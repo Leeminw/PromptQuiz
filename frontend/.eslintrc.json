@@ -1,0 +1,26 @@
+{
+  "extends": ["eslint:recommended", "prettier"],
+  "env": { "browser": true, "node": true, "es6": true },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true,
+      "tsx": true
+    },
+    "ecmaVersion": "latest"
+  },
+  "rules": {
+    "no-unused-vars": "off",
+    "space-before-function-paren": "off",
+    "comma-dangle": "off",
+    "@typescript-eslint/comma-dangle": "off",
+    "require-jsdoc": "off",
+    "at-rule-no-unknown": [
+      true,
+      {
+        "ignoreAtRules": ["tailwind", "apply", "variants", "responsive", "screen"]
+      }
+    ]
+  }
+}
