@@ -27,6 +27,6 @@ public class GameTest {
         System.out.println("찾았다!!!" + gameRepository.findById(gameEntity.getId()));
 //                .orElseThrow(null));
 
-//        gameRepository.delete(gameEntity);
+        gameRepository.delete(gameEntity);
     }
 }

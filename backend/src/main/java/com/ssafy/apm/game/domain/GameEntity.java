@@ -11,7 +11,7 @@ import org.springframework.data.redis.core.RedisHash;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@RedisHash(value = "game", timeToLive = 30)
+@RedisHash(value = "game")
 public class GameEntity {
 
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)

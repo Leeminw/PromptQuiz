@@ -24,7 +24,7 @@ public class GameController {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success());
     }
 
-    @GetMapping()
+    @GetMapping("/getGameList")
     public ResponseEntity<ResponseData<?>> getGameList() {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success());
     }
