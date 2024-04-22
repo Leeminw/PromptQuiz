@@ -1,6 +1,8 @@
 package com.ssafy.apm.game.controller;
 
 import com.ssafy.apm.common.domain.ResponseData;
+import com.ssafy.apm.game.dto.request.GameCreateRequestDto;
+import com.ssafy.apm.game.service.GameServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -13,8 +15,12 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class GameController {
 
+    private final GameServiceImpl gameService;
+
     @PostMapping()
-    public ResponseEntity<ResponseData<?>> createGame() {
+    public ResponseEntity<ResponseData<?>> createGame(@RequestBody GameCreateRequestDto gameCreateRequestDto) {
+        log.debug("gameCreateDto : {}" + gameCreateRequestDto);
+        gameService.createGame(gameCreateRequestDto);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success());
     }
 
