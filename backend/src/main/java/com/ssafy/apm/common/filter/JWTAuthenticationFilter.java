@@ -1,5 +1,6 @@
 package com.ssafy.apm.common.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.apm.common.domain.JwtProvider;
 import com.ssafy.apm.user.domain.User;
 import com.ssafy.apm.user.repository.UserRepository;
@@ -34,6 +35,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         String jwtToken = request.getHeader("Authorization");
+        
+        // 토큰이 없으면? 흠.. 쳐내야되나
         if (jwtToken == null || !jwtToken.startsWith("Bearer")) {
             chain.doFilter(request, response);
             return;
@@ -44,21 +47,28 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         response.setStatus(HttpStatus.CREATED.value());
         String providerResult = jwtProvider.validateToken(jwtToken);
         if (providerResult.equals("access")) {
-            log.info("Access Token Filter");
+            log.debug("Access Token Filter");
             User user = userRepository.findById(jwtProvider.getUserId(jwtToken))
                     .orElseThrow(IllegalAccessError::new);
             Authentication auth = getAuthentication(user);
+            log.debug("auth : {}", auth);
             SecurityContextHolder.getContext().setAuthentication(auth);
             chain.doFilter(request, response);
+            log.debug("do filter ");
             return;
+        }else if(providerResult.equals("expired")) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
-
-
+        result.put("result", providerResult);
+        response.getWriter().write(new ObjectMapper().writeValueAsString(result));
+        response.getWriter().flush();
+        
     }
 
     public Authentication getAuthentication(User user) {
-        return new UsernamePasswordAuthenticationToken(user, "",
-                List.of(new SimpleGrantedAuthority(user.getRole())));
+        return new UsernamePasswordAuthenticationToken(user, user.getPassword());
     }
 
     @Override

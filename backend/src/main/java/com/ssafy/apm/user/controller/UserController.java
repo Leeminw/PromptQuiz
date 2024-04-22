@@ -1,8 +1,10 @@
 package com.ssafy.apm.user.controller;
 
+import com.ssafy.apm.common.domain.ResponseData;
 import com.ssafy.apm.user.dto.UserCreateRequestDto;
 import com.ssafy.apm.user.dto.UserDetailResponseDto;
 import com.ssafy.apm.user.dto.UserLoginRequestDto;
+import com.ssafy.apm.user.dto.UserLoginResponseDto;
 import com.ssafy.apm.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,14 +25,14 @@ public class UserController {
     @PostMapping("/create")
     public ResponseEntity<?> createUser(@RequestBody UserCreateRequestDto requestDto){
         UserDetailResponseDto responseDto = userService.createUser(requestDto);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody UserLoginRequestDto requestDto){
         log.debug("controller : {}",requestDto.toString() );
-        UserDetailResponseDto responseDto = userService.loginUser(requestDto);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        UserLoginResponseDto responseDto = userService.loginUser(requestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }
 
 }

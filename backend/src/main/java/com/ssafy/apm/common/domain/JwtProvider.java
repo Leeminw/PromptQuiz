@@ -25,16 +25,15 @@ public class JwtProvider {
     }
 
     // 액세스 토큰 생성
-    public String createAccessToken(Long id, List<String> role) {
-        String accessToken = Jwts.builder()
-                .claim("id", id)
+    public String createAccessToken(Long id, String role) {
+        //        System.out.println("accessToken : " + accessToken);
+        return Jwts.builder()
+                .claim("userId", id)
                 .claim("type", "access")
                 .claim("role", role)
                 .setExpiration(new Date(System.currentTimeMillis() + accessExpTime))
                 .signWith(SECRET_KEY,SignatureAlgorithm.HS512)
                 .compact();
-        System.out.println("accessToken : " + accessToken);
-        return accessToken;
     }
 
     public boolean verifyToken(String token) {
@@ -53,7 +52,7 @@ public class JwtProvider {
     }
 
     public String validateToken(String accessToken) {
-        System.out.println("validate check : " + accessToken);
+//        System.out.println("validate check : " + accessToken);
         accessToken = accessToken.replace("Bearer ", "");
         try {
             Claims claims = Jwts.parserBuilder()
@@ -85,7 +84,7 @@ public class JwtProvider {
                 .build()
                 .parseClaimsJws(jwt)
                 .getBody();
-        return ((Integer) claims.get("id")).longValue();
+        return ((Integer) claims.get("userId")).longValue();
     }
 
     public List<String> getUserRole(String jwt) {
