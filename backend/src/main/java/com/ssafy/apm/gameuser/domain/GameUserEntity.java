@@ -1,19 +1,19 @@
 package com.ssafy.apm.gameuser.domain;
 
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
 
-@Entity
 @Getter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "game_user")
+@RedisHash(value = "game-user")
 public class GameUserEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @Column(name = "id")
     private Long id;
     private Long gameId;
     private Long userId;
@@ -21,6 +21,6 @@ public class GameUserEntity {
     private Boolean isReady;
     private Integer score;
     private String team;
-    private Integer rank;
+    private Integer ranking;
 
 }
