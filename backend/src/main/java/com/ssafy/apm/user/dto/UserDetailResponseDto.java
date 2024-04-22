@@ -18,8 +18,8 @@ public class UserDetailResponseDto {
     private Long userId;
     private String userName;
     private String nickName;
-    private String password;
     private String picture;
+    private String statusMessage;
     private Integer totalScore;
     private Integer teamScore;
     private Integer soloScore;
@@ -30,8 +30,8 @@ public class UserDetailResponseDto {
         this.userId = user.getId();
         this.userName = user.getUserName();
         this.nickName = user.getNickName();
-        this.password = user.getPassword();
         this.picture = user.getPicture();
+        this.statusMessage = user.getStatusMessage();
         this.totalScore = user.getTotalScore();
         this.teamScore = user.getTeamScore();
         this.soloScore = user.getSoloScore();

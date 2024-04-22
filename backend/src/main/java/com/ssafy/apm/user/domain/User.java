@@ -1,6 +1,5 @@
 package com.ssafy.apm.user.domain;
 
-import com.ssafy.apm.user.dto.UserUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,14 +16,18 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String role;
     private String userName;
     private String nickName;
     private String password;
     private String picture;
+    private String statusMessage;
     private Integer totalScore;
     private Integer teamScore;
     private Integer soloScore;
@@ -38,8 +41,5 @@ public class User {
         return this;
     }
 
-//    public User updateUser(UserUpdateRequestDto requestDto){
-//        this.
-//    }
 
 }
