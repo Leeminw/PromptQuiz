@@ -2,12 +2,15 @@ package com.ssafy.apm.game.service;
 
 import com.ssafy.apm.game.domain.GameEntity;
 import com.ssafy.apm.game.dto.request.GameCreateRequestDto;
+import com.ssafy.apm.game.dto.response.GameGetResponseDto;
 import com.ssafy.apm.game.repository.GameRepository;
 import com.ssafy.apm.gameuser.domain.GameUserEntity;
 import com.ssafy.apm.gameuser.repository.GameUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,5 +34,15 @@ public class GameServiceImpl implements GameService {
                 .ranking(0)
                 .build();
         gameUserRepository.save(gameUserEntity);
+    }
+
+    @Override
+    public List<GameGetResponseDto> getGameList(Long channelId) {
+        List<GameEntity> entityList = gameRepository.findAllByChannelId(channelId);
+
+        return entityList.stream()
+                .map(GameGetResponseDto::new)
+                .toList();
+
     }
 }
