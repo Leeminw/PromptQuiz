@@ -1,10 +1,16 @@
 import React from 'react';
-import TestScreen from './pages/test/test';
 
 const App = () => {
   return (
-    <div>
-      <TestScreen />
+    <div
+      style={{
+        backgroundImage: 'url(/ui/bg.jpg)',
+        width: '100vw',
+        height: '100vh',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
     </div>
   );
 };
