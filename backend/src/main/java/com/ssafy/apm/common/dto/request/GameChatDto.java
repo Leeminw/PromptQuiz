@@ -1,4 +1,4 @@
-package com.ssafy.apm.common.dto;
+package com.ssafy.apm.common.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
