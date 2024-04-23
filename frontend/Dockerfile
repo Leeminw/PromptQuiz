@@ -17,7 +17,7 @@ RUN npm install --force && \
 COPY . .
 
 # React 애플리케이션 빌드
-# RUN npm run build
+RUN npm run build
 
 # React 애플리케이션 실행
 CMD ["npm", "start"]
