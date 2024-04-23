@@ -13,7 +13,7 @@ COPY package*.json ./
 RUN npm install --force && \
 #    npm install --save-dev webpack webpack-cli webpack-dev-server
 #    npm install --global webpack webpack-cli webpack-dev-server
-    npm install --save-dev webpack webpack-cli webpack-dev-server html-webpack-plugin
+#    npm install --save-dev webpack webpack-cli webpack-dev-server html-webpack-plugin
 # ENV PATH /home/app/node_modules/.bin:$PATH
 
 # 현재 디렉토리의 모든 파일을 컨테이너의 작업 디렉토리로 복사
