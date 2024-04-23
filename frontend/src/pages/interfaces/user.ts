@@ -1,0 +1,4 @@
+interface LoginForm {
+    userName:string,
+    password:string
+}
