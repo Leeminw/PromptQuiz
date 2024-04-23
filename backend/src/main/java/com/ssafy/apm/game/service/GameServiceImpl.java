@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -45,5 +46,13 @@ public class GameServiceImpl implements GameService {
                 .map(GameGetResponseDto::new)
                 .toList();
 
+    }
+
+    @Override
+    public GameGetResponseDto getGameInfo(Long gameId) {
+        GameEntity gameEntity = gameRepository.findById(gameId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
+
+        return new GameGetResponseDto(gameEntity);
     }
 }

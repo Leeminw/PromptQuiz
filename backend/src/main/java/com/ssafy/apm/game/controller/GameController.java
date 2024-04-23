@@ -32,8 +32,14 @@ public class GameController {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(dtoList));
     }
 
+    @GetMapping("/getGameInfo")
+    public ResponseEntity<ResponseData<?>> getGameInfo(@RequestParam Long gameId) {
+        GameGetResponseDto dto = gameService.getGameInfo(gameId);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(dto));
+    }
+
     @DeleteMapping()
-    public ResponseEntity<ResponseData<?>> deleteGame() {
+    public ResponseEntity<ResponseData<?>> deleteGame(@RequestParam Long gameId) {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success());
     }
 }

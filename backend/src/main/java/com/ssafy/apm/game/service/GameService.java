@@ -9,4 +9,6 @@ public interface GameService {
     void createGame(GameCreateRequestDto gameCreateRequestDto);
 
     List<GameGetResponseDto> getGameList(Long channelId);
+
+    GameGetResponseDto getGameInfo(Long gameId);
 }
