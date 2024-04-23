@@ -36,9 +36,15 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updated_date;
 
-    public User encodePassword(String encodedPassword) {
+    public void encodePassword(String encodedPassword) {
         this.password = encodedPassword;
-        return this;
+    }
+
+    public void updateProfile(String profileUrl){
+        this.picture = profileUrl;
+    }
+    public void updateStatusMessage(String message){
+        this.statusMessage = message;
     }
 
 

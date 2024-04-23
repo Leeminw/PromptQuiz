@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RequiredArgsConstructor
 @Slf4j
 @RestController
@@ -22,7 +24,7 @@ public class UserController {
     @PostMapping("/create")
     public ResponseEntity<?> createUser(@RequestBody UserCreateRequestDto requestDto){
         UserDetailResponseDto responseDto = userService.createUser(requestDto);
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success(responseDto));
     }
 
     @PostMapping("/login")
@@ -38,4 +40,21 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
 
+    @GetMapping("")
+    public ResponseEntity<?> getUserInfo(){
+        UserDetailResponseDto responseDto = userService.readUser();
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<?> updateProfile(@RequestBody Map<String,String> requestBody){
+        UserDetailResponseDto responseDto =  userService.updateProfile(requestBody.get("profileUrl"));
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
+    }
+
+    @PutMapping("/status-message")
+    public ResponseEntity<?> updateStatusMessage(@RequestBody Map<String,String> requestBody ){
+        UserDetailResponseDto responseDto = userService.updateStatusMessage(requestBody.get("message"));
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
+    }
 }
