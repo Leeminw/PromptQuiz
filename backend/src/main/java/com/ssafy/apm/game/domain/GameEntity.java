@@ -24,7 +24,7 @@ public class GameEntity {
     private Integer style;
     private String code;
     private String title;
-    private  String password;
+    private String password;
     private Boolean status;
     private Boolean isTeam;
     private Integer curRound;
@@ -43,7 +43,7 @@ public class GameEntity {
         this.style = dto.getStyle();
         this.code = dto.getCode();
         this.title = dto.getTitle();
-        this.password = dto.getPassword();
+        if( dto.getPassword()!=null ) this.password = dto.getPassword();
         this.status = dto.getStatus();
         this.isTeam = dto.getIsTeam();
         this.curRound = dto.getCurRound();
