@@ -2,6 +2,7 @@ package com.ssafy.apm.game.service;
 
 import com.ssafy.apm.game.domain.GameEntity;
 import com.ssafy.apm.game.dto.request.GameCreateRequestDto;
+import com.ssafy.apm.game.dto.request.GameUpdateRequestDto;
 import com.ssafy.apm.game.dto.response.GameGetResponseDto;
 import com.ssafy.apm.game.repository.GameRepository;
 import com.ssafy.apm.gameuser.domain.GameUserEntity;
@@ -54,5 +55,22 @@ public class GameServiceImpl implements GameService {
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
 
         return new GameGetResponseDto(gameEntity);
+    }
+
+    @Override
+    @Transactional
+    public void updateGameInfo(GameUpdateRequestDto gameUpdateRequestDto) {
+        GameEntity gameEntity = gameRepository.findById(gameUpdateRequestDto.getId())
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
+
+        gameEntity.update(gameUpdateRequestDto);
+        gameRepository.save(gameEntity);
+    }
+
+    @Override
+    public void deleteGame(Long gameId) {
+        GameEntity gameEntity = gameRepository.findById(gameId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
+        gameRepository.delete(gameEntity);
     }
 }

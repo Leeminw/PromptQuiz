@@ -1,6 +1,7 @@
 package com.ssafy.apm.game.service;
 
 import com.ssafy.apm.game.dto.request.GameCreateRequestDto;
+import com.ssafy.apm.game.dto.request.GameUpdateRequestDto;
 import com.ssafy.apm.game.dto.response.GameGetResponseDto;
 
 import java.util.List;
@@ -11,4 +12,6 @@ public interface GameService {
     List<GameGetResponseDto> getGameList(Long channelId);
 
     GameGetResponseDto getGameInfo(Long gameId);
+    void updateGameInfo(GameUpdateRequestDto gameUpdateRequestDto);
+    void deleteGame(Long gameId);
 }

@@ -1,6 +1,7 @@
 package com.ssafy.apm.game.domain;
 
 import com.ssafy.apm.game.dto.request.GameCreateRequestDto;
+import com.ssafy.apm.game.dto.request.GameUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -33,6 +34,22 @@ public class GameEntity {
 
     public void updateId(Long id){
         this.id = id;
+    }
+
+    public void update(GameUpdateRequestDto dto) {
+        this.id = dto.getId();
+        this.channelId = dto.getChannelId();
+        this.type = dto.getType();
+        this.style = dto.getStyle();
+        this.code = dto.getCode();
+        this.title = dto.getTitle();
+        this.password = dto.getPassword();
+        this.status = dto.getStatus();
+        this.isTeam = dto.getIsTeam();
+        this.curRound = dto.getCurRound();
+        this.rounds = dto.getRounds();
+        this.curPlayers = dto.getCurPlayers();
+        this.maxPlayers = dto.getMaxPlayers();
     }
 
 }
