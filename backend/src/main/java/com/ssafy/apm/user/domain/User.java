@@ -22,7 +22,6 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String role;
     private String userName;
     private String nickName;
@@ -44,6 +43,7 @@ public class User {
     public void updateProfile(String profileUrl){
         this.picture = profileUrl;
     }
+
     public void updateStatusMessage(String message){
         this.statusMessage = message;
     }

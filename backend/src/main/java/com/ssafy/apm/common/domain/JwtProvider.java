@@ -17,16 +17,15 @@ public class JwtProvider {
 
     @Value("${jwt.accessExpTime}")
     long accessExpTime;
-
+    @Value("${jwt.secret}")
+    String key;
     private final SecretKey SECRET_KEY;
 
-    public JwtProvider(@Value("${jwt.secret}") String key) {
+    public JwtProvider() {
         this.SECRET_KEY = new SecretKeySpec(key.getBytes(), SignatureAlgorithm.HS512.getJcaName());
     }
 
-    // 액세스 토큰 생성
     public String createAccessToken(Long id, String role) {
-        //        System.out.println("accessToken : " + accessToken);
         return Jwts.builder()
                 .claim("userId", id)
                 .claim("type", "access")
@@ -52,7 +51,6 @@ public class JwtProvider {
     }
 
     public String validateToken(String accessToken) {
-//        System.out.println("validate check : " + accessToken);
         accessToken = accessToken.replace("Bearer ", "");
         try {
             Claims claims = Jwts.parserBuilder()
@@ -60,8 +58,7 @@ public class JwtProvider {
                     .build()
                     .parseClaimsJws(accessToken)
                     .getBody();
-            String type = (String) claims.get("type");
-            return type;
+            return (String) claims.get("type");
         } catch (ExpiredJwtException e) {
             return "expired";
         } catch (JwtException | IllegalArgumentException e) {

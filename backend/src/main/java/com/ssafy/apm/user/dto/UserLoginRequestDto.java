@@ -4,9 +4,9 @@ import lombok.*;
 
 @Getter
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class UserLoginRequestDto {
     private String userName;
     private String password;

@@ -54,10 +54,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             chain.doFilter(request, response);
             log.debug("do filter ");
             return;
-        }else if(providerResult.equals("expired")) {
+        }else {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
         result.put("result", providerResult);
         response.getWriter().write(new ObjectMapper().writeValueAsString(result));
