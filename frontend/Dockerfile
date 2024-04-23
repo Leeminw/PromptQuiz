@@ -17,12 +17,12 @@ RUN npm install
 COPY . .
 
 # React 애플리케이션 빌드
-#RUN npm run build
-RUN ./node_modules/.bin/webpack --config webpack.prod.config.js
+RUN npm run build
+#RUN ./node_modules/.bin/webpack --config webpack.prod.config.js
 
 # React 애플리케이션 실행
 #CMD ["npm", "start"]
-CMD ["./node_modules/.bin/webpack", "serve", "--config", "webpack.dev.config.js"]
+CMD ["/home/app/node_modules/.bin/webpack", "serve", "--config", "webpack.dev.config.js"]
 
 # 3000번 포트 개방
 EXPOSE 3000
