@@ -5,9 +5,9 @@ import lombok.*;
 
 @Data
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class GameGetResponseDto {
     private Long id;
     private Long channelId;
