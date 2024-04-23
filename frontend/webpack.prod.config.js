@@ -1,14 +1,18 @@
 const path = require('path');
 const { merge } = require('webpack-merge');
 const config = require('./webpack.config.js');
-
-module.exports = merge(config, {
+const mergedConfig = merge(config, {
   mode: 'production',
   devtool: 'hidden-source-map',
   performance: {
     hints: false,
     maxEntrypointSize: 512000,
     maxAssetSize: 512000,
+  },
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+    },
   },
   module: {
     rules: [
@@ -20,3 +24,5 @@ module.exports = merge(config, {
     ],
   },
 });
+
+module.exports = mergedConfig;
