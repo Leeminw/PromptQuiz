@@ -1,15 +1,14 @@
 import axios from "axios";
 
-const BASE_URL = "/api/v1"
+const BASE_URL = "http://localhost:8080/api/v1"
 
 const UserApi= {
     login : async (loginForm:LoginForm) => {
         console.log("try this")
         try{
             const response = await axios.post(
-                BASE_URL + "/user/login", {
-                    loginForm
-                }
+                BASE_URL + "/user/login", 
+                loginForm
             )
             return response.data
         }

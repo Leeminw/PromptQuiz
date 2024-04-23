@@ -20,8 +20,12 @@ const Login = () => {
             userName,
             password
         }
-        const response = await UserApi.login(loginForm)
-        console.log(response)
+        console.log(loginForm)
+        const {data} = await UserApi.login(loginForm)
+        
+        localStorage.setItem("accessToken", data.accessToken)
+        
+        
     }
 
     return (
