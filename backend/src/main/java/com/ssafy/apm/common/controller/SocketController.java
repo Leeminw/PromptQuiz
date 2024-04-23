@@ -1,6 +1,7 @@
 package com.ssafy.apm.common.controller;
 
-import com.ssafy.apm.common.dto.ChatDto;
+import com.ssafy.apm.common.dto.ChannelChatDto;
+import com.ssafy.apm.common.dto.GameChatDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -16,17 +17,16 @@ public class SocketController {
 
     private final SimpMessagingTemplate template;
 
-    // 처음 채팅방에 들어왔을 때 보내는 메세지
-    // (OO님이 채팅방에 참여하셨습니다)
-    @MessageMapping("/chat/enter")
-    public void enterMessage(@Payload ChatDto chatMessage) {
-        template.convertAndSend("/sub/chat/room/"+chatMessage
+    // 채널에서 보내는 메세지
+    @MessageMapping("/channel/chat/send")
+    public void sendChannelMessage(@Payload ChannelChatDto chatMessage) {
+        template.convertAndSend("/sub/channel?uuid="+chatMessage
                 .getUuid(), chatMessage);
     }
 
-    // 메세지로 들어온 정보에 대해서 입력을 받고 해당 room을 구독중인 구독자에게 정보를 뿌리기
-    @MessageMapping("/chat/send")
-    public void sendMessage(@Payload ChatDto chatMessage) {
-        template.convertAndSend("/sub/chat/room/"+chatMessage.getUuid(), chatMessage);
+    // 게임방에서 입력 받은 메세지 전송
+    @MessageMapping("/game/chat/send")
+    public void sendMessage(@Payload GameChatDto chatMessage) {
+        template.convertAndSend("/sub/game?uuid="+chatMessage.getUuid(), chatMessage);
     }
 }
