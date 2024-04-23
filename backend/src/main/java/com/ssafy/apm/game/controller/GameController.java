@@ -22,7 +22,6 @@ public class GameController {
 
     @PostMapping()
     public ResponseEntity<ResponseData<?>> createGame(@RequestBody GameCreateRequestDto gameCreateRequestDto) {
-        log.debug("gameCreateDto : {}" + gameCreateRequestDto);
         gameService.createGame(gameCreateRequestDto);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success());
     }
