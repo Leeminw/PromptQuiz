@@ -10,7 +10,6 @@ COPY package*.json ./
 
 # package.json에 명시된 애플리케이션 의존성 설치
 # package-lock.json이 있을 경우 더 빠르게 설치 가능
-RUN env
 RUN npm install
 
 # 현재 디렉토리의 모든 파일을 컨테이너의 작업 디렉토리로 복사
@@ -18,15 +17,18 @@ COPY . .
 
 # 환경변수 설정
 ENV PATH /home/app/node_modules/.bin:$PATH
+RUN env
 
 # React 애플리케이션 빌드
 RUN npm run build
-#RUN ./node_modules/.bin/webpack --config webpack.prod.config.js
 
 # React 애플리케이션 실행
-CMD ["npm", "start"]
+#CMD ["npm", "start"]
 #CMD ["npm", "start", "--prefix", "/home/app"]
-#CMD ["/home/app/node_modules/.bin/webpack", "serve", "--config", "webpack.dev.config.js"]
+CMD ["ls", "-al"]
+CMD ["ls", "/home/app", "-al"]
+CMD ["ls", "/home/app/node_modules/.bin", "-al"]
+CMD ["/home/app/node_modules/.bin/webpack", "serve", "--config", "webpack.dev.config.js"]
 
 # 3000번 포트 개방
 EXPOSE 3000
