@@ -25,10 +25,7 @@ RUN npm run build
 # React 애플리케이션 실행
 #CMD ["npm", "start"]
 #CMD ["npm", "start", "--prefix", "/home/app"]
-CMD ["ls", "-al"]
-CMD ["ls", "/home/app", "-al"]
-CMD ["ls", "/home/app/node_modules/.bin", "-al"]
-CMD ["/home/app/node_modules/.bin/webpack", "serve", "--config", "webpack.dev.config.js"]
+#CMD ["/home/app/node_modules/.bin/webpack", "serve", "--config", "webpack.dev.config.js"]
 
 CMD ls -al && \
     ls /home/app -al && \
