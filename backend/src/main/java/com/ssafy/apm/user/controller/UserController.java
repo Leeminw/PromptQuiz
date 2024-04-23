@@ -10,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -30,9 +27,15 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody UserLoginRequestDto requestDto){
-        log.debug("controller : {}",requestDto.toString() );
+//        log.debug("controller : {}",requestDto.toString() );
         UserLoginResponseDto responseDto = userService.loginUser(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
+    }
+
+    @GetMapping("/exist")
+    public ResponseEntity<?> isExistUser(@RequestParam String userName){
+        Boolean response = userService.isExistUserName(userName);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
 
 }

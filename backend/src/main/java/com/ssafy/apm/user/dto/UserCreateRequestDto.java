@@ -22,6 +22,7 @@ public class UserCreateRequestDto {
                 .nickName(this.nickName)
                 .password(this.password)
                 .picture(this.picture)
+                .role("ROLE_USER")
                 .soloScore(0)
                 .teamScore(0)
                 .totalScore(0)

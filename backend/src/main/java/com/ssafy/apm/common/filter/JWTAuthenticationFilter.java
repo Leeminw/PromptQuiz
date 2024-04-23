@@ -35,8 +35,6 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         String jwtToken = request.getHeader("Authorization");
-        
-        // 토큰이 없으면? 흠.. 쳐내야되나
         if (jwtToken == null || !jwtToken.startsWith("Bearer")) {
             chain.doFilter(request, response);
             return;
@@ -68,7 +66,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     }
 
     public Authentication getAuthentication(User user) {
-        return new UsernamePasswordAuthenticationToken(user, user.getPassword());
+        return new UsernamePasswordAuthenticationToken(user, user.getPassword(),  List.of(new SimpleGrantedAuthority(user.getRole())));
     }
 
     @Override
