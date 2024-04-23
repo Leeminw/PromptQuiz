@@ -16,13 +16,16 @@ RUN npm install
 # 현재 디렉토리의 모든 파일을 컨테이너의 작업 디렉토리로 복사
 COPY . .
 
+# 환경변수 설정
+ENV PATH /home/app/node_modules/.bin:$PATH
+
 # React 애플리케이션 빌드
 RUN npm run build
 #RUN ./node_modules/.bin/webpack --config webpack.prod.config.js
 
 # React 애플리케이션 실행
-#CMD ["npm", "start"]
-CMD ["npm", "start", "--prefix", "/home/app"]
+CMD ["npm", "start"]
+#CMD ["npm", "start", "--prefix", "/home/app"]
 #CMD ["/home/app/node_modules/.bin/webpack", "serve", "--config", "webpack.dev.config.js"]
 
 # 3000번 포트 개방
