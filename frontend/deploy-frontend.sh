@@ -62,11 +62,15 @@ PROJECT_NAME="AI-Prompt-Matcher"
 TARGET_DIR="/home/ubuntu/$PROJECT_NAME"
 mkdir -p $TARGET_DIR
 
-# dist 디렉토리를 /home/ubuntu/$PROJECT_NAME 폴더로 복사
-# -a: 아카이브 모드, 모든 파일 속성 보존 및 심볼릭 링크 등 처리
-# -v: 'rsync'가 수행하는 동작에 대해 보다 상세한 정보를 출력
-# --delete: 대상 폴더에서 원본에 없는 파일은 삭제
-rsync -av --delete dist/ /home/ubuntu/$PROJECT_NAME/
+# 대상 디렉토리 내의 dist 폴더가 존재하는지 확인 후 삭제
+if [ -d "$TARGET_DIR/dist" ]; then
+    echo ">>> 대상 폴더 내 dist 폴더가 이미 존재합니다. 삭제 후 복사를 진행합니다."
+    rm -rf "$TARGET_DIR/dist"
+fi
+
+# dist 디렉토리를 $TARGET_DIR 디렉토리로 복사
+# -R: 재귀적으로 복사, -f: 강제로 덮어쓰기
+cp -Rf dist/ $TARGET_DIR/
 echo ">>> 빌드 정적파일 복사 완료: $TARGET_DIR"
 echo ""
 
