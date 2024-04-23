@@ -8,6 +8,10 @@ WORKDIR /home/app
 # 컨테이너의 작업 디렉토리로 package.json과 package-lock.json 복사
 COPY package*.json ./
 
+# 개발 의존성 포함하여 모든 패키지 설치
+ARG NODE_ENV=development
+ENV NODE_ENV=${NODE_ENV}
+
 # package.json에 명시된 애플리케이션 의존성 설치
 # package-lock.json이 있을 경우 더 빠르게 설치 가능
 RUN npm install
