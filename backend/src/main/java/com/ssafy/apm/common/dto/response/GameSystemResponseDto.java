@@ -9,11 +9,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GameSystemResponseDto {
     // 게임의 타입 분류 -> ready, start, end, result
-    String type;
+    private String type;
     
     // content는 각각 상태에 들어갈 내용
     // GameChat or GameSystemContentDto
-    Object content;
+    private Object content;
 
     // 라운드 준비 상태 response
     public static GameSystemResponseDto ready(Object content){
