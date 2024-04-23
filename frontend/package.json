@@ -45,8 +45,8 @@
     "webpack-merge": "^5.10.0"
   },
   "scripts": {
-    "start": "webpack serve --open --config webpack.dev.config.js",
-    "build": "webpack --config webpack.prod.config.js",
+    "start": "npx webpack serve --open --config webpack.dev.config.js",
+    "build": "npx webpack --config webpack.prod.config.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "dev": "webpack-dev-server --config webpack.dev.config.js --open --hot"
