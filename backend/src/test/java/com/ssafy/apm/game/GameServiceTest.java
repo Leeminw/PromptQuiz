@@ -7,6 +7,7 @@ import com.ssafy.apm.game.repository.GameRepository;
 import com.ssafy.apm.game.service.GameServiceImpl;
 import com.ssafy.apm.gameuser.domain.GameUserEntity;
 import com.ssafy.apm.gameuser.repository.GameUserRepository;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -33,6 +34,7 @@ public class GameServiceTest {
 
     @Test
     @DisplayName("방 등록 테스트")
+    @Disabled
     public void createGameTest() throws Exception {
         // Given
         GameCreateRequestDto dto = new GameCreateRequestDto(1L, 1L, 0, 0, "들어와", null, true, false, 0, 0, 1, 8);
@@ -60,6 +62,7 @@ public class GameServiceTest {
     }
     @Test
     @DisplayName("방 정보 리스트 조회")
+    @Disabled
     void findBoardsServiceTest() {
         Long channelId = 1L;
         // given

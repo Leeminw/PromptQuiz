@@ -25,8 +25,8 @@ public class GameServiceImpl implements GameService {
         GameEntity gameEntity = gameCreateRequestDto.toEntity();
         gameEntity = gameRepository.save(gameEntity);
         GameUserEntity gameUserEntity = GameUserEntity.builder()
-//                .gameId(gameEntity.getId())
-                .gameId(1L)
+                .gameId(gameEntity.getId())
+//                .gameId(1L)
                 .userId(gameCreateRequestDto.getUserId())
                 .isHost(true)
                 .isReady(true)

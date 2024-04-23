@@ -1,9 +1,9 @@
 package com.ssafy.apm.userchannel.service;
 
-import com.ssafy.apm.userchannel.dto.response.UserChannelUsersResponseDto;
+import com.ssafy.apm.user.dto.UserDetailResponseDto;
 
 import java.util.List;
 
 public interface UserChannelService {
-    List<UserChannelUsersResponseDto> getUserChannelList(Long channelId);
+    List<UserDetailResponseDto> getUserChannelList(Long channelId);
 }

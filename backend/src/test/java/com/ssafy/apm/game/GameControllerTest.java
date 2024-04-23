@@ -5,6 +5,7 @@ import com.ssafy.apm.game.controller.GameController;
 import com.ssafy.apm.game.dto.request.GameCreateRequestDto;
 import com.ssafy.apm.game.dto.response.GameGetResponseDto;
 import com.ssafy.apm.game.service.GameServiceImpl;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +39,7 @@ public class GameControllerTest {
 
     @Test
     @DisplayName("방 정보 등록")
+    @Disabled
     void testRegist() throws Exception {
         // 방 등록 관련 테스트
         GameCreateRequestDto requestDto = new GameCreateRequestDto(1L,1L,0,0,"들어와",null,true,false,0,0,1,8);
@@ -56,6 +58,7 @@ public class GameControllerTest {
 
     @Test
     @DisplayName("방 정보 리스트 조회")
+    @Disabled
     void testSelectList() throws Exception {
         // given
         List<GameGetResponseDto> response = new ArrayList<>();

@@ -26,7 +26,7 @@ public class ChannelController {
     @PostMapping()
     public ResponseEntity<ResponseData<?>> createGame(@RequestBody ChannelCreateRequestDto channelCreateRequestDto) {
         channelService.createChannel(channelCreateRequestDto);
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success());
+        return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success());
     }
 
 //    채널 목록 조회
