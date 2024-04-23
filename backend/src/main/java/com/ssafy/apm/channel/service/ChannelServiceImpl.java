@@ -4,7 +4,7 @@ import com.ssafy.apm.channel.domain.ChannelEntity;
 import com.ssafy.apm.channel.dto.request.ChannelCreateRequestDto;
 import com.ssafy.apm.channel.dto.response.ChannelGetResponseDto;
 import com.ssafy.apm.channel.repository.ChannelRepository;
-import com.ssafy.apm.channel.repository.UserChannelRepository;
+import com.ssafy.apm.userchannel.repository.UserChannelRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

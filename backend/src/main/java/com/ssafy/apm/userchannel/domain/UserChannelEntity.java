@@ -1,4 +1,4 @@
-package com.ssafy.apm.channel.domain;
+package com.ssafy.apm.userchannel.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

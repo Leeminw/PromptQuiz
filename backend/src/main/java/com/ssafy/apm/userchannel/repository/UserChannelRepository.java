@@ -1,6 +1,6 @@
-package com.ssafy.apm.channel.repository;
+package com.ssafy.apm.userchannel.repository;
 
-import com.ssafy.apm.channel.domain.UserChannelEntity;
+import com.ssafy.apm.userchannel.domain.UserChannelEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
