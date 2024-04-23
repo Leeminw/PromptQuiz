@@ -11,8 +11,8 @@ COPY package*.json ./
 # package.json에 명시된 애플리케이션 의존성 설치
 # package-lock.json이 있을 경우 더 빠르게 설치 가능
 RUN npm install --force && \
-    npm install --save-dev webpack webpack-cli webpack-dev-server
-#    npm install --global webpack webpack-cli webpack-dev-server
+#    npm install --save-dev webpack webpack-cli webpack-dev-server
+    npm install --global webpack webpack-cli webpack-dev-server
 
 ENV PATH /home/app/node_modules/.bin:$PATH
 
