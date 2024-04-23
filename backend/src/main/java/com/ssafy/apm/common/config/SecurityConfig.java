@@ -36,15 +36,16 @@ public class SecurityConfig {
                     configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
                 .authorizeHttpRequests(configurer -> {
-                    configurer
-                            .requestMatchers(
-                                    "/api/v1/user/create",
-                                    "/api/v1/user/login",
-                                    "/api/v1/user/exist"
-                            )
-                            .permitAll()
-                            .anyRequest()
-                            .authenticated();
+                    configurer.anyRequest()
+                            .permitAll();
+//                            .requestMatchers(
+//                                    "/api/v1/user/create",
+//                                    "/api/v1/user/login",
+//                                    "/api/v1/user/exist"
+//                            )
+//                            .permitAll()
+//                            .anyRequest()
+//                            .authenticated();
 
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

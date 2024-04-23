@@ -11,9 +11,9 @@ import java.util.UUID;
 
 @Data
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class GameCreateRequestDto {
 //    id, 방코드, 우승자 컬럼 없음
 //    방코드는 UUID 만들어 Entity에 넣어서 만들거야
