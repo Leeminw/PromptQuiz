@@ -16,6 +16,8 @@ public interface UserService {
     UserDetailResponseDto updateProfile(String profileUrl);
     // 상태메시지 수정
     UserDetailResponseDto updateStatusMessage(String message);
+    // 점수 수정
+    UserDetailResponseDto updateUserScore(UserScoreUpdateRequestDto requestDto);
 
 
 

@@ -1,5 +1,6 @@
 package com.ssafy.apm.user.domain;
 
+import com.ssafy.apm.user.dto.UserScoreUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,5 +48,10 @@ public class User {
         this.statusMessage = message;
     }
 
+    public void updateScore(UserScoreUpdateRequestDto requestDto){
+        this.totalScore = requestDto.getTotalScore();
+        this.soloScore = requestDto.getSoloScore();
+        this.teamScore = requestDto.getTeamScore();
+    }
 
 }

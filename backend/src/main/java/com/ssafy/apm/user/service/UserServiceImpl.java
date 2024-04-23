@@ -92,4 +92,12 @@ public class UserServiceImpl implements UserService{
         userRepository.save(user);
         return new UserDetailResponseDto(user);
     }
+
+    @Override
+    public UserDetailResponseDto updateUserScore(UserScoreUpdateRequestDto requestDto) {
+        User user = this.loadUser();
+        user.updateScore(requestDto);
+        userRepository.save(user);
+        return new UserDetailResponseDto(user);
+    }
 }

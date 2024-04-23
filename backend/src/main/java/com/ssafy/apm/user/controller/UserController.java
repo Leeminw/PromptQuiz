@@ -1,10 +1,7 @@
 package com.ssafy.apm.user.controller;
 
 import com.ssafy.apm.common.domain.ResponseData;
-import com.ssafy.apm.user.dto.UserCreateRequestDto;
-import com.ssafy.apm.user.dto.UserDetailResponseDto;
-import com.ssafy.apm.user.dto.UserLoginRequestDto;
-import com.ssafy.apm.user.dto.UserLoginResponseDto;
+import com.ssafy.apm.user.dto.*;
 import com.ssafy.apm.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +52,12 @@ public class UserController {
     @PutMapping("/status-message")
     public ResponseEntity<?> updateStatusMessage(@RequestBody Map<String,String> requestBody ){
         UserDetailResponseDto responseDto = userService.updateStatusMessage(requestBody.get("message"));
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
+    }
+
+    @PutMapping("/score")
+    public ResponseEntity<?> updateScore(@RequestBody UserScoreUpdateRequestDto requestDto){
+        UserDetailResponseDto responseDto = userService.updateUserScore(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }
 }
