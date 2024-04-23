@@ -11,8 +11,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@Component
 @Slf4j
+@Component
 public class JwtProvider {
 
     @Value("${jwt.accessExpTime}")
@@ -21,7 +21,7 @@ public class JwtProvider {
     String key;
     private final SecretKey SECRET_KEY;
 
-    public JwtProvider() {
+    public JwtProvider(@Value("${jwt.secret}") String key) {
         this.SECRET_KEY = new SecretKeySpec(key.getBytes(), SignatureAlgorithm.HS512.getJcaName());
     }
 

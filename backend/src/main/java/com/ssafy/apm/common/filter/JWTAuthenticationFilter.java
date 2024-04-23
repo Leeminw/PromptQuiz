@@ -24,10 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
-@RequiredArgsConstructor
-@CrossOrigin
 @Slf4j
+@Component
+@CrossOrigin
+@RequiredArgsConstructor
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
