@@ -30,5 +30,10 @@ CMD ["ls", "/home/app", "-al"]
 CMD ["ls", "/home/app/node_modules/.bin", "-al"]
 CMD ["/home/app/node_modules/.bin/webpack", "serve", "--config", "webpack.dev.config.js"]
 
+CMD ls -al && \
+    ls /home/app -al && \
+    ls /home/app/node_modules/.bin -al && \
+    /home/app/node_modules/.bin/webpack serve --config webpack.dev.config.js
+
 # 3000번 포트 개방
 EXPOSE 3000
