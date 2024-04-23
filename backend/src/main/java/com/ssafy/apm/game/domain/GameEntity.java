@@ -31,4 +31,8 @@ public class GameEntity {
     private Integer curPlayers;
     private Integer maxPlayers;
 
+    public void updateId(Long id){
+        this.id = id;
+    }
+
 }
