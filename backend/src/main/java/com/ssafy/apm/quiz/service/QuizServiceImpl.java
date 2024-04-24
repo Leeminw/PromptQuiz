@@ -27,8 +27,11 @@ public class QuizServiceImpl implements QuizService{
     // (객관식 체크) 정답 번호 체크
     @Override
     public Boolean answerQuizCheck(GameAnswerRequestDto answer) {
+        // 라운드로 퀴즈 아이디 조회
+        Long quizId = 0L;
+
         // quiz 데이터 가져오기 (만약 퀴즈 존재하지 않는다면 false)
-        Quiz quiz = repository.findById(answer.getQuizId()).orElse(null);
+        Quiz quiz = repository.findById(quizId).orElse(null);
         if(quiz == null) return false;
         
         return false;
@@ -37,8 +40,11 @@ public class QuizServiceImpl implements QuizService{
     // (주관식 체크) 정답과 유사도 측정 이후 유사도 반환
     @Override
     public Double answerSimilarityCheck(GameAnswerRequestDto answer) {
+        // 라운드로 퀴즈 아이디 조회
+        Long quizId = 0L;
+
         // quiz 데이터 가져오기 (만약 퀴즈 존재하지 않는다면 false)
-        Quiz quiz = repository.findById(answer.getQuizId()).orElse(null);
+        Quiz quiz = repository.findById(quizId).orElse(null);
         if(quiz == null) return 0.0;
 
         return calcSimilarity(quiz.getPrompt(), answer.getAnswer());
@@ -47,8 +53,11 @@ public class QuizServiceImpl implements QuizService{
     // (순서 체크) 순서 맞추기 확인 코드
     @Override
     public Boolean answerOrderCheck(GameAnswerRequestDto answer) {
+        // 라운드로 퀴즈 아이디 조회
+        Long quizId = 0L;
+
         // quiz 데이터 가져오기 (만약 퀴즈 존재하지 않는다면 false)
-        Quiz quiz = repository.findById(answer.getQuizId()).orElse(null);
+        Quiz quiz = repository.findById(quizId).orElse(null);
         if(quiz == null) return false;
 
         return true;

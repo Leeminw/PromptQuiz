@@ -56,6 +56,7 @@ public class SocketController {
                 gameReadyList.put(game.gameId, game);
                 gameStartList.remove(game.gameId);
                 game.time = 0;
+
             } else {
                 // 각각의 시간초 보내주기
                 template.convertAndSend("/sub/game?uuid=" + game.uuid
@@ -75,8 +76,6 @@ public class SocketController {
 
             // 3초가 됐다면 이제 게임 시작하기
             if (game.time >= REST_TIME) {
-                // quizId 1 증가시키고 다음 시작
-                game.quizId++;
                 game.time = 0;
                 gameStartList.put(game.gameId, game);
                 gameReadyList.remove(game.gameId);
@@ -122,7 +121,7 @@ public class SocketController {
     public void gameStart(@Payload GameReadyDto ready) {
         // 현재 게임방에 등록되어 있지 않다면 등록시키기
         if (!gameReadyList.containsKey(ready.getGameId())) {
-            TimerGame newGame = new TimerGame(ready.getGameId(), ready.getUuid(), 0L, 10, 0);
+            TimerGame newGame = new TimerGame(ready.getGameId(), ready.getUuid(), 0, 10, 0);
             gameReadyList.put(ready.getGameId(), newGame);
             sendGameReadyMessage(newGame);
         }
@@ -131,7 +130,7 @@ public class SocketController {
     // (라운드 대기) 라운드 대기 메세지 전송
     public void sendGameReadyMessage(TimerGame game) {
         // ready 상태에서는 현재 어떤 라운드인지 알려줘야 한다.
-        GameSystemContentDto temp = new GameSystemContentDto(game.quizId, null);
+        GameSystemContentDto temp = new GameSystemContentDto(game.round, null);
 
         template.convertAndSend("/sub/game?uuid=" + game.uuid,
                 new GameResponseDto("game", GameSystemResponseDto.ready(temp)));
@@ -140,7 +139,7 @@ public class SocketController {
     // (라운드 시작) 라운드 시작 메세지 전송
     public void sendGameStartMessage(TimerGame game) {
         // 라운드 시작은 단순 시작 알림과 퀴즈 아이디를 전송
-        GameSystemContentDto temp = new GameSystemContentDto(game.quizId, null);
+        GameSystemContentDto temp = new GameSystemContentDto(game.round, null);
 
         template.convertAndSend("/sub/game?uuid=" + game.uuid,
                 new GameResponseDto("game", GameSystemResponseDto.start(temp)));
@@ -153,8 +152,13 @@ public class SocketController {
             sendGameResultMessage()
         */
 
-        // 전체 사용자에게 라운드 종료 알림 보내기
-        GameSystemContentDto temp = new GameSystemContentDto(game.quizId + 1, list);
+        // 라운드 증가시키는 로직 필요 (redis)
+        // game.round = repository.getRound()
+        // 만약 전체 라운드 종료시켰다면 result로 보내기
+        
+        
+        // 전체 사용자에게 라운드 종료 알림 보내기 (다음 라운드 증가)
+        GameSystemContentDto temp = new GameSystemContentDto(game.round, list);
 
         template.convertAndSend("/sub/game?uuid=" + game.uuid,
                 new GameResponseDto("game", GameSystemResponseDto.end(temp)));
@@ -167,7 +171,7 @@ public class SocketController {
         */
 
         // 게임이 종료됐으면 전체 사용자의 점수 list를 반환해주기
-        GameSystemContentDto temp = new GameSystemContentDto(0L, list);
+        GameSystemContentDto temp = new GameSystemContentDto(0, list);
 
         template.convertAndSend("/sub/game?uuid=" + game.uuid,
                 new GameResponseDto("game", GameSystemResponseDto.result(temp)));
@@ -179,7 +183,11 @@ public class SocketController {
     public ResponseEntity<?> registAnswer(@RequestBody GameAnswerRequestDto answer) {
         // 초기값 설정은 false로 설정
         GameAnswerResponseDto response = new GameAnswerResponseDto();
-
+        
+        // 현재 퀴즈 라운드와 다른 입력이 들어왔을때 예외 처리 필요
+        // 딜레이로 인해 잘못된 라운드에 사용자가 들어와 있을 경우
+        // if( != answer.getQuizId()) return;
+        
         switch (answer.getType()) {
             case "객관식":
                 // 객관식 번호가 정답일 경우 true
@@ -200,7 +208,7 @@ public class SocketController {
         if (response.getResult()) {
             TimerGame game = gameStartList.get(answer.getGameId());
             game.time = -game.maxTime;
-
+            
             // 미리 종료 메세지를 보내 다른 사용자가 입력 못하게 하기
             sendGameEndMessage(game);
         }

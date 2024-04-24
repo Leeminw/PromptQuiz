@@ -10,9 +10,9 @@ import java.util.List;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class GameSystemContentDto {
-    // 퀴즈 아이디 - 게임에서 현재 라운드 가져와서 퀴즈 값 넣어주기
+    // 게임에서 현재 라운드
     // 초기값 0
-    private Long quizId;
+    private Integer round;
 
     // (라운드 결과) 유저 리스트 , null 값 일 수 있음
     private List<PlayerDto> roundList;

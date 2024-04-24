@@ -12,8 +12,8 @@ public class GameAnswerRequestDto {
     // 게임방 아이디
     private Long gameId;
 
-    // 퀴즈 아이디
-    private Long quizId;
+    // 퀴즈 라운드
+    private Integer round;
 
     // 퀴즈 타입
     private String type;
