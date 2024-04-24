@@ -1,25 +1,9 @@
 const path = require('path');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  // FIXME : modify your project name
-  name: 'APM:AI Prompt Mathcer',
+  name: 'AI-Prompt-Matcher',
   entry: './src/index.tsx',
-  resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx'],
-  },
-  plugins: [
-    new CleanWebpackPlugin(),
-    new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: './public/index.html',
-    }),
-  ],
-  // output: {
-  //   path: path.resolve(__dirname, 'build'),
-  //   filename: '[name].[hash].js',
-  // },
   module: {
     rules: [
       {
@@ -43,7 +27,9 @@ module.exports = {
         ],
       },
       {
-        test: /\.(png|svg|jpe?g|gif)$/,
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: 'asset/resource',
+        // use, exclude check
         use: [
           {
             loader: 'file-loader',
@@ -61,5 +47,18 @@ module.exports = {
         exclude: /(border)?/,
       },
     ],
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.jsx', '.js'],
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: './public/index.html',
+    }),
+  ],
+  stats: {
+    children: true,
+    errorDetails: true,
   },
 };
