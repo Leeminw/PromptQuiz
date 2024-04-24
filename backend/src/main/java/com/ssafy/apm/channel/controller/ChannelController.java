@@ -2,6 +2,7 @@ package com.ssafy.apm.channel.controller;
 
 import com.ssafy.apm.channel.dto.request.ChannelCreateRequestDto;
 import com.ssafy.apm.channel.dto.response.ChannelGetResponseDto;
+import com.ssafy.apm.channel.service.ChannelService;
 import com.ssafy.apm.channel.service.ChannelServiceImpl;
 import com.ssafy.apm.common.domain.ResponseData;
 import com.ssafy.apm.game.dto.request.GameCreateRequestDto;
@@ -20,17 +21,17 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class ChannelController {
-    private final ChannelServiceImpl channelService;
+    private final ChannelService channelService;
 
 //    채널 등록
-    @PostMapping()
+    @PostMapping("")
     public ResponseEntity<ResponseData<?>> createChannel(@RequestBody ChannelCreateRequestDto channelCreateRequestDto) {
         channelService.createChannel(channelCreateRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success());
     }
 
 //    채널 목록 조회
-    @GetMapping("/getChannelList")
+    @GetMapping("/channelList")
     public ResponseEntity<ResponseData<?>> getChannelList() {
         List<ChannelGetResponseDto> dtoList = channelService.getChannelList();
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(dtoList));

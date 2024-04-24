@@ -2,15 +2,13 @@ package com.ssafy.apm.userchannel.controller;
 
 import com.ssafy.apm.common.domain.ResponseData;
 import com.ssafy.apm.user.dto.UserDetailResponseDto;
+import com.ssafy.apm.userchannel.service.UserChannelService;
 import com.ssafy.apm.userchannel.service.UserChannelServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,12 +22,12 @@ public class UserChannelController {
     *
     * */
 
-    private final UserChannelServiceImpl userChannelService;
+    private final UserChannelService userChannelService;
 
 //    채널 내에 접속한 유저 정보를 리턴하는 API
 
-    @GetMapping("/getUserChannelList")
-    public ResponseEntity<ResponseData<?>> getUserChannelList(@RequestParam Long channelId) {
+    @GetMapping("/userChannelList/{channelId}")
+    public ResponseEntity<ResponseData<?>> getUserChannelList(@PathVariable(name = "channelId") Long channelId) {
         List<UserDetailResponseDto> dtoList = userChannelService.getUserChannelList(channelId);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(dtoList));
     }

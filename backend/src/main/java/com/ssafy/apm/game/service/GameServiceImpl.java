@@ -71,6 +71,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
+    @Transactional
     public void deleteGame(Long gameId) {
         GameEntity gameEntity = gameRepository.findById(gameId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
