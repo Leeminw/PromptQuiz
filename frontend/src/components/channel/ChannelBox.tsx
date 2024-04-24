@@ -1,29 +1,57 @@
 import React, { useState } from 'react';
+import { AiOutlineRight } from 'react-icons/ai';
 
-const ChannelBox = ({channelCurrentNum, channelMaxNum}: {channelCurrentNum: number, channelMaxNum: number}) => {
-//   const [channelCurrentNum, setChannelCurrentNum] = useState(1);
-const bar = {
-    border: "1px solid #359DB0",
-    height: "10px",
-    width: "160px"
-};
-const progressBar = {
-    height: "10px"
+interface Props {
+  id: number;
+  code: string;
+  name: string;
+  curPlayers: number;
+  maxPlayers: number;
 }
-const percentage = Math.floor((channelCurrentNum/channelMaxNum)*100);
-return (
-    <div className="channelBox" style={{
-        border: "2px solid #359DB0",
-        borderRadius: "30px",
-        width: "300px",
-        height: "50px",
-        color: "#359DB0",
-        display: "flex",
-        alignItems: "center",
-        fontSize: "10px"
-    }}>
-      <span>1채널</span>
-      <span>{channelCurrentNum} / {channelMaxNum}</span>
+const ChannelBox = ({ id, code, name, curPlayers, maxPlayers }: Props) => {
+  const percentage = Math.floor((curPlayers / maxPlayers) * 100);
+  return (
+    <div
+      className="channelBox"
+      style={{
+        border: '2px solid #359DB0',
+        borderRadius: '15px',
+        height: '50px',
+        width: '300px',
+        color: '#359DB0',
+        // display: 'flex',
+        // alignItems: 'center',
+        lineHeight: '25px',
+        fontSize: '10px', // 10px로
+        margin: '2px',
+      }}
+    >
+      <div
+        className="ex"
+        style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}
+      >
+        <div>{id}채널</div>
+        {/* <div>
+        </div> */}
+        <button>
+          <AiOutlineRight style={{ fontSize: '15px', marginTop: '5px' }} />
+        </button>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+        <span
+          className="w-full bg-gray-200 rounded-full h-2.5 mb-4 dark:bg-gray-700"
+          style={{ width: '75%', border: '0.3px solid #359DB0' }}
+        >
+          <div
+            // className="bg-green-600 h-2.5 rounded-full dark:bg-blue-500"
+            className="h-2.5 rounded-full"
+            style={{ width: `${(curPlayers / maxPlayers) * 100}%`, backgroundColor: '#359DB0' }}
+          ></div>
+        </span>
+        <span>
+          {curPlayers} / {maxPlayers}
+        </span>
+      </div>
     </div>
   );
 };

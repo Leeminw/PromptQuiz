@@ -1,55 +1,111 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ChannelBox from '../components/channel/ChannelBox';
 // import ChannelBox from '../components/channel/ChannelBox';
 // import BackgroundImg from '../../public/background.png';
 
 const TestScreen = () => {
-  // 테스트용 더미데이터
-  // 채널
-  // 채널코드 varchar
-  // 채널이름 varchar
-  // 현재인원 INT
-  // 최대인원INT
-  const channelDummy = [
-    {
-      code: 'uuid1',
-      name: '토끼',
-      cur_players: 79,
-      max_players: 100,
-    },
-    {
-      code: 'uuid2',
-      name: '치타',
-      cur_players: 34,
-      max_players: 100,
-    },
-    {
-      code: 'uuid3',
-      name: '타조',
-      cur_players: 55,
-      max_players: 100,
-    },
-  ];
+  const [channelArray, setChannelList] = useState<Channel[]>([]);
+  useEffect(() => {
+    // 채널리트스 가져오기
+    const response = {
+      status: 'success',
+      message: 'The request has been processed successfully.',
+      data: [
+        {
+          id: 1,
+          code: 'code1',
+          name: '1채널',
+          curPlayers: 100,
+          maxPlayers: 100,
+        },
+        {
+          id: 2,
+          code: 'code2',
+          name: '2채널',
+          curPlayers: 100,
+          maxPlayers: 100,
+        },
+        {
+          id: 3,
+          code: 'code3',
+          name: '3채널',
+          curPlayers: 97,
+          maxPlayers: 100,
+        },
+        {
+          id: 4,
+          code: 'code4',
+          name: '4채널',
+          curPlayers: 95,
+          maxPlayers: 100,
+        },
+        {
+          id: 5,
+          code: 'code5',
+          name: '5채널',
+          curPlayers: 85,
+          maxPlayers: 100,
+        },
+        {
+          id: 6,
+          code: 'code6',
+          name: '6채널',
+          curPlayers: 76,
+          maxPlayers: 100,
+        },
+        {
+          id: 7,
+          code: 'code7',
+          name: '7채널',
+          curPlayers: 50,
+          maxPlayers: 100,
+        },
+        {
+          id: 8,
+          code: 'code8',
+          name: '8채널',
+          curPlayers: 32,
+          maxPlayers: 100,
+        },
+        {
+          id: 9,
+          code: 'code9',
+          name: '9채널',
+          curPlayers: 16,
+          maxPlayers: 100,
+        },
+        {
+          id: 10,
+          code: 'code10',
+          name: '10채널',
+          curPlayers: 3,
+          maxPlayers: 100,
+        },
+      ],
+    };
+    setChannelList(response.data);
+  }, []);
+
   const headerStyle = {
     width: '100%',
     height: '50px',
-    border: '1px solid red',
     color: '#359DB0',
     display: 'flex',
     justifyContent: 'center',
     backgroundColor: 'white',
     opacity: '0.7',
+    fontSize: '20px',
   };
   const channelList = {
     width: '100%',
     height: '400px',
-    border: '1px solid red',
     color: '#359DB0',
     display: 'flex',
-    justifyContent: 'center',
+    flexFlow: 'row wrap',
+    // justifyContent: 'center',
     backgroundColor: 'white',
     opacity: '0.7',
-    // margin: '10px',
+    marginTop: '10px',
   };
   return (
     <div
@@ -71,9 +127,16 @@ const TestScreen = () => {
       >
         <div style={headerStyle}>채널목록</div>
         <div style={channelList}>
-          <ChannelBox channelCurrentNum={66} channelMaxNum={100} />
-          <ChannelBox channelCurrentNum={66} channelMaxNum={100} />
-          <ChannelBox channelCurrentNum={66} channelMaxNum={100} />
+          {/* <ChannelBox id={1} code="code1" name="채널1" curPlayers={10} maxPlayers={100} /> */}
+          {channelArray.map((item, idx) => (
+            <ChannelBox
+              id={item.id}
+              code={item.code}
+              name={item.name}
+              curPlayers={item.curPlayers}
+              maxPlayers={item.maxPlayers}
+            />
+          ))}
         </div>
       </div>
     </div>
