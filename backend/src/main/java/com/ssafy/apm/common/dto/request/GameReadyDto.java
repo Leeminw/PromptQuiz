@@ -5,16 +5,13 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class GameAnswerDto {
-    // 사용자 아이디
-    private String userId;
-
+public class GameReadyDto {
     // 게임방 아이디
     private Long gameId;
 
+    // 게임방 uuid
+    private String uuid;
+
     // 퀴즈 아이디
     private Long quizId;
-
-    // 플레이어가 선택한 답안
-    private String answer;
 }
