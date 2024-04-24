@@ -5,6 +5,7 @@ const App = () => {
   return (
     <Routes>
       <Route path='/login' element={<Login/>}></Route>
+      <Route path='/home' element={<div>홈화면</div>}> </Route>
     </Routes>
   );
 };
