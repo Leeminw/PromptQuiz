@@ -26,6 +26,9 @@ public class GameServiceImpl implements GameService {
     public void createGame(GameCreateRequestDto gameCreateRequestDto) {
         GameEntity gameEntity = gameCreateRequestDto.toEntity();
         gameEntity = gameRepository.save(gameEntity);
+        /*
+        * 방 만든 사람의 GameUser Entity도 생성해서 저장
+        * */
         GameUserEntity gameUserEntity = GameUserEntity.builder()
                 .gameId(gameEntity.getId())
 //                .gameId(1L)

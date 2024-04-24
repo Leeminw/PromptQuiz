@@ -24,6 +24,10 @@ public class GameUserController {
 
     private final GameUserServiceImpl gameUserService;
 
+    /*  Todo: 방 입장시 GameUserEntity 생성하고, 방 퇴장시 GameUserEntity 삭제하는 로직 필요
+    *         레디하거나 팀을 바꾸거나 하는 행동을 할 때 Update 처리가 필요하다
+    * */
+
 //    게임방 안에 있는 유저들 목록 가져옴( UserDB와 GameUserDB에 있는 데이터 불러옴)
     @GetMapping("/getGameUserList")
     public ResponseEntity<ResponseData<?>> getGameUserList(@RequestParam Long gameId) {

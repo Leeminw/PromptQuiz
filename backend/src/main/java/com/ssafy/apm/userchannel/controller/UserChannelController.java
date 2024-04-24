@@ -19,8 +19,15 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class UserChannelController {
+    /*  Todo: 채널에 접속하면 (Socket 연결 되면)UserChannelEntity를 만들어 주고, channel curPlayers 하나 늘려줘야함
+              채널에서 나가면 (Socket 연결 끊기면)UserChannelEntity를 삭제해 주고, curPlayers 하나 줄여줘야함
+    *
+    * */
 
     private final UserChannelServiceImpl userChannelService;
+
+//    채널 내에 접속한 유저 정보를 리턴하는 API
+
     @GetMapping("/getUserChannelList")
     public ResponseEntity<ResponseData<?>> getUserChannelList(@RequestParam Long channelId) {
         List<UserDetailResponseDto> dtoList = userChannelService.getUserChannelList(channelId);

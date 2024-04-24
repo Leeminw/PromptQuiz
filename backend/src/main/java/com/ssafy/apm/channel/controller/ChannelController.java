@@ -24,7 +24,7 @@ public class ChannelController {
 
 //    채널 등록
     @PostMapping()
-    public ResponseEntity<ResponseData<?>> createGame(@RequestBody ChannelCreateRequestDto channelCreateRequestDto) {
+    public ResponseEntity<ResponseData<?>> createChannel(@RequestBody ChannelCreateRequestDto channelCreateRequestDto) {
         channelService.createChannel(channelCreateRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success());
     }
@@ -35,7 +35,7 @@ public class ChannelController {
         List<ChannelGetResponseDto> dtoList = channelService.getChannelList();
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(dtoList));
     }
-
+//    Todo: 채널 삭제 API 마저 구현할 것( 필요한가? )
     @DeleteMapping()
     public ResponseEntity<ResponseData<?>> deleteGame() {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success());
