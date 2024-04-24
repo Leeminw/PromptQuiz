@@ -79,6 +79,9 @@ public class GameServiceImpl implements GameService {
     public Long deleteGame(Long gameId) {
         GameEntity gameEntity = gameRepository.findById(gameId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
+        List<GameUserEntity> list = gameUserRepository.findAllByGameId(gameId);
+
+        gameUserRepository.deleteAll(list);
         gameRepository.delete(gameEntity);
 
         return gameId;
