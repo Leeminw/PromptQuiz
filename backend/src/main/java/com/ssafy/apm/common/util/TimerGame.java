@@ -12,5 +12,4 @@ public class TimerGame {
         this.maxTime = maxTime;
         this.time = time;
     }
-
 }

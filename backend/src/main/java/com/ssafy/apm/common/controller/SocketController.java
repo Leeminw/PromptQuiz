@@ -26,7 +26,7 @@ import java.util.*;
 public class SocketController {
 
     private final SimpMessagingTemplate template;
-    
+
     // 현재 게임 진행중인 리스트 (max_time 초 대기)
     private static final HashMap<Long, TimerGame> gameStartList = new HashMap<>();
 
@@ -34,7 +34,7 @@ public class SocketController {
     private static final HashMap<Long, TimerGame> gameReadyList = new HashMap<>();
 
     private static final int REST_TIME = 3;
-    
+
     // 현재 진행중인 게임 관리 타이머
     @Scheduled(fixedRate = 1000) // 1초마다 실행
     private void roundStartScheduler() {
