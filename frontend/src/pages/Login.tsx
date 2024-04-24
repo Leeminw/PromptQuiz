@@ -1,9 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
-import { UserApi } from './hook/axios-user';
-import { Router } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-
+import { UserApi } from '../hooks/axios-user';
+import { useNavigate, Link } from 'react-router-dom';
 const Login = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState<string>('');
@@ -47,7 +45,7 @@ const Login = () => {
       <br />
       <button onClick={loginUser}> 로그인</button>
       <br />
-      <button> 회원가입</button>
+      <button onClick={() => navigate('/join')}> 회원가입</button>
     </div>
   );
 };
