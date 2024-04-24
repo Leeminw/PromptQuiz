@@ -24,7 +24,7 @@ public class GameUserController {
 
     private final GameUserServiceImpl gameUserService;
 
-    /*  Todo: 방 입장시 GameUserEntity 생성하고, 방 퇴장시 GameUserEntity 삭제하는 로직 필요
+    /*  Todo: 방 입장시 GameUserEntity 생성하고, 방 퇴장시 GameUserEntity 삭제하는 로직 필요( 다 Socket Handeler로 처리해야함 )
     *         레디하거나 팀을 바꾸거나 하는 행동을 할 때 Update 처리가 필요하다
     * */
 
