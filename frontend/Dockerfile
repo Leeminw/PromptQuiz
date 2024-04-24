@@ -1,4 +1,4 @@
-# Node.js 공식 이미지 사용. 버전 20.11.1, 경량화된 Alpine Linux 기반
+# Node.js 공식 이미지 사용. 버전 20.12.2, 경량화된 Alpine Linux 기반
 FROM node:20.12.2-alpine
 
 # 작업 디렉토리 설정. 컨테이너 내 앱의 기본 경로

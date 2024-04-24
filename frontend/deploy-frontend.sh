@@ -37,7 +37,7 @@ echo ">>> DOCKER CONTAINER $CONTAINER_NAME 존재 여부 검사 완료."
 echo ""
 
 
-## Run Docker Container
+# Run Docker Container
 echo ">>> DOCKER CONTAINER $CONTAINER_NAME 실행 시작..."
 docker run -d -p 3000:3000 \
     --name $CONTAINER_NAME $IMAGE_NAME || {
@@ -57,7 +57,6 @@ docker cp $CONTAINER_NAME:/home/app/dist /var/jenkins_home/application || {
 }
 echo ">>> 빌드 정적파일 복사 완료: /var/jenkins_home/application/dist"
 echo ""
-
 
 
 echo -e "\n<<<<<<<<<< Frontend Deploy Complete Successfully >>>>>>>>>>\n"
