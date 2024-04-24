@@ -10,7 +10,7 @@ public class GameAnswerDto {
     private String userId;
 
     // 게임방 아이디
-    private Long uuid;
+    private Long gameId;
 
     // 퀴즈 아이디
     private Long quizId;

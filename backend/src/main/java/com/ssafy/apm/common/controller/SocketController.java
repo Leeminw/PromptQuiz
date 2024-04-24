@@ -117,6 +117,13 @@ public class SocketController {
             /*
                 이 부분에는 제출 답안에 따라서 업데이트 하는 부분이 들어가야 합니다.
             */
+            
+            // 맞았다고 가정하고 end시키기
+            if(gameStartList.containsKey(answer.getGameId())){
+                TimerGame game = gameStartList.get(answer.getGameId());
+                game.time = game.maxTime;
+            }
+            
         } else {
             // 정답이 아니라면 어떻게 할 것인지
             /*
