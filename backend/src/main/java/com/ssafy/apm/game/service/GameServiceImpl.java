@@ -82,6 +82,24 @@ public class GameServiceImpl implements GameService {
         return new GameGetResponseDto(gameEntity);
     }
 
+    /*  Todo: 여기서 GameQuiz 첫번째꺼 삭제 로직 구현해라
+    *
+    * */
+    @Override
+    @Transactional
+    public Integer updateGameRoundCnt(Long gameId) {
+        GameEntity gameEntity = gameRepository.findById(gameId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
+
+//        마지막 라운드라면
+        if(gameEntity.getCurRound() >= gameEntity.getRounds()) {
+            return -1;
+        }
+        Integer response = gameEntity.increaseRound();
+        gameRepository.save(gameEntity);
+        return response;
+    }
+
     @Override
     @Transactional
     public Long deleteGame(Long gameId) {
