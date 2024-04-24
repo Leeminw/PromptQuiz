@@ -16,19 +16,35 @@ module.exports = merge(config, {
   plugins: [
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
-      filename: '[name].[contenthash].css'
+      filename: '[name].[contenthash].css',
     }),
   ],
+  performance: {
+    hints: false,
+    maxEntrypointSize: 512000,
+    maxAssetSize: 512000,
+  },
   optimization: {
-    minimizer: [new TerserPlugin({
-      terserOptions: {
-        compress: {
-          drop_console: true,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: true,
+          },
         },
-      },
-    })],
+      }),
+    ],
     splitChunks: {
       chunks: 'all',
     },
+  },
+  module: {
+    rules: [
+      {
+        test: /\.jsx?$/,
+        loader: 'babel-loader',
+        exclude: path.join(__dirname, 'node_modules'),
+      },
+    ],
   },
 });
