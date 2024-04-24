@@ -19,11 +19,7 @@ COPY . .
 RUN npm run build
 
 # React 애플리케이션 실행
-#CMD ["npm", "start"]
-#CMD ["npm", "start", "--prefix", "/home/app"]
-#CMD ["/home/app/node_modules/.bin/webpack", "serve", "--config", "webpack.dev.config.js"]
-
-CMD npm install && npm run build && npm start
+CMD ["npm", "start"]
 
 # 3000번 포트 개방
 EXPOSE 3000
