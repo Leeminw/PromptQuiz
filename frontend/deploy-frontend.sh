@@ -50,6 +50,7 @@ echo ""
 
 # Copy Static Build Directory from Docker Container to Host
 echo ">>> 빌드 정적파일 복사 시작..."
+mkdir -p /var/jenkins_home/application/dist
 docker cp $CONTAINER_NAME:/home/app/dist /var/jenkins_home/application/dist || {
         echo ">>> 빌드 정적파일 복사 실패."
         exit 1
