@@ -37,15 +37,24 @@ echo ">>> DOCKER CONTAINER $CONTAINER_NAME 존재 여부 검사 완료."
 echo ""
 
 
-## Run Docker Container
+# Run Docker Container
 echo ">>> DOCKER CONTAINER $CONTAINER_NAME 실행 시작..."
-docker run -d \
-    -p 3000:3000 -v ./:/home/app \
+docker run -d -p 3000:3000 \
     --name $CONTAINER_NAME $IMAGE_NAME || {
         echo ">>> DOCKER IMAGE $IMAGE_NAME 실행 실패."
         exit 1
 }
 echo ">>> DOCKER CONTAINER $CONTAINER_NAME 실행 완료."
+echo ""
+
+
+# Copy Static Build Directory from Docker Container to Host
+echo ">>> 빌드 정적파일 복사 시작..."
+docker cp $CONTAINER_NAME:/home/app/dist /var/jenkins_home/workspace/Application || {
+        echo ">>> 빌드 정적파일 복사 실패."
+        exit 1
+}
+echo ">>> 빌드 정적파일 복사 완료: /var/jenkins_home/workspace/Application"
 echo ""
 
 
