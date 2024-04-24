@@ -3,7 +3,7 @@
 IMAGE_NAME="server/frontend"
 CONTAINER_NAME="server-frontend"
 CONTAINER_ID=$(docker ps -aqf "name=$CONTAINER_NAME")
-
+PROJECT_NAME="apm"
 
 echo -e "\n<<<<<<<<<< Frontend Deploy Process Start >>>>>>>>>>\n"
 
@@ -50,11 +50,12 @@ echo ""
 
 # Copy Static Build Directory from Docker Container to Host
 echo ">>> 빌드 정적파일 복사 시작..."
-docker cp $CONTAINER_NAME:/home/app/dist /var/jenkins_home/workspace/Application || {
+mkdir -p /var/jenkins_home/application
+docker cp $CONTAINER_NAME:/home/app/dist /var/jenkins_home/application || {
         echo ">>> 빌드 정적파일 복사 실패."
         exit 1
 }
-echo ">>> 빌드 정적파일 복사 완료: /var/jenkins_home/workspace/Application"
+echo ">>> 빌드 정적파일 복사 완료: /var/jenkins_home/application/dist"
 echo ""
 
 
