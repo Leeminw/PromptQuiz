@@ -7,7 +7,10 @@ import lombok.Data;
 @AllArgsConstructor
 public class GameReadyDto {
     // 게임방 아이디
-    private Long uuid;
+    private Long gameId;
+
+    // 게임방 uuid
+    private String uuid;
 
     // 퀴즈 아이디
     private Long quizId;

@@ -35,7 +35,7 @@ public class SocketController {
 
     private static final int REST_TIME = 3;
 
-    // 현재 진행중인 게임 관리 타이머
+    // 현재 진행중인 게임 관리 스케줄러
     @Scheduled(fixedRate = 1000) // 1초마다 실행
     private void roundStartScheduler() {
         List<TimerGame> list = new ArrayList<>(gameStartList.values());
@@ -48,12 +48,12 @@ public class SocketController {
             game.time++;
             if (game.time >= game.maxTime) {
                 // 게임 종료
-                gameReadyList.put(game.uuid, game);
-                gameStartList.remove(game.uuid);
+                gameReadyList.put(game.gameId, game);
+                gameStartList.remove(game.gameId);
                 game.time = 0;
 
                 // 게임 종료 메세지 전송
-                sendGameEndMessage(game.uuid, game.quizId);
+                sendGameEndMessage(game);
             }
         }
     }
@@ -75,11 +75,11 @@ public class SocketController {
                 // quizId 1 증가시키고 다음 시작
                 game.quizId++;
                 game.time = 0;
-                gameStartList.put(game.uuid, game);
-                gameReadyList.remove(game.uuid);
+                gameStartList.put(game.gameId, game);
+                gameReadyList.remove(game.gameId);
 
                 // 시작 메세지 전송
-                sendGameStartMessage(game.uuid, game.quizId);
+                sendGameStartMessage(game);
             }
         }
     }
@@ -117,7 +117,6 @@ public class SocketController {
             /*
                 이 부분에는 제출 답안에 따라서 업데이트 하는 부분이 들어가야 합니다.
             */
-            sendGameEndMessage(answer.getUuid(), answer.getQuizId());
         } else {
             // 정답이 아니라면 어떻게 할 것인지
             /*
@@ -130,46 +129,47 @@ public class SocketController {
     @MessageMapping("/game/start")
     public void gameStart(@Payload GameReadyDto ready) {
         // 현재 게임방에 등록되어 있지 않다면 등록시키기
-        if (!gameReadyList.containsKey(ready.getUuid())) {
-            gameReadyList.put(ready.getUuid(), new TimerGame(ready.getUuid(), 0L, 10, 0));
+        if (!gameReadyList.containsKey(ready.getGameId())) {
+            TimerGame newGame = new TimerGame(ready.getGameId(), ready.getUuid(), 0L, 10, 0);
+            gameReadyList.put(ready.getGameId(), newGame);
+            sendGameReadyMessage(newGame);
         }
-        sendGameReadyMessage(ready.getUuid(), ready.getQuizId());
     }
 
     // (라운드 대기) 라운드 대기 메세지 전송
-    public void sendGameReadyMessage(Long uuid, Long quizId) {
+    public void sendGameReadyMessage(TimerGame game) {
         // ready 상태에서는 현재 어떤 라운드인지 알려줘야 한다.
-        GameSystemContentDto temp = new GameSystemContentDto(quizId, null);
+        GameSystemContentDto temp = new GameSystemContentDto(game.quizId, null);
 
-        template.convertAndSend("/sub/game?uuid=" + uuid,
+        template.convertAndSend("/sub/game?uuid=" + game.uuid,
                 new GameResponseDto("game", GameSystemResponseDto.ready(temp)));
     }
 
     // (라운드 시작) 라운드 시작 메세지 전송
-    public void sendGameStartMessage(Long uuid, Long quizId) {
+    public void sendGameStartMessage(TimerGame game) {
         // 라운드 시작은 단순 시작 알림과 퀴즈 아이디를 전송
-        GameSystemContentDto temp = new GameSystemContentDto(quizId, null);
+        GameSystemContentDto temp = new GameSystemContentDto(game.quizId, null);
 
-        template.convertAndSend("/sub/game?uuid=" + uuid,
+        template.convertAndSend("/sub/game?uuid=" + game.uuid,
                 new GameResponseDto("game", GameSystemResponseDto.start(temp)));
     }
 
     // (라운드 종료) 누군가 정답을 맞추거나 timeout일 경우 라운드 종료 처리
-    public void sendGameEndMessage(Long uuid, Long quizId) {
+    public void sendGameEndMessage(TimerGame game) {
         /*
             이 부분에서 quiz의 아이디가 전부 소진됐다면 result로 넘어가는 로직이 들어가야 합니다.
             sendGameResultMessage()
         */
 
         // 전체 사용자에게 라운드 종료 알림 보내기
-        GameSystemContentDto temp = new GameSystemContentDto(quizId + 1, list);
+        GameSystemContentDto temp = new GameSystemContentDto(game.quizId + 1, list);
 
-        template.convertAndSend("/sub/game?uuid=" + uuid,
+        template.convertAndSend("/sub/game?uuid=" + game.uuid,
                 new GameResponseDto("game", GameSystemResponseDto.end(temp)));
     }
 
     // (게임 종료) 전체 라운드 종료 이후 사용자 점수 리스트 반환
-    public void sendGameResultMessage(Long uuid) {
+    public void sendGameResultMessage(TimerGame game) {
         /*
             여기에는 전체 점수를 통해 user의 랭킹 점수를 올리는 코드가 들어가야 합니다.
         */
@@ -177,7 +177,7 @@ public class SocketController {
         // 게임이 종료됐으면 전체 사용자의 점수 list를 반환해주기
         GameSystemContentDto temp = new GameSystemContentDto(0L, list);
 
-        template.convertAndSend("/sub/game?uuid=" + uuid,
+        template.convertAndSend("/sub/game?uuid=" + game.uuid,
                 new GameResponseDto("game", GameSystemResponseDto.result(temp)));
     }
 }
