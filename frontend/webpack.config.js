@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   // FIXME : modify your project name
-  name: 'your_project_name',
+  name: 'APM:AI Prompt Mathcer',
   entry: './src/index.tsx',
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
@@ -16,10 +16,10 @@ module.exports = {
       template: './public/index.html',
     }),
   ],
-  output: {
-    path: path.resolve(__dirname, '/build'),
-    filename: '[name].[hash].js',
-  },
+  // output: {
+  //   path: path.resolve(__dirname, 'build'),
+  //   filename: '[name].[hash].js',
+  // },
   module: {
     rules: [
       {
@@ -59,19 +59,6 @@ module.exports = {
           },
         ],
         exclude: /(border)?/,
-      },
-      {
-        test: /\.(otf)$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: '[name].[ext]',
-              outputPath: 'fonts/',
-              publicPath: '/fonts',
-            },
-          },
-        ],
       },
     ],
   },
