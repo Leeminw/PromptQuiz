@@ -8,6 +8,7 @@ import com.ssafy.apm.common.dto.response.GameResponseDto;
 import com.ssafy.apm.common.dto.response.GameSystemContentDto;
 import com.ssafy.apm.common.dto.response.GameSystemResponseDto;
 import com.ssafy.apm.common.dto.response.PlayerDto;
+import com.ssafy.apm.common.util.TimerGame;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -34,20 +35,6 @@ public class SocketController {
     private static final HashMap<Long, TimerGame> gameReadyList = new HashMap<>();
 
     private static final int REST_TIME = 3;
-
-    private static class TimerGame {
-        Long uuid;
-        Long quizId;
-        Integer time;
-        Integer maxTime;
-
-        TimerGame(Long uuid, Long quizId, Integer maxTime, Integer time) {
-            this.uuid = uuid;
-            this.quizId = quizId;
-            this.maxTime = maxTime;
-            this.time = time;
-        }
-    }
 
     @Scheduled(fixedRate = 1000) // 1초마다 실행
     private void roundStartTimer() {
