@@ -26,8 +26,7 @@ import java.util.*;
 public class SocketController {
 
     private final SimpMessagingTemplate template;
-
-    // 매 초마다 실행되며 게임 상태를 업데이트
+    
     // 현재 게임 진행중인 리스트 (max_time 초 대기)
     private static final HashMap<Long, TimerGame> gameStartList = new HashMap<>();
 
@@ -35,13 +34,12 @@ public class SocketController {
     private static final HashMap<Long, TimerGame> gameReadyList = new HashMap<>();
 
     private static final int REST_TIME = 3;
-
+    
+    // 현재 진행중인 게임 관리 타이머
     @Scheduled(fixedRate = 1000) // 1초마다 실행
-    private void roundStartTimer() {
-        // 전체
+    private void roundStartScheduler() {
         List<TimerGame> list = new ArrayList<>(gameStartList.values());
         for (TimerGame game : list) {
-
             // 각각의 시간초 보내주기
             template.convertAndSend("/sub/game?uuid=" + game.uuid
                     , new GameResponseDto("game", GameSystemResponseDto.timer(game.time)));
@@ -61,8 +59,7 @@ public class SocketController {
     }
 
     @Scheduled(fixedRate = 1000) // 1초마다 실행
-    private void roundReadyTimer() {
-
+    private void roundReadyScheduler() {
         // 전체 준비에 들어온 게임의 대기 시간을 증가시키기
         List<TimerGame> list = new ArrayList<>(gameReadyList.values());
         for (TimerGame game : list) {
@@ -87,9 +84,7 @@ public class SocketController {
         }
     }
 
-
     // -------------------- 채팅 관련 브로커 --------------------
-
     // 채널에서 보내는 메세지
     @MessageMapping("/channel/chat/send")
     public void sendChannelMessage(@Payload ChannelChatDto chatMessage) {
@@ -106,7 +101,6 @@ public class SocketController {
 
 
     // -------------------- 게임 진행 관련 브로커  --------------------
-
     // test dump list
     List<PlayerDto> list = Arrays.asList(
             new PlayerDto("test1", 10, false),
@@ -164,6 +158,7 @@ public class SocketController {
     public void sendGameEndMessage(Long uuid, Long quizId) {
         /*
             이 부분에서 quiz의 아이디가 전부 소진됐다면 result로 넘어가는 로직이 들어가야 합니다.
+            sendGameResultMessage()
         */
 
         // 전체 사용자에게 라운드 종료 알림 보내기
