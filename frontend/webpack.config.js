@@ -17,9 +17,8 @@ module.exports = {
     }),
   ],
   output: {
-    publicPath: '/',
-    path: path.resolve(__dirname, 'build'),
-    filename: 'bundle.js',
+    path: path.resolve(__dirname, '/build'),
+    filename: '[name].[hash].js',
   },
   module: {
     rules: [
@@ -45,17 +44,34 @@ module.exports = {
       },
       {
         test: /\.(png|svg|jpe?g|gif)$/,
-        loader: 'file-loader',
-        options: {
-          name: '[hash].[ext]',
-        },
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[hash].[ext]',
+            },
+          },
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 10000,
+            },
+          },
+        ],
+        exclude: /(border)?/,
       },
       {
-        test: /\.(png|svg|jpe?g|gif)$/,
-        loader: 'url-loader',
-        options: {
-          limit: 10000,
-        },
+        test: /\.(otf)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'fonts/',
+              publicPath: '/fonts',
+            },
+          },
+        ],
       },
     ],
   },
