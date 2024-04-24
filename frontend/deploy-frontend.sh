@@ -60,17 +60,18 @@ fi
 # 프로젝트 이름 변수 설정
 PROJECT_NAME="AI-Prompt-Matcher"
 TARGET_DIR="/home/ubuntu/$PROJECT_NAME"
-mkdir -p $TARGET_DIR
+mkdir -p $TARGET_DIR || { echo "디렉토리 생성 실패: $TARGET_DIR"; exit 1; }
 
 # 대상 디렉토리 내의 dist 폴더가 존재하는지 확인 후 삭제
 if [ -d "$TARGET_DIR/dist" ]; then
-    echo ">>> 대상 폴더 내 dist 폴더가 이미 존재합니다. 삭제 후 복사를 진행합니다."
-    rm -rf "$TARGET_DIR/dist"
+    echo ">>> 대상 디렉토리 내 dist 디렉토리가 이미 존재합니다: $TARGET_DIR/dist"
+    echo ">>> dist 디렉토리 삭제 후 복사를 진행합니다."
+    rm -rf "$TARGET_DIR/dist" || { echo "디렉토리 삭제 실패: $TARGET_DIR/dist"; exit 1; }
 fi
 
 # dist 디렉토리를 $TARGET_DIR 디렉토리로 복사
-# -R: 재귀적으로 복사, -f: 강제로 덮어쓰기
-cp -Rf dist/ $TARGET_DIR/
+# -r: 파일과 디렉토리를 재귀적으로 복사, -f: 강제로 덮어쓰기
+cp -rf dist $TARGET_DIR || { echo "디렉토리 복사 실패: $TARGET_DIR/dist"; exit 1; }
 echo ">>> 빌드 정적파일 복사 완료: $TARGET_DIR"
 echo ""
 
