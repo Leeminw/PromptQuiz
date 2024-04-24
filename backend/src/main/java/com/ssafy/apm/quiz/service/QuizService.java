@@ -1,8 +1,7 @@
 package com.ssafy.apm.quiz.service;
 
-import com.ssafy.apm.quiz.dto.request.QuizGetRequestDto;
 import com.ssafy.apm.quiz.dto.response.QuizDetailResponseDto;
 
 public interface QuizService {
-    QuizDetailResponseDto getQuizInfo(QuizGetRequestDto request);
+    QuizDetailResponseDto getQuizInfo(Long quizId);
 }

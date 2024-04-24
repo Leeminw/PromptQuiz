@@ -1,12 +1,11 @@
 package com.ssafy.apm.quiz.controller;
 
-import com.ssafy.apm.common.domain.ResponseData;
-import com.ssafy.apm.quiz.dto.request.QuizGetRequestDto;
-import com.ssafy.apm.quiz.dto.response.QuizDetailResponseDto;
 import com.ssafy.apm.quiz.service.QuizService;
+import com.ssafy.apm.common.domain.ResponseData;
+import com.ssafy.apm.quiz.dto.response.QuizDetailResponseDto;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +18,9 @@ public class QuizController {
     private final QuizService service;
 
     // 퀴즈 상세 정보 조회
-    @GetMapping("")
-    public ResponseEntity<?> getQuizDetail(@RequestBody QuizGetRequestDto request) {
-        QuizDetailResponseDto response = service.getQuizInfo(request);
+    @GetMapping("{quiz-id}")
+    public ResponseEntity<?> getQuizDetail(@PathVariable("quiz-id") Long quizId) {
+        QuizDetailResponseDto response = service.getQuizInfo(quizId);
         return sendResponse(response, HttpStatus.OK);
     }
 
