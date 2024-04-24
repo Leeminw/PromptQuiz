@@ -29,7 +29,7 @@ public class GameUserController {
 //    게임방 안에 있는 유저들 목록 가져옴( UserDB와 GameUserDB에 있는 데이터 불러옴)
     @GetMapping("/gameUserList/{gameId}")
     public ResponseEntity<ResponseData<?>> getGameUserList(@PathVariable(name = "gameId") Long gameId) {
-        List<GameUserDetailResponseDto> dtoList = gameUserService.getGameUserList(gameId);
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(dtoList));
+        List<GameUserDetailResponseDto> response = gameUserService.getGameUserList(gameId);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
 }

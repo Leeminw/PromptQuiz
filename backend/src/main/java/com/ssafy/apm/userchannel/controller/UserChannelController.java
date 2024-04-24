@@ -28,7 +28,7 @@ public class UserChannelController {
 
     @GetMapping("/userChannelList/{channelId}")
     public ResponseEntity<ResponseData<?>> getUserChannelList(@PathVariable(name = "channelId") Long channelId) {
-        List<UserDetailResponseDto> dtoList = userChannelService.getUserChannelList(channelId);
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(dtoList));
+        List<UserDetailResponseDto> response = userChannelService.getUserChannelList(channelId);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
 }

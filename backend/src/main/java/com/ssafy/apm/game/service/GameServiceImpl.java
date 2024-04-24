@@ -23,7 +23,7 @@ public class GameServiceImpl implements GameService {
     private final GameUserRepository gameUserRepository;
     @Override
     @Transactional
-    public void createGame(GameCreateRequestDto gameCreateRequestDto) {
+    public GameGetResponseDto createGame(GameCreateRequestDto gameCreateRequestDto) {
         GameEntity gameEntity = gameCreateRequestDto.toEntity();
         gameEntity = gameRepository.save(gameEntity);
         /*
@@ -40,6 +40,8 @@ public class GameServiceImpl implements GameService {
                 .ranking(0)
                 .build();
         gameUserRepository.save(gameUserEntity);
+
+        return new GameGetResponseDto(gameEntity);
     }
 
     @Override
@@ -62,19 +64,23 @@ public class GameServiceImpl implements GameService {
 
     @Override
     @Transactional
-    public void updateGameInfo(GameUpdateRequestDto gameUpdateRequestDto) {
+    public GameGetResponseDto updateGameInfo(GameUpdateRequestDto gameUpdateRequestDto) {
         GameEntity gameEntity = gameRepository.findById(gameUpdateRequestDto.getId())
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
 
         gameEntity.update(gameUpdateRequestDto);
         gameRepository.save(gameEntity);
+
+        return new GameGetResponseDto(gameEntity);
     }
 
     @Override
     @Transactional
-    public void deleteGame(Long gameId) {
+    public Long deleteGame(Long gameId) {
         GameEntity gameEntity = gameRepository.findById(gameId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
         gameRepository.delete(gameEntity);
+
+        return gameId;
     }
 }

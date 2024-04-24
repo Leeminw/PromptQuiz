@@ -7,11 +7,11 @@ import com.ssafy.apm.game.dto.response.GameGetResponseDto;
 import java.util.List;
 
 public interface GameService {
-    void createGame(GameCreateRequestDto gameCreateRequestDto);
+    GameGetResponseDto createGame(GameCreateRequestDto gameCreateRequestDto);
 
     List<GameGetResponseDto> getGameList(Long channelId);
 
     GameGetResponseDto getGameInfo(Long gameId);
-    void updateGameInfo(GameUpdateRequestDto gameUpdateRequestDto);
-    void deleteGame(Long gameId);
+    GameGetResponseDto updateGameInfo(GameUpdateRequestDto gameUpdateRequestDto);
+    Long deleteGame(Long gameId);
 }
