@@ -2,7 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  name: 'your_project_name',
+  name: 'AI-Prompt-Matcher',
   entry: './src/index.tsx',
   module: {
     rules: [
