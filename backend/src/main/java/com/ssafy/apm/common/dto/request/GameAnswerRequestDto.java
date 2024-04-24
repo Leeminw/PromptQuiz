@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class GameAnswerDto {
+public class GameAnswerRequestDto {
     // 사용자 아이디
     private String userId;
 
@@ -14,6 +14,9 @@ public class GameAnswerDto {
 
     // 퀴즈 아이디
     private Long quizId;
+
+    // 퀴즈 타입
+    private String type;
 
     // 플레이어가 선택한 답안
     private String answer;

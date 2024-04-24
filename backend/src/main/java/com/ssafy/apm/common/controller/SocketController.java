@@ -1,22 +1,22 @@
 package com.ssafy.apm.common.controller;
 
+import com.ssafy.apm.common.domain.ResponseData;
 import com.ssafy.apm.common.dto.request.ChannelChatDto;
-import com.ssafy.apm.common.dto.request.GameAnswerDto;
+import com.ssafy.apm.common.dto.request.GameAnswerRequestDto;
 import com.ssafy.apm.common.dto.request.GameChatDto;
 import com.ssafy.apm.common.dto.request.GameReadyDto;
-import com.ssafy.apm.common.dto.response.GameResponseDto;
-import com.ssafy.apm.common.dto.response.GameSystemContentDto;
-import com.ssafy.apm.common.dto.response.GameSystemResponseDto;
-import com.ssafy.apm.common.dto.response.PlayerDto;
+import com.ssafy.apm.common.dto.response.*;
 import com.ssafy.apm.common.util.TimerGame;
+import com.ssafy.apm.quiz.service.QuizService;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -26,6 +26,7 @@ import java.util.*;
 public class SocketController {
 
     private final SimpMessagingTemplate template;
+    private final QuizService quizService;
 
     // 현재 게임 진행중인 리스트 (max_time 초 대기)
     private static final HashMap<Long, TimerGame> gameStartList = new HashMap<>();
@@ -116,32 +117,6 @@ public class SocketController {
             new PlayerDto("test4", 0, false)
     );
 
-    // (플레이어 입력) 각 플레이어가 입력한 정답 확인
-    @MessageMapping("/game/answer")
-    public void registAnswer(@Payload GameAnswerDto answer) {
-        // 만약 정답이 맞을 경우 정답 처리 이후 end시키기
-        if (true) {
-            /*
-                이 부분에는 제출 답안에 따라서 업데이트 하는 부분이 들어가야 합니다.
-            */
-
-            // 맞았다고 가정하고 end시키기
-            if (gameStartList.containsKey(answer.getGameId())) {
-                TimerGame game = gameStartList.get(answer.getGameId());
-                game.time = -game.maxTime;
-
-                // 미리 종료 메세지를 보내 다른 사용자가 입력 못하게 하기
-                sendGameEndMessage(game);
-            }
-
-        } else {
-            // 정답이 아니라면 어떻게 할 것인지
-            /*
-                이 부분에는 제출 답안에 따라서 업데이트 하는 부분이 들어가야 합니다.
-            */
-        }
-    }
-
     // (게임 시작) 스케쥴러에 게임을 등록하고 준비 메세지 전송
     @MessageMapping("/game/start")
     public void gameStart(@Payload GameReadyDto ready) {
@@ -196,5 +171,45 @@ public class SocketController {
 
         template.convertAndSend("/sub/game?uuid=" + game.uuid,
                 new GameResponseDto("game", GameSystemResponseDto.result(temp)));
+    }
+
+    // -------------------- 플레이어 정답 입력 관련 컨트롤러  --------------------
+    // (플레이어 입력) 각 플레이어가 입력한 정답 확인
+    @PostMapping("/api/v1/game/answer")
+    public ResponseEntity<?> registAnswer(@RequestBody GameAnswerRequestDto answer) {
+        // 초기값 설정은 false로 설정
+        GameAnswerResponseDto response = new GameAnswerResponseDto();
+
+        switch (answer.getType()) {
+            case "객관식":
+                // 객관식 번호가 정답일 경우 true
+                response.setResult(quizService.answerQuizCheck(answer));
+                break;
+            case "주관식":
+                // 유사도 측정 이후 90% 이상의 유사도일 경우 정답처리
+                response.setSimilarity(quizService.answerSimilarityCheck(answer));
+                response.setResult(response.getSimilarity() > 0.9);
+                break;
+            case "순서":
+                // 순서가 맞을 경우 true
+                response.setResult(quizService.answerOrderCheck(answer));
+                break;
+        }
+
+        // response의 결과가 true일 경우 정답
+        if (response.getResult()) {
+            TimerGame game = gameStartList.get(answer.getGameId());
+            game.time = -game.maxTime;
+
+            // 미리 종료 메세지를 보내 다른 사용자가 입력 못하게 하기
+            sendGameEndMessage(game);
+        }
+
+        return sendResponse(response, HttpStatus.OK);
+    }
+
+    // response 객체 생성 메서드
+    public ResponseEntity<?> sendResponse(Object response, HttpStatus status) {
+        return ResponseEntity.status(status).body(ResponseData.success(response));
     }
 }
