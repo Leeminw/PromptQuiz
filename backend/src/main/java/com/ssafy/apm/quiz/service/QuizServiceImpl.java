@@ -1,6 +1,6 @@
 package com.ssafy.apm.quiz.service;
 
-import com.ssafy.apm.quiz.domain.QuizEntity;
+import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.quiz.repository.QuizRepository;
 import com.ssafy.apm.quiz.exception.QuizNotFoundException;
 import com.ssafy.apm.quiz.dto.response.QuizDetailResponseDto;
@@ -17,7 +17,7 @@ public class QuizServiceImpl implements QuizService{
 
     @Override
     public QuizDetailResponseDto getQuizInfo(Long quizId) {
-        QuizEntity entity = repository.findById(quizId).orElseThrow(() -> new QuizNotFoundException(quizId));
+        Quiz entity = repository.findById(quizId).orElseThrow(() -> new QuizNotFoundException(quizId));
         return new QuizDetailResponseDto(entity);
     }
 }

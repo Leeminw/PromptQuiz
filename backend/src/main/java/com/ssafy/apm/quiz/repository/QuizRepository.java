@@ -1,7 +1,9 @@
 package com.ssafy.apm.quiz.repository;
 
-import com.ssafy.apm.quiz.domain.QuizEntity;
-import org.springframework.data.repository.CrudRepository;
+import com.ssafy.apm.quiz.domain.Quiz;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface QuizRepository  extends CrudRepository<QuizEntity, Long> {
+@Repository
+public interface QuizRepository extends JpaRepository<Quiz, Long> {
 }

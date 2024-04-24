@@ -1,6 +1,6 @@
 package com.ssafy.apm.quiz.dto.response;
 
-import com.ssafy.apm.quiz.domain.QuizEntity;
+import com.ssafy.apm.quiz.domain.Quiz;
 import lombok.Data;
 
 @Data
@@ -11,7 +11,7 @@ public class QuizDetailResponseDto {
     private String prompt;
     private Integer style;
 
-    public QuizDetailResponseDto(QuizEntity entity){
+    public QuizDetailResponseDto(Quiz entity){
         this.id = entity.getId();
         this.promptGroup = entity.getPromptGroup();
         this.image = entity.getImage();

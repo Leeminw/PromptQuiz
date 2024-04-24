@@ -18,7 +18,7 @@ public class QuizController {
     private final QuizService service;
 
     // 퀴즈 상세 정보 조회
-    @GetMapping("{quiz-id}")
+    @GetMapping("/{quiz-id}")
     public ResponseEntity<?> getQuizDetail(@PathVariable("quiz-id") Long quizId) {
         QuizDetailResponseDto response = service.getQuizInfo(quizId);
         return sendResponse(response, HttpStatus.OK);
