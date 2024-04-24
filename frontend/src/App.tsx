@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import ChannelSelect from './pages/ChannelSelect';
 const App = () => {
   return (
     <div
@@ -11,6 +13,11 @@ const App = () => {
         backgroundRepeat: 'no-repeat',
       }}
     >
+      <Router>
+        <Routes>
+          <Route path="/channel-select" element={<ChannelSelect />}></Route>
+        </Routes>
+      </Router>
     </div>
   );
 };
