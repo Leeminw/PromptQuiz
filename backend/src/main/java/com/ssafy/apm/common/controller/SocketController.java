@@ -40,20 +40,26 @@ public class SocketController {
     private void roundStartScheduler() {
         List<TimerGame> list = new ArrayList<>(gameStartList.values());
         for (TimerGame game : list) {
-            // 각각의 시간초 보내주기
-            template.convertAndSend("/sub/game?uuid=" + game.uuid
-                    , new GameResponseDto("game", GameSystemResponseDto.timer(game.time)));
-
             // 시간 초 증가 시키기
             game.time++;
-            if (game.time >= game.maxTime) {
-                // 게임 종료
+            if (game.time > game.maxTime) {
+                // 게임 종료 (timeout)
                 gameReadyList.put(game.gameId, game);
                 gameStartList.remove(game.gameId);
                 game.time = 0;
 
                 // 게임 종료 메세지 전송
                 sendGameEndMessage(game);
+            } else if (game.time < 0) {
+                // 게임 종료 (정답자가 나왔을 경우)
+                gameReadyList.put(game.gameId, game);
+                gameStartList.remove(game.gameId);
+                game.time = 0;
+            } else {
+                // 각각의 시간초 보내주기
+                template.convertAndSend("/sub/game?uuid=" + game.uuid
+                        , new GameResponseDto("game", GameSystemResponseDto.timer(game.time)));
+
             }
         }
     }
@@ -66,10 +72,6 @@ public class SocketController {
             // 시간 초 증가
             game.time++;
 
-            // 각각의 시간초 보내주기
-            template.convertAndSend("/sub/game?uuid=" + game.uuid
-                    , new GameResponseDto("game", GameSystemResponseDto.timer(game.time)));
-
             // 3초가 됐다면 이제 게임 시작하기
             if (game.time >= REST_TIME) {
                 // quizId 1 증가시키고 다음 시작
@@ -80,6 +82,11 @@ public class SocketController {
 
                 // 시작 메세지 전송
                 sendGameStartMessage(game);
+            } else {
+                // 각각의 시간초 보내주기
+                template.convertAndSend("/sub/game?uuid=" + game.uuid
+                        , new GameResponseDto("game", GameSystemResponseDto.timer(game.time)));
+
             }
         }
     }
@@ -117,13 +124,16 @@ public class SocketController {
             /*
                 이 부분에는 제출 답안에 따라서 업데이트 하는 부분이 들어가야 합니다.
             */
-            
+
             // 맞았다고 가정하고 end시키기
-            if(gameStartList.containsKey(answer.getGameId())){
+            if (gameStartList.containsKey(answer.getGameId())) {
                 TimerGame game = gameStartList.get(answer.getGameId());
-                game.time = game.maxTime;
+                game.time = -game.maxTime;
+
+                // 미리 종료 메세지를 보내 다른 사용자가 입력 못하게 하기
+                sendGameEndMessage(game);
             }
-            
+
         } else {
             // 정답이 아니라면 어떻게 할 것인지
             /*
