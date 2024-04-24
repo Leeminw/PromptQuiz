@@ -22,14 +22,10 @@ public class ChannelServiceImpl implements ChannelService{
 
     @Transactional
     @Override
-    public void createChannel(ChannelCreateRequestDto dto) {
-        ChannelEntity channelEntity = ChannelEntity.builder()
-                .code(UUID.randomUUID().toString())
-                .name(dto.getName())
-                .curPlayers(dto.getCurPlayers())
-                .maxPlayers(dto.getMaxPlayers())
-                .build();
+    public ChannelGetResponseDto createChannel(ChannelCreateRequestDto dto) {
+        ChannelEntity channelEntity = dto.toEntity();
         channelRepository.save(channelEntity);
+        return new ChannelGetResponseDto(channelEntity);
     }
 
     @Override

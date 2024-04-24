@@ -1,8 +1,6 @@
 #!/bin/bash
 
 IMAGE_NAME="server/frontend"
-PROJECT_NAME="AI-Prompt-Matcher"
-
 CONTAINER_NAME="server-frontend"
 CONTAINER_ID=$(docker ps -aqf "name=$CONTAINER_NAME")
 
@@ -52,11 +50,11 @@ echo ""
 
 # Copy Static Build Directory from Docker Container to Host
 echo ">>> 빌드 정적파일 복사 시작..."
-docker cp $CONTAINER_NAME:/home/app/dist /home/ubuntu/$PROJECT_NAME || {
+docker cp $CONTAINER_NAME:/home/app/dist /var/jenkins_home/workspace/Application || {
         echo ">>> 빌드 정적파일 복사 실패."
         exit 1
 }
-echo ">>> 빌드 정적파일 복사 완료: /home/ubuntu/$PROJECT_NAME"
+echo ">>> 빌드 정적파일 복사 완료: /var/jenkins_home/workspace/Application"
 echo ""
 
 
