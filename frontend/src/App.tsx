@@ -1,23 +1,15 @@
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import ChannelSelect from './pages/ChannelSelect';
 const App = () => {
   return (
     <div
-      style={{
-        backgroundImage: 'url(/ui/bg.jpg)',
-        width: '100vw',
-        height: '100vh',
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat',
-      }}
+      className="w-[100vw] h-[100vh] flex justify-center items-center 
+    bg-[url(/public/ui/bg.jpg)] bg-no-repeat bg-cover bg-center overflow-hidden"
     >
-      <Router>
-        <Routes>
-          <Route path="/channel-select" element={<ChannelSelect />}></Route>
-        </Routes>
-      </Router>
+      <Outlet />
     </div>
   );
 };
