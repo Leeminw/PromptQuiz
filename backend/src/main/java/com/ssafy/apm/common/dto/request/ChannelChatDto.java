@@ -11,7 +11,7 @@ public class ChannelChatDto {
     private String nickname;
 
     // chanel code
-    private String uuid;
+    private Long uuid;
 
     // 메시지의 내용을 저장하기 위한 변수
     private String content;
