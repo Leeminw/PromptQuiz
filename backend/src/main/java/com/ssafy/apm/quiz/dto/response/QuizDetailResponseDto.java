@@ -11,7 +11,7 @@ public class QuizDetailResponseDto {
     private String prompt;
     private Integer style;
 
-    public QuizDetailResponseDto(Quiz entity){
+    public QuizDetailResponseDto(Quiz entity) {
         this.id = entity.getId();
         this.promptGroup = entity.getPromptGroup();
         this.image = entity.getImage();

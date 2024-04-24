@@ -14,16 +14,16 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class QuizServiceImpl implements QuizService{
+public class QuizServiceImpl implements QuizService {
     private final QuizRepository repository;
-    
+
     // 퀴즈 상세 정보 조회
     @Override
     public QuizDetailResponseDto getQuizInfo(Long quizId) {
         Quiz entity = repository.findById(quizId).orElseThrow(() -> new QuizNotFoundException(quizId));
         return new QuizDetailResponseDto(entity);
     }
-    
+
     // (객관식 체크) 정답 번호 체크
     @Override
     public Boolean answerQuizCheck(GameAnswerRequestDto answer) {
@@ -32,8 +32,8 @@ public class QuizServiceImpl implements QuizService{
 
         // quiz 데이터 가져오기 (만약 퀴즈 존재하지 않는다면 false)
         Quiz quiz = repository.findById(quizId).orElse(null);
-        if(quiz == null) return false;
-        
+        if (quiz == null) return false;
+
         return false;
     }
 
@@ -45,7 +45,7 @@ public class QuizServiceImpl implements QuizService{
 
         // quiz 데이터 가져오기 (만약 퀴즈 존재하지 않는다면 false)
         Quiz quiz = repository.findById(quizId).orElse(null);
-        if(quiz == null) return 0.0;
+        if (quiz == null) return 0.0;
 
         return calcSimilarity(quiz.getPrompt(), answer.getAnswer());
     }
@@ -58,7 +58,7 @@ public class QuizServiceImpl implements QuizService{
 
         // quiz 데이터 가져오기 (만약 퀴즈 존재하지 않는다면 false)
         Quiz quiz = repository.findById(quizId).orElse(null);
-        if(quiz == null) return false;
+        if (quiz == null) return false;
 
         return true;
     }
@@ -66,9 +66,9 @@ public class QuizServiceImpl implements QuizService{
     // 유사도 측정 메서드
     public double calcSimilarity(String input, String answer) {
         // 공백 제거하기
-        input = input.replace(" ","");
+        input = input.replace(" ", "");
         answer = answer.replace(" ", "");
-        
+
         LevenshteinDistance ld = new LevenshteinDistance();
         int maxLen = Math.max(input.length(), answer.length());
         double temp = ld.apply(input, answer);

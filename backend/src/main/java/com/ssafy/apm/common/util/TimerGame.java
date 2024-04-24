@@ -6,7 +6,6 @@ public class TimerGame {
     public Integer round;
     public Integer time;
     public Integer maxTime;
-
     public TimerGame(Long gameId, String uuid, Integer round, Integer maxTime, Integer time) {
         this.gameId = gameId;
         this.uuid = uuid;

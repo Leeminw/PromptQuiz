@@ -6,7 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ChannelChatDto {
-
     // 사용자 이름
     private String nickname;
 

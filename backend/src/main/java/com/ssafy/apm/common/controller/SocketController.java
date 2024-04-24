@@ -155,8 +155,8 @@ public class SocketController {
         // 라운드 증가시키는 로직 필요 (redis)
         // game.round = repository.getRound()
         // 만약 전체 라운드 종료시켰다면 result로 보내기
-        
-        
+
+
         // 전체 사용자에게 라운드 종료 알림 보내기 (다음 라운드 증가)
         GameSystemContentDto temp = new GameSystemContentDto(game.round, list);
 
@@ -183,11 +183,11 @@ public class SocketController {
     public ResponseEntity<?> registAnswer(@RequestBody GameAnswerRequestDto answer) {
         // 초기값 설정은 false로 설정
         GameAnswerResponseDto response = new GameAnswerResponseDto();
-        
+
         // 현재 퀴즈 라운드와 다른 입력이 들어왔을때 예외 처리 필요
         // 딜레이로 인해 잘못된 라운드에 사용자가 들어와 있을 경우
         // if( != answer.getQuizId()) return;
-        
+
         switch (answer.getType()) {
             case "객관식":
                 // 객관식 번호가 정답일 경우 true
@@ -208,7 +208,7 @@ public class SocketController {
         if (response.getResult()) {
             TimerGame game = gameStartList.get(answer.getGameId());
             game.time = -game.maxTime;
-            
+
             // 미리 종료 메세지를 보내 다른 사용자가 입력 못하게 하기
             sendGameEndMessage(game);
         }
