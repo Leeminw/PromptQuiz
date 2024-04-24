@@ -6,6 +6,6 @@ import com.ssafy.apm.channel.dto.response.ChannelGetResponseDto;
 import java.util.List;
 
 public interface ChannelService {
-    void createChannel(ChannelCreateRequestDto dto);
+    ChannelGetResponseDto createChannel(ChannelCreateRequestDto dto);
     List<ChannelGetResponseDto> getChannelList();
 }
