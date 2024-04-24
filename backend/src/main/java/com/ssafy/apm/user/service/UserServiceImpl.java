@@ -5,6 +5,7 @@ import com.ssafy.apm.user.domain.User;
 import com.ssafy.apm.user.dto.*;
 import com.ssafy.apm.user.exceptions.UserNotFoundException;
 import com.ssafy.apm.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -31,6 +32,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional
     public UserDetailResponseDto createUser(UserCreateRequestDto requestDto) {
         User user = requestDto.toEntity();
         user.encodePassword(passwordEncoder.encode(user.getPassword()));
@@ -74,10 +76,11 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Boolean isExistUserName(String userName) {
-        return userRepository.findByUserName(userName).isPresent();
+        return userRepository.existsUserByUserName(userName);
     }
 
     @Override
+    @Transactional
     public UserDetailResponseDto updateProfile(String profileUrl) {
         User user = this.loadUser();
         user.updateProfile(profileUrl);
@@ -86,6 +89,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional
     public UserDetailResponseDto updateStatusMessage(String message) {
         User user = this.loadUser();
         user.updateStatusMessage(message);
@@ -94,6 +98,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional
     public UserDetailResponseDto updateUserScore(UserScoreUpdateRequestDto requestDto) {
         User user = this.loadUser();
         user.updateScore(requestDto);
