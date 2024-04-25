@@ -71,7 +71,8 @@ public class UserServiceImpl implements UserService{
             throw new UserNotFoundException(user.getId());
         }
         String accessToken = jwtProvider.createAccessToken(user.getId(), "ROLE_USER");
-        return new UserLoginResponseDto(user.getId(),accessToken);
+        String refreshToken = "";
+        return new UserLoginResponseDto(user.getId(),accessToken,refreshToken);
     }
 
     @Override
