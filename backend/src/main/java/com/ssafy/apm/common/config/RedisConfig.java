@@ -1,4 +1,4 @@
-package com.ssafy.apm.config;
+package com.ssafy.apm.common.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
