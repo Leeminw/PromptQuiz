@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
-    @Query(value = "SELECT * FROM quiz order by RAND() LIMIT :limitMax",nativeQuery =true)
+    @Query(value = "SELECT * FROM quiz ORDER BY RAND() LIMIT :limitMax",nativeQuery =true)
     List<Quiz> findAllQuizRandom(@Param(value="limitMax") Integer limitMax);
 }

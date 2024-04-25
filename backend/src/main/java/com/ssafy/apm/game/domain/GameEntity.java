@@ -16,8 +16,6 @@ import org.springframework.data.redis.core.index.Indexed;
 @RedisHash(value = "game")
 public class GameEntity {
 
-    //    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "id")
     @Id
     private Long id;
     @Indexed
