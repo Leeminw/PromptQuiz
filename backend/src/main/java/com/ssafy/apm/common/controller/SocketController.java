@@ -182,27 +182,7 @@ public class SocketController {
     @PostMapping("/api/v1/game/answer")
     public ResponseEntity<?> registAnswer(@RequestBody GameAnswerRequestDto answer) {
         // 초기값 설정은 false로 설정
-        GameAnswerResponseDto response = new GameAnswerResponseDto();
-
-        // 현재 퀴즈 라운드와 다른 입력이 들어왔을때 예외 처리 필요
-        // 딜레이로 인해 잘못된 라운드에 사용자가 들어와 있을 경우
-        // if( != answer.getQuizId()) return;
-
-        switch (answer.getType()) {
-            case "객관식":
-                // 객관식 번호가 정답일 경우 true
-                response.setResult(quizService.answerQuizCheck(answer));
-                break;
-            case "주관식":
-                // 유사도 측정 이후 90% 이상의 유사도일 경우 정답처리
-                response.setSimilarity(quizService.answerSimilarityCheck(answer));
-                response.setResult(response.getSimilarity() > 0.9);
-                break;
-            case "순서":
-                // 순서가 맞을 경우 true
-                response.setResult(quizService.answerOrderCheck(answer));
-                break;
-        }
+        GameAnswerResponseDto response = quizService.checkAnswer(answer);
 
         // response의 결과가 true일 경우 정답
         if (response.getResult()) {

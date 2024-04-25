@@ -15,9 +15,6 @@ public class GameAnswerRequestDto {
     // 퀴즈 라운드
     private Integer round;
 
-    // 퀴즈 타입
-    private String type;
-
     // 플레이어가 선택한 답안
     private String answer;
 }
