@@ -5,6 +5,7 @@ import com.ssafy.apm.game.dto.request.GameCreateRequestDto;
 import com.ssafy.apm.game.dto.request.GameUpdateRequestDto;
 import com.ssafy.apm.game.dto.response.GameGetResponseDto;
 import com.ssafy.apm.game.repository.GameRepository;
+import com.ssafy.apm.gamequiz.repository.GameQuizRepository;
 import com.ssafy.apm.gameuser.domain.GameUserEntity;
 import com.ssafy.apm.gameuser.repository.GameUserRepository;
 import com.ssafy.apm.user.domain.User;
@@ -20,14 +21,10 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class GameServiceImpl implements GameService {
-    /*  Todo: 라운드 증가하고 증가된 라운드 값 리턴,
-    *   더 이상 라운드가 없을때( 마지막 라운드 끝나고 난 뒤 ) return 값을 -1
-    *   현재 라운드의 게임-문제 매핑 테이블 리턴
-    *
-    * */
 
     private final GameRepository gameRepository;
     private final GameUserRepository gameUserRepository;
+    private final GameQuizRepository gameQuizRepository;
     private final UserService userService;
     @Override
     @Transactional
@@ -82,9 +79,6 @@ public class GameServiceImpl implements GameService {
         return new GameGetResponseDto(gameEntity);
     }
 
-    /*  Todo: 여기서 GameQuiz 첫번째꺼 삭제 로직 구현해라
-    *
-    * */
     @Override
     @Transactional
     public Integer updateGameRoundCnt(Long gameId) {

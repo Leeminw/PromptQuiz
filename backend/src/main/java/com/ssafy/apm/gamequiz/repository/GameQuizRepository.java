@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository
 public interface GameQuizRepository extends CrudRepository<GameQuizEntity, Long> {
     List<GameQuizEntity> findAllByGameId(Long gameId);
+    Optional<GameQuizEntity> findByGameIdAndRound(Long gameId, Integer round);
 }

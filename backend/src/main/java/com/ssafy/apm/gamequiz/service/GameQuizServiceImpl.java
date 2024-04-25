@@ -20,15 +20,17 @@ public class GameQuizServiceImpl implements GameQuizService{
     private final GameQuizRepository gameQuizRepository;
     private final GameRepository gameRepository;
 
-//    현재 라운드에 해당하는 문제를 뽑아서 보내줌
+//    맨 앞에 있는 놈을 뽑아서 보내줌
     @Override
     public GameQuizGetResponseDto getGameQuizDetail(Long gameId) {
         GameEntity gameEntity = gameRepository.findById(gameId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
-        Integer curRound = gameEntity.getCurRound();
-        List<GameQuizEntity> list = gameQuizRepository.findAllByGameId(gameId);
 
-        GameQuizGetResponseDto response = new GameQuizGetResponseDto(list.get(curRound));
+        Integer round = gameEntity.getRounds();
+        GameQuizEntity dto = gameQuizRepository.findByGameIdAndRound(gameId,round)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 퀴즈입니다."));
+
+        GameQuizGetResponseDto response = new GameQuizGetResponseDto(dto);
 
         return response;
     }

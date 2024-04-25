@@ -19,5 +19,7 @@ public class GameQuizEntity {
     @Indexed
     private Long quizId;
     private Integer type;
+    @Indexed
+    private Integer round;
 
 }
