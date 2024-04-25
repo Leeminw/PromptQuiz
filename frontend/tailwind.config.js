@@ -70,13 +70,13 @@ module.exports = {
           },
         },
         logininput: {
-          '0%':{
+          '0%': {
             transform: 'translateX(0)',
-            opacity:0,
+            opacity: 0,
           },
-          '0.1%':{
+          '0.1%': {
             transform: 'translateX(-100vw)',
-            opacity:1,
+            opacity: 1,
           },
           '50%': {
             transform: 'translateX(-100vw)',
@@ -86,13 +86,13 @@ module.exports = {
           },
         },
         loginbtn: {
-          '0%':{
+          '0%': {
             transform: 'translateY(0)',
-            opacity:0,
+            opacity: 0,
           },
-          '0.1%':{
+          '0.1%': {
             transform: 'translateY(100vh)',
-            opacity:1,
+            opacity: 1,
           },
           '60%': {
             transform: 'translateY(100vh)',
@@ -146,10 +146,7 @@ module.exports = {
           borderImageRepeat: 'stretch',
         },
         '.btn-mint': {
-          borderTopWidth: '10px',
-          borderBottomWidth: '10px',
-          borderLeftWidth: '14px',
-          borderRightWidth: '14px',
+          borderWidth: '0.3rem',
           borderImageSource: "url('../public/ui/border-mint-btn.png')",
           borderImageSlice: '14%',
           borderImageOutset: '0.25rem',
@@ -159,10 +156,7 @@ module.exports = {
           fontWeight: '800',
         },
         '.btn-white': {
-          borderTopWidth: '10px',
-          borderBottomWidth: '10px',
-          borderLeftWidth: '14px',
-          borderRightWidth: '14px',
+          borderWidth: '0.3rem',
           borderImageSource: "url('../public/ui/border-white.png')",
           borderImageSlice: '14%',
           borderImageOutset: '0.25rem',
@@ -172,11 +166,8 @@ module.exports = {
           fontWeight: '800',
         },
         '.btn-white-bdmint': {
-          borderTopWidth: '10px',
-          borderBottomWidth: '10px',
-          borderLeftWidth: '14px',
-          borderRightWidth: '14px',
-          borderImageSource: "url('../public/ui/border-mint.png')",
+          borderWidth: '0.3rem',
+          borderImageSource: "url('../public/ui/border-white-btn.png')",
           borderImageSlice: '14%',
           borderImageOutset: '0.25rem',
           borderImageRepeat: 'stretch',
