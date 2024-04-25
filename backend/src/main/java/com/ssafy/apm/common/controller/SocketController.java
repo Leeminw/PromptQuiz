@@ -229,7 +229,7 @@ public class SocketController {
 
         return sendResponse(response, HttpStatus.OK);
     }
-    
+
     // response 객체 생성 메서드
     public ResponseEntity<?> sendResponse(Object response, HttpStatus status) {
         return ResponseEntity.status(status).body(ResponseData.success(response));
