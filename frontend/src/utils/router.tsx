@@ -1,7 +1,5 @@
 import React from 'react';
 import App from '../App';
-import LoginPage from '../pages/Login';
-import Join from '../pages/Join';
 import ChannelSelectPage from '../pages/ChannelSelect';
 import MainPage from '../pages/Main';
 

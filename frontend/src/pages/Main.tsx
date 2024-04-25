@@ -12,7 +12,11 @@ const MainPage = () => {
       setMainLoad(true);
     }, 1000);
   }, []);
-
+  /**
+   * 
+   * 회원가입 페이지 ui 구현, 채널 선택으로 라우팅, 설정 및 도움말 modal표시
+   * 
+   */
   return (
     <div className="flex flex-col items-center w-1/2">
       <div className="min-w-[100vw] flex flex-col items-center justify-center mb-4 animate-logo">
@@ -25,13 +29,13 @@ const MainPage = () => {
             {curpage ? (
               <Join
                 movePage={() => {
-                  setCurpage(!curpage);
+                  setCurpage(false);
                 }}
               />
             ) : (
               <LoginPage
                 movePage={() => {
-                  setCurpage(!curpage);
+                  setCurpage(true);
                 }}
               />
             )}
