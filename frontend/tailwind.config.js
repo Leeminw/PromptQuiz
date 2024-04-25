@@ -156,7 +156,6 @@ module.exports = {
           borderImageRepeat: 'stretch',
           backgroundColor: '#359DB0',
           color: 'white',
-          fontSize: '1rem',
           fontWeight: '800',
         },
         '.btn-white': {
@@ -170,7 +169,19 @@ module.exports = {
           borderImageRepeat: 'stretch',
           backgroundColor: 'white',
           color: '#359DB0',
-          fontSize: '1rem',
+          fontWeight: '800',
+        },
+        '.btn-white-bdmint': {
+          borderTopWidth: '10px',
+          borderBottomWidth: '10px',
+          borderLeftWidth: '14px',
+          borderRightWidth: '14px',
+          borderImageSource: "url('../public/ui/border-mint.png')",
+          borderImageSlice: '14%',
+          borderImageOutset: '0.25rem',
+          borderImageRepeat: 'stretch',
+          backgroundColor: 'white',
+          color: '#359DB0',
           fontWeight: '800',
         },
       });
