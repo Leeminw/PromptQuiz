@@ -59,7 +59,7 @@ const Join = () => {
     try {
       const response = await UserApi.join(joinForm);
       console.log(response);
-      navigate('/home', { replace: true });
+      navigate('/', { replace: true });
     } catch (error) {
       console.error(error);
       return;
