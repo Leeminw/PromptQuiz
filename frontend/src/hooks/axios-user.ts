@@ -41,6 +41,9 @@ const UserApi= {
             console.error(error)
             return Promise.reject(error)
         }
+    },
+    loadUser : async () => { 
+        
     }
 }
 
