@@ -1,8 +1,5 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import ChannelSelect from './pages/ChannelSelect';
 const App = () => {
   return (
     <div
