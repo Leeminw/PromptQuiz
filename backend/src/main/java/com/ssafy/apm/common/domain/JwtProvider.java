@@ -23,8 +23,6 @@ public class JwtProvider {
     private long refreshExpTime;
     @Value("${jwt.secret}")
     private String key;
-    @Autowired
-    private RefreshTokenRepository refreshTokenRepository;
     private final SecretKey SECRET_KEY;
 
     public JwtProvider(@Value("${jwt.secret}") String key) {
@@ -40,8 +38,10 @@ public class JwtProvider {
                 .signWith(SECRET_KEY,SignatureAlgorithm.HS512)
                 .compact();
     }
+
+
     public String createRefreshToken(Long id, String  role){
-        String refreshToken =
+        return
                 Jwts.builder()
                 .claim("userId",id)
                 .claim("type","refresh")
@@ -50,23 +50,21 @@ public class JwtProvider {
                 .signWith(SECRET_KEY,SignatureAlgorithm.HS512)
                 .compact();
 
-
-        return refreshToken;
     }
-    public boolean verifyToken(String token) {
-        try {
-            token = token.replace("Bearer ", "");
-            Jws<Claims> claims = Jwts.parserBuilder()
-                    .setSigningKey(SECRET_KEY)
-                    .build()
-                    .parseClaimsJws(token);
-            return claims.getBody()
-                    .getExpiration()
-                    .after(new Date());
-        } catch (Exception e) {
-            return false;
-        }
-    }
+//    public boolean verifyToken(String token) {
+//        try {
+//            token = token.replace("Bearer ", "");
+//            Jws<Claims> claims = Jwts.parserBuilder()
+//                    .setSigningKey(SECRET_KEY)
+//                    .build()
+//                    .parseClaimsJws(token);
+//            return claims.getBody()
+//                    .getExpiration()
+//                    .after(new Date());
+//        } catch (Exception e) {
+//            return false;
+//        }
+//    }
 
     public String validateToken(String accessToken) {
         accessToken = accessToken.replace("Bearer ", "");
