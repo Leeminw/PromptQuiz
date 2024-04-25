@@ -35,37 +35,10 @@ module.exports = {
           to: {
             transform: 'translateY(0)',
           },
-          '0%': {
+          '0%, 14.9%, 30%, 44.9%, 60%, 74.9%': {
             opacity: '0',
           },
-          '14.9%': {
-            opacity: '0',
-          },
-          '15%': {
-            opacity: '1',
-          },
-          '29.9%': {
-            opacity: '1',
-          },
-          '30%': {
-            opacity: '0',
-          },
-          '44.9%': {
-            opacity: '0',
-          },
-          '45%': {
-            opacity: '1',
-          },
-          '59.9%': {
-            opacity: '1',
-          },
-          '60%': {
-            opacity: '0',
-          },
-          '74.9%': {
-            opacity: '0',
-          },
-          '75%': {
+          '15%, 29.9%, 45%, 59.9%, 75%': {
             opacity: '1',
           },
         },
@@ -101,11 +74,21 @@ module.exports = {
             transform: 'translateY(0)',
           },
         },
+        clickbtn: {
+          '0%, 100%': { filter: 'brightness(1)' },
+          '50%': { filter: 'brightness(1.25)' },
+        },
+        clickwhitebtn: {
+          '0%, 100%': { filter: 'brightness(1)' },
+          '50%': { filter: 'brightness(0.8)' },
+        },
       },
       animation: {
         logo: 'logo 2s ease-in-out',
         logininput: 'logininput 2.5s ease-out',
         loginbtn: 'loginbtn 2.5s ease-out',
+        clickbtn: 'clickbtn 0.1s linear infinite',
+        clickwhitebtn: 'clickwhitebtn 0.1s linear infinite',
       },
     },
   },
