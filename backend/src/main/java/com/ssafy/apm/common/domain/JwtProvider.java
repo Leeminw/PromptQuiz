@@ -1,7 +1,9 @@
 package com.ssafy.apm.common.domain;
 
+import com.ssafy.apm.user.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -16,9 +18,11 @@ import java.util.NoSuchElementException;
 public class JwtProvider {
 
     @Value("${jwt.accessExpTime}")
-    long accessExpTime;
+    private long accessExpTime;
+    @Value("${jwt.refreshExpTime}")
+    private long refreshExpTime;
     @Value("${jwt.secret}")
-    String key;
+    private String key;
     private final SecretKey SECRET_KEY;
 
     public JwtProvider(@Value("${jwt.secret}") String key) {
@@ -35,20 +39,32 @@ public class JwtProvider {
                 .compact();
     }
 
-    public boolean verifyToken(String token) {
-        try {
-            token = token.replace("Bearer ", "");
-            Jws<Claims> claims = Jwts.parserBuilder()
-                    .setSigningKey(SECRET_KEY)
-                    .build()
-                    .parseClaimsJws(token);
-            return claims.getBody()
-                    .getExpiration()
-                    .after(new Date());
-        } catch (Exception e) {
-            return false;
-        }
+
+    public String createRefreshToken(Long id, String  role){
+        return
+                Jwts.builder()
+                .claim("userId",id)
+                .claim("type","refresh")
+                .claim("role", role)
+                .setExpiration(new Date(System.currentTimeMillis()+refreshExpTime))
+                .signWith(SECRET_KEY,SignatureAlgorithm.HS512)
+                .compact();
+
     }
+//    public boolean verifyToken(String token) {
+//        try {
+//            token = token.replace("Bearer ", "");
+//            Jws<Claims> claims = Jwts.parserBuilder()
+//                    .setSigningKey(SECRET_KEY)
+//                    .build()
+//                    .parseClaimsJws(token);
+//            return claims.getBody()
+//                    .getExpiration()
+//                    .after(new Date());
+//        } catch (Exception e) {
+//            return false;
+//        }
+//    }
 
     public String validateToken(String accessToken) {
         accessToken = accessToken.replace("Bearer ", "");

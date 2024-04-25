@@ -18,7 +18,7 @@ public interface UserService {
     UserDetailResponseDto updateStatusMessage(String message);
     // 점수 수정
     UserDetailResponseDto updateUserScore(UserScoreUpdateRequestDto requestDto);
-
+    void logoutUser(String header);
 
 
 }
