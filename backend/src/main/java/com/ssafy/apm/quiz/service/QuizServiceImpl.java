@@ -2,7 +2,6 @@ package com.ssafy.apm.quiz.service;
 
 import com.ssafy.apm.common.dto.request.GameAnswerRequestDto;
 import com.ssafy.apm.common.dto.response.GameAnswerResponseDto;
-import com.ssafy.apm.common.util.TimerGame;
 import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.quiz.repository.QuizRepository;
 import com.ssafy.apm.quiz.exception.QuizNotFoundException;
@@ -27,12 +26,13 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public GameAnswerResponseDto checkAnswer(GameAnswerRequestDto answer){
+    public GameAnswerResponseDto checkAnswer(GameAnswerRequestDto answer) {
         // 초기값 설정은 false로 설정
         GameAnswerResponseDto response = new GameAnswerResponseDto();
 
         // 현재 퀴즈 라운드와 다른 입력이 들어왔을때 예외 처리 필요
-        // 딜레이로 인해 잘못된 라운드에 사용자가 들어와 있을 경우
+        // 1. 딜레이로 인해 잘못된 라운드에 사용자가 들어와 있을 경우
+        // 2. 누군가 정답을 이미 맞춰서 다음 라운드로 진행했을 경우
         // if( != answer.getQuizId()) return response();
 
         // 퀴즈 타입 찾기

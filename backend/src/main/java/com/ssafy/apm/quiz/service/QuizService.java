@@ -6,5 +6,6 @@ import com.ssafy.apm.quiz.dto.response.QuizDetailResponseDto;
 
 public interface QuizService {
     QuizDetailResponseDto getQuizInfo(Long quizId);
+
     GameAnswerResponseDto checkAnswer(GameAnswerRequestDto answer);
 }

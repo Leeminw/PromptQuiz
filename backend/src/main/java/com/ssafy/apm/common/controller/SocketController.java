@@ -148,14 +148,11 @@ public class SocketController {
     // (라운드 종료) 누군가 정답을 맞추거나 timeout일 경우 라운드 종료 처리
     public void sendGameEndMessage(TimerGame game) {
         /*
+            라운드 증가시키는 로직 필요 (redis)
+            game.round = repository.getRound()
             이 부분에서 quiz의 아이디가 전부 소진됐다면 result로 넘어가는 로직이 들어가야 합니다.
             sendGameResultMessage()
         */
-
-        // 라운드 증가시키는 로직 필요 (redis)
-        // game.round = repository.getRound()
-        // 만약 전체 라운드 종료시켰다면 result로 보내기
-
 
         // 전체 사용자에게 라운드 종료 알림 보내기 (다음 라운드 증가)
         GameSystemContentDto temp = new GameSystemContentDto(game.round, list);
