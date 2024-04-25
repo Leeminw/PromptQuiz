@@ -20,7 +20,7 @@ public interface GameService {
 
     GameGetResponseDto updateGameInfo(GameUpdateRequestDto gameUpdateRequestDto);
 
-    Integer updateGameRoundCnt(Long gameId);
+    Integer updateGameRoundCnt(Long gameId, Boolean flag);
 
     Long deleteGame(Long gameId);
 }
