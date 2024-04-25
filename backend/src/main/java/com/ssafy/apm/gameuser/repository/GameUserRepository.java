@@ -9,10 +9,12 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface GameUserRepository extends CrudRepository<GameUserEntity, Long> {
 
     List<GameUserEntity> findAllByGameId(Long gameId);
+    Optional<GameUserEntity> findByGameIdAndUserId(Long gameId, Long UserId);
 
 }

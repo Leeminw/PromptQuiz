@@ -24,7 +24,6 @@ public class GameController {
 
 /*    Todo: 빠른 대전시 방 목록을 뒤져서 빈 방에 들어가게 할건지( 빈 방이 없다면 방 생성 )
 *           아니면 채널마다 큐를 만들어서 이 큐에 넣을건지( 좀 복잡해 ) 선택하고 API 만들어야함
-*           방 삭제할 때 GameUserEntity도 찾아서 먼저 삭제해줘야 할듯
 *
 * */
 
@@ -58,7 +57,6 @@ public class GameController {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("방 설정 수정 완료", response));
     }
 
-//    방 삭제( 방 삭제할 때 GameUserEntity도 삭제하게끔 로직 바꿔줘야함
     @DeleteMapping("/{gameId}")
     public ResponseEntity<ResponseData<?>> deleteGame(@PathVariable(name = "gameId") Long gameId) {
         Long response = gameService.deleteGame(gameId);

@@ -5,8 +5,11 @@ import com.ssafy.apm.game.dto.request.GameCreateRequestDto;
 import com.ssafy.apm.game.dto.request.GameUpdateRequestDto;
 import com.ssafy.apm.game.dto.response.GameGetResponseDto;
 import com.ssafy.apm.game.repository.GameRepository;
+import com.ssafy.apm.gamequiz.repository.GameQuizRepository;
 import com.ssafy.apm.gameuser.domain.GameUserEntity;
 import com.ssafy.apm.gameuser.repository.GameUserRepository;
+import com.ssafy.apm.user.domain.User;
+import com.ssafy.apm.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,9 +24,12 @@ public class GameServiceImpl implements GameService {
 
     private final GameRepository gameRepository;
     private final GameUserRepository gameUserRepository;
+    private final GameQuizRepository gameQuizRepository;
+    private final UserService userService;
     @Override
     @Transactional
     public GameGetResponseDto createGame(GameCreateRequestDto gameCreateRequestDto) {
+        User userEntity = userService.loadUser();
         GameEntity gameEntity = gameCreateRequestDto.toEntity();
         gameEntity = gameRepository.save(gameEntity);
         /*
@@ -31,12 +37,11 @@ public class GameServiceImpl implements GameService {
         * */
         GameUserEntity gameUserEntity = GameUserEntity.builder()
                 .gameId(gameEntity.getId())
-//                .gameId(1L)
-                .userId(gameCreateRequestDto.getUserId())
+                .userId(userEntity.getId())
                 .isHost(true)
                 .isReady(true)
                 .score(0)
-                .team("RED")
+                .team("NOTHING")
                 .ranking(0)
                 .build();
         gameUserRepository.save(gameUserEntity);
@@ -76,9 +81,27 @@ public class GameServiceImpl implements GameService {
 
     @Override
     @Transactional
+    public Integer updateGameRoundCnt(Long gameId) {
+        GameEntity gameEntity = gameRepository.findById(gameId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
+
+//        마지막 라운드라면
+        if(gameEntity.getCurRound() >= gameEntity.getRounds()) {
+            return -1;
+        }
+        Integer response = gameEntity.increaseRound();
+        gameRepository.save(gameEntity);
+        return response;
+    }
+
+    @Override
+    @Transactional
     public Long deleteGame(Long gameId) {
         GameEntity gameEntity = gameRepository.findById(gameId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
+        List<GameUserEntity> list = gameUserRepository.findAllByGameId(gameId);
+
+        gameUserRepository.deleteAll(list);
         gameRepository.delete(gameEntity);
 
         return gameId;

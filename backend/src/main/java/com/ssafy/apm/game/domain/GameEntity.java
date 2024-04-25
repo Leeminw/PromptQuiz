@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
 @Getter
 @ToString
@@ -19,6 +20,7 @@ public class GameEntity {
 //    @Column(name = "id")
     @Id
     private Long id;
+    @Indexed
     private Long channelId;
     private Integer type;
     private Integer style;
@@ -50,6 +52,11 @@ public class GameEntity {
         this.rounds = dto.getRounds();
         this.curPlayers = dto.getCurPlayers();
         this.maxPlayers = dto.getMaxPlayers();
+    }
+
+    public Integer increaseRound() {
+        this.curRound += 1;
+        return this.curRound;
     }
 
 }

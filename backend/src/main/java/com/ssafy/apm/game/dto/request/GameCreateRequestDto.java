@@ -18,7 +18,6 @@ public class GameCreateRequestDto {
 //    id, 방코드, 우승자 컬럼 없음
 //    방코드는 UUID 만들어 Entity에 넣어서 만들거야
 //    지금 만드는 놈 PK 값이 필요함
-    private Long userId;
     private Long channelId;
     private Integer type;
     private Integer style;

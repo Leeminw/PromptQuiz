@@ -2,10 +2,12 @@ package com.ssafy.apm.gameuser.service;
 
 import com.ssafy.apm.gameuser.domain.GameUserEntity;
 import com.ssafy.apm.gameuser.dto.response.GameUserDetailResponseDto;
+import com.ssafy.apm.gameuser.dto.response.GameUserGetResponseDto;
 import com.ssafy.apm.gameuser.repository.GameUserRepository;
 import com.ssafy.apm.user.domain.User;
 import com.ssafy.apm.user.dto.UserDetailResponseDto;
 import com.ssafy.apm.user.repository.UserRepository;
+import com.ssafy.apm.user.service.UserService;
 import com.ssafy.apm.userchannel.domain.UserChannelEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +25,8 @@ public class GameUserServiceImpl implements GameUserService{
 
     private final GameUserRepository gameUserRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
+
     @Override
     public List<GameUserDetailResponseDto> getGameUserList(Long gameId) {
 //        GameId로 게임방 안에 있는 게임유저 데이터들을 가져옴
@@ -48,5 +53,43 @@ public class GameUserServiceImpl implements GameUserService{
             responseDtos.add(temp);
         }
         return responseDtos;
+    }
+
+//    게임 입장할때
+    @Override
+    @Transactional
+    public GameUserGetResponseDto postEnterGame(Long gameId) {
+//        로그인 한놈 유저 정보 불러오기
+        User user = userService.loadUser();
+        Long userId = user.getId();
+
+//        일반유저
+        GameUserEntity entity = GameUserEntity.builder()
+                .gameId(gameId)
+                .userId(userId)
+                .isHost(false)
+                .isReady(false)
+                .score(0)
+                .team("NOTHING")
+                .build();
+
+        entity = gameUserRepository.save(entity);
+
+        return new GameUserGetResponseDto(entity);
+    }
+//    게임 나갈때
+    @Override
+    @Transactional
+    public Long deleteExitGame(Long gameId){
+        User user = userService.loadUser();
+        Long userId = user.getId();
+        GameUserEntity gameUserEntity = gameUserRepository.findByGameIdAndUserId(gameId, userId)
+                .orElseThrow(()-> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
+
+        Long gameUserId = gameUserEntity.getId();
+
+        gameUserRepository.delete(gameUserEntity);
+
+        return gameUserId;
     }
 }
