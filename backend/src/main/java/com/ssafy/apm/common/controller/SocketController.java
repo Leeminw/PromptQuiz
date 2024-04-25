@@ -50,6 +50,9 @@ public class SocketController {
     private void roundStartScheduler() {
         List<TimerGame> list = new ArrayList<>(gameStartList.values());
         for (TimerGame game : list) {
+            // 만약 list에 없다면 지워진 아이디 이므로 넘어가기
+            if(!gameStartList.containsKey(game.gameId)) continue;
+
             // 시간 초 증가 시키기
             game.time++;
             if (game.time > game.maxTime) {
@@ -80,6 +83,9 @@ public class SocketController {
         // 전체 준비에 들어온 게임의 대기 시간을 증가시키기
         List<TimerGame> list = new ArrayList<>(gameReadyList.values());
         for (TimerGame game : list) {
+            // 만약 list에 없다면 지워진 아이디 이므로 넘어가기
+            if(!gameReadyList.containsKey(game.gameId)) continue;
+
             // 시간 초 증가
             game.time++;
 
@@ -105,6 +111,9 @@ public class SocketController {
         // 전체 준비에 들어온 게임의 대기 시간을 증가시키기
         List<TimerGame> list = new ArrayList<>(gameEndList.values());
         for (TimerGame game : list) {
+            // 만약 list에 없다면 지워진 아이디 이므로 넘어가기
+            if(!gameEndList.containsKey(game.gameId)) continue;
+
             // 시간 초 증가
             game.time++;
 
@@ -231,6 +240,7 @@ public class SocketController {
         // 초기값 설정은 false로 설정
         GameAnswerResponseDto response = quizService.checkAnswer(answer);
         response.setResult(true);
+
         // response의 결과가 true일 경우 정답
         if (response.getResult()) {
             TimerGame game = gameStartList.get(answer.getGameId());
