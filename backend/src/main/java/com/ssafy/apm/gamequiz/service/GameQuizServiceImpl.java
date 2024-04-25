@@ -20,6 +20,7 @@ public class GameQuizServiceImpl implements GameQuizService{
     private final GameQuizRepository gameQuizRepository;
     private final GameRepository gameRepository;
 
+//    현재 라운드에 해당하는 문제를 뽑아서 보내줌
     @Override
     public GameQuizGetResponseDto getGameQuizDetail(Long gameId) {
         GameEntity gameEntity = gameRepository.findById(gameId)

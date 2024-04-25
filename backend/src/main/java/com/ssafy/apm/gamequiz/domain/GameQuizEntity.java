@@ -3,6 +3,7 @@ package com.ssafy.apm.gamequiz.domain;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
 @Getter
 @ToString
@@ -13,7 +14,9 @@ import org.springframework.data.redis.core.RedisHash;
 public class GameQuizEntity {
     @Id
     private Long id;
+    @Indexed
     private Long gameId;
+    @Indexed
     private Long quizId;
     private Integer type;
 
