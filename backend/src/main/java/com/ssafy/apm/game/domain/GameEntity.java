@@ -52,6 +52,11 @@ public class GameEntity {
         this.maxPlayers = dto.getMaxPlayers();
     }
 
+    public Integer updateCurRound() {
+        this.curRound = 1;
+        return this.curRound;
+    }
+
     public Integer increaseRound() {
         this.curRound += 1;
         return this.curRound;
