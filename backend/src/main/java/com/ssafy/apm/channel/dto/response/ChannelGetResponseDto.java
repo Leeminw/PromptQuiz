@@ -15,7 +15,7 @@ public class ChannelGetResponseDto {
     private Integer curPlayers;
     private Integer maxPlayers;
 
-    public ChannelGetResponseDto(ChannelEntity entity){
+    public ChannelGetResponseDto(ChannelEntity entity) {
         this.id = entity.getId();
         this.code = entity.getCode();
         this.name = entity.getName();

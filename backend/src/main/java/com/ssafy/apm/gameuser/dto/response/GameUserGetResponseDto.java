@@ -18,7 +18,7 @@ public class GameUserGetResponseDto {
     private String team;
     private Integer ranking;
 
-    public GameUserGetResponseDto(GameUserEntity entity){
+    public GameUserGetResponseDto(GameUserEntity entity) {
         this.id = entity.getId();
         this.gameId = entity.getGameId();
         this.userId = entity.getUserId();

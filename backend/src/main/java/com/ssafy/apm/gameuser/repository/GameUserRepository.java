@@ -15,6 +15,7 @@ import java.util.Optional;
 public interface GameUserRepository extends CrudRepository<GameUserEntity, Long> {
 
     List<GameUserEntity> findAllByGameId(Long gameId);
+
     Optional<GameUserEntity> findByGameIdAndUserId(Long gameId, Long UserId);
 
 }

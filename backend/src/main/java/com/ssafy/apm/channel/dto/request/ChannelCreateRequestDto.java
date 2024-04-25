@@ -15,7 +15,7 @@ public class ChannelCreateRequestDto {
     private Integer curPlayers;
     private Integer maxPlayers;
 
-    public ChannelEntity toEntity(){
+    public ChannelEntity toEntity() {
         return ChannelEntity.builder()
                 .code(UUID.randomUUID().toString())
                 .name(this.name)

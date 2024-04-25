@@ -23,7 +23,7 @@ public class GameGetResponseDto {
     private Integer curPlayers;
     private Integer maxPlayers;
 
-    public GameGetResponseDto(GameEntity game){
+    public GameGetResponseDto(GameEntity game) {
         this.id = game.getId();
         this.channelId = game.getChannelId();
         this.type = game.getType();

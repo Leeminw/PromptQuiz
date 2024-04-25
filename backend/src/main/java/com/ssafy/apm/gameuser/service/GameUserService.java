@@ -9,6 +9,8 @@ import java.util.List;
 public interface GameUserService {
 
     List<GameUserDetailResponseDto> getGameUserList(Long gameId);
+
     GameUserGetResponseDto postEnterGame(Long gameId);
+
     Long deleteExitGame(Long gameId);
 }

@@ -15,7 +15,7 @@ public class GameQuizGetResponseDto {
     private Integer type;
     private Integer round;
 
-    public GameQuizGetResponseDto(GameQuizEntity entity){
+    public GameQuizGetResponseDto(GameQuizEntity entity) {
         this.id = entity.getId();
         this.gameId = entity.getGameId();
         this.quizId = entity.getQuizId();

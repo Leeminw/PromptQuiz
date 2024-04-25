@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class GameUserServiceImpl implements GameUserService{
+public class GameUserServiceImpl implements GameUserService {
 
     private final GameUserRepository gameUserRepository;
     private final UserRepository userRepository;
@@ -40,11 +40,11 @@ public class GameUserServiceImpl implements GameUserService{
         HashMap<Long, GameUserDetailResponseDto> map = new HashMap<>();
         List<GameUserDetailResponseDto> responseDtos = new ArrayList<>();
 
-        for(GameUserEntity gameUser: gameUserEntityList){
+        for (GameUserEntity gameUser : gameUserEntityList) {
 //            map에 key값을 userId로 두고 value에 Dto를 넣음
             map.put(gameUser.getUserId(), new GameUserDetailResponseDto(gameUser));
         }
-        for(User user: userList){
+        for (User user : userList) {
 //            user Entity의 Id와 같은 값을 가진 dto들을 가져옴
             GameUserDetailResponseDto temp = map.get(user.getId());
 //            dto에 user data set해줌
@@ -55,7 +55,7 @@ public class GameUserServiceImpl implements GameUserService{
         return responseDtos;
     }
 
-//    게임 입장할때
+    //    게임 입장할때
     @Override
     @Transactional
     public GameUserGetResponseDto postEnterGame(Long gameId) {
@@ -77,14 +77,15 @@ public class GameUserServiceImpl implements GameUserService{
 
         return new GameUserGetResponseDto(entity);
     }
-//    게임 나갈때
+
+    //    게임 나갈때
     @Override
     @Transactional
-    public Long deleteExitGame(Long gameId){
+    public Long deleteExitGame(Long gameId) {
         User user = userService.loadUser();
         Long userId = user.getId();
         GameUserEntity gameUserEntity = gameUserRepository.findByGameIdAndUserId(gameId, userId)
-                .orElseThrow(()-> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
+                .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
 
         Long gameUserId = gameUserEntity.getId();
 
