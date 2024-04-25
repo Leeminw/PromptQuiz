@@ -3,7 +3,7 @@ import ChannelBox from '../components/channel/ChannelBox';
 // import ChannelBox from '../components/channel/ChannelBox';
 // import BackgroundImg from '../../public/background.png';
 
-const TestScreen = () => {
+const ChannelSelectPage = () => {
   const [channelArray, setChannelList] = useState<Channel[]>([]);
   useEffect(() => {
     // 채널리트스 가져오기
@@ -143,4 +143,4 @@ const TestScreen = () => {
   );
 };
 
-export default TestScreen;
+export default ChannelSelectPage;
