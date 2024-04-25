@@ -12,6 +12,7 @@ module.exports = merge(config, {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].[contenthash].js',
     clean: true,
+    publicPath: '/',
   },
   plugins: [
     new CleanWebpackPlugin(),

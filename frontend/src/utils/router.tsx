@@ -1,6 +1,7 @@
 import React from 'react';
 import App from '../App';
 import LoginPage from '../pages/Login';
+import Join from '../pages/Join';
 
 const RouterInfo = [
   {
@@ -12,6 +13,11 @@ const RouterInfo = [
             element:<LoginPage/>,
             label:'login'
         },
+        {
+          path:'/join',
+          element:<Join/>,
+          label:'join'
+      },
     ]
   },
 ];
