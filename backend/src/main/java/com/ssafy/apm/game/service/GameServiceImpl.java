@@ -82,15 +82,20 @@ public class GameServiceImpl implements GameService {
 
     @Override
     @Transactional
-    public Integer updateGameRoundCnt(Long gameId) {
+    public Integer updateGameRoundCnt(Long gameId, Boolean flag) {
         GameEntity gameEntity = gameRepository.findById(gameId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
-
+        Integer response = 0;
+        if (flag) {
+//            curRound 1로 초기화
+            response = gameEntity.updateCurRound();
+        } else {
 //        마지막 라운드라면
-        if (gameEntity.getCurRound() >= gameEntity.getRounds()) {
-            return -1;
+            if (gameEntity.getCurRound() >= gameEntity.getRounds()) {
+                return -1;
+            }
+            response = gameEntity.increaseRound();
         }
-        Integer response = gameEntity.increaseRound();
         gameRepository.save(gameEntity);
         return response;
     }
