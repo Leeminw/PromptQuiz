@@ -39,7 +39,7 @@ public class GameCreateRequestDto {
                 .status(this.status)
                 .isTeam(this.isTeam)
                 .curRound(this.curRound)
-                .rounds(this.curRound)
+                .rounds(this.rounds)
                 .curPlayers(this.curPlayers)
                 .maxPlayers(this.maxPlayers)
                 .build();
