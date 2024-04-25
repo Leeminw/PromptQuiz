@@ -70,8 +70,8 @@ public class UserServiceImpl implements UserService{
         if(!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())){
             throw new UserNotFoundException(user.getId());
         }
-        String accessToken = jwtProvider.createAccessToken(user.getId(), "ROLE_USER");
-        String refreshToken = "";
+        String accessToken = jwtProvider.createAccessToken(user.getId(),user.getRole());
+        String refreshToken = jwtProvider.createRefreshToken(user.getId(),user.getRole());
         return new UserLoginResponseDto(user.getId(),accessToken,refreshToken);
     }
 

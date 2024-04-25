@@ -19,7 +19,7 @@ public class JwtProvider {
 
     @Value("${jwt.accessExpTime}")
     private long accessExpTime;
-    @Value("jwt.refreshExpTime")
+    @Value("${jwt.refreshExpTime}")
     private long refreshExpTime;
     @Value("${jwt.secret}")
     private String key;
