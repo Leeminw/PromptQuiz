@@ -23,10 +23,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -60,17 +57,15 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         }else if (providerResult.equals("refresh")){
             log.debug("refresh token!! ");
             String token = jwtToken.replace("Bearer ", "");
-            Optional<RefreshToken> refreshToken = refreshTokenRepository.findById(token);
-            if(refreshToken.isEmpty()){
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            }
-            else{
-                User user = userRepository.findById(jwtProvider.getUserId(jwtToken))
-                        .orElseThrow(() -> new UserNotFoundException("forbidden"));
-                String accessToken = jwtProvider.createAccessToken(user.getId(), user.getRole());
-                response.setStatus(HttpServletResponse.SC_OK);
-                result.put("accessToken", accessToken);
-            }
+            refreshTokenRepository.findById(token)
+                    .orElseThrow(() -> new NoSuchElementException("invalid token"));
+
+            User user = userRepository.findById(jwtProvider.getUserId(jwtToken))
+                    .orElseThrow(() -> new UserNotFoundException("forbidden"));
+            String accessToken = jwtProvider.createAccessToken(user.getId(), user.getRole());
+            response.setStatus(HttpServletResponse.SC_OK);
+            result.put("accessToken", accessToken);
+
         }
         else {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
