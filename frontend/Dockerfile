@@ -1,5 +1,5 @@
-# Node.js 공식 이미지 사용. 버전 20.11.1, 경량화된 Alpine Linux 기반
-FROM node:20.12.2 as build-stage
+# Node.js 공식 이미지 사용. 버전 20.12.2, 경량화된 Alpine Linux 기반
+FROM node:20.12.2-alpine
 
 # 작업 디렉토리 설정. 컨테이너 내 앱의 기본 경로
 WORKDIR /home/app
@@ -10,11 +10,7 @@ COPY package*.json ./
 
 # package.json에 명시된 애플리케이션 의존성 설치
 # package-lock.json이 있을 경우 더 빠르게 설치 가능
-RUN npm install --force && \
-#    npm install --save-dev webpack webpack-cli webpack-dev-server
-    npm install --global webpack webpack-cli webpack-dev-server html-webpack-plugin @pmmmwh/react-refresh-webpack-plugin
-#    npm install --save-dev webpack webpack-cli webpack-dev-server html-webpack-plugin
-# ENV PATH /home/app/node_modules/.bin:$PATH
+RUN npm install
 
 # 현재 디렉토리의 모든 파일을 컨테이너의 작업 디렉토리로 복사
 COPY . .
@@ -25,10 +21,5 @@ RUN npm run build
 # React 애플리케이션 실행
 CMD ["npm", "start"]
 
-
-
-# Nginx를 사용하여 빌드된 애플리케이션 서비스
-# FROM nginx:stable-alpine as production-stage
-# COPY --from=build-stage /home/app/.next/server/app /var/www/html
-# EXPOSE 80
-# CMD ["nginx", "-g", "daemon off;"]
+# 3000번 포트 개방
+EXPOSE 3000
