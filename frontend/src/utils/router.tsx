@@ -1,6 +1,6 @@
 import React from 'react';
 import App from '../App';
-import LoginPage from '../pages/login';
+import LoginPage from '../pages/Login';
 
 const RouterInfo = [
   {
