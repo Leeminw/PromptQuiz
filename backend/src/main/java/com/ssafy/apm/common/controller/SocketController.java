@@ -31,8 +31,11 @@ public class SocketController {
     // 현재 게임 진행중인 리스트 (max_time 초 대기)
     private static final HashMap<Long, TimerGame> gameStartList = new HashMap<>();
 
-    // 라운드 끝나고 대기중인 리스트 (REST_TIME 초 대기)
+    // 라운드 끝나고 결과확인 리스트 (REST_TIME 초 대기)
     private static final HashMap<Long, TimerGame> gameReadyList = new HashMap<>();
+
+    // 라운드 끝나고 대기중인 리스트 (REST_TIME 초 대기)
+    private static final HashMap<Long, TimerGame> gameEndList = new HashMap<>();
 
     private static final int REST_TIME = 3;
 
@@ -45,7 +48,7 @@ public class SocketController {
             game.time++;
             if (game.time > game.maxTime) {
                 // 게임 종료 (timeout)
-                gameReadyList.put(game.gameId, game);
+                gameEndList.put(game.gameId, game);
                 gameStartList.remove(game.gameId);
                 game.time = 0;
 
@@ -53,7 +56,7 @@ public class SocketController {
                 sendGameEndMessage(game);
             } else if (game.time < 0) {
                 // 게임 종료 (정답자가 나왔을 경우)
-                gameReadyList.put(game.gameId, game);
+                gameEndList.put(game.gameId, game);
                 gameStartList.remove(game.gameId);
                 game.time = 0;
 
@@ -82,6 +85,31 @@ public class SocketController {
 
                 // 시작 메세지 전송
                 sendGameStartMessage(game);
+            } else {
+                // 각각의 시간초 보내주기
+                template.convertAndSend("/sub/game?uuid=" + game.uuid
+                        , new GameResponseDto("game", GameSystemResponseDto.timer(game.time)));
+
+            }
+        }
+    }
+
+    @Scheduled(fixedRate = 1000) // 1초마다 실행
+    private void roundEndScheduler() {
+        // 전체 준비에 들어온 게임의 대기 시간을 증가시키기
+        List<TimerGame> list = new ArrayList<>(gameEndList.values());
+        for (TimerGame game : list) {
+            // 시간 초 증가
+            game.time++;
+
+            // 3초가 됐다면 이제 준비로 보내기 시작하기
+            if (game.time >= REST_TIME) {
+                game.time = 0;
+                gameReadyList.put(game.gameId, game);
+                gameEndList.remove(game.gameId);
+
+                // 준비 메세지 전송
+                sendGameReadyMessage(game);
             } else {
                 // 각각의 시간초 보내주기
                 template.convertAndSend("/sub/game?uuid=" + game.uuid
@@ -123,6 +151,13 @@ public class SocketController {
         if (!gameReadyList.containsKey(ready.getGameId())) {
             TimerGame newGame = new TimerGame(ready.getGameId(), ready.getUuid(), 0, 10, 0);
             gameReadyList.put(ready.getGameId(), newGame);
+
+            //게임을 시작하면서 라운드 증가시키기
+            /*
+                라운드 증가시키는 로직 필요 (redis)
+                game.round = repository.getRound()
+            */
+
             sendGameReadyMessage(newGame);
         }
     }
@@ -150,6 +185,8 @@ public class SocketController {
         /*
             라운드 증가시키는 로직 필요 (redis)
             game.round = repository.getRound()
+            game.quizId = repository.getRound()
+            
             이 부분에서 quiz의 아이디가 전부 소진됐다면 result로 넘어가는 로직이 들어가야 합니다.
             sendGameResultMessage()
         */
@@ -180,7 +217,7 @@ public class SocketController {
     public ResponseEntity<?> registAnswer(@RequestBody GameAnswerRequestDto answer) {
         // 초기값 설정은 false로 설정
         GameAnswerResponseDto response = quizService.checkAnswer(answer);
-
+        response.setResult(true);
         // response의 결과가 true일 경우 정답
         if (response.getResult()) {
             TimerGame game = gameStartList.get(answer.getGameId());
@@ -192,7 +229,7 @@ public class SocketController {
 
         return sendResponse(response, HttpStatus.OK);
     }
-
+    
     // response 객체 생성 메서드
     public ResponseEntity<?> sendResponse(Object response, HttpStatus status) {
         return ResponseEntity.status(status).body(ResponseData.success(response));
