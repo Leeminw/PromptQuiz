@@ -5,6 +5,7 @@ import com.ssafy.apm.user.dto.*;
 import com.ssafy.apm.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,9 +27,13 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody UserLoginRequestDto requestDto){
-//        log.debug("controller : {}",requestDto.toString() );
         UserLoginResponseDto responseDto = userService.loginUser(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
+    }
+    @GetMapping("/logout")
+    public ResponseEntity<?> logoutUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader){
+        userService.logoutUser(authorizationHeader);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("deleted"));
     }
 
     @GetMapping("/exist")

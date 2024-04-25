@@ -1,16 +1,21 @@
 package com.ssafy.apm.user.service;
 
 import com.ssafy.apm.common.domain.JwtProvider;
+import com.ssafy.apm.user.domain.RefreshToken;
 import com.ssafy.apm.user.domain.User;
 import com.ssafy.apm.user.dto.*;
 import com.ssafy.apm.user.exceptions.UserNotFoundException;
+import com.ssafy.apm.user.repository.RefreshTokenRepository;
 import com.ssafy.apm.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 
 @Service
@@ -20,6 +25,7 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     public User loadUser() {
@@ -31,6 +37,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional
     public UserDetailResponseDto createUser(UserCreateRequestDto requestDto) {
         User user = requestDto.toEntity();
         user.encodePassword(passwordEncoder.encode(user.getPassword()));
@@ -61,6 +68,7 @@ public class UserServiceImpl implements UserService{
 //    }
 
     @Override
+    @Transactional
     public UserLoginResponseDto loginUser(UserLoginRequestDto requestDto) {
         log.debug("service : {}", requestDto.toString());
         User user = userRepository.findByUserName(requestDto.getUserName())
@@ -68,16 +76,19 @@ public class UserServiceImpl implements UserService{
         if(!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())){
             throw new UserNotFoundException(user.getId());
         }
-        String accessToken = jwtProvider.createAccessToken(user.getId(), "ROLE_USER");
-        return new UserLoginResponseDto(user.getId(),accessToken);
+        String accessToken = jwtProvider.createAccessToken(user.getId(),user.getRole());
+        String refreshToken = jwtProvider.createRefreshToken(user.getId(),user.getRole());
+        refreshTokenRepository.save(new RefreshToken(refreshToken,user.getId()));
+        return new UserLoginResponseDto(user.getId(),accessToken,refreshToken);
     }
 
     @Override
     public Boolean isExistUserName(String userName) {
-        return userRepository.findByUserName(userName).isPresent();
+        return userRepository.existsUserByUserName(userName);
     }
 
     @Override
+    @Transactional
     public UserDetailResponseDto updateProfile(String profileUrl) {
         User user = this.loadUser();
         user.updateProfile(profileUrl);
@@ -86,6 +97,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional
     public UserDetailResponseDto updateStatusMessage(String message) {
         User user = this.loadUser();
         user.updateStatusMessage(message);
@@ -94,10 +106,19 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional
     public UserDetailResponseDto updateUserScore(UserScoreUpdateRequestDto requestDto) {
         User user = this.loadUser();
         user.updateScore(requestDto);
         userRepository.save(user);
         return new UserDetailResponseDto(user);
+    }
+
+    @Override
+    @Transactional
+    public void logoutUser(String header) {
+        String token = header.replace("Bearer ","");
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findById(token);
+        refreshToken.ifPresent(refreshTokenRepository::delete);
     }
 }

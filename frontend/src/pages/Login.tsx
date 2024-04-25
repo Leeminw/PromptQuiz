@@ -27,7 +27,8 @@ const LoginPage = () => {
       console.log(loginForm);
       const { data } = await UserApi.login(loginForm);
       localStorage.setItem('accessToken', data.accessToken);
-      navigate('/home', { replace: true });
+      alert('로그인 완료!');
+      navigate('/channel');
     } catch (error) {
       // 로그인 오류
       console.error(error);

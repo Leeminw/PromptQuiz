@@ -17,11 +17,15 @@
 //@Slf4j
 //@WebMvcTest(SocketController.class)
 //@ExtendWith(MockitoExtension.class)
-//@ComponentScan({"com.ssafy.apm.common"})
+//@ComponentScan({"com.ssafy.apm.user","com.ssafy.apm.common"})
 //public class SocketControllerTests {
 //
 //    @Autowired
 //    private MockMvc mock;
+//
+//    @Test
+//    void contextLoads() {
+//    }
 //
 //    @Test
 //    void build() {
@@ -32,7 +36,7 @@
 //    @DisplayName("소켓 연결 테스트")
 //    void connectionTest() throws Exception {
 //        // socket connect get test
-//        mock.perform(MockMvcRequestBuilders.get("/socket/room/connect")
+//        mock.perform(MockMvcRequestBuilders.get("/socket/connect")
 //                        .content("connected")
 //                        .contentType(MediaType.APPLICATION_JSON))
 //                .andExpect(MockMvcResultMatchers.status().isOk());
