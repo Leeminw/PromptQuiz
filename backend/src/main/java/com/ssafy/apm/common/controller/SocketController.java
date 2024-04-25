@@ -7,6 +7,8 @@ import com.ssafy.apm.common.dto.request.GameChatDto;
 import com.ssafy.apm.common.dto.request.GameReadyDto;
 import com.ssafy.apm.common.dto.response.*;
 import com.ssafy.apm.common.util.TimerGame;
+import com.ssafy.apm.game.service.GameService;
+import com.ssafy.apm.gamequiz.service.GameQuizService;
 import com.ssafy.apm.quiz.service.QuizService;
 
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -25,9 +28,12 @@ import java.util.*;
 @CrossOrigin(origins = {"*"}, methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.POST}, maxAge = 6000)
 public class SocketController {
 
-    private final SimpMessagingTemplate template;
+    private final GameService gameService;
     private final QuizService quizService;
+    private final GameQuizService gameQuizService;
 
+    private final SimpMessagingTemplate template;
+    
     // 현재 게임 진행중인 리스트 (max_time 초 대기)
     private static final HashMap<Long, TimerGame> gameStartList = new HashMap<>();
 
@@ -147,18 +153,21 @@ public class SocketController {
     // (게임 시작) 스케쥴러에 게임을 등록하고 준비 메세지 전송
     @MessageMapping("/game/start")
     public void gameStart(@Payload GameReadyDto ready) {
-        // 현재 게임방에 등록되어 있지 않다면 등록시키기
+        // 게임방에 등록되어 있지 않다면 등록시키기
         if (!gameReadyList.containsKey(ready.getGameId())) {
             TimerGame newGame = new TimerGame(ready.getGameId(), ready.getUuid(), 0, 10, 0);
-            gameReadyList.put(ready.getGameId(), newGame);
 
-            //게임을 시작하면서 라운드 증가시키기
-            /*
-                라운드 증가시키는 로직 필요 (redis)
-                game.round = repository.getRound()
-            */
+            // 게임 보기 생성
+            gameQuizService.createAnswerGameQuiz(ready.getGameId());
 
+            // 게임 라운드 증가 (1라운드부터 시작)
+            newGame.round = gameService.updateGameRoundCnt(ready.getGameId());
+            
+            // 게임 시작 메세지 전달
             sendGameReadyMessage(newGame);
+            
+            // 스케쥴러 시작
+            gameReadyList.put(ready.getGameId(), newGame);
         }
     }
 
@@ -182,14 +191,11 @@ public class SocketController {
 
     // (라운드 종료) 누군가 정답을 맞추거나 timeout일 경우 라운드 종료 처리
     public void sendGameEndMessage(TimerGame game) {
-        /*
-            라운드 증가시키는 로직 필요 (redis)
-            game.round = repository.getRound()
-            game.quizId = repository.getRound()
-            
-            이 부분에서 quiz의 아이디가 전부 소진됐다면 result로 넘어가는 로직이 들어가야 합니다.
-            sendGameResultMessage()
-        */
+        // 해당 게임 라운드 증가
+        game.round = gameService.updateGameRoundCnt(game.gameId);
+        
+        // 만약 라운드가 음수라면 전체 게임 종료
+        if(game.round < 0) sendGameResultMessage(game);
 
         // 전체 사용자에게 라운드 종료 알림 보내기 (다음 라운드 증가)
         GameSystemContentDto temp = new GameSystemContentDto(game.round, list);
@@ -203,6 +209,13 @@ public class SocketController {
         /*
             여기에는 전체 점수를 통해 user의 랭킹 점수를 올리는 코드가 들어가야 합니다.
         */
+        
+        // 일단 게임 스케쥴러 종료
+        gameStartList.remove(game.gameId);
+
+        // 혹시 모르니 EndList와 ReadyList에서도 삭제
+        gameEndList.remove(game.gameId);
+        gameReadyList.remove(game.gameId);
 
         // 게임이 종료됐으면 전체 사용자의 점수 list를 반환해주기
         GameSystemContentDto temp = new GameSystemContentDto(0, list);
