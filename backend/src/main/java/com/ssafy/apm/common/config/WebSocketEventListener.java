@@ -16,7 +16,7 @@ public class WebSocketEventListener {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
 
     @EventListener
-    public void  handleWebSocketConnectListener(SessionConnectedEvent event) {
+    public void handleWebSocketConnectListener(SessionConnectedEvent event) {
         logger.info("Received a new web socket connection(event: " + event + ")");
     }
 

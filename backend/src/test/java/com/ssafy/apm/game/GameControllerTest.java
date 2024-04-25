@@ -53,6 +53,20 @@
 //                        .content(requestBody)
 //                        .contentType(MediaType.APPLICATION_JSON))
 //                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.success").value(true))
+//                .andExpect(jsonPath("$.data[0].id").value(response.get(0).getId()))
+//                .andExpect(jsonPath("$.data[0].channelId").value(response.get(0).getChannelId()))
+//                .andExpect(jsonPath("$.data[0].type").value(response.get(0).getType()))
+//                .andExpect(jsonPath("$.data[0].style").value(response.get(0).getStyle()))
+//                .andExpect(jsonPath("$.data[0].code").value(response.get(0).getCode()))
+//                .andExpect(jsonPath("$.data[0].tit+le").value(response.get(0).getTitle()))
+//                .andExpect(jsonPath("$.data[0].password").value(response.get(0).getPassword()))
+//                .andExpect(jsonPath("$.data[0].status").value(response.get(0).getStatus()))
+//                .andExpect(jsonPath("$.data[0].isTeam").value(response.get(0).getIsTeam()))
+//                .andExpect(jsonPath("$.data[0].curRound").value(response.get(0).getCurRound()))
+//                .andExpect(jsonPath("$.data[0].rounds").value(response.get(0).getRounds()))
+//                .andExpect(jsonPath("$.data[0].curPlayers").value(response.get(0).getCurPlayers()))
+//                .andExpect(jsonPath("$.data[0].maxPlayers").value(response.get(0).getMaxPlayers()))
 //                .andExpect((content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))).andDo(print());
 //    }
 //

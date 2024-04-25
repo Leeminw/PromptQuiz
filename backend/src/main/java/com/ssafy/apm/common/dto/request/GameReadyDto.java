@@ -12,6 +12,6 @@ public class GameReadyDto {
     // 게임방 uuid
     private String uuid;
 
-    // 퀴즈 아이디
-    private Long quizId;
+    // 퀴즈 라운드
+    private Integer round;
 }
