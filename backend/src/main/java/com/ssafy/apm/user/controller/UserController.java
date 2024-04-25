@@ -20,48 +20,49 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createUser(@RequestBody UserCreateRequestDto requestDto){
+    public ResponseEntity<?> createUser(@RequestBody UserCreateRequestDto requestDto) {
         UserDetailResponseDto responseDto = userService.createUser(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success(responseDto));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody UserLoginRequestDto requestDto){
+    public ResponseEntity<?> loginUser(@RequestBody UserLoginRequestDto requestDto) {
         UserLoginResponseDto responseDto = userService.loginUser(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }
+
     @GetMapping("/logout")
-    public ResponseEntity<?> logoutUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader){
+    public ResponseEntity<?> logoutUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
         userService.logoutUser(authorizationHeader);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("deleted"));
     }
 
     @GetMapping("/exist")
-    public ResponseEntity<?> isExistUser(@RequestParam String userName){
+    public ResponseEntity<?> isExistUser(@RequestParam String userName) {
         Boolean response = userService.isExistUserName(userName);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
 
     @GetMapping("")
-    public ResponseEntity<?> getUserInfo(){
+    public ResponseEntity<?> getUserInfo() {
         UserDetailResponseDto responseDto = userService.readUser();
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<?> updateProfile(@RequestBody Map<String,String> requestBody){
-        UserDetailResponseDto responseDto =  userService.updateProfile(requestBody.get("profileUrl"));
+    public ResponseEntity<?> updateProfile(@RequestBody Map<String, String> requestBody) {
+        UserDetailResponseDto responseDto = userService.updateProfile(requestBody.get("profileUrl"));
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }
 
     @PutMapping("/status-message")
-    public ResponseEntity<?> updateStatusMessage(@RequestBody Map<String,String> requestBody ){
+    public ResponseEntity<?> updateStatusMessage(@RequestBody Map<String, String> requestBody) {
         UserDetailResponseDto responseDto = userService.updateStatusMessage(requestBody.get("message"));
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }
 
     @PutMapping("/score")
-    public ResponseEntity<?> updateScore(@RequestBody UserScoreUpdateRequestDto requestDto){
+    public ResponseEntity<?> updateScore(@RequestBody UserScoreUpdateRequestDto requestDto) {
         UserDetailResponseDto responseDto = userService.updateUserScore(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }

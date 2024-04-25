@@ -16,8 +16,6 @@ import org.springframework.data.redis.core.index.Indexed;
 @RedisHash(value = "game")
 public class GameEntity {
 
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "id")
     @Id
     private Long id;
     @Indexed
@@ -34,7 +32,7 @@ public class GameEntity {
     private Integer curPlayers;
     private Integer maxPlayers;
 
-    public void updateId(Long id){
+    public void updateId(Long id) {
         this.id = id;
     }
 
@@ -45,7 +43,7 @@ public class GameEntity {
         this.style = dto.getStyle();
         this.code = dto.getCode();
         this.title = dto.getTitle();
-        if( dto.getPassword()!=null ) this.password = dto.getPassword();
+        if (dto.getPassword() != null) this.password = dto.getPassword();
         this.status = dto.getStatus();
         this.isTeam = dto.getIsTeam();
         this.curRound = dto.getCurRound();

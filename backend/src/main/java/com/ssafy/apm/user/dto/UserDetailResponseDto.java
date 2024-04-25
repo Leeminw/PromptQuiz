@@ -26,7 +26,7 @@ public class UserDetailResponseDto {
     private LocalDateTime created_date;
     private LocalDateTime updated_date;
 
-    public UserDetailResponseDto(User user){
+    public UserDetailResponseDto(User user) {
         this.userId = user.getId();
         this.userName = user.getUserName();
         this.nickName = user.getNickName();
