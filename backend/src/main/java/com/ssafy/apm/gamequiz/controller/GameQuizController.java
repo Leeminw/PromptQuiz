@@ -18,9 +18,9 @@ public class GameQuizController {
 
     private final GameQuizService gameQuizService;
 
-    @GetMapping("")
-    public ResponseEntity<ResponseData<?>> getGameQuiz() {
-        Boolean response = gameQuizService.createAnswerGameQuiz(1L);
+    @GetMapping("/{gameId}")
+    public ResponseEntity<ResponseData<?>> getGameQuiz(@PathVariable Long gameId) {
+        Boolean response = gameQuizService.createAnswerGameQuiz(gameId);
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success(response));
     }
 }
