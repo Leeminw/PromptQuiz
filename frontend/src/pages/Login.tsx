@@ -14,6 +14,7 @@ const LoginPage = ({ movePage }: { movePage: () => void }) => {
 
   const handleClick = (id: number) => {
     setActivateBtn((prev) => ({ ...prev, [id]: true }));
+    console.log(activateBtn);
     setTimeout(() => {
       setActivateBtn((prev) => ({ ...prev, [id]: false }));
     }, 400);
@@ -38,6 +39,7 @@ const LoginPage = ({ movePage }: { movePage: () => void }) => {
         console.log(loginForm);
         const { data } = await UserApi.login(loginForm);
         localStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem('refreshToken', data.refreshToken);
         alert('로그인 완료!');
         setMoveBtn(false);
         setMoveInput(false);

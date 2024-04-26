@@ -2,6 +2,7 @@ import React from 'react';
 import App from '../App';
 import ChannelSelectPage from '../pages/ChannelSelect';
 import MainPage from '../pages/Main';
+import GamePage from '../pages/Game';
 
 const RouterInfo = [
   {
@@ -13,12 +14,17 @@ const RouterInfo = [
         element: <MainPage />,
         label: 'main',
       },
+      {
+        path: '/channel',
+        element: <ChannelSelectPage />,
+        label: 'channel',
+      },
+      {
+        path: '/game',
+        element: <GamePage />,
+        label: 'game',
+      },
     ],
-  },
-  {
-    path: '/channel',
-    element: <ChannelSelectPage />,
-    label: 'channel',
   },
 ];
 
