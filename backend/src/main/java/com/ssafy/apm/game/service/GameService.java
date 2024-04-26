@@ -17,7 +17,10 @@ public interface GameService {
     List<GameGetResponseDto> getGameList(Long channelId);
 
     GameGetResponseDto getGameInfo(Long gameId);
+
     GameGetResponseDto updateGameInfo(GameUpdateRequestDto gameUpdateRequestDto);
-    Integer updateGameRoundCnt(Long gameId);
+
+    Integer updateGameRoundCnt(Long gameId, Boolean flag);
+
     Long deleteGame(Long gameId);
 }
