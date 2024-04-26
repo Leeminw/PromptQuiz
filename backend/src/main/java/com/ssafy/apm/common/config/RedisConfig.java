@@ -1,4 +1,4 @@
-package com.ssafy.apm.config;
+package com.ssafy.apm.common.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +20,7 @@ public class RedisConfig {
 
     @Value("${spring.data.redis.port}")
     private int port;
+
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         return new LettuceConnectionFactory(host, port);

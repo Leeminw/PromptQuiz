@@ -30,7 +30,7 @@ public class GameUserDetailResponseDto {
     private String team;
     private Integer ranking;
 
-    public GameUserDetailResponseDto(GameUserEntity entity){
+    public GameUserDetailResponseDto(GameUserEntity entity) {
         this.userId = entity.getUserId();
         this.gameUserId = entity.getId();
         this.gameId = entity.getGameId();
@@ -41,7 +41,7 @@ public class GameUserDetailResponseDto {
         this.ranking = entity.getRanking();
     }
 
-    public void setUser(User entity){
+    public void setUser(User entity) {
         this.userName = entity.getUserName();
         this.nickName = entity.getNickName();
         this.picture = entity.getPicture();

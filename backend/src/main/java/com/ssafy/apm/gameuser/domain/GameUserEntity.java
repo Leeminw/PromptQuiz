@@ -10,7 +10,7 @@ import org.springframework.data.redis.core.index.Indexed;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@RedisHash(value = "game-user")
+@RedisHash(value = "game-user", timeToLive = 600)
 public class GameUserEntity {
     @Id
     private Long id;

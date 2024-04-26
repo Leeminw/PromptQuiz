@@ -2,6 +2,7 @@ package com.ssafy.apm.userchannel.controller;
 
 import com.ssafy.apm.common.domain.ResponseData;
 import com.ssafy.apm.user.dto.UserDetailResponseDto;
+import com.ssafy.apm.userchannel.dto.response.UserChannelGetResponseDto;
 import com.ssafy.apm.userchannel.service.UserChannelService;
 import com.ssafy.apm.userchannel.service.UserChannelServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,22 @@ public class UserChannelController {
     @GetMapping("/userChannelList/{channelId}")
     public ResponseEntity<ResponseData<?>> getUserChannelList(@PathVariable(name = "channelId") Long channelId) {
         List<UserDetailResponseDto> response = userChannelService.getUserChannelList(channelId);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
+    }
+
+//    채널 입장
+//    로그인 필요
+    @PostMapping("/{channelId}")
+    public ResponseEntity<ResponseData<?>> enterUserChannel(@PathVariable(name = "channelId") Long channelId) {
+        UserChannelGetResponseDto response = userChannelService.enterUserChannel(channelId);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
+    }
+
+//    채널 퇴장
+//    로그인 필요
+    @DeleteMapping("")
+    public ResponseEntity<ResponseData<?>> exitUserChannel() {
+        Long response = userChannelService.exitUserChannel();
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
 }
