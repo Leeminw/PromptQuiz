@@ -35,48 +35,21 @@ module.exports = {
           to: {
             transform: 'translateY(0)',
           },
-          '0%': {
+          '0%, 14.9%, 30%, 44.9%, 60%, 74.9%': {
             opacity: '0',
           },
-          '14.9%': {
-            opacity: '0',
-          },
-          '15%': {
-            opacity: '1',
-          },
-          '29.9%': {
-            opacity: '1',
-          },
-          '30%': {
-            opacity: '0',
-          },
-          '44.9%': {
-            opacity: '0',
-          },
-          '45%': {
-            opacity: '1',
-          },
-          '59.9%': {
-            opacity: '1',
-          },
-          '60%': {
-            opacity: '0',
-          },
-          '74.9%': {
-            opacity: '0',
-          },
-          '75%': {
+          '15%, 29.9%, 45%, 59.9%, 75%': {
             opacity: '1',
           },
         },
         logininput: {
-          '0%':{
+          '0%': {
             transform: 'translateX(0)',
-            opacity:0,
+            opacity: 0,
           },
-          '0.1%':{
+          '0.1%': {
             transform: 'translateX(-100vw)',
-            opacity:1,
+            opacity: 1,
           },
           '50%': {
             transform: 'translateX(-100vw)',
@@ -86,13 +59,13 @@ module.exports = {
           },
         },
         loginbtn: {
-          '0%':{
+          '0%': {
             transform: 'translateY(0)',
-            opacity:0,
+            opacity: 0,
           },
-          '0.1%':{
+          '0.1%': {
             transform: 'translateY(100vh)',
-            opacity:1,
+            opacity: 1,
           },
           '60%': {
             transform: 'translateY(100vh)',
@@ -101,11 +74,21 @@ module.exports = {
             transform: 'translateY(0)',
           },
         },
+        clickbtn: {
+          '0%, 100%': { filter: 'brightness(1)' },
+          '50%': { filter: 'brightness(1.25)' },
+        },
+        clickwhitebtn: {
+          '0%, 100%': { filter: 'brightness(1)' },
+          '50%': { filter: 'brightness(0.8)' },
+        },
       },
       animation: {
         logo: 'logo 2s ease-in-out',
         logininput: 'logininput 2.5s ease-out',
         loginbtn: 'loginbtn 2.5s ease-out',
+        clickbtn: 'clickbtn 0.1s linear infinite',
+        clickwhitebtn: 'clickwhitebtn 0.1s linear infinite',
       },
     },
   },
@@ -146,10 +129,7 @@ module.exports = {
           borderImageRepeat: 'stretch',
         },
         '.btn-mint': {
-          borderTopWidth: '10px',
-          borderBottomWidth: '10px',
-          borderLeftWidth: '14px',
-          borderRightWidth: '14px',
+          borderWidth: '0.3rem',
           borderImageSource: "url('../public/ui/border-mint-btn.png')",
           borderImageSlice: '14%',
           borderImageOutset: '0.25rem',
@@ -159,10 +139,7 @@ module.exports = {
           fontWeight: '800',
         },
         '.btn-white': {
-          borderTopWidth: '10px',
-          borderBottomWidth: '10px',
-          borderLeftWidth: '14px',
-          borderRightWidth: '14px',
+          borderWidth: '0.3rem',
           borderImageSource: "url('../public/ui/border-white.png')",
           borderImageSlice: '14%',
           borderImageOutset: '0.25rem',
@@ -172,11 +149,8 @@ module.exports = {
           fontWeight: '800',
         },
         '.btn-white-bdmint': {
-          borderTopWidth: '10px',
-          borderBottomWidth: '10px',
-          borderLeftWidth: '14px',
-          borderRightWidth: '14px',
-          borderImageSource: "url('../public/ui/border-mint.png')",
+          borderWidth: '0.3rem',
+          borderImageSource: "url('../public/ui/border-white-btn.png')",
           borderImageSlice: '14%',
           borderImageOutset: '0.25rem',
           borderImageRepeat: 'stretch',
