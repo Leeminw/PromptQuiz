@@ -1,8 +1,6 @@
 package com.ssafy.apm.common.controller;
 
-import com.ssafy.apm.common.domain.ResponseData;
 import com.ssafy.apm.common.dto.request.ChannelChatDto;
-import com.ssafy.apm.common.dto.request.GameAnswerRequestDto;
 import com.ssafy.apm.common.dto.request.GameChatDto;
 import com.ssafy.apm.common.dto.request.GameReadyDto;
 import com.ssafy.apm.common.dto.response.*;
@@ -12,13 +10,10 @@ import com.ssafy.apm.gamequiz.service.GameQuizService;
 import com.ssafy.apm.quiz.service.QuizService;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -73,7 +68,7 @@ public class SocketController {
             } else {
                 // 각각의 시간초 보내주기
                 template.convertAndSend("/sub/game?uuid=" + game.uuid
-                        , new GameResponseDto("game", GameSystemResponseDto.timer(game.time)));
+                        , new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round)));
 
             }
         }
@@ -101,7 +96,7 @@ public class SocketController {
             } else {
                 // 각각의 시간초 보내주기
                 template.convertAndSend("/sub/game?uuid=" + game.uuid
-                        , new GameResponseDto("game", GameSystemResponseDto.timer(game.time)));
+                        , new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round)));
 
             }
         }
@@ -123,13 +118,13 @@ public class SocketController {
                 game.time = 0;
                 gameReadyList.put(game.gameId, game);
                 gameEndList.remove(game.gameId);
-
+                
                 // 준비 메세지 전송
                 sendGameReadyMessage(game);
             } else {
                 // 각각의 시간초 보내주기
                 template.convertAndSend("/sub/game?uuid=" + game.uuid
-                        , new GameResponseDto("game", GameSystemResponseDto.timer(game.time)));
+                        , new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round)));
 
             }
         }
@@ -143,15 +138,47 @@ public class SocketController {
                 .getUuid(), chatMessage);
     }
 
-    // 게임방에서 입력 받은 메세지 전송
+    // -------------------- 플레이어 채팅 입력 관련 컨트롤러  --------------------
+    // (플레이어 입력) 플레이어는 채팅 or 정답을 입력한다
     @MessageMapping("/game/chat/send")
-    public void sendGameChatMessage(@Payload GameChatDto chatMessage) {
+    public void registData(@Payload GameChatDto chatMessage) {
+
+        TimerGame game = gameStartList.get(chatMessage.getGameId());
+
+        // 입력이 들어왔는데 만약 현재 라운드와 전혀 다른 입력이 들어왔을 때는 채팅만 전파하기
+        if (game != null && chatMessage.getRound().equals(game.round)) {
+            // 일단 정답 확인 작업읋 한다
+            // 입력 메세지를 먼저 확인한 이후 정답일 경우에는 result에 true가 된다.
+            GameAnswerCheck check = quizService.checkAnswer(chatMessage);
+
+            if (check.getResult()) {
+                // (정답) 정답으로 게임 종료 처리
+                game.time = -game.maxTime;
+                sendGameEndMessage(game);
+
+            } else {
+                // (오답) 타입마다 처리
+                switch (check.getType()) {
+                    case "객관식", "순서":
+                        template.convertAndSend("/sub/game?uuid=" + chatMessage.
+                                getUuid(), new GameResponseDto("wrongSignal", chatMessage.getUserId()));
+                        break;
+                    case "유사도":
+                        // 게임 유사도 목록 업데이트 이후 모든 사용자에게 뿌려주기
+                        game.addSimilarity(chatMessage.getContent(), check.getSimilarity());
+                        System.out.println(game.simList);
+                        template.convertAndSend("/sub/game?uuid=" + chatMessage.
+                                getUuid(), new GameResponseDto("similarity", game.simList));
+                        break;
+                }
+            }
+        }
+
+        // 정답이든 아니든 일단 채팅은 전체 전파하기
         template.convertAndSend("/sub/game?uuid=" + chatMessage.
                 getUuid(), new GameResponseDto("chat", chatMessage));
     }
 
-
-    // -------------------- 게임 진행 관련 브로커  --------------------
     // test dump list
     List<PlayerDto> list = Arrays.asList(
             new PlayerDto("test1", 10, false),
@@ -172,6 +199,14 @@ public class SocketController {
 
             // 게임 라운드 증가 (1라운드부터 시작)
             newGame.round = gameService.updateGameRoundCnt(ready.getGameId(), true);
+
+            // 여기서 다음 게임에 대한 유사도 목록을 넣어줘야 합니다.
+            List<String> list = new ArrayList<>();
+            list.add("명사");
+            list.add("동사");
+
+            // 받아온 품사 목록으로 초기화 시키기
+            newGame.initSimilarity(list);
 
             // 게임 시작 메세지 전달
             sendGameReadyMessage(newGame);
@@ -204,7 +239,18 @@ public class SocketController {
         game.round = gameService.updateGameRoundCnt(game.gameId, false);
 
         // 만약 라운드가 음수라면 전체 게임 종료
-        if (game.round < 0) sendGameResultMessage(game);
+        if (game.round < 0) {
+            sendGameResultMessage(game);
+            return;
+        }
+
+        // 여기서 다음 게임에 대한 유사도 목록을 넣어줘야 합니다.
+        List<String> tempList = new ArrayList<>();
+        tempList.add("명사");
+        tempList.add("동사");
+
+        // 받아온 품사 목록으로 초기화 시키기
+        game.initSimilarity(tempList);
 
         // 전체 사용자에게 라운드 종료 알림 보내기 (다음 라운드 증가)
         GameSystemContentDto temp = new GameSystemContentDto(game.round, list);
@@ -231,30 +277,5 @@ public class SocketController {
 
         template.convertAndSend("/sub/game?uuid=" + game.uuid,
                 new GameResponseDto("game", GameSystemResponseDto.result(temp)));
-    }
-
-    // -------------------- 플레이어 정답 입력 관련 컨트롤러  --------------------
-    // (플레이어 입력) 각 플레이어가 입력한 정답 확인
-    @PostMapping("/api/v1/game/answer")
-    public ResponseEntity<?> registAnswer(@RequestBody GameAnswerRequestDto answer) {
-        // 초기값 설정은 false로 설정
-        GameAnswerResponseDto response = quizService.checkAnswer(answer);
-        response.setResult(true);
-
-        // response의 결과가 true일 경우 정답
-        if (response.getResult()) {
-            TimerGame game = gameStartList.get(answer.getGameId());
-            game.time = -game.maxTime;
-
-            // 미리 종료 메세지를 보내 다른 사용자가 입력 못하게 하기
-            sendGameEndMessage(game);
-        }
-
-        return sendResponse(response, HttpStatus.OK);
-    }
-
-    // response 객체 생성 메서드
-    public ResponseEntity<?> sendResponse(Object response, HttpStatus status) {
-        return ResponseEntity.status(status).body(ResponseData.success(response));
     }
 }
