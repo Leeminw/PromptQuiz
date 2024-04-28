@@ -16,7 +16,7 @@ public class PromptRequestDto {
     private Long id;
     private String url;
     private String style;
-    private Integer group;
+    private String groupCode;
 
     private String engSentence;
     private String engSubject;
@@ -36,8 +36,8 @@ public class PromptRequestDto {
         return Prompt.builder()
                 .id(this.id)
                 .url(this.url)
-                .group(this.group)
                 .style(this.style)
+                .groupCode(this.groupCode)
                 .engSentence(this.engSentence)
                 .engSubject(this.engSubject)
                 .engObject(this.engObject)

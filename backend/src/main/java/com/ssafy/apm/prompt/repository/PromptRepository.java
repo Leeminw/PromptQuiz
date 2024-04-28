@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface PromptRepository extends JpaRepository<Prompt, Long> {
     Optional<List<Prompt>> findAllByStyle(String style);
-    Optional<List<Prompt>> findAllByGroup(Integer group);
+    Optional<List<Prompt>> findAllByGroupCode(String groupCode);
 
     @Query(value = "SELECT * FROM prompt ORDER BY RAND() LIMIT 1", nativeQuery = true)
     Optional<Prompt> extractRandomPrompt();
@@ -20,6 +20,7 @@ public interface PromptRepository extends JpaRepository<Prompt, Long> {
     @Query(value = "SELECT * FROM prompt ORDER BY RAND() LIMIT :limit", nativeQuery = true)
     Optional<List<Prompt>> extractRandomPrompts(@Param("limit") Integer limit);
 
-    @Query(value = "SELECT * FROM prompt WHERE group = :group ORDER BY RAND() LIMIT :limit", nativeQuery = true)
-    Optional<List<Prompt>> extractRandomPromptsByGroup(@Param("group") Integer group, @Param("limit") Integer limit);
+    @Query(value = "SELECT * FROM prompt WHERE group_code = :groupCode ORDER BY RAND() LIMIT :limit", nativeQuery = true)
+    Optional<List<Prompt>> extractRandomPromptsByGroupCode(@Param("groupCode") String groupCode, @Param("limit") Integer limit);
+
 }

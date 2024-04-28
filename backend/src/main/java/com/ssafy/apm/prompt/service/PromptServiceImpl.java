@@ -60,9 +60,9 @@ public class PromptServiceImpl implements PromptService {
     }
 
     @Override
-    public List<PromptResponseDto> filterPromptsByGroup(Integer group) {
-        List<Prompt> prompts = promptRepository.findAllByGroup(group).orElseThrow(
-                () -> new PromptNotFoundException(group.toString()));
+    public List<PromptResponseDto> filterPromptsByGroupCode(String groupCode) {
+        List<Prompt> prompts = promptRepository.findAllByGroupCode(groupCode).orElseThrow(
+                () -> new PromptNotFoundException(groupCode));
         return prompts.stream().map(PromptResponseDto::new).toList();
     }
 
@@ -82,11 +82,10 @@ public class PromptServiceImpl implements PromptService {
     }
 
     @Override
-    public List<PromptResponseDto> extractRandomPromptsByGroup(Integer group, Integer limit) {
-        List<Prompt> prompts = promptRepository.extractRandomPromptsByGroup(group, limit).orElseThrow(
+    public List<PromptResponseDto> extractRandomPromptsByGroupCode(String groupCode, Integer limit) {
+        List<Prompt> prompts = promptRepository.extractRandomPromptsByGroupCode(groupCode, limit).orElseThrow(
                 () -> new PromptNotFoundException("No entities exists!"));
         return prompts.stream().map(PromptResponseDto::new).toList();
     }
-
 
 }

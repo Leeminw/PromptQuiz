@@ -52,25 +52,28 @@ public class PromptController {
     @GetMapping("/api/v1/prompt/search")
     public ResponseEntity<ResponseData<?>> searchPrompts(
             @RequestParam(value = "style", required = false) String style,
-            @RequestParam(value = "group", required = false) Integer group) {
+            @RequestParam(value = "groupCode", required = false) String groupCode) {
         List<PromptResponseDto> responseDto = List.of();
         if (style != null) responseDto = promptService.filterPromptByStyle(style);
-        else if (group != null) responseDto = promptService.filterPromptsByGroup(group);
+        else if (groupCode != null) responseDto = promptService.filterPromptsByGroupCode(groupCode);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }
 
     @GetMapping("/api/v1/prompt/random")
     public ResponseEntity<ResponseData<?>> randomPrompts(
             @RequestParam(value = "limit", required = false) Integer limit,
-            @RequestParam(value = "group", required = false) Integer group) {
-        if (group == null && limit == null) {
+            @RequestParam(value = "groupCode", required = false) String groupCode) {
+        if (groupCode == null && limit == null) {
             PromptResponseDto responseDto = promptService.extractRandomPrompt();
             return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
         }
         List<PromptResponseDto> responseDto = List.of();
-        if (group == null && limit != null) responseDto = promptService.extractRandomPrompts(limit);
-        else if (group != null && limit == null) responseDto = promptService.extractRandomPromptsByGroup(5, group);
-        else if (group != null && limit != null) responseDto = promptService.extractRandomPromptsByGroup(limit, group);
+        if (groupCode == null && limit != null)
+            responseDto = promptService.extractRandomPrompts(limit);
+        else if (groupCode != null && limit == null)
+            responseDto = promptService.extractRandomPromptsByGroupCode(groupCode, 5);
+        else if (groupCode != null && limit != null)
+            responseDto = promptService.extractRandomPromptsByGroupCode(groupCode, limit);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }
 

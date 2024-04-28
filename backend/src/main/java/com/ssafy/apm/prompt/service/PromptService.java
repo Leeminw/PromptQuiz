@@ -17,11 +17,11 @@ public interface PromptService {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     List<PromptResponseDto> filterPromptByStyle(String style);
-    List<PromptResponseDto> filterPromptsByGroup(Integer group);
+    List<PromptResponseDto> filterPromptsByGroupCode(String groupCode);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     PromptResponseDto extractRandomPrompt();
     List<PromptResponseDto> extractRandomPrompts(Integer limit);
-    List<PromptResponseDto> extractRandomPromptsByGroup(Integer group, Integer limit);
+    List<PromptResponseDto> extractRandomPromptsByGroupCode(String groupCode, Integer limit);
 
 }

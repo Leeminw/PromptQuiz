@@ -25,7 +25,7 @@ public class Prompt {
     private Long id;
     private String url;
     private String style;
-    private Integer group;
+    private String groupCode;
 
     private String engSentence;
     private String engSubject;
@@ -48,8 +48,8 @@ public class Prompt {
 
     public Prompt update(PromptRequestDto requestDto) {
         if (requestDto.getUrl() != null) this.url = requestDto.getUrl();
-        if (requestDto.getGroup() != null) this.group = requestDto.getGroup();
         if (requestDto.getStyle() != null) this.style = requestDto.getStyle();
+        if (requestDto.getGroupCode() != null) this.groupCode = requestDto.getGroupCode();
 
         if (requestDto.getEngAdjective() != null) this.engAdjective = requestDto.getEngAdjective();
         if (requestDto.getEngSentence() != null) this.engSentence = requestDto.getEngSentence();

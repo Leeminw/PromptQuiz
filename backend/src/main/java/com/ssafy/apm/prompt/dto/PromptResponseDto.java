@@ -16,7 +16,7 @@ public class PromptResponseDto {
     private Long id;
     private String url;
     private String style;
-    private Integer group;
+    private String groupCode;
 
     private String engSentence;
     private String engSubject;
@@ -38,8 +38,8 @@ public class PromptResponseDto {
     public PromptResponseDto(Prompt entity) {
         this.id = entity.getId();
         this.url = entity.getUrl();
-        this.group = entity.getGroup();
         this.style = entity.getStyle();
+        this.groupCode = entity.getGroupCode();
 
         this.engAdjective = entity.getEngAdjective();
         this.engSentence = entity.getEngSentence();
