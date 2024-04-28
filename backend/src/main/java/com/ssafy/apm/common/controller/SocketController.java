@@ -146,12 +146,12 @@ public class SocketController {
 
         // 입력이 들어왔는데 만약 현재 라운드와 전혀 다른 입력이 들어왔을 때는 채팅만 전파하기
         if (game != null && chatMessage.getRound().equals(game.round)) {
-            // 일단 정답 확인 작업읋 한다
             // 입력 메세지를 먼저 확인한 이후 정답일 경우에는 result에 true가 된다.
+            // 빈칸 주관식의 경우 유사도가 함께 포함된다.
             GameAnswerCheck check = quizService.checkAnswer(chatMessage);
 
             if (check.getResult()) {
-                // (정답) 정답으로 게임 종료 처리
+                // (정답) 정답으로 라운드 종료 처리
                 game.time = -game.maxTime;
                 sendRoundEndMessage(game);
 
@@ -220,7 +220,7 @@ public class SocketController {
     // (라운드 대기) 라운드 대기 메세지 전송
     public void sendRoundReadyMessage(GameRoomStatus game) {
         // ready 상태에서는 현재 어떤 라운드인지 알려줘야 한다.
-        GameSystemContentDto temp = new GameSystemContentDto(game.round, null);
+        GameSystemContentDto temp = new GameSystemContentDto(game.round);
 
         template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
             new GameResponseDto("game", GameSystemResponseDto.ready(temp)));
@@ -228,7 +228,7 @@ public class SocketController {
 
     // (라운드 시작) 라운드 시작 메세지 전송
     public void sendRoundStartMessage(GameRoomStatus game) {
-        GameSystemContentDto temp = new GameSystemContentDto(game.round, null);
+        GameSystemContentDto temp = new GameSystemContentDto(game.round);
 
         template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
             new GameResponseDto("game", GameSystemResponseDto.start(temp)));
@@ -274,7 +274,7 @@ public class SocketController {
         gameReadyList.remove(game.gameId);
 
         // 게임이 종료됐으면 전체 사용자의 점수 list를 반환해주기
-        GameSystemContentDto temp = new GameSystemContentDto(0, list);
+        GameSystemContentDto temp = new GameSystemContentDto(list);
 
         template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
             new GameResponseDto("game", GameSystemResponseDto.result(temp)));

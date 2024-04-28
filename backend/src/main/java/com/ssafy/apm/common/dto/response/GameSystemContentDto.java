@@ -16,4 +16,14 @@ public class GameSystemContentDto {
 
     // (라운드 결과) 유저 리스트 , null 값 일 수 있음
     private List<PlayerDto> roundList;
+
+    public GameSystemContentDto(Integer round){
+        this.round = round;
+        this.roundList = null;
+    }
+
+    public GameSystemContentDto(List<PlayerDto> roundList){
+        this.round = 0;
+        this.roundList = roundList;
+    }
 }
