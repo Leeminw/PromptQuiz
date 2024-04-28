@@ -66,7 +66,7 @@ public class SocketController {
 
             } else {
                 // 각각의 시간초 보내주기
-                template.convertAndSend("/sub/game?uuid=" + game.uuid,
+                template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
                     new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round)));
             }
         }
@@ -95,7 +95,7 @@ public class SocketController {
                 sendRoundStartMessage(game);
             } else {
                 // 각각의 시간초 보내주기
-                template.convertAndSend("/sub/game?uuid=" + game.uuid,
+                template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
                     new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round)));
             }
         }
@@ -124,7 +124,7 @@ public class SocketController {
                 sendRoundReadyMessage(game);
             } else {
                 // 각각의 시간초 보내주기
-                template.convertAndSend("/sub/game?uuid=" + game.uuid,
+                template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
                     new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round)));
             }
         }
@@ -134,7 +134,7 @@ public class SocketController {
     // 채널에서 보내는 메세지
     @MessageMapping("/channel/chat/send")
     public void sendChannelChat(@Payload ChannelChatDto chatMessage) {
-        template.convertAndSend("/sub/channel?uuid=" + chatMessage
+        template.convertAndSend("/ws/sub/channel?uuid=" + chatMessage
             .getUuid(), chatMessage);
     }
 
@@ -160,14 +160,14 @@ public class SocketController {
                 switch (check.getType()) {
                     case 1, 2:
                         // 오답 여부 해당 사용자에게 알려주기
-                        template.convertAndSend("/sub/game?uuid=" + chatMessage.
+                        template.convertAndSend("/ws/sub/game?uuid=" + chatMessage.
                             getUuid(), new GameResponseDto("wrongSignal", chatMessage.getUserId()));
                         break;
                     case 4:
                         // 게임 유사도 목록 업데이트 이후 모든 사용자에게 뿌려주기
                         game.addSimilarity(chatMessage.getContent(), check.getSimilarity());
 
-                        template.convertAndSend("/sub/game?uuid=" + chatMessage.
+                        template.convertAndSend("/ws/sub/game?uuid=" + chatMessage.
                             getUuid(), new GameResponseDto("similarity", game.simList));
                         break;
                 }
@@ -175,7 +175,7 @@ public class SocketController {
         }
 
         // 정답이든 아니든 일단 채팅은 전체 전파하기
-        template.convertAndSend("/sub/game?uuid=" + chatMessage.
+        template.convertAndSend("/ws/sub/game?uuid=" + chatMessage.
             getUuid(), new GameResponseDto("chat", chatMessage));
     }
 
@@ -192,7 +192,8 @@ public class SocketController {
     public void sendRoundStartMessage(@Payload GameReadyDto ready) {
         // 게임방에 등록되어 있지 않다면 등록시키기
         if (!gameReadyList.containsKey(ready.getGameId())) {
-            GameRoomStatus newGame = new GameRoomStatus(ready.getGameId(), ready.getUuid(), 0, 10,0);
+            GameRoomStatus newGame = new GameRoomStatus(ready.getGameId(), ready.getUuid(), 0, 10,
+                0);
 
             // 게임 보기 생성
             gameQuizService.createAnswerGameQuiz(ready.getGameId());
@@ -221,7 +222,7 @@ public class SocketController {
         // ready 상태에서는 현재 어떤 라운드인지 알려줘야 한다.
         GameSystemContentDto temp = new GameSystemContentDto(game.round, null);
 
-        template.convertAndSend("/sub/game?uuid=" + game.uuid,
+        template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
             new GameResponseDto("game", GameSystemResponseDto.ready(temp)));
     }
 
@@ -229,7 +230,7 @@ public class SocketController {
     public void sendRoundStartMessage(GameRoomStatus game) {
         GameSystemContentDto temp = new GameSystemContentDto(game.round, null);
 
-        template.convertAndSend("/sub/game?uuid=" + game.uuid,
+        template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
             new GameResponseDto("game", GameSystemResponseDto.start(temp)));
     }
 
@@ -255,7 +256,7 @@ public class SocketController {
         // 전체 사용자에게 라운드 종료 알림 보내기 (다음 라운드 증가)
         GameSystemContentDto temp = new GameSystemContentDto(game.round, list);
 
-        template.convertAndSend("/sub/game?uuid=" + game.uuid,
+        template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
             new GameResponseDto("game", GameSystemResponseDto.end(temp)));
     }
 
@@ -275,7 +276,7 @@ public class SocketController {
         // 게임이 종료됐으면 전체 사용자의 점수 list를 반환해주기
         GameSystemContentDto temp = new GameSystemContentDto(0, list);
 
-        template.convertAndSend("/sub/game?uuid=" + game.uuid,
+        template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
             new GameResponseDto("game", GameSystemResponseDto.result(temp)));
     }
 }

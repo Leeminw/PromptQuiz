@@ -35,7 +35,9 @@ public class GameRoomStatus {
             // 각 PQ에 현재값을 넣고 size가 3이 될 때까지 줄여주기
             PriorityQueue<SimilarityResponseDto> temp = simList.get(i);
             temp.add(cur);
-            while (temp.size() > 3) {
+            
+            // 자기가 넣은 값에 대해서만 지우기
+            if(temp.size() > 3) {
                 temp.poll();
             }
         }
