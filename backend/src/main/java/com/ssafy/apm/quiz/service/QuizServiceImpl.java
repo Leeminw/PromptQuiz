@@ -31,24 +31,24 @@ public class QuizServiceImpl implements QuizService {
         GameAnswerCheck response = new GameAnswerCheck();
 
         // 퀴즈 타입 찾기
-        String type = "유사도";
+        int type = 4;
 
         switch (type) {
-            case "객관식":
+            case 1:
                 // 객관식 번호가 정답일 경우 true
-                response.setType("객관식");
+                response.setType(1);
                 response.setResult(answerQuizCheck(answer));
                 break;
-            case "유사도":
+            case 2:
+                // 순서가 맞을 경우 true
+                response.setType(2);
+                response.setResult(answerOrderCheck(answer));
+                break;
+            case 4:
                 // 유사도 측정 이후 90% 이상의 유사도일 경우 정답처리
-                response.setType("유사도");
+                response.setType(4);
                 response.setSimilarity(answerSimilarityCheck(answer));
                 response.setResult(response.getSimilarity() > 0.9);
-                break;
-            case "순서":
-                // 순서가 맞을 경우 true
-                response.setType("순서");
-                response.setResult(answerOrderCheck(answer));
                 break;
         }
 

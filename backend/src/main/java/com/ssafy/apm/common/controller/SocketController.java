@@ -159,12 +159,12 @@ public class SocketController {
             } else {
                 // (오답) 타입마다 처리
                 switch (check.getType()) {
-                    case "객관식", "순서":
+                    case 1, 2:
                         // 오답 여부 해당 사용자에게 알려주기
                         template.convertAndSend("/sub/game?uuid=" + chatMessage.
                                 getUuid(), new GameResponseDto("wrongSignal", chatMessage.getUserId()));
                         break;
-                    case "유사도":
+                    case 4:
                         // 게임 유사도 목록 업데이트 이후 모든 사용자에게 뿌려주기
                         game.addSimilarity(chatMessage.getContent(), check.getSimilarity());
 
