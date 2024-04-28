@@ -97,27 +97,29 @@ def generate_sentence():
                 category_id += 1
                 for eng_adjective, kor_adjective in zip(eng_adjectives, kor_adjectives):
                     for eng_adverb, kor_adverb in zip(eng_adverbs, kor_adverbs):
-                        eng_sentence = f'{eng_subject} {eng_verb} {eng_adjective} {eng_object} {eng_adverb}'
-                        kor_sentence = f'{kor_subject}이(가) {kor_adjective} {kor_object}을(를) {kor_adverb} {kor_verb}'
-                        sentences.append([
-                            eng_sentence, eng_subject, eng_verb, eng_object, eng_adjective, eng_adverb,
-                            kor_sentence, kor_subject, kor_verb, kor_object, kor_adjective, kor_adverb,
-                            category_id
-                        ])
-                        print(f'Category: {category_id} | Eng Sentence: {eng_sentence}')
-                        print(f'Category: {category_id} | Kor Sentence: {kor_sentence}\n')
+                        for style in ('anime', 'cartoon', 'realistic'):
+                            eng_sentence = f'{eng_subject} {eng_verb} {eng_adjective} {eng_object} {eng_adverb}'
+                            kor_sentence = f'{kor_subject}이(가) {kor_adjective} {kor_object}을(를) {kor_adverb} {kor_verb}'
+                            sentences.append([
+                                eng_sentence, eng_subject, eng_verb, eng_object, eng_adjective, eng_adverb,
+                                kor_sentence, kor_subject, kor_verb, kor_object, kor_adjective, kor_adverb,
+                                category_id, style
+                            ])
+                            print(f'Category: {category_id} | Style: {style} | Eng Sentence: {eng_sentence}')
+                            print(f'Category: {category_id} | Style: {style} | Kor Sentence: {kor_sentence}')
+                        print()
     return sentences
 
 
 def save_as_csv(sentences):
     # CSV 파일로 저장
     os.makedirs('datasets', exist_ok=True)
-    with open('datasets/sentences.csv', 'w', newline='', encoding='cp949') as file:
+    with open('datasets/sentences2.csv', 'w', newline='', encoding='cp949') as file:
         writer = csv.writer(file)
         writer.writerow([
             "eng_sentence", "eng_subject", "eng_verb", "eng_object", "eng_adjective", "eng_adverb",
             "kor_sentence", "kor_subject", "kor_verb", "kor_object", "kor_adjective", "kor_adverb",
-            "category_id"
+            "group_code", "style"
         ])
         writer.writerows(sentences)
 
