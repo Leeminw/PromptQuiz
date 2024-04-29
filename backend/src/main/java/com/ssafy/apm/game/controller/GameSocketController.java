@@ -1,10 +1,15 @@
 package com.ssafy.apm.game.controller;
 
-import com.ssafy.apm.common.dto.request.EnterUserDto;
-import com.ssafy.apm.common.dto.request.GameChatDto;
-import com.ssafy.apm.common.dto.request.GameReadyDto;
-import com.ssafy.apm.common.dto.response.*;
-import com.ssafy.apm.common.util.GameRoomStatus;
+import com.ssafy.apm.socket.dto.request.EnterUserDto;
+import com.ssafy.apm.socket.dto.request.GameChatDto;
+import com.ssafy.apm.socket.dto.request.GameReadyDto;
+import com.ssafy.apm.socket.dto.response.GameAnswerCheck;
+import com.ssafy.apm.socket.dto.response.GameResponseDto;
+import com.ssafy.apm.socket.dto.response.GameSystemContentDto;
+import com.ssafy.apm.socket.dto.response.GameSystemResponseDto;
+import com.ssafy.apm.socket.dto.response.GameTimerResponseDto;
+import com.ssafy.apm.socket.dto.response.PlayerDto;
+import com.ssafy.apm.socket.util.GameRoomStatus;
 import com.ssafy.apm.game.service.GameService;
 import com.ssafy.apm.gamequiz.service.GameQuizService;
 import com.ssafy.apm.quiz.service.QuizService;

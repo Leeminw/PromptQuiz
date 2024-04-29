@@ -1,4 +1,4 @@
-package com.ssafy.apm.common.dto.request;
+package com.ssafy.apm.socket.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,7 +1,7 @@
-package com.ssafy.apm.common.service;
+package com.ssafy.apm.socket.service;
 
-import com.ssafy.apm.common.domain.SessionEntity;
-import com.ssafy.apm.common.repository.SocketRepository;
+import com.ssafy.apm.socket.domain.SessionEntity;
+import com.ssafy.apm.socket.repository.SocketRepository;
 import com.ssafy.apm.user.domain.User;
 import com.ssafy.apm.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class SocketServiceImpl implements SocketService{
-
-    private final SocketRepository socketRepository;
     private final UserService userService;
+    private final SocketRepository socketRepository;
 
     @Override
     public void addSession(String sessionId) {
@@ -35,7 +34,7 @@ public class SocketServiceImpl implements SocketService{
     }
 
     @Override
-    public void editSession(String sessionId, String uuid, Integer type) {
+    public void editSession(String sessionId, Long uuid, Integer type) {
         // todo: 채널 이동이므로 상태 바꿔주기
     }
 }

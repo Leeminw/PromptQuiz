@@ -1,6 +1,6 @@
-package com.ssafy.apm.common.util;
+package com.ssafy.apm.socket.util;
 
-import com.ssafy.apm.common.dto.response.SimilarityResponseDto;
+import com.ssafy.apm.socket.dto.response.SimilarityResponseDto;
 
 import java.util.HashMap;
 import java.util.PriorityQueue;

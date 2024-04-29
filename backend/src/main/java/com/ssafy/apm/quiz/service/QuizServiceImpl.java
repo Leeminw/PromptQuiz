@@ -1,7 +1,7 @@
 package com.ssafy.apm.quiz.service;
 
-import com.ssafy.apm.common.dto.request.GameChatDto;
-import com.ssafy.apm.common.dto.response.GameAnswerCheck;
+import com.ssafy.apm.socket.dto.request.GameChatDto;
+import com.ssafy.apm.socket.dto.response.GameAnswerCheck;
 import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.quiz.repository.QuizRepository;
 import com.ssafy.apm.quiz.exception.QuizNotFoundException;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 @Slf4j

@@ -1,4 +1,4 @@
-package com.ssafy.apm.common.domain;
+package com.ssafy.apm.socket.domain;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;

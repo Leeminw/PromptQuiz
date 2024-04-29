@@ -1,6 +1,6 @@
 package com.ssafy.apm.channel.controller;
 
-import com.ssafy.apm.common.dto.request.ChannelChatDto;
+import com.ssafy.apm.channel.dto.request.ChannelChatDto;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;

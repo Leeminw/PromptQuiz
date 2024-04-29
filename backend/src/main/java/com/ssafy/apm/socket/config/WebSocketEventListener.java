@@ -1,6 +1,6 @@
-package com.ssafy.apm.common.config;
+package com.ssafy.apm.socket.config;
 
-import com.ssafy.apm.common.service.SocketService;
+import com.ssafy.apm.socket.service.SocketService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,7 @@ public class WebSocketEventListener {
         // event 객체에서 sessionId 추출
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = accessor.getSessionId();
-        String uuid = "";
+        Long uuid = 0L;
         Integer type = 1;
 
         // 세션 정보를 redis에 저장
