@@ -9,6 +9,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
 @Component
 @RequiredArgsConstructor
@@ -21,25 +22,42 @@ public class WebSocketEventListener {
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
         logger.info("Received a new web socket connection(event: " + event + ")");
+
         // event 객체에서 sessionId 추출
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = accessor.getSessionId();
         
         // 세션 정보를 redis에 저장
-        socketService.addSessionId(sessionId);
+        socketService.addSession(sessionId);
     }
 
-    // 누군가 연결이 끊어졌을 경우에 해당 사용자의 상태를 바꾸기
-    // 채널, 게임방 인원 줄이기
-    // 만약 게임방에 접속해있었을 경우 게임방 떠나기
     @EventListener
-    public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
-        logger.info("Received a web socket disconnection(event: " + event + ")");
+    public void handleWebSocketSubscribeListener(SessionSubscribeEvent event) {
+        logger.info("Received a new web socket subscribe(event: " + event + ")");
+
         // event 객체에서 sessionId 추출
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = accessor.getSessionId();
+        String uuid = "";
+        Integer type = 1;
 
         // 세션 정보를 redis에 저장
+        socketService.editSession(sessionId, uuid, type);
+    }
+    
+    // 세션 연결이 끊어졌을 경우
+    @EventListener
+    public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
+        logger.info("Received a web socket disconnection(event: " + event + ")");
+
+        // event 객체에서 sessionId 추출
+        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
+        String sessionId = accessor.getSessionId();
+    
+        // 현재 있는 채널에서 삭제하기
+        socketService.kickOutUser(sessionId);
+
+        // 세션 정보를 삭제하고 퇴장시키기
         socketService.deleteSession(sessionId);
     }
 }

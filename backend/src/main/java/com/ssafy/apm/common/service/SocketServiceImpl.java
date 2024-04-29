@@ -17,7 +17,7 @@ public class SocketServiceImpl implements SocketService{
     private final UserService userService;
 
     @Override
-    public void addSessionId(String sessionId) {
+    public void addSession(String sessionId) {
         User user = userService.loadUser();
 
         // 처음 접속했을때는 일단 유저의 이름과 세션 아이디만 함께 저장을 해놓는다.
@@ -25,7 +25,17 @@ public class SocketServiceImpl implements SocketService{
     }
 
     @Override
+    public void kickOutUser(String sessionId) {
+        // todo: 현재 있는 채널 혹은 게임에서 강퇴시키기
+    }
+
+    @Override
     public void deleteSession(String sessionId) {
         // todo: 먼저 세션 Entity를 확인해서 게임방 or 채널에 끊김 액션을 취하고 삭제하기
+    }
+
+    @Override
+    public void editSession(String sessionId, String uuid, Integer type) {
+        // todo: 채널 이동이므로 상태 바꿔주기
     }
 }
