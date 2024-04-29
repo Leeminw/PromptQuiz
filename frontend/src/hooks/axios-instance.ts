@@ -8,7 +8,7 @@ const instance = axios.create({
     timeout : 5000,
 });
 
-const capiclient = axios.create({
+const apiClient = axios.create({
     baseURL : BASE_URL,
     timeout :5000,
 })
@@ -33,7 +33,7 @@ instance.interceptors.response.use(
         if(error.response.status === 401){
             try {
                 const refreshToken = localStorage.getItem("refreshToken");
-                const response = await capiclient.get("/user", {
+                const response = await apiClient.get("/user", {
                     headers:{
                         Authorization:`Bearer ${refreshToken}`
                     }

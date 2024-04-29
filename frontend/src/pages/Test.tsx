@@ -7,7 +7,15 @@ import useUserStore from '../stores/userStore';
 const TestPage = () => {
   const [userList, setUserList] = useState<ChannelUser[]>([]);
   const { user } = useUserStore();
-
+  const logoutUser = async () => {
+    console.log('로그아웃');
+    try {
+      const response = await UserApi.logoutUser();
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const loadUserTest = async () => {
     try {
       const response = await UserApi.loadUser();
@@ -28,6 +36,9 @@ const TestPage = () => {
       </button>
       <TestChild />
       <div>{JSON.stringify(user)}</div>
+      <button onClick={logoutUser} className="border">
+        로그아웃
+      </button>
     </div>
   );
 };
