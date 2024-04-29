@@ -8,6 +8,7 @@ import com.ssafy.apm.gameuser.dto.response.GameUserGetResponseDto;
 import com.ssafy.apm.gameuser.repository.GameUserRepository;
 import com.ssafy.apm.user.domain.User;
 import com.ssafy.apm.user.dto.UserDetailResponseDto;
+import com.ssafy.apm.user.dto.UserScoreUpdateRequestDto;
 import com.ssafy.apm.user.repository.UserRepository;
 import com.ssafy.apm.user.service.UserService;
 import com.ssafy.apm.userchannel.domain.UserChannelEntity;
@@ -131,16 +132,79 @@ public class GameUserServiceImpl implements GameUserService {
         GameEntity game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new NoSuchElementException("그런 게임방이 존재하지 않습니다"));
         List<GameUserEntity> gameUserEntityList = gameUserRepository.findAllByGameId(gameId);
+        List<User> userList = new ArrayList<>();
 
 //        Todo: Game-User의 Ranking을 여기서 구하고 점수를 넣는건지, 라운드마다 Ranking을 업데이트 하는지 상의하고 구현해야함.
+        int winnerListSize = gameUserEntityList.size() / 2;
+        int loserListSize = winnerListSize + gameUserEntityList.size() % 2;
+        int totalScore = 10 * game.getRounds();
+        int getWinnerMaxScore = Math.round(totalScore * (Math.min(game.getCurPlayers(), 12) / 12));
+
+        //            score를 기준으로 높은 순서대로 리스트가 정렬됨
+        List<GameUserEntity> GameUsers = gameUserEntityList.stream()
+                .map(obj -> (GameUserEntity) obj)
+                .sorted((user1, user2) -> user2.getScore().compareTo(user1.getScore()))
+                .toList();
+        List<GameUserEntity> winnderList = new ArrayList<>();
+        List<GameUserEntity> loserList = new ArrayList<>();
 
 //        팀전일때
-        if(game.getIsTeam()){
+        if (game.getIsTeam()) {
 //            Todo:팀전일 때 점수 구하는 로직 작성해야 합니다.
         }
 //        개인전일때
         else {
 //            Todo:개인전일 때 점수 구하는 로직 작성해야 합니다.
+//            점수 받는 놈들 로직
+            /* 10라운드 6명 기준
+            * getWinnerMaxScore = 10*10(10라운드) * (curPlayers/maxPlayers) = 50( 6명이서 게임할 때 1등이 받을 점수 )
+            * 1등 : 50 * 0.8^0 = 50,  2등 : 50 * 0.8^1 = 40, 3등 : 50*0.8^2 = 32
+            * 절반 이상부터는 점수 잃는 놈들
+            * 4등 : -50 * 0.8^2(3-1) = -32, 5등 : -50 * 0.8^1(3-2) = -40, 6등 : -40 * 0.8^0 = -50
+            *
+            * */
+            /* 10라운드 7명 기준
+             * getWinnerMaxScore = 10*10(10라운드) * (curPlayers/maxPlayers) = 58( 7명이서 게임할 때 1등이 받을 점수, 반올림 )
+             * 1등 : 58 * 0.8^0 = 58,  2등 : 58 * 0.8^1 = 46(반올림), 3등 : 58 * 0.8^2 = 37(반올림)
+             * 절반 이상부터는 점수 잃는 놈들
+             * 4등 : -58 * 0.8^3(4-1) = -29, 5등 : -58 * 0.8^2(4-2) = -37, 6등 : -58 * 0.8^1(4-3) : -46, 7등 : -58 * 0.8^0 : -58
+             *
+             * */
+            for (int i = 0; i < winnerListSize; i++) {
+                GameUserEntity entity = GameUsers.get(i);
+                User user = userRepository.findById(entity.getUserId())
+                        .orElseThrow(() -> new NoSuchElementException("그런 유저는 없다."));
+
+                int earnUserScore = (int) Math.round(getWinnerMaxScore * Math.pow(0.8, i));
+
+                UserScoreUpdateRequestDto dto = UserScoreUpdateRequestDto.builder()
+                        .soloScore(earnUserScore)
+                        .totalScore(earnUserScore)
+                        .teamScore(0)
+                        .build();
+
+                user.updateScore(dto);
+                userList.add(user);
+            }
+//            점수 잃는 놈들 로직
+            int j = 1;
+            for (int i = winnerListSize; i < GameUsers.size(); i++) {
+                GameUserEntity entity = GameUsers.get(i);
+                User user = userRepository.findById(entity.getUserId())
+                        .orElseThrow(() -> new NoSuchElementException("그런 유저는 없다."));
+
+                int loseUserScore = -1 * (int) Math.round(getWinnerMaxScore * Math.pow(0.8, loserListSize-j++));
+
+                UserScoreUpdateRequestDto dto = UserScoreUpdateRequestDto.builder()
+                        .soloScore(loseUserScore)
+                        .totalScore(loseUserScore)
+                        .teamScore(0)
+                        .build();
+
+                user.updateScore(dto);
+                userList.add(user);
+
+            }
         }
 
     }
