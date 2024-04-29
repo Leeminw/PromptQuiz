@@ -2,16 +2,11 @@ import React, { useEffect, useState } from 'react';
 import instance from '../hooks/axios-instance';
 import ChannelUserComponent from '../components/user/ChannelUserComponent';
 import { UserApi } from '../hooks/axios-user';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import TestChild from './TestChild';
+import useUserStore from '../stores/userStore';
 const TestPage = () => {
   const [userList, setUserList] = useState<ChannelUser[]>([]);
-  const queryClient = useQueryClient();
-
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['user'],
-    queryFn: UserApi.loadUser,
-  });
+  const { user } = useUserStore();
 
   const loadUserTest = async () => {
     try {
@@ -31,8 +26,8 @@ const TestPage = () => {
       <button className="border" onClick={loadUserTest}>
         loadUser
       </button>
-      <div>{JSON.stringify(queryClient.getQueryData(['user']))}</div>
       <TestChild />
+      <div>{JSON.stringify(user)}</div>
     </div>
   );
 };
