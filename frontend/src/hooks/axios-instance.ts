@@ -1,4 +1,6 @@
 import axios, {AxiosInstance} from "axios";
+import useUserStore from "../stores/userStore";
+
 const BASE_URL = 'http://localhost:8080/api/v1'
 
 const instance = axios.create({
@@ -45,12 +47,14 @@ instance.interceptors.response.use(
                 // 로그아웃 
                 localStorage.removeItem("accessToken")
                 localStorage.removeItem("refreshToken")
+                useUserStore.getState().clearUser();
                 return Promise.reject(_error);
             }
         }
         else{
             localStorage.removeItem("accessToken")
             localStorage.removeItem("refreshToken")
+            useUserStore.getState().clearUser();
             return Promise.reject(error);
 
         }

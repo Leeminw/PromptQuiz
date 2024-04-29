@@ -32,3 +32,8 @@ interface ChannelUser {
     created_date: string,
     updated_date: string
 }
+interface UserState {
+    user: User | null;
+    setUser: (user: User) => void;
+    clearUser: () => void;
+}
