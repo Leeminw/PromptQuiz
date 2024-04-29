@@ -1,7 +1,7 @@
 import axios, {AxiosInstance} from "axios";
 import useUserStore from "../stores/userStore";
 
-const BASE_URL = 'http://localhost:8080/api/v1'
+const BASE_URL = process.env.REACT_APP_SERVER;
 
 const instance = axios.create({
     baseURL : BASE_URL,

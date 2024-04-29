@@ -1,7 +1,7 @@
 import axios from "axios";
 import instance from "./axios-instance";
 import useUserStore from "../stores/userStore";
-const BASE_URL = "http://localhost:8080/api/v1"
+const BASE_URL = process.env.REACT_APP_SERVER
 
 const UserApi= {
     login : async (loginForm:LoginForm) => {
