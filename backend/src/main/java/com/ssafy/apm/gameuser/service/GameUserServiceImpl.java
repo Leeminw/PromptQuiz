@@ -1,5 +1,7 @@
 package com.ssafy.apm.gameuser.service;
 
+import com.ssafy.apm.game.domain.GameEntity;
+import com.ssafy.apm.game.repository.GameRepository;
 import com.ssafy.apm.gameuser.domain.GameUserEntity;
 import com.ssafy.apm.gameuser.dto.response.GameUserDetailResponseDto;
 import com.ssafy.apm.gameuser.dto.response.GameUserGetResponseDto;
@@ -23,6 +25,7 @@ import java.util.NoSuchElementException;
 @Transactional(readOnly = true)
 public class GameUserServiceImpl implements GameUserService {
 
+    private final GameRepository gameRepository;
     private final GameUserRepository gameUserRepository;
     private final UserRepository userRepository;
     private final UserService userService;
@@ -121,6 +124,25 @@ public class GameUserServiceImpl implements GameUserService {
 //        DB에 반영
         gameUserEntity = gameUserRepository.save(gameUserEntity);
         return new GameUserGetResponseDto(gameUserEntity);
+    }
+
+    @Override
+    public void updateUserScore(Long gameId) {
+        GameEntity game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new NoSuchElementException("그런 게임방이 존재하지 않습니다"));
+        List<GameUserEntity> gameUserEntityList = gameUserRepository.findAllByGameId(gameId);
+
+//        Todo: Game-User의 Ranking을 여기서 구하고 점수를 넣는건지, 라운드마다 Ranking을 업데이트 하는지 상의하고 구현해야함.
+
+//        팀전일때
+        if(game.getIsTeam()){
+//            Todo:팀전일 때 점수 구하는 로직 작성해야 합니다.
+        }
+//        개인전일때
+        else {
+//            Todo:개인전일 때 점수 구하는 로직 작성해야 합니다.
+        }
+
     }
 
     //    게임 나갈때
