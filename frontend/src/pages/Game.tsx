@@ -1,10 +1,13 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { IoSettings } from 'react-icons/io5';
 import { IoLogOut } from 'react-icons/io5';
 import { FaUserPlus } from 'react-icons/fa';
 import { IoSend } from 'react-icons/io5';
 
 const GamePage = () => {
+  const [game, setGame] = useState<Game | null>(null);
+  useEffect(() => {}, []);
+  // useEffect 구독하기
   const chattingBox = useRef(null);
   const chatInput = useRef(null);
   const chatFunction = () => {
