@@ -31,8 +31,9 @@ public class GameQuizServiceImpl implements GameQuizService {
         GameEntity gameEntity = gameRepository.findById(gameId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
 
-        Integer round = gameEntity.getRounds();
-//        정답 주는거
+//        현재 라운드 가져와서
+        Integer round = gameEntity.getCurRound();
+//        현재 라운드에 해당하는 정답 주는거
         GameQuizEntity entity = gameQuizRepository.findByGameIdAndRound(gameId, round)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 퀴즈입니다."));
 
