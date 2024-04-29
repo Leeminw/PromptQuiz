@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { FaUser } from 'react-icons/fa';
 import { IoMdLock } from 'react-icons/io';
 import { wait } from '@testing-library/user-event/dist/utils';
-
+import useUserStore from '../stores/userStore';
 const LoginPage = ({ movePage }: { movePage: () => void }) => {
   const navigate = useNavigate();
   const [activateBtn, setActivateBtn] = useState<ActivateButton>({});
@@ -13,6 +13,9 @@ const LoginPage = ({ movePage }: { movePage: () => void }) => {
   const [moveInput, setMoveInput] = useState<boolean>(false);
   const [moveBtn, setMoveBtn] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const { user, setUser, clearUser } = useUserStore();
+
   const handleClick = (id: number) => {
     setActivateBtn((prev) => ({ ...prev, [id]: true }));
     setTimeout(() => {
@@ -44,8 +47,13 @@ const LoginPage = ({ movePage }: { movePage: () => void }) => {
         alert('로그인 완료!');
         setMoveBtn(false);
         setMoveInput(false);
+
+        const { data: userData } = await UserApi.loadUser();
+
+        setUser(userData);
+
         setTimeout(() => {
-          navigate('/channel');
+          navigate('/test');
         }, 1000);
       } catch (error) {
         // 로그인 오류
