@@ -78,6 +78,51 @@ public class GameUserServiceImpl implements GameUserService {
         return new GameUserGetResponseDto(entity);
     }
 
+    @Override
+    @Transactional
+    public GameUserGetResponseDto updateGameUserScore(Integer score) {
+        User user = userService.loadUser();
+        GameUserEntity gameUserEntity = gameUserRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
+
+//        점수 업데이트
+        gameUserEntity.updateScore(score);
+
+//        점수 DB에 반영
+        gameUserEntity = gameUserRepository.save(gameUserEntity);
+        return new GameUserGetResponseDto(gameUserEntity);
+    }
+
+    @Override
+    @Transactional
+    public GameUserGetResponseDto updateGameUserIsReady(Boolean isReady) {
+        User user = userService.loadUser();
+        GameUserEntity gameUserEntity = gameUserRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
+
+//        레디 상태 업데이트
+        gameUserEntity.updateIsReady(isReady);
+
+//        DB에 반영
+        gameUserEntity = gameUserRepository.save(gameUserEntity);
+        return new GameUserGetResponseDto(gameUserEntity);
+    }
+
+    @Override
+    @Transactional
+    public GameUserGetResponseDto updateGameUserTeam(String team) {
+        User user = userService.loadUser();
+        GameUserEntity gameUserEntity = gameUserRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
+
+//        팀 업데이트
+        gameUserEntity.updateTeam(team);
+
+//        DB에 반영
+        gameUserEntity = gameUserRepository.save(gameUserEntity);
+        return new GameUserGetResponseDto(gameUserEntity);
+    }
+
     //    게임 나갈때
     @Override
     @Transactional

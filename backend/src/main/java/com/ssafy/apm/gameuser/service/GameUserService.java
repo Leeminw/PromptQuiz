@@ -12,5 +12,9 @@ public interface GameUserService {
 
     GameUserGetResponseDto postEnterGame(Long gameId);
 
+    GameUserGetResponseDto updateGameUserScore(Integer score);
+    GameUserGetResponseDto updateGameUserIsReady(Boolean isReady);
+    GameUserGetResponseDto updateGameUserTeam(String team);
+
     Long deleteExitGame(Long gameId);
 }
