@@ -148,29 +148,29 @@ public class SocketController {
         if (game != null && chatMessage.getRound().equals(game.round)) {
             // 입력 메세지를 먼저 확인한 이후 정답일 경우에는 result에 true가 된다.
             // 빈칸 주관식의 경우 유사도가 함께 포함된다.
-            GameAnswerCheck check = quizService.checkAnswer(chatMessage);
+            GameAnswerCheck check = quizService.checkAnswer(chatMessage, game.playerSimilarityMap.keySet());
 
-            if (check.getResult()) {
-                // (정답) 정답으로 라운드 종료 처리
-                game.time = -game.maxTime;
-                sendRoundEndMessage(game);
-
-            } else {
-                // (오답) 타입마다 처리
-                switch (check.getType()) {
-                    case 1, 2:
+            // (오답) 타입마다 처리
+            switch (check.getType()) {
+                // 객관식 문제 정답 처리
+                case 1, 2:
+                    if (check.getResult()) {
+                        // (정답) 정답으로 라운드 종료 처리
+                        game.time = -game.maxTime;
+                        sendRoundEndMessage(game);
+                    }else{
                         // 오답 여부 해당 사용자에게 알려주기
                         template.convertAndSend("/ws/sub/game?uuid=" + chatMessage.
-                            getUuid(), new GameResponseDto("wrongSignal", chatMessage.getUserId()));
-                        break;
-                    case 4:
-                        // 게임 유사도 목록 업데이트 이후 모든 사용자에게 뿌려주기
-                        game.addSimilarity(chatMessage.getContent(), check.getSimilarity());
+                                getUuid(), new GameResponseDto("wrongSignal", chatMessage.getUserId()));
+                    }
+                    break;
+                case 4:
+                    // 게임 유사도 목록 업데이트 이후 모든 사용자에게 뿌려주기
+                    game.addSimilarityToMap(chatMessage.getContent(), check.getSimilarity());
 
-                        template.convertAndSend("/ws/sub/game?uuid=" + chatMessage.
-                            getUuid(), new GameResponseDto("similarity", game.simList));
-                        break;
-                }
+                    template.convertAndSend("/ws/sub/game?uuid=" + chatMessage.
+                            getUuid(), new GameResponseDto("similarity", game.playerSimilarityMap));
+                    break;
             }
         }
 
@@ -200,14 +200,19 @@ public class SocketController {
 
             // 게임 라운드 증가 (1라운드부터 시작)
             newGame.round = gameService.updateGameRoundCnt(ready.getGameId(), true);
+            System.out.println(newGame.gameId);
+            // 게임 타입이 빈칸 주관식일 경우에는 다음과 같이 유사도 목록 추가하기
+            if(gameQuizService.getGameQuizDetail(newGame.gameId).getType() == 4){
+                // 처음 주어지는 품사에 대한 값 넣어주기
+                HashMap<String, String> map = new HashMap<>();
+                map.put("명사","안녕!");
+                map.put("동사", "반가워");
+                map.put("형용사", null);
+                map.put("부사", null);
 
-            // 여기서 다음 게임이 빈칸 객관식이라면 유사도 목록 컬럼을 넣어줘야 합니다.
-            List<String> list = new ArrayList<>();
-            list.add("명사");
-            list.add("동사");
-
-            // 받아온 품사 목록으로 초기화 시키기
-            newGame.initSimilarity(list);
+                // 받아온 품사 목록으로 초기화 시키기
+                newGame.initSimilarity(map);
+            }
 
             // 게임 시작 메세지 전달
             sendRoundReadyMessage(newGame);
@@ -245,13 +250,18 @@ public class SocketController {
             return;
         }
 
-        // 여기서 다음 게임에 대한 유사도 목록을 넣어줘야 합니다.
-        List<String> tempList = new ArrayList<>();
-        tempList.add("명사");
-        tempList.add("동사");
+        // 게임 타입이 빈칸 주관식일 경우에는 다음과 같이 유사도 목록 추가하기
+        if(gameQuizService.getGameQuizDetail(game.gameId).getType() == 4){
+            // 처음 주어지는 품사에 대한 값 넣어주기
+            HashMap<String, String> map = new HashMap<>();
+            map.put("명사","안녕!");
+            map.put("동사", "반가워");
+            map.put("형용사", null);
+            map.put("부사", null);
 
-        // 받아온 품사 목록으로 초기화 시키기
-        game.initSimilarity(tempList);
+            // 받아온 품사 목록으로 초기화 시키기
+            game.initSimilarity(map);
+        }
 
         // 전체 사용자에게 라운드 종료 알림 보내기 (다음 라운드 증가)
         GameSystemContentDto temp = new GameSystemContentDto(game.round, list);

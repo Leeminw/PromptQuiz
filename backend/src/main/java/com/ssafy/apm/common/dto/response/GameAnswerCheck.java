@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+import java.util.HashMap;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,5 +15,5 @@ public class GameAnswerCheck {
     // 정답인지 아닌지에 대한 Boolean 값
     Boolean result;
     // 유사도 % -> 0~1 사이 값
-    Double similarity;
+    HashMap<String, Double> similarity;
 }
