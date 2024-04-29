@@ -6,8 +6,11 @@ import { IoMdRefresh } from 'react-icons/io';
 import { FaForward } from 'react-icons/fa6';
 import { MdAddHome } from 'react-icons/md';
 import { Link } from 'react-router-dom';
-
-const Header = () => {
+import CreateRoom from './CreateRoom';
+interface Props {
+  channelId: number;
+}
+const Header = ({ channelId }: Props) => {
   const createRoom = () => {
     alert('방 생성 모달창 띄움');
   };
@@ -19,9 +22,7 @@ const Header = () => {
     <nav className="flex flex-col w-full">
       <div className="w-full h-[10vh] bg-red-200">자유 1 채널</div>
       <div className="w-full h-[10vh] flex">
-        <button className="w-1/4 h-[10vh] btn-mint" onClick={createRoom}>
-          <MdAddHome />방 만들기
-        </button>
+        <CreateRoom />
         <button className="w-1/4 h-[10vh] btn-mint">
           <FaForward />
           빠른대전
