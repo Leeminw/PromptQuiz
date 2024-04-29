@@ -11,7 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class SocketServiceImpl implements SocketService{
+public class SocketServiceImpl implements SocketService {
+
     private final UserService userService;
     private final SocketRepository socketRepository;
 

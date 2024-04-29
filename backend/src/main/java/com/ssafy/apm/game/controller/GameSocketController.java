@@ -141,7 +141,7 @@ public class GameSocketController {
     public void enterGameUser(@Payload EnterUserDto user) {
         // 새로운 플레이어 입장
         template.convertAndSend("/ws/sub/game?uuid=" + user.getUuid(),
-                new GameResponseDto("enter", user));
+            new GameResponseDto("enter", user));
     }
 
     // 퇴장 메세지
@@ -149,7 +149,7 @@ public class GameSocketController {
     public void leaveGameUser(@Payload EnterUserDto user) {
         // 플레이어 퇴장
         template.convertAndSend("/ws/sub/game?uuid=" + user.getUuid(),
-                new GameResponseDto("leave", user));
+            new GameResponseDto("leave", user));
     }
 
     // (플레이어 입력) 플레이어는 채팅 or 정답을 입력한다
@@ -161,7 +161,8 @@ public class GameSocketController {
         if (game != null && chatMessage.getRound().equals(game.round)) {
             // 입력 메세지를 먼저 확인한 이후 정답일 경우에는 result에 true가 된다.
             // 빈칸 주관식의 경우 유사도가 함께 포함된다.
-            GameAnswerCheck check = quizService.checkAnswer(chatMessage, game.playerSimilarityMap.keySet());
+            GameAnswerCheck check = quizService.checkAnswer(chatMessage,
+                game.playerSimilarityMap.keySet());
 
             // (오답) 타입마다 처리
             switch (check.getType()) {
@@ -171,18 +172,24 @@ public class GameSocketController {
                         // (정답) 정답으로 라운드 종료 처리
                         game.time = -game.maxTime;
                         sendRoundEndMessage(game);
-                    }else{
+                    } else {
                         // 오답 여부 해당 사용자에게 알려주기
                         template.convertAndSend("/ws/sub/game?uuid=" + chatMessage.
-                                getUuid(), new GameResponseDto("wrongSignal", chatMessage.getUserId()));
+                            getUuid(), new GameResponseDto("wrongSignal", chatMessage.getUserId()));
                     }
                     break;
                 case 4:
                     // 게임 유사도 목록 업데이트 이후 모든 사용자에게 뿌려주기
                     game.addSimilarityToMap(chatMessage.getContent(), check.getSimilarity());
 
-                    template.convertAndSend("/ws/sub/game?uuid=" + chatMessage.
+                    // 유사도 목록이 모두 비어있다면 모든 정답이 나왔으므로 종료처리 해야 한다.
+                    if (game.similarityGameEnd()) {
+                        game.time = -game.maxTime;
+                        sendRoundEndMessage(game);
+                    } else {
+                        template.convertAndSend("/ws/sub/game?uuid=" + chatMessage.
                             getUuid(), new GameResponseDto("similarity", game.playerSimilarityMap));
+                    }
                     break;
             }
         }
@@ -209,16 +216,16 @@ public class GameSocketController {
                 0);
 
             // 방장일 경우에만 게임 보기가 생성됩니다
-            if(gameQuizService.createAnswerGameQuiz(ready.getGameId())){
+            if (gameQuizService.createAnswerGameQuiz(ready.getGameId())) {
 
                 // 게임 라운드 증가 (1라운드부터 시작)
                 newGame.round = gameService.updateGameRoundCnt(ready.getGameId(), true);
-                System.out.println(newGame.gameId);
+
                 // 게임 타입이 빈칸 주관식일 경우에는 다음과 같이 유사도 목록 추가하기
-                if(gameQuizService.getGameQuizDetail(newGame.gameId).getType() == 4){
+                if (gameQuizService.getGameQuizDetail(newGame.gameId).getType() == 4) {
                     // 처음 주어지는 품사에 대한 값 넣어주기
                     HashMap<String, String> map = new HashMap<>();
-                    map.put("명사","안녕!");
+                    map.put("명사", "안녕!");
                     map.put("동사", "반가워");
                     map.put("형용사", null);
                     map.put("부사", null);
@@ -268,13 +275,13 @@ public class GameSocketController {
         GameSystemContentDto temp = new GameSystemContentDto(game.round, list);
 
         template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
-                new GameResponseDto("game", GameSystemResponseDto.end(temp)));
+            new GameResponseDto("game", GameSystemResponseDto.end(temp)));
 
         // 게임 타입이 빈칸 주관식일 경우에는 다음과 같이 유사도 목록 추가하기
-        if(gameQuizService.getGameQuizDetail(game.gameId).getType() == 4){
+        if (gameQuizService.getGameQuizDetail(game.gameId).getType() == 4) {
             // 처음 주어지는 품사에 대한 값 넣어주기
             HashMap<String, String> map = new HashMap<>();
-            map.put("명사","안녕!");
+            map.put("명사", "안녕!");
             map.put("동사", "반가워");
             map.put("형용사", null);
             map.put("부사", null);
