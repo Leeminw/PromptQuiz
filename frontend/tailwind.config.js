@@ -138,6 +138,16 @@ module.exports = {
         },
         '.btn-mint': {
           borderWidth: '0.3rem',
+          borderImageSource: "url('../public/ui/border-mint.png')",
+          borderImageSlice: '14%',
+          borderImageOutset: '0.25rem',
+          borderImageRepeat: 'stretch',
+          backgroundColor: '#359DB0',
+          color: 'white',
+          fontWeight: '800',
+        },
+        '.btn-mint-border-white': {
+          borderWidth: '0.3rem',
           borderImageSource: "url('../public/ui/border-mint-btn.png')",
           borderImageSlice: '14%',
           borderImageOutset: '0.25rem',

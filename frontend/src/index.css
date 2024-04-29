@@ -45,6 +45,13 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
+.chat {
+  overflow: auto;
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-anchor: auto !important;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
 }
