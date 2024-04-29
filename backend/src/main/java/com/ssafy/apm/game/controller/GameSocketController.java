@@ -1,6 +1,5 @@
-package com.ssafy.apm.common.controller;
+package com.ssafy.apm.game.controller;
 
-import com.ssafy.apm.common.dto.request.ChannelChatDto;
 import com.ssafy.apm.common.dto.request.GameChatDto;
 import com.ssafy.apm.common.dto.request.GameReadyDto;
 import com.ssafy.apm.common.dto.response.*;
@@ -22,7 +21,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @CrossOrigin(origins = {"*"}, methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
     RequestMethod.POST}, maxAge = 6000)
-public class SocketController {
+public class GameSocketController {
 
     private final GameService gameService;
     private final QuizService quizService;
@@ -128,14 +127,6 @@ public class SocketController {
                     new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round)));
             }
         }
-    }
-
-    // -------------------- 채팅 관련 브로커 --------------------
-    // 채널에서 보내는 메세지
-    @MessageMapping("/channel/chat/send")
-    public void sendChannelChat(@Payload ChannelChatDto chatMessage) {
-        template.convertAndSend("/ws/sub/channel?uuid=" + chatMessage
-            .getUuid(), chatMessage);
     }
 
     // -------------------- 플레이어 채팅 입력 관련 컨트롤러  --------------------
