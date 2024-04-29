@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -43,21 +44,85 @@ public class GameQuizServiceImpl implements GameQuizService {
     @Override
     @Transactional
     public Boolean createAnswerGameQuiz(Long gameId) {
-        List<Quiz> quizList = quizRepository.findAllQuizRandom(10);
+        GameEntity gameEntity = gameRepository.findById(gameId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
+        List<Quiz> quizList = quizRepository.findAllQuizRandom(gameEntity.getRounds());
+
         List<GameQuizEntity> gameQuizEntityList = new ArrayList<>();
+//        게임 문제 유형
+        Integer gameType = gameEntity.getType();
+//        라운드 별로 문제 출제
         Integer currentRound = 1;
-        for (Quiz quiz : quizList) {
-            GameQuizEntity entity = GameQuizEntity.builder()
-                    .gameId(gameId)
-                    .quizId(quiz.getId())
-                    .round(currentRound)
-                    .type(1) // 임시로 1넣었는데 나중에 방설정에 따라서 ㄱㄱ
-                    .build();
-            currentRound += 1;
-            gameQuizEntityList.add(entity);
+//        랜덤 숫자
+        int randomType = 0;
+//        랜덤 인덱스
+        int randomIndex = 0;
+        Random random = new Random();
+
+//        문제 유형이 하나일 경우
+        if (gameType == 1 || gameType == 2 || gameType == 4) {
+            for (Quiz quiz : quizList) {
+                GameQuizEntity entity = createGameQuizEntity(gameId, quiz.getId(), currentRound, gameType);
+                currentRound += 1;
+                gameQuizEntityList.add(entity);
+            }
+        }
+//        문제 유형이 객관식, 빈칸객관식일 경우
+        else if (gameType == 3) {
+            for (Quiz quiz : quizList) {
+                // 1 또는 2
+                randomType = random.nextInt(3) + 1;
+                GameQuizEntity entity = createGameQuizEntity(gameId, quiz.getId(), currentRound, randomType);
+                currentRound += 1;
+                gameQuizEntityList.add(entity);
+            }
+
+        }
+//        문제 유형이 객관식, 빈칸주관식일 경우(1, 4)
+        else if (gameType == 5) {
+            int[] numbers = {1, 4}; // 선택하고 싶은 숫자들을 배열에 저장
+            createGameQuizEntityList(gameId, quizList, gameQuizEntityList, currentRound, random, numbers);
+
+        }
+//          문제 유형이 빈칸객관식, 빈칸주관식일 경우(2, 4)
+        else if (gameType == 6) {
+            int[] numbers = {2, 4}; // 선택하고 싶은 숫자들을 배열에 저장
+            createGameQuizEntityList(gameId, quizList, gameQuizEntityList, currentRound, random, numbers);
+        }
+//        문제 유형 랜덤일 경우
+        else {
+            int[] numbers = {1, 2, 4}; // 선택하고 싶은 숫자들을 배열에 저장
+            createGameQuizEntityList(gameId, quizList, gameQuizEntityList, currentRound, random, numbers);
+
         }
 
         gameQuizRepository.saveAll(gameQuizEntityList);
         return true;
+    }
+
+    private void createGameQuizEntityList(Long gameId, List<Quiz> quizList, List<GameQuizEntity> gameQuizEntityList, Integer currentRound, Random random, int[] numbers) {
+        int randomIndex;
+        int randomType;
+        for (Quiz quiz : quizList) {
+            // 배열의 길이를 최대값으로 하는 랜덤 인덱스 생성
+            randomIndex = random.nextInt(numbers.length);
+            // 1 또는 4
+            // 랜덤 인덱스를 사용하여 배열에서 하나의 숫자 선택
+            randomType = numbers[randomIndex];
+            GameQuizEntity entity = createGameQuizEntity(gameId, quiz.getId(), currentRound, randomType);
+            currentRound += 1;
+            gameQuizEntityList.add(entity);
+        }
+    }
+
+    //    GameQuizEntity를 반환하는 함수
+    private GameQuizEntity createGameQuizEntity(Long gameId, Long quizId, Integer round, Integer type) {
+        GameQuizEntity entity = GameQuizEntity.builder()
+                .gameId(gameId)
+                .quizId(quizId)
+                .round(round)
+                .type(type)
+                .build();
+        return entity;
     }
 }

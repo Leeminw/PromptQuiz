@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ChannelBox from '../components/channel/ChannelBox';
 // import ChannelBox from '../components/channel/ChannelBox';
-// import BackgroundImg from '../../public/background.png';
 
 const ChannelSelectPage = () => {
   const [channelArray, setChannelList] = useState<Channel[]>([]);

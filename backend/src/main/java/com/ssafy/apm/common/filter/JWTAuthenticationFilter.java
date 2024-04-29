@@ -42,7 +42,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         }
 
         Map<String,Object> result = new HashMap<>();
-        response.setHeader("Access-Control-Allow-Origin", "https://k10a509.p.ssafy.io/");
+        response.setHeader("Access-Control-Allow-Origin", "*");
         response.setStatus(HttpStatus.CREATED.value());
         String providerResult = jwtProvider.validateToken(jwtToken);
         if (providerResult.equals("access")) {
@@ -64,10 +64,10 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                     .orElseThrow(() -> new UserNotFoundException("forbidden"));
             String accessToken = jwtProvider.createAccessToken(user.getId(), user.getRole());
             response.setStatus(HttpServletResponse.SC_OK);
-            result.put("accessToken", accessToken);
-
+                result.put("accessToken", accessToken);
         }
         else {
+            log.debug("un authorized");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
         result.put("result", providerResult);
