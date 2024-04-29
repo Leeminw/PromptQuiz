@@ -6,6 +6,8 @@ module.exports = {
     extend: {
       colors: {
         mint: '#359DB0',
+        lightmint: '#8ecfdb',
+        extralightmint: '#d5e7eb',
       },
       animationDelay: {
         '1s': '1s',
@@ -123,17 +125,17 @@ module.exports = {
           borderImageRepeat: 'stretch',
         },
         '.border-custom-white': {
-          borderWidth:'0.3rem',
+          borderWidth: '0.3rem',
           borderImageSource: "url('../public/ui/border-white.png')",
           borderImageSlice: '14%',
-          borderImageOutset:'0.25rem',
+          borderImageOutset: '0.25rem',
           borderImageRepeat: 'stretch',
         },
         '.border-custom-mint': {
-          borderWidth:'0.3rem',
+          borderWidth: '0.3rem',
           borderImageSource: "url('../public/ui/border-mint.png')",
           borderImageSlice: '14%',
-          borderImageOutset:'0.05rem',
+          borderImageOutset: '0.05rem',
           borderImageRepeat: 'stretch',
         },
         '.btn-mint': {

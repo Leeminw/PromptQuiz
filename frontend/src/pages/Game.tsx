@@ -74,9 +74,17 @@ const GamePage = () => {
           </div>
           {/* 문제 화면, 타이머 */}
           <div className="w-full grow flex flex-col">
-            <div className="h-4 rounded-full w-[100%] bg-mint mb-1"></div>
-            <div className="h-full w-full bg-gray-200 flex items-center justify-center">
-              문제 화면
+            <div className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint border">
+              <div className="h-full rounded-full w-[66%] bg-mint"></div>
+            </div>
+            <div className="border-custom-mint w-full h-full flex items-center justify-center relative">
+              <div className="w-16 h-7 absolute top-2 left-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
+                1 / 20
+              </div>
+              <div className="w-fit h-7 px-3 absolute top-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
+                흠 뭐넣지
+              </div>
+              <div className="w-full h-full bg-[url(https://contents-cdn.viewus.co.kr/image/2023/08/CP-2023-0056/image-7adf97c8-ef11-4def-81e8-fe2913667983.jpeg)] bg-cover bg-center"></div>
             </div>
           </div>
           {/* 우파 */}
