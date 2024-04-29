@@ -23,6 +23,7 @@ import { IoIosLock } from 'react-icons/io';
 // }
 
 interface Props {
+  index: number;
   id: number;
   channelId: number;
   type: number;
@@ -38,6 +39,7 @@ interface Props {
   maxPlayers: number;
 }
 const Room = ({
+  index,
   id,
   channelId,
   type,
@@ -66,7 +68,7 @@ const Room = ({
   return (
     <div className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 border-mint rounded-3xl ">
       <div>
-        {}
+        {index}
         {title}
         {password == null ? '' : <IoIosLock />}
       </div>
