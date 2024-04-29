@@ -1,5 +1,6 @@
 package com.ssafy.apm.game.controller;
 
+import com.ssafy.apm.common.dto.request.EnterUserDto;
 import com.ssafy.apm.common.dto.request.GameChatDto;
 import com.ssafy.apm.common.dto.request.GameReadyDto;
 import com.ssafy.apm.common.dto.response.*;
@@ -130,6 +131,22 @@ public class GameSocketController {
     }
 
     // -------------------- 플레이어 채팅 입력 관련 컨트롤러  --------------------
+    // 새로운 사용자 입장 메세지
+    @MessageMapping("/game/enter")
+    public void enterGameUser(@Payload EnterUserDto user) {
+        // 새로운 플레이어 입장
+        template.convertAndSend("/ws/sub/game?uuid=" + user.getUuid(),
+                new GameResponseDto("enter", user));
+    }
+
+    // 퇴장 메세지
+    @MessageMapping("/game/leave")
+    public void leaveGameUser(@Payload EnterUserDto user) {
+        // 플레이어 퇴장
+        template.convertAndSend("/ws/sub/game?uuid=" + user.getUuid(),
+                new GameResponseDto("leave", user));
+    }
+
     // (플레이어 입력) 플레이어는 채팅 or 정답을 입력한다
     @MessageMapping("/game/chat/send")
     public void sendGameChat(@Payload GameChatDto chatMessage) {
