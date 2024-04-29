@@ -180,7 +180,7 @@ public class GameSocketController {
 
     // (게임 시작) 스케쥴러에 게임을 등록하고 준비 메세지 전송
     @MessageMapping("/game/start")
-    public void sendRoundStartMessage(@Payload GameReadyDto ready) {
+    public void sendGameStartMessage(@Payload GameReadyDto ready) {
         // 게임방에 등록되어 있지 않다면 등록시키기
         if (!gameReadyList.containsKey(ready.getGameId())) {
             GameRoomStatus newGame = new GameRoomStatus(ready.getGameId(), ready.getUuid(), 0, 10,
