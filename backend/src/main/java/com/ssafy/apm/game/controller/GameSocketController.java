@@ -29,7 +29,7 @@ public class GameSocketController {
     private final SimpMessagingTemplate template;
 
     // 현재 게임 진행중인 리스트 (max_time 초 대기)
-    private static final HashMap<Long, GameRoomStatus> gameStartList = new HashMap<>();
+    private static final HashMap<Long, GameRoomStatus> gameOngoingList = new HashMap<>();
     // 라운드 끝나고 결과확인 리스트 (REST_TIME 초 대기)
     private static final HashMap<Long, GameRoomStatus> gameReadyList = new HashMap<>();
     // 라운드 끝나고 대기중인 리스트 (REST_TIME 초 대기)
@@ -39,10 +39,10 @@ public class GameSocketController {
     // 현재 진행중인 게임 관리 스케줄러
     @Scheduled(fixedRate = 1000) // 1초마다 실행
     private void roundOngoingScheduler() {
-        List<GameRoomStatus> list = new ArrayList<>(gameStartList.values());
+        List<GameRoomStatus> list = new ArrayList<>(gameOngoingList.values());
         for (GameRoomStatus game : list) {
             // 만약 list에 없다면 지워진 아이디 이므로 넘어가기
-            if (!gameStartList.containsKey(game.gameId) || game.round < 0) {
+            if (!gameOngoingList.containsKey(game.gameId) || game.round < 0) {
                 continue;
             }
 
@@ -52,7 +52,7 @@ public class GameSocketController {
             if (game.time > game.maxTime) {
                 // 게임 종료 (timeout)
                 gameEndList.put(game.gameId, game);
-                gameStartList.remove(game.gameId);
+                gameOngoingList.remove(game.gameId);
                 game.time = 0;
 
                 // 게임 종료 메세지 전송
@@ -60,7 +60,7 @@ public class GameSocketController {
             } else if (game.time < 0) {
                 // 게임 종료 (정답자가 나왔을 경우)
                 gameEndList.put(game.gameId, game);
-                gameStartList.remove(game.gameId);
+                gameOngoingList.remove(game.gameId);
                 game.time = 0;
 
             } else {
@@ -87,7 +87,7 @@ public class GameSocketController {
             // 3초가 됐다면 이제 게임 시작하기
             if (game.time >= REST_TIME) {
                 game.time = 0;
-                gameStartList.put(game.gameId, game);
+                gameOngoingList.put(game.gameId, game);
                 gameReadyList.remove(game.gameId);
 
                 // 시작 메세지 전송
@@ -133,7 +133,7 @@ public class GameSocketController {
     // (플레이어 입력) 플레이어는 채팅 or 정답을 입력한다
     @MessageMapping("/game/chat/send")
     public void sendGameChat(@Payload GameChatDto chatMessage) {
-        GameRoomStatus game = gameStartList.get(chatMessage.getGameId());
+        GameRoomStatus game = gameOngoingList.get(chatMessage.getGameId());
 
         // 입력이 들어왔는데 만약 현재 라운드와 전혀 다른 입력이 들어왔을 때는 채팅만 전파하기
         if (game != null && chatMessage.getRound().equals(game.round)) {
@@ -186,30 +186,31 @@ public class GameSocketController {
             GameRoomStatus newGame = new GameRoomStatus(ready.getGameId(), ready.getUuid(), 0, 10,
                 0);
 
-            // 게임 보기 생성
-            gameQuizService.createAnswerGameQuiz(ready.getGameId());
+            // 방장일 경우에만 게임 보기가 생성됩니다
+            if(gameQuizService.createAnswerGameQuiz(ready.getGameId())){
 
-            // 게임 라운드 증가 (1라운드부터 시작)
-            newGame.round = gameService.updateGameRoundCnt(ready.getGameId(), true);
-            System.out.println(newGame.gameId);
-            // 게임 타입이 빈칸 주관식일 경우에는 다음과 같이 유사도 목록 추가하기
-            if(gameQuizService.getGameQuizDetail(newGame.gameId).getType() == 4){
-                // 처음 주어지는 품사에 대한 값 넣어주기
-                HashMap<String, String> map = new HashMap<>();
-                map.put("명사","안녕!");
-                map.put("동사", "반가워");
-                map.put("형용사", null);
-                map.put("부사", null);
+                // 게임 라운드 증가 (1라운드부터 시작)
+                newGame.round = gameService.updateGameRoundCnt(ready.getGameId(), true);
+                System.out.println(newGame.gameId);
+                // 게임 타입이 빈칸 주관식일 경우에는 다음과 같이 유사도 목록 추가하기
+                if(gameQuizService.getGameQuizDetail(newGame.gameId).getType() == 4){
+                    // 처음 주어지는 품사에 대한 값 넣어주기
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put("명사","안녕!");
+                    map.put("동사", "반가워");
+                    map.put("형용사", null);
+                    map.put("부사", null);
 
-                // 받아온 품사 목록으로 초기화 시키기
-                newGame.initSimilarity(map);
+                    // 받아온 품사 목록으로 초기화 시키기
+                    newGame.initSimilarity(map);
+                }
+
+                // 게임 시작 메세지 전달
+                sendRoundReadyMessage(newGame);
+
+                // 스케쥴러 시작
+                gameReadyList.put(ready.getGameId(), newGame);
             }
-
-            // 게임 시작 메세지 전달
-            sendRoundReadyMessage(newGame);
-
-            // 스케쥴러 시작
-            gameReadyList.put(ready.getGameId(), newGame);
         }
     }
 
@@ -241,6 +242,12 @@ public class GameSocketController {
             return;
         }
 
+        // 전체 사용자에게 라운드 종료 알림 보내기 (다음 라운드 증가)
+        GameSystemContentDto temp = new GameSystemContentDto(game.round, list);
+
+        template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
+                new GameResponseDto("game", GameSystemResponseDto.end(temp)));
+
         // 게임 타입이 빈칸 주관식일 경우에는 다음과 같이 유사도 목록 추가하기
         if(gameQuizService.getGameQuizDetail(game.gameId).getType() == 4){
             // 처음 주어지는 품사에 대한 값 넣어주기
@@ -253,12 +260,6 @@ public class GameSocketController {
             // 받아온 품사 목록으로 초기화 시키기
             game.initSimilarity(map);
         }
-
-        // 전체 사용자에게 라운드 종료 알림 보내기 (다음 라운드 증가)
-        GameSystemContentDto temp = new GameSystemContentDto(game.round, list);
-
-        template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
-            new GameResponseDto("game", GameSystemResponseDto.end(temp)));
     }
 
     // (게임 종료) 전체 라운드 종료 이후 사용자 점수 리스트 반환
@@ -268,7 +269,7 @@ public class GameSocketController {
         */
 
         // 일단 게임 스케쥴러 종료
-        gameStartList.remove(game.gameId);
+        gameOngoingList.remove(game.gameId);
 
         // 혹시 모르니 EndList와 ReadyList에서도 삭제
         gameEndList.remove(game.gameId);
