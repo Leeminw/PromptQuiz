@@ -2,6 +2,7 @@ import React from 'react';
 import App from '../App';
 import ChannelSelectPage from '../pages/ChannelSelect';
 import MainPage from '../pages/Main';
+import TestPage from '../pages/Test';
 import Lobby from '../pages/Lobby';
 const RouterInfo = [
   {
@@ -30,6 +31,11 @@ const RouterInfo = [
         label: 'lobby',
       },
     ],
+  },
+  {
+    path: '/test',
+    element: <TestPage />,
+    label: 'test',
   },
 ];
 
