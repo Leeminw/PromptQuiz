@@ -12,13 +12,7 @@ public class GameSystemResponseDto {
     private String type;
 
     // content는 각각 상태에 들어갈 내용
-    // GameChat or GameSystemContentDto
     private Object content;
-
-    // 라운드 및 게임 진행중 타이머
-    public static GameSystemResponseDto timer(Integer time) {
-        return new GameSystemResponseDto("timer", time);
-    }
 
     // 라운드 준비 상태 response
     public static GameSystemResponseDto ready(Object content) {
