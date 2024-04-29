@@ -18,6 +18,7 @@ public class GameQuizEntity {
     private Long gameId;
     @Indexed
     private Long quizId;
+    //    객관식, 빈칸객관식, 빈칸주관식
     private Integer type;
     @Indexed
     private Integer round;

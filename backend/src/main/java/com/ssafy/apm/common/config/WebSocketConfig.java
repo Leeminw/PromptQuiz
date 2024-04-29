@@ -13,8 +13,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     // 브로커가 보내줄 주소 즉 클라이언트가 받게될 주소 설정과 서버에서 입력을 받게 될 prefix를 설정한다
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/sub");
-        config.setApplicationDestinationPrefixes("/pub");
+        config.enableSimpleBroker("/ws/sub");
+        config.setApplicationDestinationPrefixes("/ws/pub");
     }
 
     // connection이 맺어지면 CORS를 허용해주기
@@ -22,8 +22,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry
-                .addEndpoint("/socket/connect")
-                .setAllowedOrigins("http://localhost:3000")
-                .withSockJS();
+            .addEndpoint("/socket/connect")
+            .setAllowedOrigins("http://localhost:3000")
+            .withSockJS();
     }
 }
