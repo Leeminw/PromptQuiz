@@ -1,5 +1,7 @@
 package com.ssafy.apm.gameuser.service;
 
+import com.ssafy.apm.game.domain.GameEntity;
+import com.ssafy.apm.game.repository.GameRepository;
 import com.ssafy.apm.gameuser.domain.GameUserEntity;
 import com.ssafy.apm.gameuser.dto.response.GameUserDetailResponseDto;
 import com.ssafy.apm.gameuser.dto.response.GameUserGetResponseDto;
@@ -23,6 +25,7 @@ import java.util.NoSuchElementException;
 @Transactional(readOnly = true)
 public class GameUserServiceImpl implements GameUserService {
 
+    private final GameRepository gameRepository;
     private final GameUserRepository gameUserRepository;
     private final UserRepository userRepository;
     private final UserService userService;
@@ -76,6 +79,70 @@ public class GameUserServiceImpl implements GameUserService {
         entity = gameUserRepository.save(entity);
 
         return new GameUserGetResponseDto(entity);
+    }
+
+    @Override
+    @Transactional
+    public GameUserGetResponseDto updateGameUserScore(Integer score) {
+        User user = userService.loadUser();
+        GameUserEntity gameUserEntity = gameUserRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
+
+//        점수 업데이트
+        gameUserEntity.updateScore(score);
+
+//        점수 DB에 반영
+        gameUserEntity = gameUserRepository.save(gameUserEntity);
+        return new GameUserGetResponseDto(gameUserEntity);
+    }
+
+    @Override
+    @Transactional
+    public GameUserGetResponseDto updateGameUserIsReady(Boolean isReady) {
+        User user = userService.loadUser();
+        GameUserEntity gameUserEntity = gameUserRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
+
+//        레디 상태 업데이트
+        gameUserEntity.updateIsReady(isReady);
+
+//        DB에 반영
+        gameUserEntity = gameUserRepository.save(gameUserEntity);
+        return new GameUserGetResponseDto(gameUserEntity);
+    }
+
+    @Override
+    @Transactional
+    public GameUserGetResponseDto updateGameUserTeam(String team) {
+        User user = userService.loadUser();
+        GameUserEntity gameUserEntity = gameUserRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
+
+//        팀 업데이트
+        gameUserEntity.updateTeam(team);
+
+//        DB에 반영
+        gameUserEntity = gameUserRepository.save(gameUserEntity);
+        return new GameUserGetResponseDto(gameUserEntity);
+    }
+
+    @Override
+    public void updateUserScore(Long gameId) {
+        GameEntity game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new NoSuchElementException("그런 게임방이 존재하지 않습니다"));
+        List<GameUserEntity> gameUserEntityList = gameUserRepository.findAllByGameId(gameId);
+
+//        Todo: Game-User의 Ranking을 여기서 구하고 점수를 넣는건지, 라운드마다 Ranking을 업데이트 하는지 상의하고 구현해야함.
+
+//        팀전일때
+        if(game.getIsTeam()){
+//            Todo:팀전일 때 점수 구하는 로직 작성해야 합니다.
+        }
+//        개인전일때
+        else {
+//            Todo:개인전일 때 점수 구하는 로직 작성해야 합니다.
+        }
+
     }
 
     //    게임 나갈때
