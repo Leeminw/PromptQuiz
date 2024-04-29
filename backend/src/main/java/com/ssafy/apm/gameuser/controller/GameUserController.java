@@ -40,4 +40,12 @@ public class GameUserController {
         GameUserGetResponseDto response = gameUserService.postEnterGame(gameId);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
+
+    //    게임 퇴장할 때 GameUserEntity 삭제
+    @DeleteMapping("/exitGame/{gameId}")
+    public ResponseEntity<ResponseData<?>> deleteExitGame(@PathVariable(name = "gameId") Long gameId) {
+//        삭제된 gameUserId 리턴
+        Long response = gameUserService.deleteExitGame(gameId);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
+    }
 }
