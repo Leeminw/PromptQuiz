@@ -18,6 +18,7 @@ const LoginPage = ({ movePage }: { movePage: () => void }) => {
 
   const handleClick = (id: number) => {
     setActivateBtn((prev) => ({ ...prev, [id]: true }));
+    console.log(activateBtn);
     setTimeout(() => {
       setActivateBtn((prev) => ({ ...prev, [id]: false }));
     }, 400);
