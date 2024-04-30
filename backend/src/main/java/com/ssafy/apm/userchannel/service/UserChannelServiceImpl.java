@@ -1,5 +1,7 @@
 package com.ssafy.apm.userchannel.service;
 
+import com.ssafy.apm.channel.domain.ChannelEntity;
+import com.ssafy.apm.channel.repository.ChannelRepository;
 import com.ssafy.apm.user.domain.User;
 import com.ssafy.apm.user.dto.UserDetailResponseDto;
 import com.ssafy.apm.user.repository.UserRepository;
@@ -21,6 +23,7 @@ public class UserChannelServiceImpl implements UserChannelService{
 
     private final UserChannelRepository userChannelRepository;
     private final UserRepository userRepository;
+    private final ChannelRepository channelRepository;
     private final UserService userService;
     @Override
     public List<UserDetailResponseDto> getUserChannelList(Long channelId) {
@@ -54,10 +57,23 @@ public class UserChannelServiceImpl implements UserChannelService{
 
     @Override
     @Transactional
-    public Long exitUserChannel() {
+    public Long deleteExitUserChannel() {
         User user = userService.loadUser();
         UserChannelEntity entity = userChannelRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new NoSuchElementException("현재 채널에 접속중이지 않습니다."));
+        Long response = entity.getId();
+        userChannelRepository.delete(entity);
+        return response;
+    }
+
+    @Override
+    @Transactional
+    public Long deleteExitUserChannelByChannelCodeAndUserId(Long userId, String channelCode) {
+        ChannelEntity channelEntity = channelRepository.findByChannelCode(channelCode)
+                .orElseThrow(() -> new NoSuchElementException("채널 코드에 해당하는 채널이 존재하지 않습니다."));
+        UserChannelEntity entity = userChannelRepository.findByUserIdAndChannelId(userId, channelEntity.getId())
+                .orElseThrow(() -> new NoSuchElementException("유저의 Id와 채널 코드에 해당하는 채널 접속자 정보가 없습니다."));
+
         Long response = entity.getId();
         userChannelRepository.delete(entity);
         return response;
