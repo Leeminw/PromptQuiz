@@ -5,8 +5,13 @@ import com.ssafy.apm.game.repository.GameRepository;
 import com.ssafy.apm.gamequiz.domain.GameQuizEntity;
 import com.ssafy.apm.gamequiz.dto.response.GameQuizGetResponseDto;
 import com.ssafy.apm.gamequiz.repository.GameQuizRepository;
+import com.ssafy.apm.gameuser.domain.GameUserEntity;
+import com.ssafy.apm.gameuser.repository.GameUserRepository;
 import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.quiz.repository.QuizRepository;
+import com.ssafy.apm.user.domain.User;
+import com.ssafy.apm.user.repository.UserRepository;
+import com.ssafy.apm.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +27,10 @@ import java.util.Random;
 public class GameQuizServiceImpl implements GameQuizService {
 
     private final GameQuizRepository gameQuizRepository;
+    private final GameUserRepository gameUserRepository;
     private final GameRepository gameRepository;
     private final QuizRepository quizRepository;
+    private final UserService userService;
 
     //    맨 앞에 있는 놈을 뽑아서 보내줌
     @Override
@@ -31,8 +38,9 @@ public class GameQuizServiceImpl implements GameQuizService {
         GameEntity gameEntity = gameRepository.findById(gameId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
 
-        Integer round = gameEntity.getRounds();
-//        정답 주는거
+//        현재 라운드 가져와서
+        Integer round = gameEntity.getCurRound();
+//        현재 라운드에 해당하는 정답 주는거
         GameQuizEntity entity = gameQuizRepository.findByGameIdAndRound(gameId, round)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 퀴즈입니다."));
 
@@ -44,6 +52,15 @@ public class GameQuizServiceImpl implements GameQuizService {
     @Override
     @Transactional
     public Boolean createAnswerGameQuiz(Long gameId) {
+        User user = userService.loadUser();
+        GameUserEntity gameUser = gameUserRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new NoSuchElementException("이 유저는 게임방에 접속해 있지 않습니다."));
+
+//        방장이 아니면 게임 시작할 수 없음
+        if(!gameUser.getIsHost()){
+            return false;
+        }
+
         GameEntity gameEntity = gameRepository.findById(gameId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
         List<Quiz> quizList = quizRepository.findAllQuizRandom(gameEntity.getRounds());
