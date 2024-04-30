@@ -22,6 +22,7 @@ public class GameEntity {
     private Long channelId;
     private Integer type;
     private Integer style;
+    @Indexed
     private String code;
     private String title;
     private String password;
