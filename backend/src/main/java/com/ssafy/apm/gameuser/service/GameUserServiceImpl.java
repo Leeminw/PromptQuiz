@@ -138,6 +138,7 @@ public class GameUserServiceImpl implements GameUserService {
         int winnerListSize = gameUserEntityList.size() / 2;
         int loserListSize = winnerListSize + gameUserEntityList.size() % 2;
         int totalScore = 10 * game.getRounds();
+//        12가 최대 게임 참여자 수
         int getWinnerMaxScore = Math.round(totalScore * (Math.min(game.getCurPlayers(), 12) / 12));
 
         //            score를 기준으로 높은 순서대로 리스트가 정렬됨
@@ -145,24 +146,114 @@ public class GameUserServiceImpl implements GameUserService {
                 .map(obj -> (GameUserEntity) obj)
                 .sorted((user1, user2) -> user2.getScore().compareTo(user1.getScore()))
                 .toList();
-        List<GameUserEntity> winnderList = new ArrayList<>();
-        List<GameUserEntity> loserList = new ArrayList<>();
 
 //        팀전일때
         if (game.getIsTeam()) {
 //            Todo:팀전일 때 점수 구하는 로직 작성해야 합니다.
+//            테스트 완료되면 리팩토링 해야합니다 ㅎㅎ..
+            int redTeam = 0, blueTeam = 0;
+            List<GameUserEntity> redTeamEntity = new ArrayList<>();
+            List<GameUserEntity> blueTeamEntity = new ArrayList<>();
+
+//            누가 이겼는가
+            for (GameUserEntity entity : GameUsers) {
+                if (entity.getTeam() == "RED") {
+                    redTeam += entity.getScore();
+                    redTeamEntity.add(entity);
+                } else {
+                    blueTeam += entity.getScore();
+                    blueTeamEntity.add(entity);
+                }
+            }
+//            RedTeam이 점수가 더 높다면
+            if (redTeam > blueTeam) {
+                for (int i = 0; i < redTeamEntity.size(); i++) {
+                    GameUserEntity entity = redTeamEntity.get(i);
+                    User user = userRepository.findById(entity.getUserId())
+                            .orElseThrow(() -> new NoSuchElementException("그런 유저는 없다."));
+
+                    int earnUserScore = (int) Math.round(getWinnerMaxScore * Math.pow(0.8, i));
+
+                    UserScoreUpdateRequestDto dto = UserScoreUpdateRequestDto.builder()
+                            .soloScore(0)
+                            .totalScore(earnUserScore)
+                            .teamScore(earnUserScore)
+                            .build();
+
+                    user.updateScore(dto);
+                    userList.add(user);
+                }
+
+                //            점수 잃는 놈들 로직
+                int j = 1;
+                for (int i = 0; i < blueTeamEntity.size(); i++) {
+                    GameUserEntity entity = blueTeamEntity.get(i);
+                    User user = userRepository.findById(entity.getUserId())
+                            .orElseThrow(() -> new NoSuchElementException("그런 유저는 없다."));
+
+                    int loseUserScore = -1 * (int) Math.round(getWinnerMaxScore * Math.pow(0.8, blueTeamEntity.size() - j++));
+
+                    UserScoreUpdateRequestDto dto = UserScoreUpdateRequestDto.builder()
+                            .soloScore(loseUserScore)
+                            .totalScore(loseUserScore)
+                            .teamScore(0)
+                            .build();
+
+                    user.updateScore(dto);
+                    userList.add(user);
+                }
+            }
+//            Blue팀의 점수가 더 높다면
+            else {
+                for (int i = 0; i < blueTeamEntity.size(); i++) {
+                    GameUserEntity entity = blueTeamEntity.get(i);
+                    User user = userRepository.findById(entity.getUserId())
+                            .orElseThrow(() -> new NoSuchElementException("그런 유저는 없다."));
+
+                    int earnUserScore = (int) Math.round(getWinnerMaxScore * Math.pow(0.8, i));
+
+                    UserScoreUpdateRequestDto dto = UserScoreUpdateRequestDto.builder()
+                            .soloScore(0)
+                            .totalScore(earnUserScore)
+                            .teamScore(earnUserScore)
+                            .build();
+
+                    user.updateScore(dto);
+                    userList.add(user);
+                }
+
+                //            점수 잃는 놈들 로직
+                int j = 1;
+                for (int i = 0; i < redTeamEntity.size(); i++) {
+                    GameUserEntity entity = redTeamEntity.get(i);
+                    User user = userRepository.findById(entity.getUserId())
+                            .orElseThrow(() -> new NoSuchElementException("그런 유저는 없다."));
+
+                    int loseUserScore = -1 * (int) Math.round(getWinnerMaxScore * Math.pow(0.8, redTeamEntity.size() - j++));
+
+                    UserScoreUpdateRequestDto dto = UserScoreUpdateRequestDto.builder()
+                            .soloScore(loseUserScore)
+                            .totalScore(loseUserScore)
+                            .teamScore(0)
+                            .build();
+
+                    user.updateScore(dto);
+                    userList.add(user);
+                }
+            }
+
         }
 //        개인전일때
         else {
 //            Todo:개인전일 때 점수 구하는 로직 작성해야 합니다.
 //            점수 받는 놈들 로직
             /* 10라운드 6명 기준
-            * getWinnerMaxScore = 10*10(10라운드) * (curPlayers/maxPlayers) = 50( 6명이서 게임할 때 1등이 받을 점수 )
-            * 1등 : 50 * 0.8^0 = 50,  2등 : 50 * 0.8^1 = 40, 3등 : 50*0.8^2 = 32
-            * 절반 이상부터는 점수 잃는 놈들
-            * 4등 : -50 * 0.8^2(3-1) = -32, 5등 : -50 * 0.8^1(3-2) = -40, 6등 : -40 * 0.8^0 = -50
-            *
-            * */
+             * getWinnerMaxScore = 10*10(10라운드) * (curPlayers/maxPlayers) = 50( 6명이서 게임할 때 1등이 받을 점수 )
+             * 1등 : 50 * 0.8^0 = 50,  2등 : 50 * 0.8^1 = 40, 3등 : 50*0.8^2 = 32
+             * 절반 이상부터는 점수 잃는 놈들
+             * 4등 : -50 * 0.8^2(3-1) = -32, 5등 : -50 * 0.8^1(3-2) = -40, 6등 : -40 * 0.8^0 = -50
+             *
+             * */
             /* 10라운드 7명 기준
              * getWinnerMaxScore = 10*10(10라운드) * (curPlayers/maxPlayers) = 58( 7명이서 게임할 때 1등이 받을 점수, 반올림 )
              * 1등 : 58 * 0.8^0 = 58,  2등 : 58 * 0.8^1 = 46(반올림), 3등 : 58 * 0.8^2 = 37(반올림)
@@ -193,7 +284,7 @@ public class GameUserServiceImpl implements GameUserService {
                 User user = userRepository.findById(entity.getUserId())
                         .orElseThrow(() -> new NoSuchElementException("그런 유저는 없다."));
 
-                int loseUserScore = -1 * (int) Math.round(getWinnerMaxScore * Math.pow(0.8, loserListSize-j++));
+                int loseUserScore = -1 * (int) Math.round(getWinnerMaxScore * Math.pow(0.8, loserListSize - j++));
 
                 UserScoreUpdateRequestDto dto = UserScoreUpdateRequestDto.builder()
                         .soloScore(loseUserScore)
@@ -206,7 +297,7 @@ public class GameUserServiceImpl implements GameUserService {
 
             }
         }
-
+        userRepository.saveAll(userList);
     }
 
     //    게임 나갈때
