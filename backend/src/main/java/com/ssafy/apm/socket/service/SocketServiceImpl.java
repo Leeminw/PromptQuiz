@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class SocketServiceImpl implements SocketService {
-
     private final UserService userService;
     private final SocketRepository socketRepository;
 
@@ -39,11 +38,11 @@ public class SocketServiceImpl implements SocketService {
         Session session = socketRepository.findBySessionId(sessionId).orElseThrow();
 
         // 현재 채널인 경우
-        if(session.getType() == 1){
-            
-        // 현재 게임방인 경우
-        }else{
-            
+        if (session.getType() == 1) {
+
+            // 현재 게임방인 경우
+        } else {
+
         }
     }
 

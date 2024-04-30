@@ -1,16 +1,17 @@
 package com.ssafy.apm.socket.config;
 
 import com.ssafy.apm.socket.service.SocketService;
-import lombok.RequiredArgsConstructor;
-
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
-import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
@@ -18,11 +19,9 @@ import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 @Component
 @RequiredArgsConstructor
 public class WebSocketEventListener {
-    // WebSocket 사용하면서 뿌릴 로그
-    private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
-
     private final SocketService socketService;
     private final Integer GAME = 1, CHANNEL = 2;
+    private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
 
     // 누군가 게임에 접속했을 경우
     @EventListener
@@ -55,7 +54,7 @@ public class WebSocketEventListener {
             String uuid = matcher.group(2); // uuid 값 가져오기
 
             // 구독한 정보를 세션에 저장
-            socketService.editSession(sessionId, uuid, type.equals("game") ? GAME:CHANNEL);
+            socketService.editSession(sessionId, uuid, type.equals("game") ? GAME : CHANNEL);
 
         } else {
             logger.info("destination format does not match.");
