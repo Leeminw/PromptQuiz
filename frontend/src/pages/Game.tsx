@@ -9,33 +9,58 @@ import { useParams } from 'react-router-dom';
 import SockJS from 'sockjs-client';
 import { Client, Message, IMessage } from '@stomp/stompjs';
 import { useWebSocketStore } from '../stores/socketStore';
+import useUserStore from '../stores/userStore';
 const GamePage = () => {
   const [game, setGame] = useState<Game | null>(null);
   const { roomId } = useParams();
   const [chat, setChat] = useState<string[]>([]);
   const client = useRef<Client | null>(null);
+  const { user } = useUserStore();
+  const [text, setText] = useState('');
   const { isConnected, connectWebSocket, disconnectWebSocket, subscribeWebSocket, publish } =
     useWebSocketStore();
 
   const getGameData = async () => {
     const response = await GameApi.getGame(roomId);
     setGame(response.data);
-    connectWebSocket(`/ws/sub/game?uuid=${game?.code}`, recieveChat);
+    console.log(game);
+    // enterGame();
   };
 
   useEffect(() => {
     getGameData();
   }, []);
 
+  useEffect(() => {
+    connectWebSocket(`/ws/sub/game?uuid=${game?.code}`, recieveChat, enterGame);
+  }, [game]);
+
   const recieveChat = (message: IMessage) => {
     if (message.body) {
+      console.log(message.body);
       const body = JSON.parse(message.body);
       setChat((prevItems) => [...prevItems, body.content]);
     }
   };
+  const enterGame = () => {
+    const gameEnter: GameEnter = {
+      userId: user.userId,
+      uuid: game?.code,
+      nickname: user.nickName,
+    };
+    const destination = '/ws/pub/game/enter';
+    publish(destination, gameEnter);
+  };
 
   const publishChat = () => {
     const destination = '/ws/pub/game/chat/send';
+
+    //     userId: number,
+    // nickName: string,
+    // uuid: string,
+    // gameId: number,
+    // round: number,
+    // content: string,
   };
   const chattingBox = useRef(null);
   const chatInput = useRef(null);
@@ -87,6 +112,7 @@ const GamePage = () => {
         {/* 채널 */}
         <label className="flex items-center w-1/3 py-4 border-custom-mint bg-white text-sm">
           <p className="text-center w-full text-nowrap">{game?.channelId}채널</p>
+          <button onClick={enterGame}> 입장 버튼</button>
         </label>
         {/* 제목 */}
         <label className="flex items-center w-full grow py-4 border-custom-mint bg-white text-sm">

@@ -22,3 +22,8 @@ interface GameChat{
     round: number,
     content: string,
 }
+interface GameEnter{
+    userId:number,
+    uuid: string,
+    nickname:string
+}
