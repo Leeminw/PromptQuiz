@@ -5,10 +5,10 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 @Getter
+@Builder
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @RedisHash(value = "session", timeToLive = 36000)
 public class Session {
     @Id
