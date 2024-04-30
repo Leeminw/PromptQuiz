@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 @Data
 @AllArgsConstructor
 public class EnterUserDto {
-    String nickname;
-    String userId;
+    Long userId;
     String uuid;
+    String nickname;
 }
