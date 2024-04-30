@@ -10,6 +10,20 @@ const GamePage = () => {
   const chatBtn = useRef(null);
   const [chatOpen, setChatOpen] = useState(false);
 
+  const chatFunction = () => {
+    const chatChild = document.createElement('div');
+    chatChild.className = 'flex';
+    const chatUser = document.createElement('p');
+    const chatMessage = document.createElement('p');
+    chatUser.className = 'font-extrabold pr-1 text-nowrap text-black';
+    chatUser.innerText = '푸바오 ㅠㅠㅠ : ';
+    chatMessage.innerText = chatInput.current.value;
+    chatChild.appendChild(chatUser);
+    chatChild.appendChild(chatMessage);
+    chatInput.current.value = '';
+    chattingBox.current.appendChild(chatChild);
+  };
+
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
       const target = event.target as Node;
@@ -18,25 +32,10 @@ const GamePage = () => {
       }
     };
     const handleChatKey = (event: KeyboardEvent) => {
-      if (event.key === 'Enter') {
-        if (chatOpen) {
-          if (chatInput.current.value !== '') {
-            const chatChild = document.createElement('div');
-            chatChild.className = 'flex';
-            const chatUser = document.createElement('p');
-            const chatMessage = document.createElement('p');
-            chatUser.className = 'font-extrabold pr-1 text-nowrap text-black';
-            chatUser.innerText = '푸바오 ㅠㅠㅠ : ';
-            chatMessage.innerText = chatInput.current.value;
-            chatChild.appendChild(chatUser);
-            chatChild.appendChild(chatMessage);
-            chatInput.current.value = '';
-            chattingBox.current.appendChild(chatChild);
-          } else {
-            setChatOpen(false);
-          }
-        } else {
-          chatInput.current.focus(); 
+      const target = event.target as Node;
+      if (event.key === 'Enter' && !chatInput.current?.contains(target)) {
+        if (!chatOpen) {
+          chatInput.current.focus();
           setChatOpen(true);
         }
       }
@@ -148,6 +147,16 @@ const GamePage = () => {
               className="w-full h-10 bg-transparent rounded-full pl-5 pr-20 text-sm placeholder-gray-400"
               maxLength={30}
               placeholder="채팅 입력..."
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  if (chatInput.current.value !== '') {
+                    chatFunction();
+                  } else {
+                    chatInput.current.blur();
+                    setChatOpen(false);
+                  }
+                }
+              }}
               onClick={async () => {
                 setChatOpen(true);
               }}
