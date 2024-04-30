@@ -1,7 +1,7 @@
 package com.ssafy.apm.quiz.service;
 
-import com.ssafy.apm.common.dto.request.GameChatDto;
-import com.ssafy.apm.common.dto.response.GameAnswerCheck;
+import com.ssafy.apm.socket.dto.request.GameChatDto;
+import com.ssafy.apm.socket.dto.response.GameAnswerCheck;
 import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.quiz.repository.QuizRepository;
 import com.ssafy.apm.quiz.exception.QuizNotFoundException;
@@ -11,6 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.apache.commons.text.similarity.LevenshteinDistance;
+
+import java.util.HashMap;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -28,7 +31,7 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public GameAnswerCheck checkAnswer(GameChatDto answer) {
+    public GameAnswerCheck checkAnswer(GameChatDto answer, Set<String> checkPrompt) {
         // 초기값 설정은 false로 설정
         GameAnswerCheck response = new GameAnswerCheck();
 
@@ -50,8 +53,7 @@ public class QuizServiceImpl implements QuizService {
                 // 유사도 측정 이후 90% 이상의 유사도일 경우 정답처리
                 // todo: 주어진 리스트로 모두 확인해야 함
                 response.setType(4);
-                response.setSimilarity(blankShortAnswerCheck(answer));
-                response.setResult(response.getSimilarity() > 0.9);
+                response.setSimilarity(blankShortAnswerCheck(answer, checkPrompt));
                 break;
         }
 
@@ -76,21 +78,19 @@ public class QuizServiceImpl implements QuizService {
     }
 
     // (빈칸 주관식) 빈칸 주관식 유사도 체크 메서드
-    /*
-      todo: 이때 하나만 하는게 아니라 주어진 List에 있는 것을 모두 확인해야 한다.
-       이후 맞은 것들을 모두 체크해줘야 함
-       이때 남은 문제가 있다면 result = false, 모든 문제 정답이 나왔다면 true로 만들어야 한다.
-    */
-    public Double blankShortAnswerCheck(GameChatDto answer) {
+    public HashMap<String, Double> blankShortAnswerCheck(GameChatDto answer, Set<String> checkPrompt) {
         // 라운드로 퀴즈 아이디 조회
         Long quizId = 0L;
 
-        // quiz 데이터 가져오기 (만약 퀴즈 존재하지 않는다면 false)
-        // Quiz quiz = repository.findById(quizId).orElse(null);
-        // if (quiz == null) return 0.0;
-
-        // return calcSimilarity(quiz.getPrompt(), answer.getContent());
-        return calcSimilarity("테스트 입력입니다", answer.getContent());
+        // 현재 남은 프롬프트 품사 데이터를 확인하며 유사도 결과 return하기
+        HashMap<String, Double> resultMap = new HashMap<>();
+        for(String i : checkPrompt){
+            // 해당 품사와 유사도 측정 이후 result에 넣어주기
+            // 테스트 입력 부분에는 해당 품사(i)에 대한 정보가 들어가야 한다.
+            resultMap.put(i, calcSimilarity("테스트 입력입니다",answer.getContent()));
+        }
+        
+        return resultMap;
     }
 
     // (빈칸 객관식) 빈칸 객관식 체크 메서드
@@ -108,7 +108,7 @@ public class QuizServiceImpl implements QuizService {
     }
 
     // 유사도 측정 메서드
-    public double calcSimilarity(String input, String answer) {
+    public Double calcSimilarity(String input, String answer) {
         // 공백 제거하기
         input = input.replace(" ", "");
         answer = answer.replace(" ", "");
