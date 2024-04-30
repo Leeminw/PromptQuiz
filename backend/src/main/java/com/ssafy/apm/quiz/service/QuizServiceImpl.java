@@ -1,10 +1,14 @@
 package com.ssafy.apm.quiz.service;
 
+import com.ssafy.apm.prompt.domain.Prompt;
+import com.ssafy.apm.prompt.dto.PromptResponseDto;
+import com.ssafy.apm.prompt.exception.PromptNotFoundException;
+import com.ssafy.apm.quiz.dto.request.QuizRequestDto;
+import com.ssafy.apm.quiz.exception.QuizNotFoundException;
 import com.ssafy.apm.socket.dto.request.GameChatDto;
 import com.ssafy.apm.socket.dto.response.GameAnswerCheck;
 import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.quiz.repository.QuizRepository;
-import com.ssafy.apm.quiz.exception.QuizNotFoundException;
 import com.ssafy.apm.quiz.dto.response.QuizDetailResponseDto;
 
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -20,15 +25,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class QuizServiceImpl implements QuizService {
 
-    private final QuizRepository repository;
-
-    // 퀴즈 상세 정보 조회
-    @Override
-    public QuizDetailResponseDto getQuizInfo(Long quizId) {
-        Quiz entity = repository.findById(quizId)
-            .orElseThrow(() -> new QuizNotFoundException(quizId));
-        return new QuizDetailResponseDto(entity);
-    }
+    private final QuizRepository quizRepository;
 
     @Override
     public GameAnswerCheck checkAnswer(GameChatDto answer, Set<String> checkPrompt) {
@@ -60,6 +57,75 @@ public class QuizServiceImpl implements QuizService {
         return response;
     }
 
+    @Override
+    public QuizDetailResponseDto createQuiz(QuizRequestDto requestDto) {
+        Quiz quiz = quizRepository.save(requestDto.toEntity());
+        return new QuizDetailResponseDto(quiz);
+    }
+
+    @Override
+    public QuizDetailResponseDto updateQuiz(QuizRequestDto requestDto) {
+        Quiz quiz = quizRepository.findById(requestDto.getId()).orElseThrow(
+                () -> new QuizNotFoundException(requestDto.getId()));
+        return new QuizDetailResponseDto(quiz.update(requestDto));
+    }
+
+    @Override
+    public QuizDetailResponseDto deleteQuiz(Long id) {
+        Quiz quiz = quizRepository.findById(id).orElseThrow(
+                () -> new QuizNotFoundException(id));
+        quizRepository.delete(quiz);
+        return new QuizDetailResponseDto(quiz);
+    }
+
+    @Override
+    public QuizDetailResponseDto findQuizById(Long id) {
+        Quiz quiz = quizRepository.findById(id).orElseThrow(
+                () -> new QuizNotFoundException(id));
+        return new QuizDetailResponseDto(quiz);
+    }
+
+    @Override
+    public List<QuizDetailResponseDto> findAllQuizs() {
+        List<Quiz> quizs = quizRepository.findAll();
+        return quizs.stream().map(QuizDetailResponseDto::new).toList();
+    }
+
+    @Override
+    public List<QuizDetailResponseDto> filterQuizByStyle(String style) {
+        List<Quiz> quizs = quizRepository.findAllByStyle(style).orElseThrow(
+                () -> new QuizNotFoundException(style));
+        return quizs.stream().map(QuizDetailResponseDto::new).toList();
+    }
+
+    @Override
+    public List<QuizDetailResponseDto> filterQuizsByGroupCode(String groupCode) {
+        List<Quiz> quizs = quizRepository.findAllByGroupCode(groupCode).orElseThrow(
+                () -> new QuizNotFoundException(groupCode));
+        return quizs.stream().map(QuizDetailResponseDto::new).toList();
+    }
+
+    @Override
+    public QuizDetailResponseDto extractRandomQuiz() {
+        Quiz quiz = quizRepository.extractRandomQuiz().orElseThrow(
+                () -> new QuizNotFoundException("No entities exists!"));
+        return new QuizDetailResponseDto(quiz);
+    }
+
+    @Override
+    public List<QuizDetailResponseDto> extractRandomQuizs(Integer limit) {
+        List<Quiz> quizs = quizRepository.extractRandomQuizs(limit).orElseThrow(
+                () -> new QuizNotFoundException("No entities exists!"));
+        return quizs.stream().map(QuizDetailResponseDto::new).toList();
+    }
+
+    @Override
+    public List<QuizDetailResponseDto> extractRandomQuizsByGroupCode(String groupCode, Integer limit) {
+        List<Quiz> quizs = quizRepository.extractRandomQuizsByGroupCode(groupCode, limit).orElseThrow(
+                () -> new QuizNotFoundException("No entities exists!"));
+        return quizs.stream().map(QuizDetailResponseDto::new).toList();
+    }
+
 
     // (객관식 체크) 객관식 체크 메서드
     public Boolean multipleChoiceCheck(GameChatDto answer) {
@@ -69,7 +135,7 @@ public class QuizServiceImpl implements QuizService {
         Long quizId = 0L;
 
         // quiz 데이터 가져오기 (만약 퀴즈 존재하지 않는다면 false)
-        Quiz quiz = repository.findById(quizId).orElse(null);
+        Quiz quiz = quizRepository.findById(quizId).orElse(null);
         if (quiz == null) {
             return false;
         }
@@ -99,7 +165,7 @@ public class QuizServiceImpl implements QuizService {
         Long quizId = 0L;
 
         // quiz 데이터 가져오기 (만약 퀴즈 존재하지 않는다면 false)
-        Quiz quiz = repository.findById(quizId).orElse(null);
+        Quiz quiz = quizRepository.findById(quizId).orElse(null);
         if (quiz == null) {
             return false;
         }
