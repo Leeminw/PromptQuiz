@@ -40,21 +40,45 @@ const GamePage = () => {
   const chattingBox = useRef(null);
   const chatInput = useRef(null);
 
+  const chatBtn = useRef(null);
+  const [chatOpen, setChatOpen] = useState(false);
+
   const chatFunction = () => {
-    if (chatInput.current.value !== '') {
-      const chatChild = document.createElement('div');
-      chatChild.className = 'flex';
-      const chatUser = document.createElement('p');
-      const chatMessage = document.createElement('p');
-      chatUser.className = 'font-extrabold pr-1 text-nowrap text-black';
-      chatUser.innerText = '푸바오 ㅠㅠㅠ : ';
-      chatMessage.innerText = chatInput.current.value;
-      chatChild.appendChild(chatUser);
-      chatChild.appendChild(chatMessage);
-      chatInput.current.value = '';
-      chattingBox.current.appendChild(chatChild);
-    }
+    const chatChild = document.createElement('div');
+    chatChild.className = 'flex';
+    const chatUser = document.createElement('p');
+    const chatMessage = document.createElement('p');
+    chatUser.className = 'font-extrabold pr-1 text-nowrap text-black';
+    chatUser.innerText = '푸바오 ㅠㅠㅠ : ';
+    chatMessage.innerText = chatInput.current.value;
+    chatChild.appendChild(chatUser);
+    chatChild.appendChild(chatMessage);
+    chatInput.current.value = '';
+    chattingBox.current.appendChild(chatChild);
   };
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (target && !chatInput.current?.contains(target) && !chatBtn.current?.contains(target)) {
+        setChatOpen(false);
+      }
+    };
+    const handleChatKey = (event: KeyboardEvent) => {
+      const target = event.target as Node;
+      if (event.key === 'Enter' && !chatInput.current?.contains(target)) {
+        if (!chatOpen) {
+          chatInput.current.focus();
+          setChatOpen(true);
+        }
+      }
+    };
+    document.addEventListener('click', handleOutsideClick);
+    document.addEventListener('keydown', handleChatKey);
+    return () => {
+      document.removeEventListener('click', handleOutsideClick);
+    };
+  }, []);
 
   return (
     <div className="bg-white/80 w-[80vw] h-[85vh] min-w-[50rem] min-h-[35rem] z-10 rounded-3xl drop-shadow-lg px-8 py-6 flex flex-col items-center justify-center">
@@ -102,14 +126,16 @@ const GamePage = () => {
                 <p className="pl-2 w-full text-xs font-bold text-white line-clamp-2 text-ellipsis">
                   푸바오 ㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠ
                 </p>
-                <p className="text-nowrap text-white text-sm pr-1">0점</p>
+                <p className="h-full text-nowrap text-white text-sm pr-1 pl-1 flex items-center">
+                  0점
+                </p>
               </div>
             ))}
           </div>
           {/* 문제 화면, 타이머 */}
           <div className="w-full grow flex flex-col">
-            <div className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint border">
-              <div className="h-full rounded-full w-[66%] bg-mint"></div>
+            <div className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint border relative overflow-hidden flex">
+              <div className="w-full h-full rounded-full -translate-x-[50%] transition-transform duration-1000 bg-mint absolute"></div>
             </div>
             <div className="border-custom-mint w-full h-full flex items-center justify-center relative">
               <div className="w-16 h-7 absolute top-2 left-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
@@ -140,7 +166,9 @@ const GamePage = () => {
         {/* 채팅창 */}
         <div className="w-full flex grow flex-col items-center justify-end">
           <div className="w-full h-[8rem] mb-2 relative">
-            <div className="absolute w-full h-full border-custom-white opacity-80 bg-white">
+            <div
+              className={`absolute w-full h-full border-custom-white opacity-80 bg-white  transition-all origin-bottom duration-300 ${chatOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
+            >
               <div className="px-3 py-2 w-full h-full text-sm chat">
                 <div ref={chattingBox}></div>
               </div>
@@ -154,13 +182,21 @@ const GamePage = () => {
               placeholder="채팅 입력..."
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
-                  chatFunction();
+                  if (chatInput.current.value !== '') {
+                    chatFunction();
+                  } else {
+                    chatInput.current.blur();
+                    setChatOpen(false);
+                  }
                 }
+              }}
+              onClick={async () => {
+                setChatOpen(true);
               }}
             ></input>
             <div
-              className="w-16 bg-mint cursor-pointer absolute h-full right-0 rounded-r-full flex justify-center items-center"
-              onClick={chatFunction}
+              className="w-16 bg-mint cursor-pointer absolute h-full right-0 rounded-r-full flex justify-center items-center hover:brightness-125 transition"
+              ref={chatBtn}
             >
               <IoSend className="text-white w-6 h-6" />
             </div>
