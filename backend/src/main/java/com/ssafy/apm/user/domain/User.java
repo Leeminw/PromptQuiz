@@ -49,9 +49,9 @@ public class User {
     }
 
     public void updateScore(UserScoreUpdateRequestDto requestDto) {
-        this.totalScore = requestDto.getTotalScore();
-        this.soloScore = requestDto.getSoloScore();
-        this.teamScore = requestDto.getTeamScore();
+        this.totalScore += requestDto.getTotalScore();
+        this.soloScore += requestDto.getSoloScore();
+        this.teamScore += requestDto.getTeamScore();
     }
 
 }

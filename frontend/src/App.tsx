@@ -17,7 +17,7 @@ const App = () => {
       className="w-[100vw] h-[100vh] flex justify-center items-center 
     bg-[url(/public/ui/bg.jpg)] bg-no-repeat bg-cover bg-center overflow-hidden"
     >
-      <div className="absolute top-4 right-4 flex flex-col gap-3">
+      <div className="absolute top-4 right-4 flex gap-3">
         <button
           className={`btn-mint hover:brightness-125 transition text-sm ${activateBtn[0] ? 'animate-clickbtn' : ''}`}
           onClick={() => {
