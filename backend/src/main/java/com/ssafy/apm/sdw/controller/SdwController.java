@@ -9,7 +9,7 @@ import com.ssafy.apm.sdw.service.SdwService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,13 +19,13 @@ public class SdwController {
 
     private final SdwService sdwService;
 
-    @GetMapping("/api/v1/sdw/txt2img")
+    @PostMapping("/api/v1/sdw/txt2img")
     public ResponseEntity<ResponseData<?>> requestStableDiffusion(@RequestBody SdwRequestDto requestDto) {
         SdwResponseDto responseDto = sdwService.requestStableDiffusion(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }
 
-    @GetMapping("/api/v1/dottegi/txt2img")
+    @PostMapping("/api/v1/dottegi/txt2img")
     public ResponseEntity<ResponseData<?>> requestStableDiffusion(@RequestBody DottegiRequestDto requestDto) {
         DottegiResponseDto responseDto = sdwService.createDottegiTxt2Img(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
