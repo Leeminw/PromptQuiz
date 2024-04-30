@@ -3,13 +3,33 @@ import { IoSettings } from 'react-icons/io5';
 import { IoLogOut } from 'react-icons/io5';
 import { FaUserPlus } from 'react-icons/fa';
 import { IoSend } from 'react-icons/io5';
+import GameApi from '../hooks/axios-game';
+import { useLoaderData } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import SockJS from 'sockjs-client';
+import { Client, Message } from '@stomp/stompjs';
 
 const GamePage = () => {
   const [game, setGame] = useState<Game | null>(null);
-  useEffect(() => {}, []);
-  // useEffect 구독하기
+  const { roomId } = useParams();
+  const client = useRef<Client | null>(null);
+  const socketUrl = process.env.REACT_APP_SOCKET;
+  const socket = new SockJS(`${socketUrl}/socket/connect`);
+
+  useEffect(() => {
+    const getGameData = async () => {
+      const response = await GameApi.getGame(roomId);
+      setGame(response.data);
+    };
+    const connect = async () => {};
+
+    getGameData();
+    connect;
+    // useEffect 구독하기
+  }, []);
   const chattingBox = useRef(null);
   const chatInput = useRef(null);
+
   const chatFunction = () => {
     if (chatInput.current.value !== '') {
       const chatChild = document.createElement('div');
@@ -25,18 +45,19 @@ const GamePage = () => {
       chattingBox.current.appendChild(chatChild);
     }
   };
+
   return (
     <div className="bg-white/80 w-[80vw] h-[85vh] min-w-[50rem] min-h-[35rem] z-10 rounded-3xl drop-shadow-lg px-8 py-6 flex flex-col items-center justify-center">
       {/* 상단 : 제목, 버튼 */}
       <div className="w-full h-10 flex gap-4 mb-2">
         {/* 채널 */}
         <label className="flex items-center w-1/3 py-4 border-custom-mint bg-white text-sm">
-          <p className="text-center w-full text-nowrap">1채널</p>
+          <p className="text-center w-full text-nowrap">{game?.channelId}채널</p>
         </label>
         {/* 제목 */}
         <label className="flex items-center w-full grow py-4 border-custom-mint bg-white text-sm">
-          <div className="border-r border-gray-200 pl-3 pr-2.5">86</div>
-          <p className="text-center w-full text-nowrap line-clamp-1">개인전 빠무 초보만</p>
+          <div className="border-r border-gray-200 pl-3 pr-2.5">{roomId}</div>
+          <p className="text-center w-full text-nowrap line-clamp-1">{game?.title}</p>
         </label>
         {/* 버튼 */}
         <div className="w-1/3 flex gap-4">
