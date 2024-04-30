@@ -8,5 +8,7 @@ public interface SocketService {
 
     void deleteSession(String sessionId);
 
-    void editSession(String sessionId, Long uuid, Integer type);
+    void editSession(String sessionId, String uuid, Integer type);
+
+    void printSession(String sessionId);
 }

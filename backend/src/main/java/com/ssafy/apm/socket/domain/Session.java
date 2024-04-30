@@ -10,10 +10,15 @@ import org.springframework.data.redis.core.RedisHash;
 @AllArgsConstructor
 @Builder
 @RedisHash(value = "session", timeToLive = 36000)
-public class SessionEntity {
+public class Session {
     @Id
     String sessionId;
     String userId;
-    Long uuid;
+    String uuid;
     Integer type; // 1: 게임 방   2: 채널
+
+    public void updateState(String uuid, Integer type){
+        this.uuid = uuid;
+        this.type = type;
+    }
 }
