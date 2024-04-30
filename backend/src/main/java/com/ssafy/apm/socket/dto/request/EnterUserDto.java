@@ -1,7 +1,7 @@
 package com.ssafy.apm.socket.dto.request;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.AllArgsConstructor;
 
 @Data
 @AllArgsConstructor

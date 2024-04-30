@@ -3,10 +3,43 @@ import { IoSettings } from 'react-icons/io5';
 import { IoLogOut } from 'react-icons/io5';
 import { FaUserPlus } from 'react-icons/fa';
 import { IoSend } from 'react-icons/io5';
-
+import GameApi from '../hooks/axios-game';
+import { useLoaderData } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import SockJS from 'sockjs-client';
+import { Client, Message, IMessage } from '@stomp/stompjs';
+import { useWebSocketStore } from '../stores/socketStore';
 const GamePage = () => {
+  const [game, setGame] = useState<Game | null>(null);
+  const { roomId } = useParams();
+  const [chat, setChat] = useState<string[]>([]);
+  const client = useRef<Client | null>(null);
+  const { isConnected, connectWebSocket, disconnectWebSocket, subscribeWebSocket, publish } =
+    useWebSocketStore();
+
+  const getGameData = async () => {
+    const response = await GameApi.getGame(roomId);
+    setGame(response.data);
+    connectWebSocket(`/ws/sub/game?uuid=${game?.code}`, recieveChat);
+  };
+
+  useEffect(() => {
+    getGameData();
+  }, []);
+
+  const recieveChat = (message: IMessage) => {
+    if (message.body) {
+      const body = JSON.parse(message.body);
+      setChat((prevItems) => [...prevItems, body.content]);
+    }
+  };
+
+  const publishChat = () => {
+    const destination = '/ws/pub/game/chat/send';
+  };
   const chattingBox = useRef(null);
   const chatInput = useRef(null);
+
   const chatBtn = useRef(null);
   const [chatOpen, setChatOpen] = useState(false);
 
@@ -53,12 +86,12 @@ const GamePage = () => {
       <div className="w-full h-10 flex gap-4 mb-2">
         {/* 채널 */}
         <label className="flex items-center w-1/3 py-4 border-custom-mint bg-white text-sm">
-          <p className="text-center w-full text-nowrap">1채널</p>
+          <p className="text-center w-full text-nowrap">{game?.channelId}채널</p>
         </label>
         {/* 제목 */}
         <label className="flex items-center w-full grow py-4 border-custom-mint bg-white text-sm">
-          <div className="border-r border-gray-200 pl-3 pr-2.5">86</div>
-          <p className="text-center w-full text-nowrap line-clamp-1">개인전 빠무 초보만</p>
+          <div className="border-r border-gray-200 pl-3 pr-2.5">{roomId}</div>
+          <p className="text-center w-full text-nowrap line-clamp-1">{game?.title}</p>
         </label>
         {/* 버튼 */}
         <div className="w-1/3 flex gap-4">

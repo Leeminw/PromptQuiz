@@ -7,10 +7,13 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class GameChatDto {
     // 사용자 아이디
-    private String userId;
+    private Long userId;
+
+    // 사용자 닉네임
+    private String nickname;
 
     // 게임방 코드
-    private Long uuid;
+    private String uuid;
 
     // 게임방 아이디
     private Long gameId;
