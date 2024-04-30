@@ -63,7 +63,8 @@ public class GameQuizServiceImpl implements GameQuizService {
 
         GameEntity gameEntity = gameRepository.findById(gameId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
-        List<Quiz> quizList = quizRepository.findAllQuizRandom(gameEntity.getRounds());
+        List<Quiz> quizList = quizRepository.extractRandomQuizs(gameEntity.getRounds())
+                .orElseThrow(() -> new NoSuchElementException("정답을 추출하는데 실패했습니다."));
 
         List<GameQuizEntity> gameQuizEntityList = new ArrayList<>();
 //        게임 문제 유형
@@ -72,8 +73,6 @@ public class GameQuizServiceImpl implements GameQuizService {
         Integer currentRound = 1;
 //        랜덤 숫자
         int randomType = 0;
-//        랜덤 인덱스
-        int randomIndex = 0;
         Random random = new Random();
 
 //        문제 유형이 하나일 경우
