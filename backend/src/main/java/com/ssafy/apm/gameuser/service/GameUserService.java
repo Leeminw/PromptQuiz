@@ -22,4 +22,6 @@ public interface GameUserService {
     /////////////////////////////////////////////////////////////////////////////
 
     Long deleteExitGame(Long gameId);
+
+    Long deleteExitGameByUserId(Long userId, String gameCode);
 }
