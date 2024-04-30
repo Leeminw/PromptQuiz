@@ -1,4 +1,4 @@
-package com.ssafy.apm.common.dto.response;
+package com.ssafy.apm.socket.dto.response;
 
 import lombok.Data;
 import lombok.AllArgsConstructor;
