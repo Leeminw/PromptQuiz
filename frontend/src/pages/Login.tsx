@@ -5,6 +5,7 @@ import { FaUser } from 'react-icons/fa';
 import { IoMdLock } from 'react-icons/io';
 import { wait } from '@testing-library/user-event/dist/utils';
 import useUserStore from '../stores/userStore';
+import { useWebSocketStore } from '../stores/socketStore';
 const LoginPage = ({ movePage }: { movePage: () => void }) => {
   const navigate = useNavigate();
   const [activateBtn, setActivateBtn] = useState<ActivateButton>({});
@@ -52,7 +53,6 @@ const LoginPage = ({ movePage }: { movePage: () => void }) => {
         const { data: userData } = await UserApi.loadUser();
 
         setUser(userData);
-
         setTimeout(() => {
           navigate('/channel');
         }, 1000);
