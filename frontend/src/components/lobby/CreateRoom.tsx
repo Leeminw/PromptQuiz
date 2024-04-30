@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { MdAddHome } from 'react-icons/md';
+import { LobbyApi } from '../../hooks/axios-lobby';
 
 // 방생성 BE API
 // "{
@@ -98,6 +99,8 @@ const CreateRoom = () => {
     console.log('최대라운드:' + maxRound);
     console.log('현재플레이어:' + curPlayers);
     console.log('최대플레이어:' + maxPlayers);
+
+    const { data } = await LobbyApi.createRoom(Room);
   };
   return (
     // className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 "

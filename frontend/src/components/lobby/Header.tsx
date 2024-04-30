@@ -7,6 +7,7 @@ import { FaForward } from 'react-icons/fa6';
 import { MdAddHome } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import CreateRoom from './CreateRoom';
+import { LobbyApi } from '../../hooks/axios-lobby';
 interface Props {
   channelId: number;
 }
@@ -15,7 +16,13 @@ const Header = ({ channelId }: Props) => {
     alert('방 생성 모달창 띄움');
   };
   const fastMatching = () => {};
-  const refresh = () => {};
+  const refresh = async () => {
+    // const { data } = await UserApi.login(loginForm);
+    console.log('새로고침 버튼 누름');
+
+    const { data } = await LobbyApi.getGameList(1);
+    console.log(data);
+  };
   const ranking = () => {};
 
   return (
@@ -27,7 +34,7 @@ const Header = ({ channelId }: Props) => {
           <FaForward />
           빠른대전
         </button>
-        <button className="w-1/4 h-[10vh] btn-mint">
+        <button className="w-1/4 h-[10vh] btn-mint" onClick={refresh}>
           <IoMdRefresh />
           새로고침
         </button>

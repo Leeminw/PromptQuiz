@@ -7,7 +7,6 @@ const RoomList = () => {
     <div className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 border-mint rounded-3xl ">
       <div>방 내용</div>
       <div>
-        {/* <button>&lt;</button> */}
         <button>
           <FaPlay className="rotate-180" />
         </button>
