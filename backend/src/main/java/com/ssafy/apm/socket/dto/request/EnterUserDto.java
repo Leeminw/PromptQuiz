@@ -8,5 +8,5 @@ import lombok.AllArgsConstructor;
 public class EnterUserDto {
     String nickname;
     String userId;
-    Long uuid;
+    String uuid;
 }
