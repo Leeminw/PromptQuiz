@@ -7,26 +7,36 @@ import GameApi from '../hooks/axios-game';
 import { useLoaderData } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import SockJS from 'sockjs-client';
-import { Client, Message } from '@stomp/stompjs';
-
+import { Client, Message, IMessage } from '@stomp/stompjs';
+import { useWebSocketStore } from '../stores/socketStore';
 const GamePage = () => {
   const [game, setGame] = useState<Game | null>(null);
   const { roomId } = useParams();
+  const [chat, setChat] = useState<string[]>([]);
   const client = useRef<Client | null>(null);
-  const socketUrl = process.env.REACT_APP_SOCKET;
-  const socket = new SockJS(`${socketUrl}/socket/connect`);
+  const { isConnected, connectWebSocket, disconnectWebSocket, subscribeWebSocket, publish } =
+    useWebSocketStore();
+
+  const getGameData = async () => {
+    const response = await GameApi.getGame(roomId);
+    setGame(response.data);
+    connectWebSocket(`/ws/sub/game?uuid=${game?.code}`, recieveChat);
+  };
 
   useEffect(() => {
-    const getGameData = async () => {
-      const response = await GameApi.getGame(roomId);
-      setGame(response.data);
-    };
-    const connect = async () => {};
-
     getGameData();
-    connect;
-    // useEffect 구독하기
   }, []);
+
+  const recieveChat = (message: IMessage) => {
+    if (message.body) {
+      const body = JSON.parse(message.body);
+      setChat((prevItems) => [...prevItems, body.content]);
+    }
+  };
+
+  const publishChat = () => {
+    const destination = '/ws/pub/game/chat/send';
+  };
   const chattingBox = useRef(null);
   const chatInput = useRef(null);
 

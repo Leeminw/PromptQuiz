@@ -13,3 +13,12 @@ interface Game {
     curPlayers: number,
     maxPlayers: number
 }
+
+interface GameChat{
+    userId: number,
+    nickName: string,
+    uuid: string,
+    gameId: number,
+    round: number,
+    content: string,
+}
