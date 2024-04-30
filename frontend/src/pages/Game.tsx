@@ -10,6 +10,7 @@ const GamePage = () => {
   const chatBtn = useRef(null);
   const [chatOpen, setChatOpen] = useState(false);
 
+  // 채팅 입력
   const chatFunction = () => {
     const chatChild = document.createElement('div');
     chatChild.className = 'flex';
@@ -24,22 +25,36 @@ const GamePage = () => {
     chattingBox.current.appendChild(chatChild);
   };
 
+  // 채팅창 열기
+  const chatFocus = () => {
+    chatInput.current.focus();
+    setChatOpen(true);
+  };
+
+  // 채팅창 닫기
+  const chatFocusOut = () => {
+    chatInput.current.blur();
+    setChatOpen(false);
+  };
+
   useEffect(() => {
+    // 채팅 입력 바깥 클릭 시 채팅창 닫기
     const handleOutsideClick = (event: MouseEvent) => {
       const target = event.target as Node;
       if (target && !chatInput.current?.contains(target) && !chatBtn.current?.contains(target)) {
-        setChatOpen(false);
+        chatFocusOut();
       }
     };
+
+    // 채팅 입력 안하고 있을 때 Enter시 채팅창 열기
     const handleChatKey = (event: KeyboardEvent) => {
       const target = event.target as Node;
-      if (event.key === 'Enter' && !chatInput.current?.contains(target)) {
-        if (!chatOpen) {
-          chatInput.current.focus();
-          setChatOpen(true);
-        }
+      if (event.key === 'Enter' && !chatInput.current?.contains(target) && !chatOpen) {
+        chatFocus();
       }
     };
+
+    // 클릭 & 키다운 이벤트 추가
     document.addEventListener('click', handleOutsideClick);
     document.addEventListener('keydown', handleChatKey);
     return () => {
@@ -62,7 +77,9 @@ const GamePage = () => {
         </label>
         {/* 버튼 */}
         <div className="w-1/3 flex gap-4">
-          <button className={`btn-mint-border-white hover:brightness-125 transition text-sm w-1/2`}>
+          <button
+            className={`btn-mint-border-white hover:brightness-125 hover:scale-105 transition text-sm w-1/2`}
+          >
             <label className="flex gap-1 items-center px-2 cursor-pointer overflow-hidden max-xl:justify-center">
               <FaUserPlus className="min-w-5 min-h-5 mb-0.5" />
               <p className="text-center w-full text-nowrap text-sm overflow-hidden text-ellipsis xl:flex max-xl:hidden">
@@ -71,7 +88,7 @@ const GamePage = () => {
             </label>
           </button>
           <button
-            className={`btn-red bg-red-400 text-white hover:brightness-125 transition text-sm w-1/2 min-w-[3rem]`}
+            className={`btn-red bg-red-400 text-white hover:brightness-125 hover:scale-105 transition text-sm w-1/2 min-w-[3rem]`}
           >
             <label className="flex gap-1 items-center px-2 cursor-pointer overflow-hidden max-xl:justify-center">
               <IoLogOut className="min-w-6 min-h-6 mb-0.5" />
@@ -88,7 +105,7 @@ const GamePage = () => {
           {/* 좌파 */}
           <div className="w-1/3 flex flex-col gap-3 pt-5">
             {Array.from({ length: 6 }, (_, index) => (
-              <div key={index} className="border-custom-mint bg-mint h-1/6 flex items-center pl-1">
+              <div key={index} className="border-custom-green bg-customGreen h-1/6 flex items-center pl-1">
                 <div className="rounded-full bg-[url(https://contents-cdn.viewus.co.kr/image/2023/08/CP-2023-0056/image-7adf97c8-ef11-4def-81e8-fe2913667983.jpeg)] bg-cover w-8 h-8 aspect-square"></div>
                 <p className="pl-2 w-full text-xs font-bold text-white line-clamp-2 text-ellipsis">
                   푸바오 ㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠ
@@ -132,7 +149,8 @@ const GamePage = () => {
         <div className="w-1/3 bg-red-200 flex justify-center items-center">광고</div>
         {/* 채팅창 */}
         <div className="w-full flex grow flex-col items-center justify-end">
-          <div className="w-full h-[8rem] mb-2 relative">
+          {/* 채팅 기록 */}
+          <div className="w-full h-36 mb-2 relative">
             <div
               className={`absolute w-full h-full border-custom-white opacity-80 bg-white  transition-all origin-bottom duration-300 ${chatOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
             >
@@ -141,7 +159,8 @@ const GamePage = () => {
               </div>
             </div>
           </div>
-          <div className="w-full bg-white/80 h-10 rounded-full flex relative">
+          {/* 채팅 입력 */}
+          <div className="w-full h-10 bg-white/80 rounded-full flex relative">
             <input
               ref={chatInput}
               className="w-full h-10 bg-transparent rounded-full pl-5 pr-20 text-sm placeholder-gray-400"
@@ -151,26 +170,72 @@ const GamePage = () => {
                 if (e.key === 'Enter') {
                   if (chatInput.current.value !== '') {
                     chatFunction();
-                  } else {
-                    chatInput.current.blur();
-                    setChatOpen(false);
                   }
-                }
+                } else if (e.key === 'Escape') chatFocusOut();
               }}
-              onClick={async () => {
-                setChatOpen(true);
-              }}
+              onClick={chatFocus}
             ></input>
             <div
               className="w-16 bg-mint cursor-pointer absolute h-full right-0 rounded-r-full flex justify-center items-center hover:brightness-125 transition"
               ref={chatBtn}
+              onClick={() => {
+                if (chatInput.current.value !== '') {
+                  chatFunction();
+                  if (!chatOpen) chatFocus();
+                }
+              }}
             >
               <IoSend className="text-white w-6 h-6" />
             </div>
           </div>
         </div>
         {/* 게임 설정 */}
-        <div className="w-1/3 bg-blue-200 flex"></div>
+        <div className="w-1/3 flex flex-col cursor-default">
+          {/* 방 설정 */}
+          <div className="w-full h-14 border-custom-mint bg-mint pl-2 pr-1 text-white font-bold text-sm flex items-center">
+            <p className="w-full">방 설정</p>
+            <IoSettings className="w-5 h-5 hover:scale-125 transition cursor-pointer" />
+          </div>
+          <div className="w-full h-40 border-custom-white bg-white flex flex-col text-xs text-gray-400 pt-0.5">
+            <div className="w-full h-5 pb-1 flex border-b border-gray-200">
+              <div className="w-1/2 flex items-center justify-center border-r border-gray-200">
+                개인전
+              </div>
+              <div className="w-1/2 flex items-center justify-center font-extrabold text-mint">
+                팀전
+              </div>
+            </div>
+            <div className="w-full h-7 flex border-b border-gray-200 items-center">
+              <div className="w-1/3 flex items-center justify-center text-nowrap font-extrabold text-mint">
+                객관식
+              </div>
+              <div className="w-1/3 flex items-center justify-center text-nowrap border-x border-gray-200">
+                순서배치
+              </div>
+              <div className="w-1/3 flex items-center justify-center text-nowrap">주관식</div>
+            </div>
+            <div className="w-full h-5 flex justify-center items-center font-extrabold text-mint mt-1">
+              8 라운드
+            </div>
+          </div>
+          {/* 팀 선택, 게임 시작 버튼 */}
+          <div className="w-full h-7 my-2 flex gap-2">
+            <div className="w-1/3 h-full flex items-center justify-center border-custom-red bg-customRed text-white text-sm font-bold cursor-pointer hover:brightness-125 hover:scale-110 transition">
+              1팀
+            </div>
+            <div className="w-1/3 h-full flex items-center justify-center border-custom-blue bg-customBlue text-white text-sm font-bold cursor-pointer hover:brightness-125 hover:scale-110 transition">
+              2팀
+            </div>
+            <div className="w-1/3 h-full flex items-center justify-center border-custom-green bg-customGreen text-white text-sm font-bold cursor-pointer hover:brightness-125 hover:scale-110 transition">
+              랜덤
+            </div>
+          </div>
+          <button
+            className={`w-full h-8 btn-mint-border-white hover:brightness-125 hover:scale-105 transition mb-1`}
+          >
+            게임시작
+          </button>
+        </div>
       </div>
     </div>
   );

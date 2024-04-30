@@ -19,7 +19,7 @@ const App = () => {
     >
       <div className="absolute top-4 right-4 flex gap-3">
         <button
-          className={`btn-mint hover:brightness-125 transition text-sm ${activateBtn[0] ? 'animate-clickbtn' : ''}`}
+          className={`btn-mint hover:brightness-125 hover:scale-105 transition text-sm ${activateBtn[0] ? 'animate-clickbtn scale-105' : ''}`}
           onClick={() => {
             handleClick(0);
           }}
@@ -30,7 +30,7 @@ const App = () => {
           </label>
         </button>
         <button
-          className={`btn-white-bdmint hover:brightness-125 transition text-sm ${activateBtn[1] ? 'animate-clickwhitebtn' : ''}`}
+          className={`btn-white-bdmint hover:brightness-125 hover:scale-105 transition text-sm ${activateBtn[1] ? 'animate-clickwhitebtn scale-105' : ''}`}
           onClick={() => {
             handleClick(1);
           }}
