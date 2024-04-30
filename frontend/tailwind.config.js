@@ -8,7 +8,7 @@ module.exports = {
         mint: '#359DB0',
         lightmint: '#8ecfdb',
         extralightmint: '#d5e7eb',
-        customRed: '#f87171',
+        customRed: '#e37070',
         customGreen: '#6bc164',
         customBlue: '#4d9be3',
         customYellow: '#de9e23',
@@ -88,6 +88,14 @@ module.exports = {
           '0%, 100%': { filter: 'brightness(1)' },
           '50%': { filter: 'brightness(0.8)' },
         },
+        earthquake: {
+          '0%, 100%': {
+            transform: 'translateY(0.5vh)',
+          },
+          '50%': {
+            transform: 'translateY(-0.5vh)',
+          },
+        },
       },
       animation: {
         logo: 'logo 2s ease-in-out',
@@ -95,6 +103,7 @@ module.exports = {
         loginbtn: 'loginbtn 2.5s ease-out',
         clickbtn: 'clickbtn 0.1s linear infinite',
         clickwhitebtn: 'clickwhitebtn 0.1s linear infinite',
+        earthquake: 'earthquake 0.1s linear infinite',
       },
     },
   },
@@ -193,7 +202,7 @@ module.exports = {
           borderImageSlice: '14%',
           borderImageOutset: '0.25rem',
           borderImageRepeat: 'stretch',
-          backgroundColor: '#f87171',
+          backgroundColor: '#e37070',
           color: 'white',
           fontWeight: '800',
         },
