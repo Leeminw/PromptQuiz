@@ -67,6 +67,9 @@ public class GameSocketController {
 
                 // 게임 종료 메세지 전송
                 sendRoundEndMessage(game);
+
+                // 게임 종료 상태로 만들기
+                setRoundToEnd(game);
             } else if (game.time < 0) {
                 // 게임 종료 (정답자가 나왔을 경우)
                 gameEndList.put(game.gameId, game);
@@ -178,6 +181,7 @@ public class GameSocketController {
                         // (정답) 정답으로 라운드 종료 처리
                         game.time = -game.maxTime;
                         sendRoundEndMessage(game);
+                        setRoundToEnd(game);
                     } else {
                         // 오답 여부 해당 사용자에게 알려주기
                         template.convertAndSend("/ws/sub/game?uuid=" + chatMessage.
@@ -192,6 +196,7 @@ public class GameSocketController {
                     if (game.similarityGameEnd()) {
                         game.time = -game.maxTime;
                         sendRoundEndMessage(game);
+                        setRoundToEnd(game);
                     } else {
                         template.convertAndSend("/ws/sub/game?uuid=" + chatMessage.
                             getUuid(), new GameResponseDto("similarity", game.playerSimilarityMap));
@@ -215,7 +220,7 @@ public class GameSocketController {
 
     // (게임 시작) 스케쥴러에 게임을 등록하고 준비 메세지 전송
     @MessageMapping("/game/start")
-    public void sendGameStartMessage(@Payload GameReadyDto ready) {
+    public void setGameStart(@Payload GameReadyDto ready) {
         // 게임방에 등록되어 있지 않다면 등록시키기
         if (!gameReadyList.containsKey(ready.getGameId())) {
             GameRoomStatus newGame = new GameRoomStatus(ready.getGameId(), ready.getUuid(), 0, 10,
@@ -266,22 +271,29 @@ public class GameSocketController {
             new GameResponseDto("game", GameSystemResponseDto.start(temp)));
     }
 
-    // (라운드 종료) 누군가 정답을 맞추거나 timeout일 경우 라운드 종료 처리
+    // (라운드 종료) 라운드 종료 메세지 전송
     public void sendRoundEndMessage(GameRoomStatus game) {
+        // 전체 사용자에게 라운드 종료 알림 보내기 (다음 라운드 증가)
+        GameSystemContentDto temp = new GameSystemContentDto(game.round, list);
+
+        template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
+            new GameResponseDto("game", GameSystemResponseDto.end(temp)));
+    }
+
+    // (라운드 종료) 현재 게임 라운드 종료상태로 만들기
+    public void setRoundToEnd(GameRoomStatus game) {
         // 해당 게임 라운드 증가
         game.round = gameService.updateGameRoundCnt(game.gameId, false);
 
         // 만약 라운드가 음수라면 전체 게임 종료
         if (game.round < 0) {
+            setGameResult(game);
             sendGameResultMessage(game);
             return;
         }
 
         // 전체 사용자에게 라운드 종료 알림 보내기 (다음 라운드 증가)
         GameSystemContentDto temp = new GameSystemContentDto(game.round, list);
-
-        template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
-            new GameResponseDto("game", GameSystemResponseDto.end(temp)));
 
         // 게임 타입이 빈칸 주관식일 경우에는 다음과 같이 유사도 목록 추가하기
         if (gameQuizService.getGameQuizDetail(game.gameId).getType() == 4) {
@@ -297,8 +309,17 @@ public class GameSocketController {
         }
     }
 
-    // (게임 종료) 전체 라운드 종료 이후 사용자 점수 리스트 반환
+    // (게임 종료) 게임 종료 메세지 전송
     public void sendGameResultMessage(GameRoomStatus game) {
+        // 게임이 종료됐으면 전체 사용자의 점수 list를 반환해주기
+        GameSystemContentDto temp = new GameSystemContentDto(list);
+
+        template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
+            new GameResponseDto("game", GameSystemResponseDto.result(temp)));
+    }
+
+    // (게임 종료) 전체 게임 종료 이후 사용자 접수 업데이트
+    public void setGameResult(GameRoomStatus game) {
         // 게임 점수 적용
         gameUserService.updateUserScore(game.gameId);
 
@@ -308,11 +329,5 @@ public class GameSocketController {
         // 혹시 모르니 EndList와 ReadyList에서도 삭제
         gameEndList.remove(game.gameId);
         gameReadyList.remove(game.gameId);
-
-        // 게임이 종료됐으면 전체 사용자의 점수 list를 반환해주기
-        GameSystemContentDto temp = new GameSystemContentDto(list);
-
-        template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
-            new GameResponseDto("game", GameSystemResponseDto.result(temp)));
     }
 }
