@@ -6,7 +6,7 @@ import com.ssafy.apm.quiz.service.QuizService;
 import com.ssafy.apm.socket.util.GameRoomStatus;
 import com.ssafy.apm.socket.dto.response.PlayerDto;
 import com.ssafy.apm.socket.dto.request.GameChatDto;
-import com.ssafy.apm.socket.dto.request.EnterUserDto;
+import com.ssafy.apm.socket.dto.request.EnterUserMessageDto;
 import com.ssafy.apm.socket.dto.request.GameReadyDto;
 import com.ssafy.apm.gamequiz.service.GameQuizService;
 import com.ssafy.apm.socket.dto.response.GameAnswerCheck;
@@ -147,7 +147,7 @@ public class GameSocketController {
 
     // 새로운 사용자 입장 메세지
     @MessageMapping("/game/enter")
-    public void enterGameUser(@Payload EnterUserDto user) {
+    public void enterGameUser(@Payload EnterUserMessageDto user) {
         // 새로운 플레이어 입장
         template.convertAndSend("/ws/sub/game?uuid=" + user.getUuid(),
             new GameResponseDto("enter", user));
@@ -155,7 +155,7 @@ public class GameSocketController {
 
     // 퇴장 메세지
     @MessageMapping("/game/leave")
-    public void leaveGameUser(@Payload EnterUserDto user) {
+    public void leaveGameUser(@Payload EnterUserMessageDto user) {
         // 플레이어 퇴장
         template.convertAndSend("/ws/sub/game?uuid=" + user.getUuid(),
             new GameResponseDto("leave", user));
