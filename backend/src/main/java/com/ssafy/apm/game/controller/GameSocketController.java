@@ -1,6 +1,7 @@
 package com.ssafy.apm.game.controller;
 
 import com.ssafy.apm.game.service.GameService;
+import com.ssafy.apm.gameuser.service.GameUserService;
 import com.ssafy.apm.quiz.service.QuizService;
 import com.ssafy.apm.socket.util.GameRoomStatus;
 import com.ssafy.apm.socket.dto.response.PlayerDto;
@@ -26,12 +27,13 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = {"*"}, methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
-        RequestMethod.POST}, maxAge = 6000)
+    RequestMethod.POST}, maxAge = 6000)
 public class GameSocketController {
 
-    private final GameService gameService;
     private final QuizService quizService;
+    private final GameService gameService;
     private final GameQuizService gameQuizService;
+    private final GameUserService gameUserService;
     private final SimpMessagingTemplate template;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -74,7 +76,7 @@ public class GameSocketController {
             } else {
                 // 각각의 시간초 보내주기
                 template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
-                        new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round)));
+                    new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round)));
             }
         }
     }
@@ -103,7 +105,7 @@ public class GameSocketController {
             } else {
                 // 각각의 시간초 보내주기
                 template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
-                        new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round)));
+                    new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round)));
             }
         }
     }
@@ -132,7 +134,7 @@ public class GameSocketController {
             } else {
                 // 각각의 시간초 보내주기
                 template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
-                        new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round)));
+                    new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round)));
             }
         }
     }
@@ -145,7 +147,7 @@ public class GameSocketController {
     public void enterGameUser(@Payload EnterUserDto user) {
         // 새로운 플레이어 입장
         template.convertAndSend("/ws/sub/game?uuid=" + user.getUuid(),
-                new GameResponseDto("enter", user));
+            new GameResponseDto("enter", user));
     }
 
     // 퇴장 메세지
@@ -153,7 +155,7 @@ public class GameSocketController {
     public void leaveGameUser(@Payload EnterUserDto user) {
         // 플레이어 퇴장
         template.convertAndSend("/ws/sub/game?uuid=" + user.getUuid(),
-                new GameResponseDto("leave", user));
+            new GameResponseDto("leave", user));
     }
 
     // (플레이어 입력) 플레이어는 채팅 or 정답을 입력한다
@@ -166,7 +168,7 @@ public class GameSocketController {
             // 입력 메세지를 먼저 확인한 이후 정답일 경우에는 result에 true가 된다.
             // 빈칸 주관식의 경우 유사도가 함께 포함된다.
             GameAnswerCheck check = quizService.checkAnswer(chatMessage,
-                    game.playerSimilarityMap.keySet());
+                game.playerSimilarityMap.keySet());
 
             // (오답) 타입마다 처리
             switch (check.getType()) {
@@ -179,7 +181,7 @@ public class GameSocketController {
                     } else {
                         // 오답 여부 해당 사용자에게 알려주기
                         template.convertAndSend("/ws/sub/game?uuid=" + chatMessage.
-                                getUuid(), new GameResponseDto("wrongSignal", chatMessage.getUserId()));
+                            getUuid(), new GameResponseDto("wrongSignal", chatMessage.getUserId()));
                     }
                     break;
                 case 4:
@@ -192,7 +194,7 @@ public class GameSocketController {
                         sendRoundEndMessage(game);
                     } else {
                         template.convertAndSend("/ws/sub/game?uuid=" + chatMessage.
-                                getUuid(), new GameResponseDto("similarity", game.playerSimilarityMap));
+                            getUuid(), new GameResponseDto("similarity", game.playerSimilarityMap));
                     }
                     break;
             }
@@ -200,15 +202,15 @@ public class GameSocketController {
 
         // 정답이든 아니든 일단 채팅은 전체 전파하기
         template.convertAndSend("/ws/sub/game?uuid=" + chatMessage.
-                getUuid(), new GameResponseDto("chat", chatMessage));
+            getUuid(), new GameResponseDto("chat", chatMessage));
     }
 
     // test dump list
     List<PlayerDto> list = Arrays.asList(
-            new PlayerDto("test1", 10, false),
-            new PlayerDto("test2", 30, false),
-            new PlayerDto("test3", 40, false),
-            new PlayerDto("test4", 0, false)
+        new PlayerDto("test1", 10, false),
+        new PlayerDto("test2", 30, false),
+        new PlayerDto("test3", 40, false),
+        new PlayerDto("test4", 0, false)
     );
 
     // (게임 시작) 스케쥴러에 게임을 등록하고 준비 메세지 전송
@@ -217,7 +219,7 @@ public class GameSocketController {
         // 게임방에 등록되어 있지 않다면 등록시키기
         if (!gameReadyList.containsKey(ready.getGameId())) {
             GameRoomStatus newGame = new GameRoomStatus(ready.getGameId(), ready.getUuid(), 0, 10,
-                    0);
+                0);
 
             // 방장일 경우에만 게임 보기가 생성됩니다
             if (gameQuizService.createAnswerGameQuiz(ready.getGameId())) {
@@ -253,7 +255,7 @@ public class GameSocketController {
         GameSystemContentDto temp = new GameSystemContentDto(game.round);
 
         template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
-                new GameResponseDto("game", GameSystemResponseDto.ready(temp)));
+            new GameResponseDto("game", GameSystemResponseDto.ready(temp)));
     }
 
     // (라운드 시작) 라운드 시작 메세지 전송
@@ -261,7 +263,7 @@ public class GameSocketController {
         GameSystemContentDto temp = new GameSystemContentDto(game.round);
 
         template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
-                new GameResponseDto("game", GameSystemResponseDto.start(temp)));
+            new GameResponseDto("game", GameSystemResponseDto.start(temp)));
     }
 
     // (라운드 종료) 누군가 정답을 맞추거나 timeout일 경우 라운드 종료 처리
@@ -279,7 +281,7 @@ public class GameSocketController {
         GameSystemContentDto temp = new GameSystemContentDto(game.round, list);
 
         template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
-                new GameResponseDto("game", GameSystemResponseDto.end(temp)));
+            new GameResponseDto("game", GameSystemResponseDto.end(temp)));
 
         // 게임 타입이 빈칸 주관식일 경우에는 다음과 같이 유사도 목록 추가하기
         if (gameQuizService.getGameQuizDetail(game.gameId).getType() == 4) {
@@ -297,9 +299,8 @@ public class GameSocketController {
 
     // (게임 종료) 전체 라운드 종료 이후 사용자 점수 리스트 반환
     public void sendGameResultMessage(GameRoomStatus game) {
-        /*
-            여기에는 전체 점수를 통해 user의 랭킹 점수를 올리는 코드가 들어가야 합니다.
-        */
+        // 게임 점수 적용
+        gameUserService.updateUserScore(game.gameId);
 
         // 일단 게임 스케쥴러 종료
         gameOngoingList.remove(game.gameId);
@@ -312,6 +313,6 @@ public class GameSocketController {
         GameSystemContentDto temp = new GameSystemContentDto(list);
 
         template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
-                new GameResponseDto("game", GameSystemResponseDto.result(temp)));
+            new GameResponseDto("game", GameSystemResponseDto.result(temp)));
     }
 }
