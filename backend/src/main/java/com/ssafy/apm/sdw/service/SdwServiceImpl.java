@@ -54,7 +54,7 @@ public class SdwServiceImpl implements SdwService {
         switch (requestDto.getStyle()) {
             case "Anime" -> sdwRequestDto.updateAnimePrompt(requestDto.getPrompt());
             case "Disney" -> sdwRequestDto.updateDisneyPrompt(requestDto.getPrompt());
-            case "Realistic" -> sdwRequestDto.updateRealismPrompt(requestDto.getPrompt());
+            case "Realistic" -> sdwRequestDto.updateRealisticPrompt(requestDto.getPrompt());
         }
         SdwResponseDto sdwResponseDto = requestStableDiffusion(sdwRequestDto);
 
