@@ -13,18 +13,36 @@ import java.util.Map;
 @AllArgsConstructor
 public class SdwRequestDto {
     @Builder.Default
-    private String prompt = "(HDR, UHD, 64K), (best quality, masterpiece), anime style, " +
-            "universe, milkyway, scenary, landscape, sunrise, clean pastel color tones, wallpaper, " +
-            "professional, (hyper detailed, ultra detailed, highly detailed), fantasy world";
+    private String prompt = "(HDR, UHD, 64K), (masterpiece, best quality, high quality), anime style, " +
+            "(hyper detailed, ultra detailed, highly detailed), " +
+            "(hi-top fade:1.3), universe, milkyway, scenary, landscape, sunrise, " +
+            "dark theme, fantasy world, wallpaper, professional, " +
+            "soothing tones, clean pastel color tones, muted colors, high contrast, " +
+            "(natural skin texture, hyperrealism, soft light, sharp), pureerosface_v1";
     @Builder.Default
-    private String negative_prompt = "(EasyNegative, AuroraNegative, ng_deepnegative_v1_75t, " +
-            "bad-image-v2-39000, negative_hand-neg, badhandv4), " +
-            "(worst quality:2, bad quality:2, poor quality:2, normal quality:2, low quality:2), " +
-            "(username, watermark, signature, time signature, timestamp, artist name, copyright name, copyright), " +
-            "(bad anatomy, extra digits, fewer digits), (bad fingers, bad hands, bad arms, bad legs, bad body), " +
-            "(extra fingers, extra hands, extra arms, extra legs), missing fingers, " +
-            "(poorly drawn, poorly drawn hands, poorly drawn face), (bad-artist, bad-artist-anime), " +
-            "nsfw, ugly, blurry, jpeg artifacts, text, logo";
+    private String negative_prompt = "EasyNegative, AuroraNegative, ng_deepnegative_v1_75t, bad-image-v2-39000, KHFB, " +
+                    "(worst quality:2), (bad quality:2), (poor quality:2), (low quality:2), (normal quality:2), " +
+                    "(worst details:2), (bad details:2), (poor details:2), (low details:2), (normal details:2), " +
+
+                    "bad-artist, bad-artist-anime, poorly drawn, poorly sketched, " +
+                    "poorly drawn by bad-artist, poorly drawn by bad-artist-anime, " +
+                    "poorly sketched by bad-artist, poorly sketched by bad-artist-anime, " +
+
+                    "negative_hand-neg, bad-hands-5, badhandv4, extra digits, fewer digits, " +
+                    "bad anatomy, bad face, bad body, bad limbs, " +
+                    "bad fingers, bad hands, bad arms, bad legs, " +
+                    "extra fingers, extra hands, extra arms, extra legs, " +
+                    "fewer fingers, fewer hands, fewer arms, fewer legs, " +
+                    "missing fingers, missing hands, missing arms, missing legs, " +
+
+                    "poorly drawn anatomy, poorly drawn face, poorly drawn body, poorly drawn limbs," +
+                    "poorly drawn fingers, poorly drawn hands, poorly drawn arms, poorly drawn legs," +
+                    "poorly sketched anatomy, poorly sketched face, poorly sketched body, poorly sketched limbs," +
+                    "poorly sketched fingers, poorly sketched hands, poorly sketched arms, poorly sketched legs," +
+
+                    "(username, artist name, signature, watermark, time signature, timestamp, copyright name, copyright:1.4)," +
+                    "(nsfw, uncensored, nude, nipples:2), (monochrome, grayscale, lowres, blurry, fuzzy:1.2), (jpeg, jpeg artifacts:1.2)" +
+                    "(ugly:2), text, logo";
     @Builder.Default
     private Integer steps = 10;
     @Builder.Default
