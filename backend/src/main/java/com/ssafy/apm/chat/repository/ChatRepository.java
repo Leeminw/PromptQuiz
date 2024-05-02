@@ -2,6 +2,7 @@ package com.ssafy.apm.chat.repository;
 
 import com.influxdb.query.FluxTable;
 import com.influxdb.query.FluxRecord;
+import com.ssafy.apm.chat.config.InfluxDBConfig;
 import com.ssafy.apm.chat.domain.Chat;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.domain.WritePrecision;
@@ -18,7 +19,8 @@ import java.util.ArrayList;
 @Repository
 @RequiredArgsConstructor
 public class ChatRepository {
-  private final InfluxDBClient influxDBClient;
+
+  private final InfluxDBConfig influxDBConfig;
 
   // 기본 DB 정보 로드
   @Value("${spring.influx.org}")
@@ -28,7 +30,7 @@ public class ChatRepository {
   private String bucket;
 
   public Chat save(Chat chat) {
-    try {
+    try (InfluxDBClient influxDBClient = influxDBConfig.getConnectionInfluxDBClient()){
       influxDBClient.getWriteApiBlocking().writeMeasurement(bucket, org, WritePrecision.NS, chat);
       return chat;
     } catch (Exception e) {
@@ -44,7 +46,7 @@ public class ChatRepository {
             + "  |> filter(fn: (r) => r._measurement == \"chat\")\n"
             + "  |> sort(columns: [\"_time\"], desc: false)";
 
-    try {
+    try (InfluxDBClient influxDBClient = influxDBConfig.getConnectionInfluxDBClient()){
       List<FluxTable> tables = influxDBClient.getQueryApi().query(flux);
 
       return fluxTableToList(tables);

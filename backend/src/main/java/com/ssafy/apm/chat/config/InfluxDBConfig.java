@@ -1,10 +1,7 @@
 package com.ssafy.apm.chat.config;
 
-import org.influxdb.InfluxDB;
-import org.influxdb.InfluxDBFactory;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,8 +16,7 @@ public class InfluxDBConfig {
   @Value("${spring.influx.token}")
   private char[] token;
 
-  @Bean
-  public InfluxDBClient influxDBClient(){
+  public InfluxDBClient getConnectionInfluxDBClient(){
     return InfluxDBClientFactory.create(url, token, org, bucket);
   }
 }
