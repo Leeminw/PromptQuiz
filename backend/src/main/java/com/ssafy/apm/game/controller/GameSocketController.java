@@ -212,10 +212,11 @@ public class GameSocketController {
 
     // test dump list
     List<PlayerDto> list = Arrays.asList(
-        new PlayerDto("test1", 10, false),
-        new PlayerDto("test2", 30, false),
-        new PlayerDto("test3", 40, false),
-        new PlayerDto("test4", 0, false)
+
+        new PlayerDto(0L, 10, false),
+        new PlayerDto(1L, 30, false),
+        new PlayerDto(2L, 40, false),
+        new PlayerDto(3L, 0, false)
     );
 
     // (게임 시작) 스케쥴러에 게임을 등록하고 준비 메세지 전송

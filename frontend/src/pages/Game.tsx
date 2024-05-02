@@ -9,53 +9,109 @@ import { useParams } from 'react-router-dom';
 import SockJS from 'sockjs-client';
 import { Client, Message, IMessage } from '@stomp/stompjs';
 import { useWebSocketStore } from '../stores/socketStore';
+import useUserStore from '../stores/userStore';
 const GamePage = () => {
   const [game, setGame] = useState<Game | null>(null);
   const { roomId } = useParams();
-  const [chat, setChat] = useState<string[]>([]);
+  const [chat, setChat] = useState<GameChatRecieve[]>([]);
   const client = useRef<Client | null>(null);
-  const { isConnected, connectWebSocket, disconnectWebSocket, subscribeWebSocket, publish } =
-    useWebSocketStore();
+  const { user } = useUserStore();
+  const [text, setText] = useState('');
+  const { connectWebSocket, disconnectWebSocket, publish } = useWebSocketStore();
 
   const getGameData = async () => {
     const response = await GameApi.getGame(roomId);
     setGame(response.data);
-    connectWebSocket(`/ws/sub/game?uuid=${game?.code}`, recieveChat);
+    console.log(game);
+    // enterGame();
   };
 
   useEffect(() => {
     getGameData();
   }, []);
 
+  useEffect(() => {
+    // 게임 로드하면 구독.
+    connectWebSocket(`/ws/sub/game?uuid=${game?.code}`, recieveChat, enterGame);
+    return () => {
+      disconnectWebSocket();
+    };
+  }, [game]);
+
   const recieveChat = (message: IMessage) => {
     if (message.body) {
-      const body = JSON.parse(message.body);
-      setChat((prevItems) => [...prevItems, body.content]);
+      const body: RecieveData = JSON.parse(message.body);
+      gameController(body);
     }
+  };
+
+  const gameController = (data: RecieveData) => {
+    if (data.tag === 'chat') {
+      // console.log(body.data);
+      setChat((prevItems) => [...prevItems, data.data]);
+      // setChat((prevItems) => [...prevItems, body]);
+    } else if (data.tag === 'enter') {
+      // console.log(body.data);
+      // const data: GameChatRecieve = {
+      //   userId: -1,
+      //   nickname: 'system',
+      //   uuid: game.code,
+      //   gameId: game.id,
+      //   round: 0,
+      //   content: `${body.data.nickname}님이 입장하셨습니다.`,
+      //   createdDate: '',
+      // };
+      // setChat((prevItems) => [...prevItems, data]);
+    } else if (data.tag === 'leave') {
+    } else if (data.tag === 'timer') {
+    } else if (data.tag === 'wrongSignal') {
+    } else if (data.tag === 'similarity') {
+    } else if (data.tag === 'game') {
+    }
+  };
+  const enterGame = () => {
+    const gameEnter: GameEnter = {
+      userId: user.userId,
+      uuid: game?.code,
+      nickname: user.nickName,
+    };
+    const destination = '/ws/pub/game/enter';
+    publish(destination, gameEnter);
   };
 
   const publishChat = () => {
     const destination = '/ws/pub/game/chat/send';
+    const gameChat: GameChat = {
+      userId: user.userId,
+      nickname: user.nickName,
+      uuid: game.code,
+      gameId: game.id,
+      round: 0,
+      content: chatInput.current.value,
+    };
+    publish(destination, gameChat);
+    chatInput.current.value = '';
   };
+
   const chattingBox = useRef(null);
   const chatInput = useRef(null);
 
   const chatBtn = useRef(null);
   const [chatOpen, setChatOpen] = useState(false);
 
-  const chatFunction = () => {
-    const chatChild = document.createElement('div');
-    chatChild.className = 'flex';
-    const chatUser = document.createElement('p');
-    const chatMessage = document.createElement('p');
-    chatUser.className = 'font-extrabold pr-1 text-nowrap text-black';
-    chatUser.innerText = '푸바오 ㅠㅠㅠ : ';
-    chatMessage.innerText = chatInput.current.value;
-    chatChild.appendChild(chatUser);
-    chatChild.appendChild(chatMessage);
-    chatInput.current.value = '';
-    chattingBox.current.appendChild(chatChild);
-  };
+  // const chatFunction = () => {
+  //   const chatChild = document.createElement('div');
+  //   chatChild.className = 'flex';
+  //   const chatUser = document.createElement('p');
+  //   const chatMessage = document.createElement('p');
+  //   chatUser.className = 'font-extrabold pr-1 text-nowrap text-black';
+  //   chatUser.innerText = '푸바오 ㅠㅠㅠ : ';
+  //   chatMessage.innerText = chatInput.current.value;
+  //   chatChild.appendChild(chatUser);
+  //   chatChild.appendChild(chatMessage);
+  //   chatInput.current.value = '';
+  //   chattingBox.current.appendChild(chatChild);
+  // };
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -170,7 +226,16 @@ const GamePage = () => {
               className={`absolute w-full h-full border-custom-white opacity-80 bg-white  transition-all origin-bottom duration-300 ${chatOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
             >
               <div className="px-3 py-2 w-full h-full text-sm chat">
-                <div ref={chattingBox}></div>
+                <div>
+                  {chat.map((chatItem, index) => (
+                    <div className="flex" key={index}>
+                      <p className="font-extrabold pr-1 text-nowrap text-black">
+                        {chatItem.nickname}
+                      </p>
+                      <p>{chatItem.content}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -183,7 +248,7 @@ const GamePage = () => {
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   if (chatInput.current.value !== '') {
-                    chatFunction();
+                    publishChat();
                   } else {
                     chatInput.current.blur();
                     setChatOpen(false);
