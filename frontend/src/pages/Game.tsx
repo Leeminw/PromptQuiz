@@ -3,13 +3,12 @@ import { IoSettings } from 'react-icons/io5';
 import { IoLogOut } from 'react-icons/io5';
 import { FaUserPlus } from 'react-icons/fa';
 import { IoSend } from 'react-icons/io5';
+import GamePlayer from '../components/game/Player';
+import SelectionGame from '../components/game/SelectionGame';
+import GameChat from '../components/game/GameChat';
+import GameRoomSetting from '../components/game/GameRoomSetting';
 
 const GamePage = () => {
-  const chattingBox = useRef(null);
-  const chatInput = useRef(null);
-  const chatBtn = useRef(null);
-  const [chatOpen, setChatOpen] = useState(false);
-
   const [gamestart, setGamestart] = useState(false);
   const [earthquake, setEarthquake] = useState(false);
 
@@ -28,71 +27,25 @@ const GamePage = () => {
     setTimeout(() => {
       setEarthquake(true);
       setTimeout(() => {
-        setGamestart(false);
         setEarthquake(false);
-      }, 400);
-    }, 400);
+        setTimeout(() => {
+          setGamestart(false);
+        }, 1000);
+      }, 600);
+    }, 500);
   };
-
-  // 채팅 입력
-  const chatFunction = () => {
-    const chatChild = document.createElement('div');
-    chatChild.className = 'flex';
-    const chatUser = document.createElement('p');
-    const chatMessage = document.createElement('p');
-    chatUser.className = 'font-extrabold pr-1 text-nowrap text-black';
-    chatUser.innerText = '푸바오 ㅠㅠㅠ : ';
-    chatMessage.innerText = chatInput.current.value;
-    chatChild.appendChild(chatUser);
-    chatChild.appendChild(chatMessage);
-    chatInput.current.value = '';
-    chattingBox.current.appendChild(chatChild);
-  };
-
-  // 채팅창 열기
-  const chatFocus = () => {
-    chatInput.current.focus();
-    setChatOpen(true);
-  };
-
-  // 채팅창 닫기
-  const chatFocusOut = () => {
-    chatInput.current.blur();
-    setChatOpen(false);
-  };
-
-  useEffect(() => {
-    // 채팅 입력 바깥 클릭 시 채팅창 닫기
-    const handleOutsideClick = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (target && !chatInput.current?.contains(target) && !chatBtn.current?.contains(target)) {
-        chatFocusOut();
-      }
-    };
-
-    // 채팅 입력 안하고 있을 때 Enter시 채팅창 열기
-    const handleChatKey = (event: KeyboardEvent) => {
-      const target = event.target as Node;
-      if (event.key === 'Enter' && !chatInput.current?.contains(target) && !chatOpen) {
-        chatFocus();
-      }
-    };
-
-    // 클릭 & 키다운 이벤트 추가
-    document.addEventListener('click', handleOutsideClick);
-    document.addEventListener('keydown', handleChatKey);
-    return () => {
-      document.removeEventListener('click', handleOutsideClick);
-    };
-  }, []);
 
   return (
-    <div className={`bg-white/80 w-[80vw] h-[85vh] min-w-[50rem] min-h-[35rem] z-10 rounded-3xl drop-shadow-lg px-8 py-6 flex flex-col items-center justify-center ${earthquake?"animate-earthquake":""}`}>
+    <div
+      className={`bg-white/80 w-[80vw] h-[85vh] min-w-[50rem] min-h-[37rem] z-10 
+      rounded-3xl drop-shadow-lg px-8 py-6 flex flex-col items-center justify-center 
+      ${earthquake ? 'animate-earthquake' : ''}`}
+    >
       <div
-        className={`absolute w-full h-full flex items-center justify-center text-white text-6xl z-20 font-extrabold transition duration-500 ${gamestart ? 'block translate-y-0' : 'translate-y-[-100vh]'}`}
-      >
-        GAME START!!!
-      </div>
+        className={`absolute bg-no-repeat bg-contain bg-center bg-[url(/public/ui/gamestart.png)] 
+        w-full h-full flex items-center justify-center text-white text-6xl z-20 font-extrabold 
+        transition ease-in duration-500 ${gamestart ? 'block translate-y-0' : 'translate-y-[-100vh]'}`}
+      ></div>
       {/* 상단 : 제목, 버튼 */}
       <div className="w-full h-10 flex gap-4 mb-2">
         {/* 채널 */}
@@ -107,20 +60,25 @@ const GamePage = () => {
         {/* 버튼 */}
         <div className="w-1/3 flex gap-4">
           <button
-            className={`btn-mint-border-white hover:brightness-125 hover:scale-105 transition text-sm w-1/2 ${activateBtn[0] ? 'animate-clickbtn scale-105' : ''}`}
+            className={`btn-mint-border-white hover:brightness-125 hover:scale-105 
+            transition text-sm w-1/2 ${activateBtn[0] ? 'animate-clickbtn scale-105' : ''}`}
             onClick={() => {
               handleClick(0);
             }}
           >
             <label className="flex gap-1 items-center px-2 cursor-pointer overflow-hidden max-xl:justify-center">
               <FaUserPlus className="min-w-5 min-h-5 mb-0.5" />
-              <p className="text-center w-full text-nowrap text-sm overflow-hidden text-ellipsis xl:flex max-xl:hidden">
+              <p
+                className="text-center w-full text-nowrap text-sm overflow-hidden 
+              text-ellipsis xl:flex max-xl:hidden"
+              >
                 초대하기
               </p>
             </label>
           </button>
           <button
-            className={`btn-red text-white hover:brightness-125 hover:scale-105 transition text-sm w-1/2 min-w-[3rem] ${activateBtn[1] ? 'animate-clickbtn scale-105' : ''}`}
+            className={`btn-red text-white hover:brightness-125 hover:scale-105 transition 
+            text-sm w-1/2 min-w-[3rem] ${activateBtn[1] ? 'animate-clickbtn scale-105' : ''}`}
             onClick={() => {
               handleClick(1);
             }}
@@ -140,43 +98,37 @@ const GamePage = () => {
           {/* 좌파 */}
           <div className="w-1/3 flex flex-col gap-3 pt-5">
             {Array.from({ length: 6 }, (_, index) => (
-              <div
-                key={index}
-                className="border-custom-green bg-customGreen h-1/6 flex items-center pl-1"
-              >
-                <div className="rounded-full bg-[url(https://contents-cdn.viewus.co.kr/image/2023/08/CP-2023-0056/image-7adf97c8-ef11-4def-81e8-fe2913667983.jpeg)] bg-cover w-8 h-8 aspect-square"></div>
-                <p className="pl-2 w-full text-xs font-bold text-white line-clamp-2 text-ellipsis">
-                  푸바오 ㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠ
-                </p>
-                <p className="h-full text-nowrap text-white text-sm pr-1 pl-1 flex items-center">
-                  0점
-                </p>
-              </div>
+              <GamePlayer idx={index + 1} />
             ))}
           </div>
           {/* 문제 화면, 타이머 */}
           <div className="w-full grow flex flex-col">
-            <div className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint border relative overflow-hidden flex">
-              <div className="w-full h-full rounded-full -translate-x-[50%] transition-transform duration-1000 bg-mint absolute"></div>
+            <div
+              className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint
+             border relative overflow-hidden flex"
+            >
+              <div
+                className="w-full h-full rounded-full -translate-x-[0%] transition-transform
+               duration-1000 bg-mint absolute"
+              ></div>
             </div>
             <div className="border-custom-mint w-full h-full flex items-center justify-center relative">
-              <div className="w-16 h-7 absolute top-2 left-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
-                1 / 20
+              <div
+                className="w-16 h-7 absolute top-2 left-2 bg-yellow-500/80 text-white
+               rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300"
+              >
+                1/20
               </div>
-              <div className="w-fit h-7 px-3 absolute top-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
-                흠 뭐넣지
-              </div>
-              <div className="w-full h-full bg-[url(https://contents-cdn.viewus.co.kr/image/2023/08/CP-2023-0056/image-7adf97c8-ef11-4def-81e8-fe2913667983.jpeg)] bg-cover bg-center"></div>
+              <div
+                className="w-full h-full bg-[url(https://contents-cdn.viewus.co.kr/image/2023/08/CP-2023-0056/image-7adf97c8-ef11-4def-81e8-fe2913667983.jpeg)] 
+              bg-cover bg-center"
+              ></div>
             </div>
           </div>
           {/* 우파 */}
           <div className="w-1/3 flex flex-col gap-3 pt-5">
             {Array.from({ length: 6 }, (_, index) => (
-              <div key={index} className="border-custom-mint bg-mint h-1/6 flex items-center pl-1">
-                <div className="rounded-full bg-[url(https://contents-cdn.viewus.co.kr/image/2023/08/CP-2023-0056/image-7adf97c8-ef11-4def-81e8-fe2913667983.jpeg)] bg-cover w-8 h-8 aspect-square"></div>
-                <p className="pl-2 w-full text-xs font-bold text-white">푸바오 ㅠㅠㅠ</p>
-                <p className="text-nowrap text-white text-sm pr-1">0점</p>
-              </div>
+              <GamePlayer idx={index + 7} />
             ))}
           </div>
         </div>
@@ -189,104 +141,16 @@ const GamePage = () => {
         <div className="w-full flex grow flex-col items-center justify-end">
           <div className="w-full h-36 mb-2 relative">
             {/* 객관식 선택 */}
-            <div className="absolute w-full h-full bg-slate-200 grid grid-rows-2 grid-cols-2 gap-2 text-sm text-white font-extrabold">
-              <button className="w-full h-full bg-[#e37070] border-custom-red flex items-center justify-center cursor-pointer hover:brightness-125 hover:scale-105 transition">
-                <div className="w-full h-full border-4 border-dashed rounded-lg border-white flex items-center justify-center px-3 py-4">
-                  1. 인사하는 푸바오의 환영 인사
-                </div>
-              </button>
-              <button
-                className={`w-full h-full bg-customYellow border-custom-yellow flex items-center justify-center cursor-pointer hover:brightness-125 hover:scale-105 transition`}
-              >
-                <div className="w-full h-full border-4 border-dashed rounded-lg border-white flex items-center justify-center px-3 py-4">
-                  2. 푸바오의 친근한 손짓
-                </div>
-              </button>
-              <button
-                className={`w-full h-full bg-customGreen border-custom-green flex items-center justify-center cursor-pointer hover:brightness-125 hover:scale-105 transition`}
-              >
-                <div className="w-full h-full border-4 border-dashed rounded-lg border-white flex items-center justify-center px-3 py-4">
-                  3. 푸바오의 첫 만남 반응
-                </div>
-              </button>
-              <button
-                className={`w-full h-full bg-customBlue border-custom-blue flex items-center justify-center cursor-pointer hover:brightness-125 hover:scale-105 transition`}
-              >
-                <div className="w-full h-full border-4 border-dashed rounded-lg border-white flex items-center justify-center px-3 py-4">
-                  4. 푸바오와의 기념사진 요청
-                </div>
-              </button>
-            </div>
-            {/* 채팅 기록 */}
-            <div
-              className={`absolute flex items-center w-full h-full transition-all origin-bottom duration-300 ${chatOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
-            >
-              <div className="absolute w-full h-[90%] px-3 py-2 text-sm chat z-10">
-                <div className="z-10 text-gray-700" ref={chattingBox}></div>
-              </div>
-              <div className="absolute w-full h-full border-custom-white opacity-90 bg-white z-0"></div>
-            </div>
+            <SelectionGame />
           </div>
-          {/* 채팅 입력 */}
-          <div className="w-full h-10 bg-white/80 rounded-full flex relative">
-            <input
-              ref={chatInput}
-              className="w-full h-10 bg-transparent rounded-full pl-5 pr-20 text-sm placeholder-gray-400"
-              maxLength={30}
-              placeholder={`${chatOpen ? 'Esc를 눌러 채팅창 닫기' : 'Enter를 눌러 채팅 입력'}`}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  if (chatInput.current.value !== '') {
-                    chatFunction();
-                  }
-                } else if (e.key === 'Escape') chatFocusOut();
-              }}
-              onClick={chatFocus}
-            ></input>
-            <div
-              className="w-16 bg-mint cursor-pointer absolute h-full right-0 rounded-r-full flex justify-center items-center hover:brightness-125 transition"
-              ref={chatBtn}
-              onClick={() => {
-                if (chatInput.current.value !== '') {
-                  chatFunction();
-                  if (!chatOpen) chatFocus();
-                }
-              }}
-            >
-              <IoSend className="text-white w-6 h-6" />
-            </div>
-          </div>
+          {/* 채팅 */}
+          <GameChat />
         </div>
         {/* 게임 설정 */}
         <div className="w-1/3 flex flex-col cursor-default">
           {/* 방 설정 */}
-          <div className="w-full h-14 border-custom-mint bg-mint pl-2 pr-1 text-white font-bold text-sm flex items-center">
-            <p className="w-full">방 설정</p>
-            <IoSettings className="w-5 h-5 hover:scale-125 transition cursor-pointer" />
-          </div>
-          <div className="w-full h-40 border-custom-white bg-white flex flex-col text-xs text-gray-400 pt-0.5">
-            <div className="w-full h-5 pb-1 flex border-b border-gray-200">
-              <div className="w-1/2 flex items-center justify-center border-r border-gray-200">
-                개인전
-              </div>
-              <div className="w-1/2 flex items-center justify-center font-extrabold text-mint">
-                팀전
-              </div>
-            </div>
-            <div className="w-full h-7 flex border-b border-gray-200 items-center">
-              <div className="w-1/3 flex items-center justify-center text-nowrap font-extrabold text-mint">
-                객관식
-              </div>
-              <div className="w-1/3 flex items-center justify-center text-nowrap border-x border-gray-200">
-                순서배치
-              </div>
-              <div className="w-1/3 flex items-center justify-center text-nowrap">주관식</div>
-            </div>
-            {/* 라운드 수 */}
-            <div className="w-full h-5 flex justify-center items-center font-extrabold text-mint mt-1">
-              20 라운드
-            </div>
-          </div>
+          <GameRoomSetting />
+
           {/* 팀 선택, 게임 시작 버튼 */}
           <div className="w-full h-7 my-2 flex gap-2">
             <button
@@ -320,8 +184,10 @@ const GamePage = () => {
               랜덤
             </button>
           </div>
+
           <button
-            className={`w-full h-8 btn-mint-border-white hover:brightness-125 hover:scale-105 transition mb-1 ${activateBtn[5] ? 'animate-clickbtn scale-105' : ''}`}
+            className={`w-full h-8 btn-mint-border-white hover:brightness-125 hover:scale-105
+             transition mb-1 ${activateBtn[5] ? 'animate-clickbtn scale-105' : ''}`}
             onClick={() => {
               handleClick(5);
               setTimeout(() => {

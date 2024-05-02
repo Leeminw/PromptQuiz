@@ -89,11 +89,11 @@ module.exports = {
           '50%': { filter: 'brightness(0.8)' },
         },
         earthquake: {
-          '0%, 100%': {
-            transform: 'translateY(0.5vh)',
+          '0%, 50%, 100%': {
+            transform: 'translateY(1vh)',
           },
-          '50%': {
-            transform: 'translateY(-0.5vh)',
+          '25%, 75%' : {
+            transform: 'translateY(-1vh)'
           },
         },
       },

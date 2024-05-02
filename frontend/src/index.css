@@ -8,16 +8,19 @@
     src: url(/public/font/NanumSquareRoundOTFL.woff2) format('woff2');
     font-weight: 300;
   }
+
   @font-face {
     font-family: 'NanumSquareRound';
     src: url(/public/font/NanumSquareRoundOTFR.woff2) format('woff2');
     font-weight: 400;
   }
+
   @font-face {
     font-family: 'NanumSquareRound';
     src: url(/public/font/NanumSquareRoundOTFB.woff2) format('woff2');
     font-weight: 700;
   }
+
   @font-face {
     font-family: 'NanumSquareRound';
     src: url(/public/font/NanumSquareRoundOTFEB.woff2) format('woff2');
@@ -52,7 +55,11 @@ code {
   overflow-anchor: auto !important;
 }
 
-::-webkit-scrollbar {
+body::-webkit-scrollbar {
+  width: 0px;
+}
+
+.chat::-webkit-scrollbar {
   width: 6px;
 }
 
