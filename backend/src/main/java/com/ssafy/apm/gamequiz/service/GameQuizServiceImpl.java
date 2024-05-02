@@ -63,8 +63,18 @@ public class GameQuizServiceImpl implements GameQuizService {
 
         GameEntity gameEntity = gameRepository.findById(gameId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
-        List<Quiz> quizList = quizRepository.extractRandomQuizs(gameEntity.getRounds())
-                .orElseThrow(() -> new NoSuchElementException("정답을 추출하는데 실패했습니다."));
+
+        String gameStyle = gameEntity.getStyle();
+
+        List<Quiz> quizList;
+
+        if(gameStyle.equals("random")){
+            quizList = quizRepository.extractRandomQuizs(gameEntity.getRounds())
+                    .orElseThrow(() -> new NoSuchElementException("랜덤 스타일의 정답을 추출하는데 실패했습니다."));
+        } else {
+            quizList = quizRepository.extractRandomQuizsByStyle(gameStyle, gameEntity.getRounds())
+                    .orElseThrow(() -> new NoSuchElementException(gameStyle + "타입의 정답을 추출하는데 실패했습니다."));
+        }
 
         List<GameQuizEntity> gameQuizEntityList = new ArrayList<>();
 //        게임 문제 유형
