@@ -2,7 +2,7 @@ interface Room{
     userId: number,
     channelId: number,
     type: number,
-    style: number,
+    style: number, // number -> string
     title: string,
     password: null | string,
     status: boolean,
