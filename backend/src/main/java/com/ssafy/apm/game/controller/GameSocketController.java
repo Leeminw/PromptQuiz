@@ -212,6 +212,7 @@ public class GameSocketController {
 
     // test dump list
     List<PlayerDto> list = Arrays.asList(
+
         new PlayerDto("test1", 10, false),
         new PlayerDto("test2", 30, false),
         new PlayerDto("test3", 40, false),

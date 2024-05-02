@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class PlayerDto {
     // player의 아이디
-    private String userId;
+    private Long userId;
 
     // 해당 player의 점수
     private Integer score;
