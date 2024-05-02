@@ -5,7 +5,6 @@ import { FaUserPlus } from 'react-icons/fa';
 import { IoSend } from 'react-icons/io5';
 import GamePlayer from '../components/game/Player';
 import SelectionGame from '../components/game/SelectionGame';
-import GameChat from '../components/game/GameChat';
 import GameRoomSetting from '../components/game/GameRoomSetting';
 import GameApi from '../hooks/axios-game';
 import { useLoaderData } from 'react-router-dom';
