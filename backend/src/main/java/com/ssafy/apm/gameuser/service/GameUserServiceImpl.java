@@ -244,6 +244,20 @@ public class GameUserServiceImpl implements GameUserService {
 
         Long gameUserId = gameUserEntity.getId();
 
+        if (gameUserEntity.getIsHost()) {
+//            방 안에 있는 유저 목록 가져와서
+            List<GameUserEntity> userList = gameUserRepository.findAllByGameId(gameId);
+            for (GameUserEntity entity : userList) {
+//                방장이 아닌 놈을 찾아서
+                if (!entity.getIsHost()) {
+//                    방장 주고
+                    entity.updateIsHost(true);
+                    break;
+                }
+            }
+//            더티 체킹으로 알아서 업데이트
+        }
+
         gameUserRepository.delete(gameUserEntity);
 
         return gameUserId;
