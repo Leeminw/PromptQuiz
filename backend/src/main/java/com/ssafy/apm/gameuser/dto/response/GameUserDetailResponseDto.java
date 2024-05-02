@@ -22,8 +22,8 @@ public class GameUserDetailResponseDto {
     private Integer soloScore;
     private LocalDateTime created_date;
     private LocalDateTime updated_date;
-    private Long gameUserId;
-    private Long gameId;
+    private String gameUserId;
+    private String gameId;
     private Boolean isHost;
     private Boolean isReady;
     private Integer score;
@@ -32,8 +32,8 @@ public class GameUserDetailResponseDto {
 
     public GameUserDetailResponseDto(GameUserEntity entity) {
         this.userId = entity.getUserId();
-        this.gameUserId = entity.getId();
-        this.gameId = entity.getGameId();
+        this.gameUserId = entity.getId().toString();
+        this.gameId = entity.getGameId().toString();
         this.isHost = entity.getIsHost();
         this.isReady = entity.getIsReady();
         this.score = entity.getScore();

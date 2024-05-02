@@ -9,10 +9,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GameGetResponseDto {
-    private Long id;
+    private String id;
     private Long channelId;
     private Integer type;
-    private Integer style;
+    private String style;
     private String code;
     private String title;
     private String password;
@@ -24,7 +24,7 @@ public class GameGetResponseDto {
     private Integer maxPlayers;
 
     public GameGetResponseDto(GameEntity game) {
-        this.id = game.getId();
+        this.id = game.getId().toString();
         this.channelId = game.getChannelId();
         this.type = game.getType();
         this.style = game.getStyle();
