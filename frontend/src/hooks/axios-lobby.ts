@@ -7,7 +7,7 @@ const BASE_URL = process.env.REACT_APP_SERVER
     // 게임방 목록 조회
     getGameList : async (channelId: number) => {
         try{
-            const response = await axios.get(
+            const response = await instance.get(
                 BASE_URL + `/game/gameList/${channelId}`, 
             )
             return response.data
@@ -20,7 +20,7 @@ const BASE_URL = process.env.REACT_APP_SERVER
     // 현재 채널 접속 인원 조회
     getUserList : async (channelId: number) => {
         try{
-            const response = await axios.get(
+            const response = await instance.get(
                 BASE_URL + `/user-channel/getUserChannelList/${channelId}`, 
             )
             return response.data
@@ -32,9 +32,9 @@ const BASE_URL = process.env.REACT_APP_SERVER
     }, 
     // 게임방 생성
     createRoom : async (room: Room) => {
-
+    
         try{
-            const response = await axios.post(
+            const response = await instance.post(
                 BASE_URL + `/game`,
                 room
             )

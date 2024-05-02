@@ -12,7 +12,7 @@ const RoomList = (roomList: RoomProps[]) => {
     return <div>게임방이 없습니다.</div>;
   }
   return (
-    <div className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 border-mint rounded-3xl ">
+    <div className="w-2/3 h-[100px] bg-white-300 gap-1 border-2 border-mint rounded-3xl ">
       <div>
         방 내용
         <div className="flex flex-col">

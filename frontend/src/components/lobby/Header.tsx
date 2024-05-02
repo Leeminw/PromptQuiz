@@ -20,7 +20,7 @@ const Header = ({ channelId }: Props) => {
   };
   const refresh = async () => {
     // const { data } = await UserApi.login(loginForm);
-    console.log('새로고침 버튼 누름');
+    alert('새로고침 버튼 누름');
 
     const { data } = await LobbyApi.getGameList(channelId);
     console.log(data);

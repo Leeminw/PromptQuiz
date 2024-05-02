@@ -42,6 +42,7 @@ interface Props {
   channelId: number;
 }
 const CurrentUserList = ({ channelId }: Props) => {
+  const dummyUserList = [];
   const createRoom = () => {
     alert('방 생성 모달창 띄움');
   };
