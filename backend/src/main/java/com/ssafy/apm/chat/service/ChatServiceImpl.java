@@ -1,48 +1,34 @@
 package com.ssafy.apm.chat.service;
 
-import com.influxdb.client.QueryApi;
 import com.ssafy.apm.chat.domain.Chat;
-import lombok.RequiredArgsConstructor;
-import com.influxdb.client.write.Point;
-import com.influxdb.client.InfluxDBClient;
-import org.influxdb.InfluxDB;
-import org.influxdb.dto.Query;
-import org.influxdb.dto.QueryResult;
-import org.influxdb.impl.InfluxDBMapper;
-import org.influxdb.impl.InfluxDBResultMapper;
-import org.springframework.stereotype.Service;
+import com.ssafy.apm.chat.repository.ChatRepository;
+import com.ssafy.apm.socket.dto.request.GameChatDto;
+import com.ssafy.apm.channel.dto.request.ChannelChatDto;
 
 import java.util.List;
+import java.time.Instant;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ChatServiceImpl implements ChatService{
-
-  private final InfluxDBClient influxDBClient;
-
-  private final InfluxDB influxDB;
+public class ChatServiceImpl implements ChatService {
+  private final ChatRepository chatRepository;
 
   @Override
-  public void addChat(String content){
-    Point row = Point.measurement("test")
-            .addTag("nickname", "test")
-            .addField("content", content)
-            .addField("order", "ASC");
-
-    influxDBClient.getWriteApiBlocking().writePoint(row);
+  public void insertChannelChat(ChannelChatDto request) {
+    Chat input = new Chat(Instant.now(), request.getUuid(), request.getNickname(), request.getContent());
+    chatRepository.save(input);
   }
 
-  public Chat getChatList(){
-    try {
-      // 쿼리 실행
-      QueryResult queryResult = influxDB.query(new Query("SELECT * FROM test"));
-      InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
-      List<Chat> memoryPointList = resultMapper
-              .toPOJO(queryResult, Chat.class);
-    } finally {
-      // InfluxDB 클라이언트 종료
-      influxDB.close();
-    }
-    return null;
+  @Override
+  public void insertGameChat(GameChatDto request) {
+    Chat input = new Chat(Instant.now(), request.getUuid(), request.getNickname(), request.getContent());
+    chatRepository.save(input);
+  }
+
+  public List<Chat> getChatListUsingHour(Integer hour) {
+    return chatRepository.findByHourDuration(hour);
   }
 }
