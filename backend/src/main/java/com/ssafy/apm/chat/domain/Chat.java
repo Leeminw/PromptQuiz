@@ -9,6 +9,9 @@ import lombok.Builder;
 import lombok.AllArgsConstructor;
 
 import java.time.Instant;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @Data
@@ -32,4 +35,7 @@ public class Chat {
     this.uuid = Long.valueOf((String) Objects.requireNonNull(fluxRecord.getValueByKey("uuid")));
   }
 
+  public String getLocalTime(){
+    return LocalTime.ofInstant(this.time, ZoneId.of("UTC")).toString();
+  }
 }

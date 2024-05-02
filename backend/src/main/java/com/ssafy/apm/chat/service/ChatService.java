@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface ChatService {
 
-  void insertGameChat(GameChatDto request);
+  Chat insertGameChat(GameChatDto request);
 
-  void insertChannelChat(ChannelChatDto request);
+  Chat insertChannelChat(ChannelChatDto request);
 
   List<Chat> getChatListUsingHour(Integer hour);
 }

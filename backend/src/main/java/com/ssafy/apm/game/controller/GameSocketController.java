@@ -1,5 +1,7 @@
 package com.ssafy.apm.game.controller;
 
+import com.ssafy.apm.chat.domain.Chat;
+import com.ssafy.apm.chat.service.ChatService;
 import com.ssafy.apm.game.service.GameService;
 import com.ssafy.apm.gameuser.service.GameUserService;
 import com.ssafy.apm.quiz.service.QuizService;
@@ -29,7 +31,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 @CrossOrigin(origins = {"*"}, methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
     RequestMethod.POST}, maxAge = 6000)
 public class GameSocketController {
-
+    private final ChatService chatService;
     private final QuizService quizService;
     private final GameService gameService;
     private final GameQuizService gameQuizService;
@@ -204,6 +206,9 @@ public class GameSocketController {
                     break;
             }
         }
+
+        Chat chat = chatService.insertGameChat(chatMessage);
+        chatMessage.setCreatedDate(chat.getLocalTime());
 
         // 정답이든 아니든 일단 채팅은 전체 전파하기
         template.convertAndSend("/ws/sub/game?uuid=" + chatMessage.

@@ -17,15 +17,17 @@ public class ChatServiceImpl implements ChatService {
   private final ChatRepository chatRepository;
 
   @Override
-  public void insertChannelChat(ChannelChatDto request) {
+  public Chat insertChannelChat(ChannelChatDto request) {
     Chat input = new Chat(Instant.now(), request.getUuid(), request.getNickname(), request.getContent());
     chatRepository.save(input);
+    return input;
   }
 
   @Override
-  public void insertGameChat(GameChatDto request) {
+  public Chat insertGameChat(GameChatDto request) {
     Chat input = new Chat(Instant.now(), request.getUuid(), request.getNickname(), request.getContent());
     chatRepository.save(input);
+    return input;
   }
 
   public List<Chat> getChatListUsingHour(Integer hour) {
