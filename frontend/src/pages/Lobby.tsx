@@ -9,48 +9,55 @@ import Chatting from '../components/lobby/Chatting';
 import RoomList from '../components/lobby/RoomList';
 import CreateRoom from '../components/lobby/CreateRoom';
 import Room from '../components/lobby/Room';
+import { LobbyApi } from '../hooks/axios-lobby';
 const Lobby = () => {
   const [roomList, setRoomList] = useState<RoomProps[]>([]);
-
   useEffect(() => {
     // 방정보 가져오기
-    const response = {
-      status: 'success',
-      message: '방 목록 조회 완료',
-      data: [
-        {
-          id: 8144742847851927974,
-          channelId: 1,
-          type: 1,
-          style: 0,
-          code: '20b3ed3c-965c-40c0-ad7c-62c9bdd29b3e',
-          title: '들어와2',
-          password: '1234', // or null
-          status: true,
-          isTeam: false,
-          curRound: 0,
-          rounds: 0,
-          curPlayers: 1,
-          maxPlayers: 8,
-        },
-        {
-          id: 8144749997851927974,
-          channelId: 1,
-          type: 1,
-          style: 0,
-          code: '20b3ffff-965c-40c0-ad7c-62c9bdd29b3e',
-          title: '들어와3',
-          password: '1234aaaaa',
-          status: true,
-          isTeam: true,
-          curRound: 0,
-          rounds: 0,
-          curPlayers: 3,
-          maxPlayers: 8,
-        },
-      ],
-    };
-    setRoomList(response.data);
+    const response = LobbyApi.getGameList(1)
+      .then((response) => {
+        setRoomList(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    // const response = {
+    //   status: 'success',
+    //   message: '방 목록 조회 완료',
+    //   data: [
+    //     {
+    //       id: 8144742847851927974,
+    //       channelId: 1,
+    //       type: 1,
+    //       style: 0,
+    //       code: '20b3ed3c-965c-40c0-ad7c-62c9bdd29b3e',
+    //       title: '들어와2',
+    //       password: '1234', // or null
+    //       status: true,
+    //       isTeam: false,
+    //       curRound: 0,
+    //       rounds: 0,
+    //       curPlayers: 1,
+    //       maxPlayers: 8,
+    //     },
+    //     {
+    //       id: 8144749997851927974,
+    //       channelId: 1,
+    //       type: 1,
+    //       style: 0,
+    //       code: '20b3ffff-965c-40c0-ad7c-62c9bdd29b3e',
+    //       title: '들어와3',
+    //       password: '1234aaaaa',
+    //       status: true,
+    //       isTeam: true,
+    //       curRound: 0,
+    //       rounds: 0,
+    //       curPlayers: 3,
+    //       maxPlayers: 8,
+    //     },
+    //   ],
+    // };
+    // setRoomList(response.data);
   }, []);
 
   return (

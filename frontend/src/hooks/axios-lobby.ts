@@ -38,6 +38,7 @@ const BASE_URL = process.env.REACT_APP_SERVER
                 BASE_URL + `/game`,
                 room
             )
+            alert("게임방이 정상적으로 생성되었습니다.");
             return response.data
         }
         catch (error) {

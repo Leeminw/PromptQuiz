@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { MdAddHome } from 'react-icons/md';
 import { LobbyApi } from '../../hooks/axios-lobby';
 
+import instance from '../../hooks/axios-instance';
+
 // 방생성 BE API
 // "{
 //     ""userId"" : 1,
@@ -37,6 +39,7 @@ const CreateRoom = () => {
   const [style, setStyle] = useState(0);
   const [password, setPassword] = useState('');
   const [title, setTitle] = useState<string>('');
+
   const privacyHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPrivacyStatus(Number(event.target.value));
     console.log(privacyStatus);

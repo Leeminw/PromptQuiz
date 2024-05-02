@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
+import Room from '../../components/lobby/Room';
 import { FaPlay } from 'react-icons/fa';
 
 const RoomList = () => {
