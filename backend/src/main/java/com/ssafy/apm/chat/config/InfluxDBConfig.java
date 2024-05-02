@@ -14,10 +14,6 @@ public class InfluxDBConfig {
   private String org;
   @Value("${spring.influx.bucket}")
   private String bucket;
-  @Value("${spring.influx.user}")
-  private String user;
-  @Value("${spring.influx.password}")
-  private String password;
   @Value("${spring.influx.url}")
   private String url;
   @Value("${spring.influx.token}")
@@ -26,10 +22,5 @@ public class InfluxDBConfig {
   @Bean
   public InfluxDBClient influxDBClient(){
     return InfluxDBClientFactory.create(url, token, org, bucket);
-  }
-
-  @Bean
-  public InfluxDB influxDB(){
-    return InfluxDBFactory.connect(url, user, password);
   }
 }
