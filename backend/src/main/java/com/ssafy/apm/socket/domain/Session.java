@@ -12,10 +12,10 @@ import org.springframework.data.redis.core.RedisHash;
 @RedisHash(value = "session", timeToLive = 36000)
 public class Session {
     @Id
-    String sessionId;
-    Long userId;
-    String uuid;
-    Integer type; // 1: 게임 방   2: 채널
+    private String sessionId;
+    private String userId;
+    private String uuid;
+    private Integer type; // 1: 게임 방   2: 채널
 
     public void updateState(String uuid, Integer type) {
         this.uuid = uuid;

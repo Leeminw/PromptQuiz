@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 
 @Data
 @AllArgsConstructor
-public class EnterUserDto {
-    Long userId;
-    String uuid;
-    String nickname;
+public class EnterUserMessageDto {
+    private String nickname;
+    private String userId;
+    private Long uuid;
 }
