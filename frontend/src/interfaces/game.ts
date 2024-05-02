@@ -16,14 +16,29 @@ interface Game {
 
 interface GameChat{
     userId: number,
-    nickName: string,
+    nickname: string,
     uuid: string,
     gameId: number,
     round: number,
     content: string,
 }
+
 interface GameEnter{
     userId:number,
     uuid: string,
     nickname:string
+}
+
+interface GameChatRecieve {
+    userId: number,
+    nickname: string,
+    uuid: string,
+    gameId: number,
+    round: number,
+    content: string,
+    createdDate: string
+}
+interface RecieveData {
+    tag: string,
+    data : GameChatRecieve
 }
