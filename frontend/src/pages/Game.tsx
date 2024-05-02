@@ -10,6 +10,8 @@ import SockJS from 'sockjs-client';
 import { Client, Message, IMessage } from '@stomp/stompjs';
 import { useWebSocketStore } from '../stores/socketStore';
 import useUserStore from '../stores/userStore';
+import instance from '../hooks/axios-instance';
+
 const GamePage = () => {
   const [game, setGame] = useState<Game | null>(null);
   const { roomId } = useParams();
@@ -17,12 +19,17 @@ const GamePage = () => {
   const client = useRef<Client | null>(null);
   const { user } = useUserStore();
   const [text, setText] = useState('');
+  const [time, setTime] = useState<number>(0);
+  const [maxRound, setMaxRound] = useState<number>(0);
+  const [round, setRound] = useState<number>(0);
   const { connectWebSocket, disconnectWebSocket, publish } = useWebSocketStore();
 
   const getGameData = async () => {
     const response = await GameApi.getGame(roomId);
-    setGame(response.data);
-    console.log(game);
+    const responseGame: Game = response.data;
+    console.log(responseGame);
+    setGame(responseGame);
+    setMaxRound(responseGame.rounds);
     // enterGame();
   };
 
@@ -31,7 +38,7 @@ const GamePage = () => {
   }, []);
 
   useEffect(() => {
-    // 게임 로드하면 구독.
+    // 게임 로드하면 구독하기
     connectWebSocket(`/ws/sub/game?uuid=${game?.code}`, recieveChat, enterGame);
     return () => {
       disconnectWebSocket();
@@ -45,12 +52,12 @@ const GamePage = () => {
     }
   };
 
-  const gameController = (data: RecieveData) => {
-    if (data.tag === 'chat') {
-      // console.log(body.data);
-      setChat((prevItems) => [...prevItems, data.data]);
+  const gameController = (recieve: RecieveData) => {
+    console.log(recieve);
+    if (recieve.tag === 'chat') {
+      setChat((prevItems) => [...prevItems, recieve.data]);
       // setChat((prevItems) => [...prevItems, body]);
-    } else if (data.tag === 'enter') {
+    } else if (recieve.tag === 'enter') {
       // console.log(body.data);
       // const data: GameChatRecieve = {
       //   userId: -1,
@@ -62,11 +69,14 @@ const GamePage = () => {
       //   createdDate: '',
       // };
       // setChat((prevItems) => [...prevItems, data]);
-    } else if (data.tag === 'leave') {
-    } else if (data.tag === 'timer') {
-    } else if (data.tag === 'wrongSignal') {
-    } else if (data.tag === 'similarity') {
-    } else if (data.tag === 'game') {
+    } else if (recieve.tag === 'leave') {
+    } else if (recieve.tag === 'timer') {
+      console.log(recieve.data);
+      setTime(recieve.data.time);
+      setRound(recieve.data.round);
+    } else if (recieve.tag === 'wrongSignal') {
+    } else if (recieve.tag === 'similarity') {
+    } else if (recieve.tag === 'game') {
     }
   };
   const enterGame = () => {
@@ -91,6 +101,24 @@ const GamePage = () => {
     };
     publish(destination, gameChat);
     chatInput.current.value = '';
+  };
+
+  const publishStart = async () => {
+    // 모두 레디가 되있는지?
+    // const destination = '/ws/pub/game/start';
+    const gameReady: GameReady = {
+      gameId: game.id,
+      uuid: game.code,
+    };
+    console.log(gameReady);
+    //
+    try {
+      const response = await instance.post('game/start', gameReady);
+      console.log(response);
+      // publish(destination, gameReady);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const chattingBox = useRef(null);
@@ -193,12 +221,12 @@ const GamePage = () => {
             <div className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint border relative overflow-hidden flex">
               <div className="w-full h-full rounded-full -translate-x-[50%] transition-transform duration-1000 bg-mint absolute"></div>
             </div>
-            <div className="border-custom-mint w-full h-full flex items-center justify-center relative">
+            <div className="border-custom- w-full h-full flex items-center justify-center relative">
               <div className="w-16 h-7 absolute top-2 left-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
-                1 / 20
+                {round} / {maxRound}
               </div>
               <div className="w-fit h-7 px-3 absolute top-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
-                흠 뭐넣지
+                남은시간 : {time}
               </div>
               <div className="w-full h-full bg-[url(https://contents-cdn.viewus.co.kr/image/2023/08/CP-2023-0056/image-7adf97c8-ef11-4def-81e8-fe2913667983.jpeg)] bg-cover bg-center"></div>
             </div>
@@ -268,7 +296,11 @@ const GamePage = () => {
           </div>
         </div>
         {/* 게임 설정 */}
-        <div className="w-1/3 bg-blue-200 flex"></div>
+        <div className="w-1/3 bg-blue-200 flex">
+          <button className="border" onClick={publishStart}>
+            game start!
+          </button>
+        </div>
       </div>
     </div>
   );
