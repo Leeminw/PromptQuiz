@@ -5,6 +5,7 @@ import com.ssafy.apm.sdw.dto.DottegiResponseDto;
 import com.ssafy.apm.sdw.dto.SdwRequestDto;
 import com.ssafy.apm.sdw.dto.SdwResponseDto;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
@@ -24,6 +25,9 @@ import java.util.*;
 @Service
 public class SdwServiceImpl implements SdwService {
 
+    @Value("${cloud.aws.gpu.server.ip}")
+    private String gpuServerIP;
+
     @Override
     public SdwResponseDto requestStableDiffusion(SdwRequestDto requestDto) {
         RestTemplate restTemplate = new RestTemplate();
@@ -31,7 +35,7 @@ public class SdwServiceImpl implements SdwService {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
 //        String url = "http://127.0.0.1:7860/sdapi/v1/txt2img";
-        String url = "http://222.107.238.44:7860/sdapi/v1/txt2img";
+        String url = String.format("http://%s/sdapi/v1/txt2img", gpuServerIP);
 
         HttpEntity<SdwRequestDto> request = new HttpEntity<>(requestDto, httpHeaders);
         try {
