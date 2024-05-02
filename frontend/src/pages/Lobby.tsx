@@ -80,7 +80,7 @@ const Lobby = () => {
       /> */}
       <div className="h-[100px] w-[100px] bg-yellow-300">광고</div>
       <Chatting />
-      <RoomList />
+      <RoomList {...roomList} />
     </div>
   );
 };

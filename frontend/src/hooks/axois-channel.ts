@@ -3,11 +3,6 @@ import instance from "./axios-instance";
 import useUserStore from "../stores/userStore";
 const BASE_URL = process.env.REACT_APP_SERVER
 
-/**
- * /api/v1/channel/getChannelList 오타인듯
- * 
- */
-
  const ChannelApi= {
     // 채널 목록 조회
     getChannelList : async () => {

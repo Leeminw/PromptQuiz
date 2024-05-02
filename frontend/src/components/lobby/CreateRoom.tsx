@@ -103,6 +103,7 @@ const CreateRoom = () => {
     console.log('현재플레이어:' + curPlayers);
     console.log('최대플레이어:' + maxPlayers);
 
+    instance.interceptors.request.use();
     const { data } = await LobbyApi.createRoom(Room);
   };
   return (
