@@ -31,7 +31,7 @@ public class SdwServiceImpl implements SdwService {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
 //        String url = "http://127.0.0.1:7860/sdapi/v1/txt2img";
-        String url = "http://70.12.130.101:7860/sdapi/v1/txt2img";
+        String url = "http://222.107.238.44:7860/sdapi/v1/txt2img";
 
         HttpEntity<SdwRequestDto> request = new HttpEntity<>(requestDto, httpHeaders);
         try {
