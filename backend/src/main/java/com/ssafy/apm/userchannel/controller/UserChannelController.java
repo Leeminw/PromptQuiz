@@ -44,8 +44,8 @@ public class UserChannelController {
 //    채널 퇴장
 //    로그인 필요
     @DeleteMapping("")
-    public ResponseEntity<ResponseData<?>> exitUserChannel() {
-        Long response = userChannelService.exitUserChannel();
+    public ResponseEntity<ResponseData<?>> deleteExitUserChannel() {
+        Long response = userChannelService.deleteExitUserChannel();
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
 }

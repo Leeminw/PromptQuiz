@@ -7,10 +7,149 @@ import GamePlayer from '../components/game/Player';
 import SelectionGame from '../components/game/SelectionGame';
 import GameChat from '../components/game/GameChat';
 import GameRoomSetting from '../components/game/GameRoomSetting';
+import GameApi from '../hooks/axios-game';
+import { useLoaderData } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import SockJS from 'sockjs-client';
+import { Client, Message, IMessage } from '@stomp/stompjs';
+import { useWebSocketStore } from '../stores/socketStore';
+import useUserStore from '../stores/userStore';
 
 const GamePage = () => {
   const [gamestart, setGamestart] = useState(false);
   const [earthquake, setEarthquake] = useState(false);
+  const [game, setGame] = useState<Game | null>(null);
+  const { roomId } = useParams();
+  const [chat, setChat] = useState<GameChatRecieve[]>([]);
+  const client = useRef<Client | null>(null);
+  const { user } = useUserStore();
+  const { connectWebSocket, disconnectWebSocket, publish } = useWebSocketStore();
+  const chattingBox = useRef(null);
+  const chatInput = useRef(null);
+  const chatBtn = useRef(null);
+  const [chatOpen, setChatOpen] = useState(false);
+
+  const getGameData = async () => {
+    const response = await GameApi.getGame(roomId);
+    setGame(response.data);
+    console.log(game);
+    // enterGame();
+  };
+
+  useEffect(() => {
+    getGameData();
+    // 채팅 입력 바깥 클릭 시 채팅창 닫기
+    const handleOutsideClick = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (target && !chatInput.current?.contains(target) && !chatBtn.current?.contains(target)) {
+        chatFocusOut();
+      }
+    };
+
+    // 채팅 입력 안하고 있을 때 Enter시 채팅창 열기
+    const handleChatKey = (event: KeyboardEvent) => {
+      const target = event.target as Node;
+      if (event.key === 'Enter' && !chatInput.current?.contains(target) && !chatOpen) {
+        chatFocus();
+      }
+    };
+
+    // 클릭 & 키다운 이벤트 추가
+    document.addEventListener('click', handleOutsideClick);
+    document.addEventListener('keydown', handleChatKey);
+    return () => {
+      document.removeEventListener('click', handleOutsideClick);
+    };
+  }, []);
+
+  useEffect(() => {
+    // 게임 로드하면 구독.
+    connectWebSocket(`/ws/sub/game?uuid=${game?.code}`, recieveChat, enterGame);
+    return () => {
+      disconnectWebSocket();
+    };
+  }, [game]);
+
+  // 채팅창 열기
+  const chatFocus = () => {
+    chatInput.current.focus();
+    setChatOpen(true);
+  };
+
+  // 채팅창 닫기
+  const chatFocusOut = () => {
+    chatInput.current.blur();
+    setChatOpen(false);
+  };
+
+  const recieveChat = (message: IMessage) => {
+    if (message.body) {
+      const body: RecieveData = JSON.parse(message.body);
+      gameController(body);
+    }
+  };
+
+  const gameController = (data: RecieveData) => {
+    if (data.tag === 'chat') {
+      // console.log(body.data);
+      setChat((prevItems) => [...prevItems, data.data]);
+      // setChat((prevItems) => [...prevItems, body]);
+    } else if (data.tag === 'enter') {
+      // console.log(body.data);
+      // const data: GameChatRecieve = {
+      //   userId: -1,
+      //   nickname: 'system',
+      //   uuid: game.code,
+      //   gameId: game.id,
+      //   round: 0,
+      //   content: `${body.data.nickname}님이 입장하셨습니다.`,
+      //   createdDate: '',
+      // };
+      // setChat((prevItems) => [...prevItems, data]);
+    } else if (data.tag === 'leave') {
+    } else if (data.tag === 'timer') {
+    } else if (data.tag === 'wrongSignal') {
+    } else if (data.tag === 'similarity') {
+    } else if (data.tag === 'game') {
+    }
+  };
+  const enterGame = () => {
+    const gameEnter: GameEnter = {
+      userId: user.userId,
+      uuid: game?.code,
+      nickname: user.nickName,
+    };
+    const destination = '/ws/pub/game/enter';
+    publish(destination, gameEnter);
+  };
+
+  const publishChat = () => {
+    const destination = '/ws/pub/game/chat/send';
+    const gameChat: GameChat = {
+      userId: user.userId,
+      nickname: user.nickName,
+      uuid: game.code,
+      gameId: game.id,
+      round: 0,
+      content: chatInput.current.value,
+    };
+    publish(destination, gameChat);
+    chatInput.current.value = '';
+  };
+
+  // const chatFunction = () => {
+  //   const chatChild = document.createElement('div');
+  //   chatChild.className = 'flex';
+  //   const chatUser = document.createElement('p');
+  //   const chatMessage = document.createElement('p');
+  //   chatUser.className = 'font-extrabold pr-1 text-nowrap text-black';
+  //   chatUser.innerText = '푸바오 ㅠㅠㅠ : ';
+  //   chatMessage.innerText = chatInput.current.value;
+  //   chatChild.appendChild(chatUser);
+  //   chatChild.appendChild(chatMessage);
+  //   chatInput.current.value = '';
+  //   chattingBox.current.appendChild(chatChild);
+  // };
 
   // 버튼 제어
   // [0]초대하기 | [1]나가기 | [2]1팀 | [3]2팀 | [4]랜덤 | [5]게임시작
@@ -77,12 +216,12 @@ const GamePage = () => {
       <div className="w-full h-10 flex gap-4 mb-2">
         {/* 채널 */}
         <label className="flex items-center w-1/3 py-4 border-custom-mint bg-white text-sm">
-          <p className="text-center w-full text-nowrap">1채널</p>
+          <p className="text-center w-full text-nowrap">{game?.channelId}채널</p>
         </label>
         {/* 제목 */}
         <label className="flex items-center w-full grow py-4 border-custom-mint bg-white text-sm">
-          <div className="border-r border-gray-200 pl-3 pr-2.5">86</div>
-          <p className="text-center w-full text-nowrap line-clamp-1">개인전 빠무 초보만</p>
+          <div className="border-r border-gray-200 pl-3 pr-2.5">{roomId}</div>
+          <p className="text-center w-full text-nowrap line-clamp-1">{game?.title}</p>
         </label>
         {/* 버튼 */}
         <div className="w-1/3 flex gap-4">
@@ -173,7 +312,56 @@ const GamePage = () => {
             <SelectionGame />
           </div>
           {/* 채팅 */}
-          <GameChat />
+          <div className="w-full">
+            <div className="relative w-full">
+              <div
+                className={`absolute flex items-center w-full h-36 bottom-0 mb-2 transition-all origin-bottom duration-300 ${chatOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
+              >
+                <div className="absolute w-full h-[90%] px-3 py-2 text-sm chat z-10">
+                  <div className="z-10 text-gray-700" ref={chattingBox}>
+                    {chat.map((chatItem, index) => (
+                      <div className="flex" key={index}>
+                        <p className="font-extrabold pr-1 text-nowrap text-black">
+                          {chatItem.nickname}
+                        </p>
+                        <p>{chatItem.content}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="absolute w-full h-full border-custom-white opacity-90 bg-white z-0"></div>
+              </div>
+            </div>
+
+            <div className="w-full h-10 bg-white/80 rounded-full flex relative">
+              <input
+                ref={chatInput}
+                className="w-full h-10 bg-transparent rounded-full pl-5 pr-20 text-sm placeholder-gray-400"
+                maxLength={30}
+                placeholder={`${chatOpen ? 'Esc를 눌러 채팅창 닫기' : 'Enter를 눌러 채팅 입력'}`}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    if (chatInput.current.value !== '') {
+                      publishChat();
+                    }
+                  } else if (e.key === 'Escape') chatFocusOut();
+                }}
+                onClick={chatFocus}
+              ></input>
+              <div
+                className="w-16 bg-mint cursor-pointer absolute h-full right-0 rounded-r-full flex justify-center items-center hover:brightness-125 transition"
+                ref={chatBtn}
+                onClick={() => {
+                  if (chatInput.current.value !== '') {
+                    publishChat();
+                    if (!chatOpen) chatFocus();
+                  }
+                }}
+              >
+                <IoSend className="text-white w-6 h-6" />
+              </div>
+            </div>
+          </div>
         </div>
         {/* 게임 설정 */}
         <div className="w-1/3 flex flex-col cursor-default">

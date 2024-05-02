@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 @Data
 @AllArgsConstructor
 public class SimilarityResponseDto implements Comparable<SimilarityResponseDto> {
-    String value;
-    Double rate;
+    private String value;
+    private Double rate;
 
     @Override
     public int compareTo(SimilarityResponseDto o) {

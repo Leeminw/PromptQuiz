@@ -244,17 +244,48 @@ public class GameUserServiceImpl implements GameUserService {
 
         Long gameUserId = gameUserEntity.getId();
 
+        if (gameUserEntity.getIsHost()) {
+//            방 안에 있는 유저 목록 가져와서
+            List<GameUserEntity> userList = gameUserRepository.findAllByGameId(gameId);
+            for (GameUserEntity entity : userList) {
+//                방장이 아닌 놈을 찾아서
+                if (!entity.getIsHost()) {
+//                    방장 주고
+                    entity.updateIsHost(true);
+                    break;
+                }
+            }
+//            더티 체킹으로 알아서 업데이트
+        }
+
         gameUserRepository.delete(gameUserEntity);
 
         return gameUserId;
     }
 
-//    이긴 팀 점수 계산
-    public void winnerTeamScore(List<User> userList, List<GameUserEntity> winnerTeamEntity, int getWinnerMaxScore ) {
+    @Override
+    @Transactional
+    public Long deleteExitGameByUserId(Long userId, String gameCode) {
+        GameEntity gameEntity = gameRepository.findByCode(gameCode)
+                .orElseThrow(() -> new NoSuchElementException("해당 code를 가진 게임을 찾을 수 없습니다."));
+
+        GameUserEntity gameUserEntity = gameUserRepository.findByGameIdAndUserId(gameEntity.getId(), userId)
+                .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
+
+        Long gameUserId = gameUserEntity.getId();
+
+        gameUserRepository.delete(gameUserEntity);
+
+        return gameUserId;
+    }
+
+
+    //    이긴 팀 점수 계산
+    public void winnerTeamScore(List<User> userList, List<GameUserEntity> winnerTeamEntity, int getWinnerMaxScore) {
         for (int i = 0; i < winnerTeamEntity.size(); i++) {
             GameUserEntity entity = winnerTeamEntity.get(i);
             User user = userRepository.findById(entity.getUserId())
-                    .orElseThrow(() -> new NoSuchElementException("그런 유저는 없다."));
+                    .orElseThrow(() -> new NoSuchElementException("해당 ID를 가진 유저를 찾을 수 없습니다."));
 
             int earnUserScore = (int) Math.round(getWinnerMaxScore * Math.pow(0.8, i));
 
@@ -269,7 +300,7 @@ public class GameUserServiceImpl implements GameUserService {
         }
     }
 
-    public void loserTeamScore(List<User> userList, List<GameUserEntity> loserTeamEntity, int getWinnerMaxScore ) {
+    public void loserTeamScore(List<User> userList, List<GameUserEntity> loserTeamEntity, int getWinnerMaxScore) {
         //            점수 잃는 놈들 로직
         int j = 1;
         for (int i = 0; i < loserTeamEntity.size(); i++) {

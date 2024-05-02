@@ -4,9 +4,18 @@ import ChannelUserComponent from '../components/user/ChannelUserComponent';
 import { UserApi } from '../hooks/axios-user';
 import TestChild from './TestChild';
 import useUserStore from '../stores/userStore';
+import { useWebSocketStore } from '../stores/socketStore';
 const TestPage = () => {
   const [userList, setUserList] = useState<ChannelUser[]>([]);
   const { user } = useUserStore();
+  const { isConnected, connectWebSocket, disconnectWebSocket } = useWebSocketStore();
+  useEffect(() => {
+    // connectWebSocket();
+    return () => {
+      // disconnectWebSocket();
+    };
+  }, []);
+
   const logoutUser = async () => {
     console.log('로그아웃');
     try {
@@ -39,6 +48,7 @@ const TestPage = () => {
       <button onClick={logoutUser} className="border">
         로그아웃
       </button>
+      <div>{isConnected ? 'connected' : 'not connected'}</div>
     </div>
   );
 };

@@ -28,7 +28,7 @@ public class SocketServiceImpl implements SocketService {
         //User user = userService.loadUser();
 
         // 처음 접속했을때는 일단 유저의 이름과 세션 아이디만 함께 저장을 해놓는다.
-        socketRepository.save(new Session(sessionId, "ssafy", "0", 2));
+        socketRepository.save(new Session(sessionId, 1L, "0", 2));
     }
 
     @Override
