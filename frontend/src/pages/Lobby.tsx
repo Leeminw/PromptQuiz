@@ -9,12 +9,16 @@ import Chatting from '../components/lobby/Chatting';
 import RoomList from '../components/lobby/RoomList';
 import CreateRoom from '../components/lobby/CreateRoom';
 import Room from '../components/lobby/Room';
+
+import { useLocation } from 'react-router-dom';
 import { LobbyApi } from '../hooks/axios-lobby';
 const Lobby = () => {
+  const location = useLocation();
+  const channelId = location.state?.channelId;
   const [roomList, setRoomList] = useState<RoomProps[]>([]);
   useEffect(() => {
     // 방정보 가져오기
-    const response = LobbyApi.getGameList(1)
+    const response = LobbyApi.getGameList(channelId)
       .then((response) => {
         setRoomList(response.data);
       })
@@ -62,7 +66,7 @@ const Lobby = () => {
 
   return (
     <div className="flex flex-col items-center w-3/4 bg-white opacity-80">
-      <Header channelId={3} />
+      <Header channelId={channelId} />
       {/* <Room
         id={8144742847851927974}
         channelId={1}

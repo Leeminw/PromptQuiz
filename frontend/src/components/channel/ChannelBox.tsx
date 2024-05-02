@@ -14,7 +14,8 @@ const ChannelBox = ({ id, code, name, curPlayers, maxPlayers }: Props) => {
   const navigate = useNavigate();
   const enterLobby = () => {
     setTimeout(() => {
-      navigate(`/lobby/${code}`);
+      // navigate(`/lobby/${code}`);
+      navigate(`/lobby/${code}`, { state: { channelId: id } });
     }, 1000);
   };
   return (

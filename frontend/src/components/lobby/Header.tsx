@@ -15,22 +15,24 @@ const Header = ({ channelId }: Props) => {
   const createRoom = () => {
     alert('방 생성 모달창 띄움');
   };
-  const fastMatching = () => {};
+  const fastMatching = () => {
+    alert('빠른대전 매칭완료!');
+  };
   const refresh = async () => {
     // const { data } = await UserApi.login(loginForm);
     console.log('새로고침 버튼 누름');
 
-    const { data } = await LobbyApi.getGameList(1);
+    const { data } = await LobbyApi.getGameList(channelId);
     console.log(data);
   };
   const ranking = () => {};
 
   return (
     <nav className="flex flex-col w-full">
-      <div className="w-full h-[10vh] bg-red-200">자유 1 채널</div>
+      <div className="w-full h-[10vh] bg-red-200">자유 {channelId} 채널</div>
       <div className="w-full h-[10vh] flex">
-        <CreateRoom />
-        <button className="w-1/4 h-[10vh] btn-mint">
+        <CreateRoom channelId={channelId} />
+        <button className="w-1/4 h-[10vh] btn-mint" onClick={fastMatching}>
           <FaForward />
           빠른대전
         </button>

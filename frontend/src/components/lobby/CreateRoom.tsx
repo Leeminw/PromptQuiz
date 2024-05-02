@@ -24,7 +24,7 @@ interface Props {
   channelId: number;
 }
 
-const CreateRoom = () => {
+const CreateRoom = ({ channelId }: Props) => {
   const [privacyStatus, setPrivacyStatus] = useState(0);
   const [isTeam, setIsTeam] = useState(false);
   const [type, setType] = useState(0);
@@ -32,7 +32,7 @@ const CreateRoom = () => {
   const [maxRound, setMaxRound] = useState(1);
   /**로그인 상태 정보를 가져오기 전에 임시로 userId 값을 부여 */
   const [userId, setUserId] = useState(3);
-  const [channelId, setChannelId] = useState(1);
+  // const [channelId, setChannelId] = useState(1);
   const [status, setStatus] = useState(false);
   const curPlayers = 1;
   const curRound = 0;

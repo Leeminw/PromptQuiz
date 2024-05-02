@@ -6,6 +6,8 @@ import { FaPlay } from 'react-icons/fa';
 
 const RoomList = (roomList: RoomProps[]) => {
   const roomArray = Object.values(roomList);
+  console.log(roomArray);
+
   if (!Array.isArray(roomArray)) {
     return <div>게임방이 없습니다.</div>;
   }
@@ -13,7 +15,7 @@ const RoomList = (roomList: RoomProps[]) => {
     <div className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 border-mint rounded-3xl ">
       <div>
         방 내용
-        <div>
+        <div className="flex flex-col">
           {roomArray.map((item, index) => (
             // <p key={index}>{item.channelId}</p>
             <Room
