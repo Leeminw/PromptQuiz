@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { IoSettings } from 'react-icons/io5';
 interface GameRoomSettingProps {
-  teammode: boolean;
-  gamemode: string;
-  round: number;
+  gamestart: boolean;
 }
 
-const GameRoomSetting = () => {
+const GameRoomSetting = ({ gamestart }: GameRoomSettingProps) => {
   return (
     <div className="w-full h-28 flex flex-col cursor-default">
       <dialog id="modalopen" className="modal">
@@ -23,8 +21,10 @@ const GameRoomSetting = () => {
       <div className="w-full h-7 border-custom-mint bg-mint pl-2 pr-1 text-white font-bold text-sm flex items-center">
         <p className="w-full">방 설정</p>
         <IoSettings
-          className="w-5 h-5 hover:scale-125 transition cursor-pointer"
-          onClick={() => (document.getElementById('modalopen') as HTMLDialogElement).showModal()}
+          className={`w-5 h-5 transition ${!gamestart && 'hover:scale-125 cursor-pointer'}`}
+          onClick={() => {
+            if (!gamestart) (document.getElementById('modalopen') as HTMLDialogElement).showModal();
+          }}
         />
       </div>
       <div className="w-full h-40 border-custom-white bg-white flex flex-col text-xs text-gray-400 pt-0.5">

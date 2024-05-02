@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react';
+interface TimerProps {
+  idx: number;
+}
 
 const GamePlayer = () => {
   return (

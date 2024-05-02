@@ -12,16 +12,43 @@ const GamePage = () => {
   const [gamestart, setGamestart] = useState(false);
   const [earthquake, setEarthquake] = useState(false);
 
-  // 버튼 클릭 시 애니메이션
+  // 버튼 제어
   // [0]초대하기 | [1]나가기 | [2]1팀 | [3]2팀 | [4]랜덤 | [5]게임시작
   const [activateBtn, setActivateBtn] = useState<ActivateButton>({});
+  const [isStart, setIsStart] = useState<boolean>(false);
+  const [btnCurrentActivate, setBtnCurrentActivate] = useState<boolean>(false);
   const handleClick = (id: number) => {
-    setActivateBtn((prev) => ({ ...prev, [id]: true }));
-    setTimeout(() => {
-      setActivateBtn((prev) => ({ ...prev, [id]: false }));
-    }, 400);
+    // 버튼 비활성화 상태라면 이벤트 방지
+    setIsStart((disable) => {
+      if (!disable || id === 1) {
+        // 버튼이 활성돼있는 동안 버튼 클릭 방지
+        setBtnCurrentActivate((current) => {
+          if (!current) {
+            setBtnCurrentActivate(true);
+            setActivateBtn((prev) => ({ ...prev, [id]: true }));
+            setTimeout(() => {
+              // 게임 시작 시 버튼 비활성화
+              if (id === 5) {
+                console.log('start!!!');
+                handleGamestart();
+                setIsStart(true);
+              }
+              // 버튼 이벤트 활성화
+              setActivateBtn((prev) => ({ ...prev, [id]: false }));
+              setTimeout(() => {
+                setBtnCurrentActivate(false);
+              }, 300);
+            }, 400);
+            return true;
+          }
+          return current;
+        });
+      }
+      return disable;
+    });
   };
 
+  // 게임 시작 이벤트
   const handleGamestart = () => {
     setGamestart(true);
     setTimeout(() => {
@@ -37,7 +64,7 @@ const GamePage = () => {
 
   return (
     <div
-      className={`bg-white/80 w-[80vw] h-[85vh] min-w-[50rem] min-h-[37rem] z-10 
+      className={`bg-white/80 w-[75vw] h-[90vh] min-w-[50rem] min-h-[40rem] z-10 
       rounded-3xl drop-shadow-lg px-8 py-6 flex flex-col items-center justify-center 
       ${earthquake ? 'animate-earthquake' : ''}`}
     >
@@ -60,13 +87,24 @@ const GamePage = () => {
         {/* 버튼 */}
         <div className="w-1/3 flex gap-4">
           <button
-            className={`btn-mint-border-white hover:brightness-125 hover:scale-105 
-            transition text-sm w-1/2 ${activateBtn[0] ? 'animate-clickbtn scale-105' : ''}`}
+            className={`
+            transition text-sm w-1/2 text-white ${activateBtn[0] ? 'animate-clickbtn scale-105' : ''}
+            ${
+              isStart
+                ? 'border-custom-gray bg-[#999999] cursor-default'
+                : 'btn-mint-border-white hover:brightness-125 hover:scale-110 cursor-pointer'
+            }
+            `}
             onClick={() => {
               handleClick(0);
             }}
           >
-            <label className="flex gap-1 items-center px-2 cursor-pointer overflow-hidden max-xl:justify-center">
+            <label
+              className={`
+            flex gap-1 items-center px-2 overflow-hidden max-xl:justify-center font-extrabold
+            ${isStart ? 'cursor-default' : 'cursor-pointer'}
+            `}
+            >
               <FaUserPlus className="min-w-5 min-h-5 mb-0.5" />
               <p
                 className="text-center w-full text-nowrap text-sm overflow-hidden 
@@ -94,24 +132,15 @@ const GamePage = () => {
       </div>
       {/* 중간 : 플레이어, 문제 화면 */}
       <div className="w-full h-[22rem] flex flex-col items-center mb-4">
-        <div className="w-full h-full flex gap-4">
+        <div className="w-full h-full flex gap-4 pt-5">
           {/* 좌파 */}
-          <div className="w-1/3 flex flex-col gap-3 pt-5">
+          <div className="w-1/3 flex flex-col gap-3">
             {Array.from({ length: 6 }, (_, index) => (
-              <GamePlayer idx={index + 1} />
+              <GamePlayer key={index} idx={index + 1} />
             ))}
           </div>
           {/* 문제 화면, 타이머 */}
           <div className="w-full grow flex flex-col">
-            <div
-              className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint
-             border relative overflow-hidden flex"
-            >
-              <div
-                className="w-full h-full rounded-full -translate-x-[0%] transition-transform
-               duration-1000 bg-mint absolute"
-              ></div>
-            </div>
             <div className="border-custom-mint w-full h-full flex items-center justify-center relative">
               <div
                 className="w-16 h-7 absolute top-2 left-2 bg-yellow-500/80 text-white
@@ -120,15 +149,15 @@ const GamePage = () => {
                 1/20
               </div>
               <div
-                className="w-full h-full bg-[url(https://contents-cdn.viewus.co.kr/image/2023/08/CP-2023-0056/image-7adf97c8-ef11-4def-81e8-fe2913667983.jpeg)] 
+                className="w-full h-full bg-[url(/public/testphoto.png)] 
               bg-cover bg-center"
               ></div>
             </div>
           </div>
           {/* 우파 */}
-          <div className="w-1/3 flex flex-col gap-3 pt-5">
+          <div className="w-1/3 flex flex-col gap-3">
             {Array.from({ length: 6 }, (_, index) => (
-              <GamePlayer idx={index + 7} />
+              <GamePlayer key={index} idx={index + 7} />
             ))}
           </div>
         </div>
@@ -149,14 +178,19 @@ const GamePage = () => {
         {/* 게임 설정 */}
         <div className="w-1/3 flex flex-col cursor-default">
           {/* 방 설정 */}
-          <GameRoomSetting />
+          <GameRoomSetting gamestart={isStart} />
 
           {/* 팀 선택, 게임 시작 버튼 */}
           <div className="w-full h-7 my-2 flex gap-2">
             <button
-              className={`w-1/3 h-full flex items-center justify-center border-custom-red bg-customRed
-              text-white text-sm font-bold cursor-pointer hover:brightness-125 hover:scale-110 transition 
-              ${activateBtn[2] ? 'animate-clickbtn scale-105' : ''}`}
+              className={`w-1/3 h-full flex items-center justify-center text-white text-sm font-bold transition 
+              ${activateBtn[2] ? 'animate-clickbtn scale-105' : ''}
+              ${
+                isStart
+                  ? 'border-custom-gray bg-[#999999] cursor-default'
+                  : 'border-custom-red bg-customRed hover:brightness-125 hover:scale-110 cursor-pointer'
+              }
+              `}
               onClick={() => {
                 handleClick(2);
               }}
@@ -164,9 +198,15 @@ const GamePage = () => {
               1팀
             </button>
             <button
-              className={`w-1/3 h-full flex items-center justify-center border-custom-blue bg-customBlue
-              text-white text-sm font-bold cursor-pointer hover:brightness-125 hover:scale-110 transition 
-              ${activateBtn[3] ? 'animate-clickbtn scale-105' : ''}`}
+              className={`w-1/3 h-full flex items-center justify-center
+              text-white text-sm font-bold transition 
+              ${activateBtn[3] ? 'animate-clickbtn scale-105' : ''}
+              ${
+                isStart
+                  ? 'border-custom-gray bg-[#999999] cursor-default'
+                  : 'border-custom-blue bg-customBlue hover:brightness-125 hover:scale-110 cursor-pointer'
+              }
+              `}
               onClick={() => {
                 handleClick(3);
               }}
@@ -174,9 +214,14 @@ const GamePage = () => {
               2팀
             </button>
             <button
-              className={`w-1/3 h-full flex items-center justify-center border-custom-green bg-customGreen
-              text-white text-sm font-bold cursor-pointer hover:brightness-125 hover:scale-110 transition
-              ${activateBtn[4] ? 'animate-clickbtn scale-105' : ''}`}
+              className={`w-1/3 h-full flex items-center justify-center text-white text-sm font-bold transition
+              ${activateBtn[4] ? 'animate-clickbtn scale-105' : ''}
+              ${
+                isStart
+                  ? 'border-custom-gray bg-[#999999] cursor-default'
+                  : 'border-custom-green bg-customGreen hover:brightness-125 hover:scale-110 cursor-pointer'
+              }
+              `}
               onClick={() => {
                 handleClick(4);
               }}
@@ -184,15 +229,17 @@ const GamePage = () => {
               랜덤
             </button>
           </div>
-
           <button
-            className={`w-full h-8 btn-mint-border-white hover:brightness-125 hover:scale-105
-             transition mb-1 ${activateBtn[5] ? 'animate-clickbtn scale-105' : ''}`}
+            className={`w-full h-8 font-extrabold
+             transition mb-1 ${activateBtn[5] ? 'animate-clickbtn scale-105' : ''}
+             ${
+               isStart
+                 ? 'border-custom-gray bg-[#999999] cursor-default text-white'
+                 : ' btn-mint-border-white hover:brightness-125 hover:scale-110 cursor-pointer'
+             }
+             `}
             onClick={() => {
               handleClick(5);
-              setTimeout(() => {
-                handleGamestart();
-              }, 400);
             }}
           >
             게임시작

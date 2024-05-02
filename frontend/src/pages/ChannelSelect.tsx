@@ -108,18 +108,8 @@ const ChannelSelectPage = () => {
   };
   return (
     <div
-      className="w-fit p-2 m-4"
-      style={{
-        // backgroundColor: 'yellow',
-        width: '80%',
-        height: '80%',
-      }}
-    >
-      <div
         className="container"
         style={{
-          width: '80%',
-          height: '80%',
           //   display: 'flex',
           //   justifyContent: 'center',
         }}
@@ -138,7 +128,6 @@ const ChannelSelectPage = () => {
           ))}
         </div>
       </div>
-    </div>
   );
 };
 

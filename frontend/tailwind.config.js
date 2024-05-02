@@ -176,6 +176,13 @@ module.exports = {
           borderImageOutset: '0.05rem',
           borderImageRepeat: 'stretch',
         },
+        '.border-custom-gray': {
+          borderWidth: '0.3rem',
+          borderImageSource: "url('../public/ui/border-gray.png')",
+          borderImageSlice: '14%',
+          borderImageOutset: '0.05rem',
+          borderImageRepeat: 'stretch',
+        },
         '.btn-mint': {
           borderWidth: '0.3rem',
           borderImageSource: "url('../public/ui/border-mint.png')",
