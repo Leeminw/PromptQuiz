@@ -10,4 +10,5 @@ public interface S3Service {
     S3FileResponseDto uploadImage(MultipartFile file) throws IOException;
     S3FileResponseDto uploadVideo(MultipartFile file) throws IOException;
 
+    String uploadBase64ImageToS3(String base64Image);
 }

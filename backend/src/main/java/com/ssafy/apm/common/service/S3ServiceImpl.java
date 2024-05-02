@@ -2,15 +2,18 @@ package com.ssafy.apm.common.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssafy.apm.common.dto.request.S3FileRequestDto;
 import com.ssafy.apm.common.dto.response.S3FileResponseDto;
 import com.ssafy.apm.common.repository.S3FileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -71,6 +74,15 @@ public class S3ServiceImpl implements S3Service {
         return new S3FileResponseDto(s3FileRepository.save(requestDto.toEntity()));
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public String uploadBase64ImageToS3(String base64Image) {
+        ObjectMetadata metadata = new ObjectMetadata();
+        byte[] imageBytes = Base64.decodeBase64(base64Image);
+        String filename = "images/" + UUID.randomUUID() + ".png";
+
+        amazonS3.putObject(bucketName, filename, new ByteArrayInputStream(imageBytes), metadata);
+        return String.format("https://%s.s3.amazonaws.com/%s", bucketName, filename);
+    }
 
 //    public String uploadFileToS3(MultipartFile multipartFile) {
 //        String s3Key = S3KEY_PREFIX + multipartFile.getOriginalFilename();
