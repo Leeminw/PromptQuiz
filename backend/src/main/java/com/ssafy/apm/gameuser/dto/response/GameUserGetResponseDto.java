@@ -9,8 +9,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GameUserGetResponseDto {
-    private Long id;
-    private Long gameId;
+    private String id;
+    private String gameId;
     private Long userId;
     private Boolean isHost;
     private Boolean isReady;
@@ -19,8 +19,8 @@ public class GameUserGetResponseDto {
     private Integer ranking;
 
     public GameUserGetResponseDto(GameUserEntity entity) {
-        this.id = entity.getId();
-        this.gameId = entity.getGameId();
+        this.id = entity.getId().toString();
+        this.gameId = entity.getGameId().toString();
         this.userId = entity.getUserId();
         this.isHost = entity.getIsHost();
         this.isReady = entity.getIsReady();
