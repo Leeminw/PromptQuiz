@@ -10,4 +10,6 @@ public class GameTimerResponseDto {
     private Integer time;
     // 현재 라운드
     private Integer round;
+    // 현재 상태
+    private String state;
 }
