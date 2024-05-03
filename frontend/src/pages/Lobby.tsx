@@ -12,6 +12,7 @@ import Room from '../components/lobby/Room';
 
 import { useLocation } from 'react-router-dom';
 import { LobbyApi } from '../hooks/axios-lobby';
+import CurrentUserList from '../components/lobby/CurrentUserList';
 const Lobby = () => {
   const location = useLocation();
   const channelId = location.state?.channelId;
@@ -67,23 +68,9 @@ const Lobby = () => {
   return (
     <div className="flex flex-col items-center w-3/4 bg-white opacity-80">
       <Header channelId={channelId} />
-      {/* <Room
-        id={8144742847851927974}
-        channelId={1}
-        type={1}
-        style={0}
-        code={'20b3ed3c-965c-40c0-ad7c-62c9bdd29b3e'}
-        title={'들어와2'}
-        password={'1234'}
-        status={true}
-        isTeam={false}
-        curRound={0}
-        rounds={0}
-        curPlayers={1}
-        maxPlayers={8}
-      /> */}
-      <div className="h-[100px] w-[100px] bg-yellow-300">광고</div>
-      <Chatting />
+      {/* <div className="h-[100px] w-[100px] bg-yellow-300">광고</div> */}
+      <CurrentUserList />
+      {/* <Chatting /> */}
       <RoomList {...roomList} />
     </div>
   );

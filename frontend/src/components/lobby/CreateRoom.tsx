@@ -4,21 +4,6 @@ import { LobbyApi } from '../../hooks/axios-lobby';
 
 import instance from '../../hooks/axios-instance';
 import { useNavigate } from 'react-router-dom';
-// 방생성 BE API
-// "{
-//     ""userId"" : 1,
-//     ""channelId"" : 1,
-//     ""type"" : 1,
-//      ""style"" : 0,
-//     ""title"" : ""들어와"",
-//     ""password"" : null,
-//     ""status"" : true,
-//     ""isTeam"" : false,
-//     ""curRound"" : 0,
-//     ""maxRound"" : 0,
-//     ""curPlayers"" : 1,
-//     ""maxPlayers"" : 8
-// }"
 
 interface Props {
   channelId: number;
