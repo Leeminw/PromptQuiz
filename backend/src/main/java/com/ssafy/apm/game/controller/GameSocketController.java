@@ -63,14 +63,11 @@ public class GameSocketController {
                 continue;
             }
 
-            // 시간 초 증가 시키기
-            game.time++;
-
-            if (game.time > game.maxTime) {
+            if (game.time == 0) {
                 // 게임 종료 (timeout)
                 gameEndList.put(game.gameId, game);
                 gameOngoingList.remove(game.gameId);
-                game.time = 0;
+                game.time = REST_TIME;
 
                 // 게임 종료 메세지 전송
                 sendRoundEndMessage(game);
@@ -81,12 +78,14 @@ public class GameSocketController {
                 // 게임 종료 (정답자가 나왔을 경우)
                 gameEndList.put(game.gameId, game);
                 gameOngoingList.remove(game.gameId);
-                game.time = 0;
+                game.time = REST_TIME;
 
             } else {
                 // 각각의 시간초 보내주기
                 template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
                         new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round, "ongoing")));
+                // 시간 초 감소 시키기
+                game.time--;
             }
         }
     }
@@ -101,12 +100,9 @@ public class GameSocketController {
                 continue;
             }
 
-            // 시간 초 증가
-            game.time++;
-
-            // 3초가 됐다면 이제 게임 시작하기
-            if (game.time > REST_TIME) {
-                game.time = 0;
+            // 0초가 됐다면 이제 게임 시작하기
+            if (game.time <= 0) {
+                game.time = game.maxTime;
                 gameOngoingList.put(game.gameId, game);
                 gameReadyList.remove(game.gameId);
 
@@ -116,6 +112,8 @@ public class GameSocketController {
                 // 각각의 시간초 보내주기
                 template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
                         new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round, "ready")));
+                // 시간 초 감소
+                game.time--;
             }
         }
     }
@@ -130,12 +128,9 @@ public class GameSocketController {
                 continue;
             }
 
-            // 시간 초 증가
-            game.time++;
-
             // 3초가 됐다면 이제 준비로 보내기 시작하기
-            if (game.time > REST_TIME) {
-                game.time = 0;
+            if (game.time <= 0) {
+                game.time = REST_TIME;
                 gameReadyList.put(game.gameId, game);
                 gameEndList.remove(game.gameId);
 
@@ -145,6 +140,8 @@ public class GameSocketController {
                 // 각각의 시간초 보내주기
                 template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
                         new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round, "end")));
+                // 시간 초 감소
+                game.time--;
             }
         }
     }
@@ -228,7 +225,7 @@ public class GameSocketController {
             new PlayerDto(3L, 0, false)
     );
 
-    // (게임 시작) 스케쥴러에 게임을 등록하고 준비 메세지 전송
+    // (게임 시작) 스케쥴러에 게임을 등록하고 준      비 메세지 전송
     @PostMapping("/api/v1/game/start")
     public ResponseEntity<?> setGameStart(@RequestBody GameReadyDto ready) {
         log.debug("game start! ");
