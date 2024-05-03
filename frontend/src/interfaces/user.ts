@@ -9,7 +9,7 @@ interface JoinForm {
     picture:string
 }
 interface User {
-    userId: number,
+    userId: bigint,
     userName: string,
     nickName: string,
     picture: string,
@@ -21,7 +21,7 @@ interface User {
     updated_date: string
 }
 interface ChannelUser {
-    userId: number,
+    userId: bigint,
     userName: string,
     nickName: string,
     picture: string,
