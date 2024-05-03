@@ -5,7 +5,7 @@ interface GamePlayerProps {
 
 const GamePlayer = ({ idx }: GamePlayerProps) => {
   return (
-    <div className="border-custom-green bg-customGreen h-1/6 relative flex items-center">
+    <div className="border-custom-green bg-customGreen w-full h-full relative flex items-center">
       <div className="absolute w-full -translate-y-8">
         <div
           className="min-w-14 min-h-6 w-fit h-fit bg-white border border-gray-200 rounded-lg text-xs px-2 pt-1 line-clamp-2
@@ -13,7 +13,7 @@ const GamePlayer = ({ idx }: GamePlayerProps) => {
         >
           가나다
         </div>
-        <svg className="absolute z-10 translate-x-8 -translate-y-[0.05rem]">
+        <svg className="absolute z-10 w-3 h-3 translate-x-8 -translate-y-[0.05rem]">
           <path d="M 0 0 V 10 L 7 0" stroke="#dde5e3" strokeWidth={1} fill="white"></path>
         </svg>
       </div>
