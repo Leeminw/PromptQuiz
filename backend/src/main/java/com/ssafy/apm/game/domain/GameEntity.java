@@ -13,7 +13,7 @@ import org.springframework.data.redis.core.index.Indexed;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@RedisHash(value = "game", timeToLive = 900)
+@RedisHash(value = "game", timeToLive = 3600)
 public class GameEntity {
 
     @Id
@@ -61,6 +61,14 @@ public class GameEntity {
     public Integer increaseRound() {
         this.curRound += 1;
         return this.curRound;
+    }
+
+    public void increaseCurPlayers() {
+        this.curPlayers += 1;
+    }
+
+    public void decreaseCurPlayers() {
+        this.curPlayers -= 1;
     }
 
 }
