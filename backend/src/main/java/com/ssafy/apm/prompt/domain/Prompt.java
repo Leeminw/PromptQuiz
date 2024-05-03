@@ -68,4 +68,9 @@ public class Prompt {
         return this;
     }
 
+    public Prompt updateUrl(String url) {
+        this.url = url;
+        return this;
+    }
+
 }
