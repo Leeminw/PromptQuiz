@@ -13,7 +13,7 @@ public class GameChatDto {
     private String nickname;
 
     // 게임방 코드
-    private Long uuid;
+    private String uuid;
 
     // 게임방 아이디
     private Long gameId;

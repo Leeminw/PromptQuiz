@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { MdAddHome } from 'react-icons/md';
+import { LobbyApi } from '../../hooks/axios-lobby';
 
+import instance from '../../hooks/axios-instance';
+import { useNavigate } from 'react-router-dom';
 // 방생성 BE API
 // "{
 //     ""userId"" : 1,
@@ -21,7 +24,7 @@ interface Props {
   channelId: number;
 }
 
-const CreateRoom = () => {
+const CreateRoom = ({ channelId }: Props) => {
   const [privacyStatus, setPrivacyStatus] = useState(0);
   const [isTeam, setIsTeam] = useState(false);
   const [type, setType] = useState(0);
@@ -29,13 +32,15 @@ const CreateRoom = () => {
   const [maxRound, setMaxRound] = useState(1);
   /**로그인 상태 정보를 가져오기 전에 임시로 userId 값을 부여 */
   const [userId, setUserId] = useState(3);
-  const [channelId, setChannelId] = useState(1);
+  // const [channelId, setChannelId] = useState(1);
   const [status, setStatus] = useState(false);
   const curPlayers = 1;
   const curRound = 0;
-  const [style, setStyle] = useState(0);
+  const [styleIndex, setStyleIndex] = useState(0);
   const [password, setPassword] = useState('');
   const [title, setTitle] = useState<string>('');
+
+  const navigate = useNavigate();
   const privacyHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPrivacyStatus(Number(event.target.value));
     console.log(privacyStatus);
@@ -57,8 +62,8 @@ const CreateRoom = () => {
     console.log(maxRound);
   };
   const styleHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setStyle(Number(event.target.value));
-    console.log(style);
+    setStyleIndex(Number(event.target.value));
+    console.log(styleIndex);
   };
 
   const titleHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,7 +75,16 @@ const CreateRoom = () => {
     console.log(password);
   };
   const createRoom = async () => {
+    const styleArr = ['realistic', 'anime', 'cartoon', 'random'];
     const stateNum = status ? 1 : 0;
+    // const style = styleArr[styleIndex];
+    const style = 2; // 임시값
+
+    if (privacyStatus === 1 && password.trim().length === 0) {
+      alert('비공개 방의 비밀번호를 입력해주세요');
+      return;
+    }
+
     const Room: Room = {
       userId,
       channelId,
@@ -98,6 +112,14 @@ const CreateRoom = () => {
     console.log('최대라운드:' + maxRound);
     console.log('현재플레이어:' + curPlayers);
     console.log('최대플레이어:' + maxPlayers);
+
+    console.log('---------');
+    console.log(Room);
+
+    const { data } = await LobbyApi.createRoom(Room);
+    setTimeout(() => {
+      navigate('/game');
+    }, 1000);
   };
   return (
     // className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 "
@@ -182,14 +204,20 @@ const CreateRoom = () => {
             />
             <label htmlFor="sequence">순서</label>
             <div>그림체</div>
-            <input type="radio" value={0} id="real" onChange={styleHandler} checked={style === 0} />
+            <input
+              type="radio"
+              value={0}
+              id="real"
+              onChange={styleHandler}
+              checked={styleIndex === 0}
+            />
             <label htmlFor="real">실사체</label>
             <input
               type="radio"
               value={1}
               id="comic"
               onChange={styleHandler}
-              checked={style === 1}
+              checked={styleIndex === 1}
             />
             <label htmlFor="comic">만화체</label>
             <input
@@ -197,9 +225,17 @@ const CreateRoom = () => {
               value={2}
               id="disney"
               onChange={styleHandler}
-              checked={style === 2}
+              checked={styleIndex === 2}
             />
             <label htmlFor="disney">디즈니체</label>
+            <input
+              type="radio"
+              value={3}
+              id="random"
+              onChange={styleHandler}
+              checked={styleIndex === 3}
+            />
+            <label htmlFor="random">랜덤</label>
             <div>인원수</div>
             <input
               type="number"
@@ -207,8 +243,6 @@ const CreateRoom = () => {
               max={12}
               placeholder="인원수입력하세요"
               onChange={maxPlayersHandler}
-              //   onChange={typeHandler}
-              //   checked={type === 2}
             />
             <div>라운드수</div>
             <input

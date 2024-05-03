@@ -27,7 +27,8 @@ const RouterInfo = [
         label: 'game',
       },
       {
-        path: '/lobby',
+        // 동적 라우팅 설정
+        path: '/lobby/:id',
         element: <Lobby />,
         label: 'lobby',
       },

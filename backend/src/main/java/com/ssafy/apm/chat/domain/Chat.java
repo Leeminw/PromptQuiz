@@ -22,7 +22,7 @@ public class Chat {
     @Column(timestamp = true)
     private Instant time;
     @Column(tag = true)
-    private Long uuid;
+    private String uuid;
     @Column(tag = true)
     private String nickname;
     @Column(name = "content")
@@ -32,7 +32,7 @@ public class Chat {
         this.time = fluxRecord.getTime();
         this.content = (String) fluxRecord.getValueByKey("_value");
         this.nickname = (String) fluxRecord.getValueByKey("nickname");
-        this.uuid = Long.valueOf((String) Objects.requireNonNull(fluxRecord.getValueByKey("uuid")));
+        this.uuid = (String) fluxRecord.getValueByKey("uuid");
     }
 
     public String getLocalTime() {

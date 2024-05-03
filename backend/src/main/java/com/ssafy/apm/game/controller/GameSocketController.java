@@ -2,6 +2,8 @@ package com.ssafy.apm.game.controller;
 
 import com.ssafy.apm.chat.domain.Chat;
 import com.ssafy.apm.chat.service.ChatService;
+
+import com.ssafy.apm.common.domain.ResponseData;
 import com.ssafy.apm.game.service.GameService;
 import com.ssafy.apm.quiz.service.QuizService;
 import com.ssafy.apm.socket.util.GameRoomStatus;
@@ -20,12 +22,15 @@ import com.ssafy.apm.socket.dto.response.GameSystemResponseDto;
 import java.util.*;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = {"*"}, methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
@@ -216,17 +221,20 @@ public class GameSocketController {
 
     // test dump list
     List<PlayerDto> list = Arrays.asList(
-            new PlayerDto("test1", 10, false),
-            new PlayerDto("test2", 30, false),
-            new PlayerDto("test3", 40, false),
-            new PlayerDto("test4", 0, false)
+        new PlayerDto(0L, 10, false),
+        new PlayerDto(1L, 30, false),
+        new PlayerDto(2L, 40, false),
+        new PlayerDto(3L, 0, false)
     );
 
     // (게임 시작) 스케쥴러에 게임을 등록하고 준비 메세지 전송
-    @MessageMapping("/game/start")
-    public void setGameStart(@Payload GameReadyDto ready) {
+    @PostMapping("/api/v1/game/start")
+    public ResponseEntity<?> setGameStart(@RequestBody GameReadyDto ready) {
+        log.debug("game start! ");
         // 게임방에 등록되어 있지 않다면 등록시키기
         if (!gameReadyList.containsKey(ready.getGameId())) {
+            log.debug("do if ");
+            log.debug("ready , {} , {}", ready.getGameId(), ready.getUuid());
             GameRoomStatus newGame = new GameRoomStatus(ready.getGameId(), ready.getUuid(), 0, 10,
                     0);
 
@@ -237,17 +245,17 @@ public class GameSocketController {
                 newGame.round = gameService.updateGameRoundCnt(ready.getGameId(), true);
 
                 // 게임 타입이 빈칸 주관식일 경우에는 다음과 같이 유사도 목록 추가하기
-                if (gameQuizService.getGameQuizDetail(newGame.gameId).getType() == 4) {
-                    // 처음 주어지는 품사에 대한 값 넣어주기
-                    HashMap<String, String> map = new HashMap<>();
-                    map.put("명사", "안녕!");
-                    map.put("동사", "반가워");
-                    map.put("형용사", null);
-                    map.put("부사", null);
-
-                    // 받아온 품사 목록으로 초기화 시키기
-                    newGame.initSimilarity(map);
-                }
+//                if (gameQuizService.getGameQuizDetail(newGame.gameId).getType() == 4) {
+//                    // 처음 주어지는 품사에 대한 값 넣어주기
+//                    HashMap<String, String> map = new HashMap<>();
+//                    map.put("명사", "안녕!");
+//                    map.put("동사", "반가워");
+//                    map.put("형용사", null);
+//                    map.put("부사", null);
+//
+//                    // 받아온 품사 목록으로 초기화 시키기
+//                    newGame.initSimilarity(map);
+//                }
 
                 // 게임 시작 메세지 전달
                 sendRoundReadyMessage(newGame);
@@ -256,6 +264,7 @@ public class GameSocketController {
                 gameReadyList.put(ready.getGameId(), newGame);
             }
         }
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("start game"));
     }
 
     // (라운드 대기) 라운드 대기 메세지 전송

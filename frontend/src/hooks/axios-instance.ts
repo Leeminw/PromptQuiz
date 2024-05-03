@@ -25,11 +25,12 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
     async (response) => {
-        // console.log("response : ", response);
+        console.log("response : ", response);
         return response;
     },
     async error => { 
         const originalRequest = error.config;
+        console.log("send refresh")
         if(error.response.status === 401){
             try {
                 const refreshToken = localStorage.getItem("refreshToken");
@@ -45,16 +46,16 @@ instance.interceptors.response.use(
             }
             catch (_error) {
                 // 로그아웃 
-                localStorage.removeItem("accessToken")
-                localStorage.removeItem("refreshToken")
-                useUserStore.getState().clearUser();
+                // localStorage.removeItem("accessToken")
+                // localStorage.removeItem("refreshToken")
+                // useUserStore.getState().clearUser();
                 return Promise.reject(_error);
             }
         }
         else{
-            localStorage.removeItem("accessToken")
-            localStorage.removeItem("refreshToken")
-            useUserStore.getState().clearUser();
+            // localStorage.removeItem("accessToken")
+            // localStorage.removeItem("refreshToken")
+            // useUserStore.getState().clearUser();
             return Promise.reject(error);
 
         }

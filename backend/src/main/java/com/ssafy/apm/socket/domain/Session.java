@@ -13,7 +13,7 @@ import org.springframework.data.redis.core.RedisHash;
 public class Session {
     @Id
     private String sessionId;
-    private String userId;
+    private Long userId;
     private String uuid;
     private Integer type; // 1: 게임 방   2: 채널
 

@@ -21,7 +21,7 @@ public class ChatController {
     @GetMapping("/write/{content}")
     public ResponseEntity<?> writeTest(@PathVariable String content) {
         // 컨트롤러는 사용하지 않으니 일단 channel 채팅으로 가정하고 저장
-        ChannelChatDto channel = new ChannelChatDto("testNickName", 123456L, content, null);
+        ChannelChatDto channel = new ChannelChatDto("testNickName", "saew23sdw", content, null);
         service.insertChannelChat(channel);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("채팅 저장 완료", "OK"));
     }

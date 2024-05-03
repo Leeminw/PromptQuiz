@@ -55,6 +55,8 @@ dependencies {
     implementation group: 'org.apache.commons', name: 'commons-text', version: '1.10.0'
     implementation "com.influxdb:influxdb-client-java:7.0.0"
     implementation 'org.influxdb:influxdb-java:2.17'
+    // AWS S3
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.707'
 }
 
 tasks.named('test') {

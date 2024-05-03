@@ -1,5 +1,5 @@
 interface Game {
-    id: number,
+    id: bigint,
     channelId: number,
     type: number,
     style: number,
@@ -13,12 +13,47 @@ interface Game {
     curPlayers: number,
     maxPlayers: number
 }
-
+interface GameRoomSettingProps {
+    teammode: boolean;
+    gamemode: string;
+    round: number;
+  }
 interface GameChat{
-    userId: number,
-    nickName: string,
+    userId: bigint,
+    nickname: string,
     uuid: string,
-    gameId: number,
+    gameId: bigint,
     round: number,
     content: string,
+}
+
+interface GameEnter{
+    userId:bigint,
+    uuid: string,
+    nickname:string
+}
+
+interface GameChatRecieve {
+    userId: bigint|null,
+    nickname: string|null,
+    uuid: string|null,
+    gameId: bigint|null,
+    round: number|null,
+    content: string|null,
+    createdDate: string|null,
+    time : number|null,
+}
+interface RecieveData {
+    tag: string,
+    data : GameChatRecieve
+}
+
+interface GameReady{
+    gameId: bigint,
+    uuid : string
+}
+
+interface GameTime {
+    time : number,
+    round : number
 }
