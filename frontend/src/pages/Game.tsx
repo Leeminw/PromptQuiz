@@ -286,7 +286,7 @@ const GamePage = () => {
       {/* 중간 : 플레이어, 문제 화면 */}
       <div className="w-full h-[22rem] mt-2 mb-4 grid grid-rows-6 grid-cols-5 grid-flow-row gap-3">
         {/* 방장 */}
-        <GamePlayer idx={1} />
+        <GamePlayer />
         {/* 문제 화면, 타이머 */}
         <div className="w-full grow flex flex-col row-span-6 col-span-3">
           <div className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint border relative overflow-hidden flex">
@@ -303,7 +303,7 @@ const GamePage = () => {
           </div>
         </div>
         {Array.from({ length: 11 }, (_, index) => (
-          <GamePlayer key={index} idx={index + 2} />
+          <GamePlayer key={index}/>
         ))}
       </div>
       {/* 광고, 채팅창, 게임 설정 */}
