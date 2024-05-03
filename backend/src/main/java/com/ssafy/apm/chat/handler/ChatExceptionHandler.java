@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class ChatExceptionHandler {
 
-  @ExceptionHandler(ChatNotFoundException.class)
-  public void handleCustomNotFoundException(UserNotFoundException e) {
-    log.error("ChatNotFoundException: " + e.getMessage());
-  }
+    @ExceptionHandler(ChatNotFoundException.class)
+    public void handleCustomNotFoundException(UserNotFoundException e) {
+        log.error("ChatNotFoundException: " + e.getMessage());
+    }
 
-  @ExceptionHandler(ChatValidationException.class)
-  public void handleCustomValidationException(UserValidationException e) {
-    log.error("ChatValidationException: " + e.getMessage());
-  }
+    @ExceptionHandler(ChatValidationException.class)
+    public void handleCustomValidationException(UserValidationException e) {
+        log.error("ChatValidationException: " + e.getMessage());
+    }
 }

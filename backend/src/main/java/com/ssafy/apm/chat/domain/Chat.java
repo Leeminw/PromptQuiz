@@ -19,23 +19,23 @@ import java.util.Objects;
 @AllArgsConstructor
 @Measurement(name = "chat")
 public class Chat {
-  @Column(timestamp = true)
-  private Instant time;
-  @Column(tag = true)
-  private Long uuid;
-  @Column(tag = true)
-  private String nickname;
-  @Column(name = "content")
-  private String content;
+    @Column(timestamp = true)
+    private Instant time;
+    @Column(tag = true)
+    private Long uuid;
+    @Column(tag = true)
+    private String nickname;
+    @Column(name = "content")
+    private String content;
 
-  public Chat(FluxRecord fluxRecord) {
-    this.time = fluxRecord.getTime();
-    this.content = (String) fluxRecord.getValueByKey("_value");
-    this.nickname = (String) fluxRecord.getValueByKey("nickname");
-    this.uuid = Long.valueOf((String) Objects.requireNonNull(fluxRecord.getValueByKey("uuid")));
-  }
+    public Chat(FluxRecord fluxRecord) {
+        this.time = fluxRecord.getTime();
+        this.content = (String) fluxRecord.getValueByKey("_value");
+        this.nickname = (String) fluxRecord.getValueByKey("nickname");
+        this.uuid = Long.valueOf((String) Objects.requireNonNull(fluxRecord.getValueByKey("uuid")));
+    }
 
-  public String getLocalTime(){
-    return LocalTime.ofInstant(this.time, ZoneId.of("UTC")).toString();
-  }
+    public String getLocalTime() {
+        return LocalTime.ofInstant(this.time, ZoneId.of("UTC")).toString();
+    }
 }
