@@ -5,6 +5,9 @@ interface GameRoomSettingProps {
 }
 
 const GameRoomSetting = ({ gamestart }: GameRoomSettingProps) => {
+  useEffect(()=>{
+    console.log("게임이 시작됐나요?",gamestart)
+  },[])
   return (
     <div className="w-full h-28 flex flex-col cursor-default">
       <dialog id="modalopen" className="modal">
