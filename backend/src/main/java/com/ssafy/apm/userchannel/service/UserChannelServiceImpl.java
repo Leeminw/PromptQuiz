@@ -51,6 +51,11 @@ public class UserChannelServiceImpl implements UserChannelService {
                 .channelId(channelId)
                 .build();
 
+        ChannelEntity channelEntity = channelRepository.findById(channelId)
+                .orElseThrow(() -> new NoSuchElementException("해당 채널을 찾을 수 없습니다."));
+
+        channelEntity.increaseCurPlayers();
+
         entity = userChannelRepository.save(entity);
         return new UserChannelGetResponseDto(entity);
 
@@ -63,6 +68,10 @@ public class UserChannelServiceImpl implements UserChannelService {
         UserChannelEntity entity = userChannelRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new NoSuchElementException("현재 채널에 접속중이지 않습니다."));
         Long response = entity.getId();
+
+        ChannelEntity channel = channelRepository.findById(entity.getChannelId())
+                .orElseThrow(() -> new NoSuchElementException("해당 채널을 찾을 수 없습니다."));
+        channel.decreaseCurPlayers();
         userChannelRepository.delete(entity);
         return response;
     }
@@ -72,6 +81,8 @@ public class UserChannelServiceImpl implements UserChannelService {
     public Long deleteExitUserChannelByChannelCodeAndUserId(Long userId, String channelCode) {
         ChannelEntity channelEntity = channelRepository.findByCode(channelCode)
                 .orElseThrow(() -> new NoSuchElementException("채널 코드에 해당하는 채널이 존재하지 않습니다."));
+        channelEntity.decreaseCurPlayers();
+
         UserChannelEntity entity = userChannelRepository.findByUserIdAndChannelId(userId, channelEntity.getId())
                 .orElseThrow(() -> new NoSuchElementException("유저의 Id와 채널 코드에 해당하는 채널 접속자 정보가 없습니다."));
 
