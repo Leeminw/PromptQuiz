@@ -14,6 +14,7 @@ const RoomList = (roomList: RoomProps[]) => {
   const [curRoomList, setCurRoomList] = useState<RoomProps[]>([]);
   const totalGameNum = roomArray.length;
 
+  const updatePage = () => {};
   // 이전 페이지로 이동(왼쪽 버튼)
   const getPrevPage = () => {
     alert('이전페이지로!!');
@@ -26,6 +27,8 @@ const RoomList = (roomList: RoomProps[]) => {
 
   useEffect(() => {
     setCurRoomList(roomArray);
+    setTotalPageNum(1);
+    if (roomArray.length > 6) setTotalPageNum(Math.ceil(roomArray.length / 6));
   }, []);
 
   if (!Array.isArray(roomArray)) {
