@@ -59,6 +59,15 @@ public class GameUserServiceImpl implements GameUserService {
         return responseDtos;
     }
 
+    @Override
+    public GameUserGetResponseDto getGameUser(Long gameUserId) {
+
+        GameUserEntity entity = gameUserRepository.findById(gameUserId)
+                .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다."));
+
+        return new GameUserGetResponseDto(entity);
+    }
+
     //    게임 입장할때
     @Override
     @Transactional
@@ -93,7 +102,7 @@ public class GameUserServiceImpl implements GameUserService {
     public GameUserGetResponseDto updateGameUserScore(Integer score) {
         User user = userService.loadUser();
         GameUserEntity gameUserEntity = gameUserRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
+                .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다."));
 
 //        점수 업데이트
         gameUserEntity.updateScore(score);
