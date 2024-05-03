@@ -82,6 +82,7 @@ public class GameUserServiceImpl implements GameUserService {
 //        방에 접속 중인 인원 하나 늘려줌
         gameEntity.increaseCurPlayers();
 
+        gameRepository.save(gameEntity);
         entity = gameUserRepository.save(entity);
 
         return new GameUserGetResponseDto(entity);
@@ -109,10 +110,8 @@ public class GameUserServiceImpl implements GameUserService {
         GameUserEntity gameUserEntity = gameUserRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
 
-//        레디 상태 업데이트
         gameUserEntity.updateIsReady(isReady);
 
-//        DB에 반영
         gameUserEntity = gameUserRepository.save(gameUserEntity);
         return new GameUserGetResponseDto(gameUserEntity);
     }
@@ -124,10 +123,8 @@ public class GameUserServiceImpl implements GameUserService {
         GameUserEntity gameUserEntity = gameUserRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
 
-//        팀 업데이트
         gameUserEntity.updateTeam(team);
 
-//        DB에 반영
         gameUserEntity = gameUserRepository.save(gameUserEntity);
         return new GameUserGetResponseDto(gameUserEntity);
     }
@@ -255,15 +252,16 @@ public class GameUserServiceImpl implements GameUserService {
             gameRepository.delete(gameEntity);// 방 자체를 지움
         } else {
             gameEntity.decreaseCurPlayers();// 방 현재 인원 수를 줄임
+            gameRepository.save(gameEntity);
             if (gameUserEntity.getIsHost()) {// 나가는 유저가 방장이라면
                 List<GameUserEntity> userList = gameUserRepository.findAllByGameId(gameEntity.getId());// 방 안에 있는 유저 목록 가져와서
                 for (GameUserEntity entity : userList) {
                     if (!entity.getIsHost()) {// 방장이 아닌 놈을 찾아서 방장 권한을 준다
                         entity.updateIsHost(true);
+                        gameUserRepository.save(entity);
                         break;
                     }
                 }
-//            더티 체킹으로 알아서 업데이트
             }
         }
         gameUserRepository.delete(gameUserEntity);
@@ -286,15 +284,16 @@ public class GameUserServiceImpl implements GameUserService {
             gameRepository.delete(gameEntity);// 방 자체를 지움
         } else {
             gameEntity.decreaseCurPlayers();// 방 현재 인원 수를 줄임
+            gameRepository.save(gameEntity);
             if (gameUserEntity.getIsHost()) {// 나가는 유저가 방장이라면
                 List<GameUserEntity> userList = gameUserRepository.findAllByGameId(gameEntity.getId());// 방 안에 있는 유저 목록 가져와서
                 for (GameUserEntity entity : userList) {
                     if (!entity.getIsHost()) {// 방장이 아닌 놈을 찾아서 방장 권한을 준다
                         entity.updateIsHost(true);
+                        gameUserRepository.save(entity);
                         break;
                     }
                 }
-//            더티 체킹으로 알아서 업데이트
             }
         }
 
