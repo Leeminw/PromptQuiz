@@ -13,6 +13,7 @@ import SockJS from 'sockjs-client';
 import { Client, Message, IMessage } from '@stomp/stompjs';
 import { useWebSocketStore } from '../stores/socketStore';
 import useUserStore from '../stores/userStore';
+import instance from '../hooks/axios-instance';
 
 const GamePage = () => {
   const [gamestart, setGamestart] = useState(false);
@@ -22,6 +23,10 @@ const GamePage = () => {
   const [chat, setChat] = useState<GameChatRecieve[]>([]);
   const client = useRef<Client | null>(null);
   const { user } = useUserStore();
+  const [text, setText] = useState('');
+  const [time, setTime] = useState<number>(0);
+  const [maxRound, setMaxRound] = useState<number>(0);
+  const [round, setRound] = useState<number>(0);
   const { connectWebSocket, disconnectWebSocket, publish } = useWebSocketStore();
   const chattingBox = useRef(null);
   const chatInput = useRef(null);
@@ -30,8 +35,10 @@ const GamePage = () => {
 
   const getGameData = async () => {
     const response = await GameApi.getGame(roomId);
-    setGame(response.data);
-    console.log(game);
+    const responseGame: Game = response.data;
+    console.log(responseGame);
+    setGame(responseGame);
+    setMaxRound(responseGame.rounds);
     // enterGame();
   };
 
@@ -62,7 +69,7 @@ const GamePage = () => {
   }, []);
 
   useEffect(() => {
-    // 게임 로드하면 구독.
+    // 게임 로드하면 구독하기
     connectWebSocket(`/ws/sub/game?uuid=${game?.code}`, recieveChat, enterGame);
     return () => {
       disconnectWebSocket();
@@ -88,12 +95,12 @@ const GamePage = () => {
     }
   };
 
-  const gameController = (data: RecieveData) => {
-    if (data.tag === 'chat') {
-      // console.log(body.data);
-      setChat((prevItems) => [...prevItems, data.data]);
+  const gameController = (recieve: RecieveData) => {
+    console.log(recieve);
+    if (recieve.tag === 'chat') {
+      setChat((prevItems) => [...prevItems, recieve.data]);
       // setChat((prevItems) => [...prevItems, body]);
-    } else if (data.tag === 'enter') {
+    } else if (recieve.tag === 'enter') {
       // console.log(body.data);
       // const data: GameChatRecieve = {
       //   userId: -1,
@@ -105,11 +112,14 @@ const GamePage = () => {
       //   createdDate: '',
       // };
       // setChat((prevItems) => [...prevItems, data]);
-    } else if (data.tag === 'leave') {
-    } else if (data.tag === 'timer') {
-    } else if (data.tag === 'wrongSignal') {
-    } else if (data.tag === 'similarity') {
-    } else if (data.tag === 'game') {
+    } else if (recieve.tag === 'leave') {
+    } else if (recieve.tag === 'timer') {
+      console.log(recieve.data);
+      setTime(recieve.data.time);
+      setRound(recieve.data.round);
+    } else if (recieve.tag === 'wrongSignal') {
+    } else if (recieve.tag === 'similarity') {
+    } else if (recieve.tag === 'game') {
     }
   };
   const enterGame = () => {
@@ -136,19 +146,26 @@ const GamePage = () => {
     chatInput.current.value = '';
   };
 
-  // const chatFunction = () => {
-  //   const chatChild = document.createElement('div');
-  //   chatChild.className = 'flex';
-  //   const chatUser = document.createElement('p');
-  //   const chatMessage = document.createElement('p');
-  //   chatUser.className = 'font-extrabold pr-1 text-nowrap text-black';
-  //   chatUser.innerText = '푸바오 ㅠㅠㅠ : ';
-  //   chatMessage.innerText = chatInput.current.value;
-  //   chatChild.appendChild(chatUser);
-  //   chatChild.appendChild(chatMessage);
-  //   chatInput.current.value = '';
-  //   chattingBox.current.appendChild(chatChild);
-  // };
+  const publishStart = async () => {
+    // 모두 레디가 되있는지?
+    // const destination = '/ws/pub/game/start';
+    const gameReady: GameReady = {
+      gameId: game.id,
+      uuid: game.code,
+    };
+    console.log(gameReady);
+    //
+    try {
+      const response = await instance.post('game/start', gameReady);
+      console.log(response);
+      console.log('start!!!');
+      handleGamestart();
+      setIsStart(true);
+      // publish(destination, gameReady);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   // 버튼 제어
   // [0]초대하기 | [1]나가기 | [2]1팀 | [3]2팀 | [4]랜덤 | [5]게임시작
@@ -167,9 +184,7 @@ const GamePage = () => {
             setTimeout(() => {
               // 게임 시작 시 버튼 비활성화
               if (id === 5) {
-                console.log('start!!!');
-                handleGamestart();
-                setIsStart(true);
+                publishStart();
               }
               // 버튼 이벤트 활성화
               setActivateBtn((prev) => ({ ...prev, [id]: false }));
@@ -279,17 +294,17 @@ const GamePage = () => {
           </div>
           {/* 문제 화면, 타이머 */}
           <div className="w-full grow flex flex-col">
-            <div className="border-custom-mint w-full h-full flex items-center justify-center relative">
-              <div
-                className="w-16 h-7 absolute top-2 left-2 bg-yellow-500/80 text-white
-               rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300"
-              >
-                1/20
+            <div className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint border relative overflow-hidden flex">
+              <div className="w-full h-full rounded-full -translate-x-[50%] transition-transform duration-1000 bg-mint absolute"></div>
+            </div>
+            <div className="border-custom- w-full h-full flex items-center justify-center relative">
+              <div className="w-16 h-7 absolute top-2 left-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
+                {round} / {maxRound}
               </div>
-              <div
-                className="w-full h-full bg-[url(/public/testphoto.png)] 
-              bg-cover bg-center"
-              ></div>
+              <div className="w-fit h-7 px-3 absolute top-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
+                남은시간 : {time}
+              </div>
+              <div className="w-full h-full bg-[url(https://contents-cdn.viewus.co.kr/image/2023/08/CP-2023-0056/image-7adf97c8-ef11-4def-81e8-fe2913667983.jpeg)] bg-cover bg-center"></div>
             </div>
           </div>
           {/* 우파 */}
