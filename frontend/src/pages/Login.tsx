@@ -3,7 +3,9 @@ import { UserApi } from '../hooks/axios-user';
 import { useNavigate } from 'react-router-dom';
 import { FaUser } from 'react-icons/fa';
 import { IoMdLock } from 'react-icons/io';
-
+import { wait } from '@testing-library/user-event/dist/utils';
+import useUserStore from '../stores/userStore';
+import { useWebSocketStore } from '../stores/socketStore';
 const LoginPage = ({ movePage }: { movePage: () => void }) => {
   const navigate = useNavigate();
   const [activateBtn, setActivateBtn] = useState<ActivateButton>({});
@@ -11,9 +13,13 @@ const LoginPage = ({ movePage }: { movePage: () => void }) => {
   const [password, setPassword] = useState<string>('');
   const [moveInput, setMoveInput] = useState<boolean>(false);
   const [moveBtn, setMoveBtn] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const { user, setUser, clearUser } = useUserStore();
 
   const handleClick = (id: number) => {
     setActivateBtn((prev) => ({ ...prev, [id]: true }));
+    console.log(activateBtn);
     setTimeout(() => {
       setActivateBtn((prev) => ({ ...prev, [id]: false }));
     }, 400);
@@ -28,6 +34,7 @@ const LoginPage = ({ movePage }: { movePage: () => void }) => {
   };
 
   const loginUser = () => {
+    setIsLoading(true);
     handleClick(0);
     setTimeout(async () => {
       try {
@@ -38,15 +45,23 @@ const LoginPage = ({ movePage }: { movePage: () => void }) => {
         console.log(loginForm);
         const { data } = await UserApi.login(loginForm);
         localStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem('refreshToken', data.refreshToken);
         alert('로그인 완료!');
         setMoveBtn(false);
         setMoveInput(false);
+
+        const { data: userData } = await UserApi.loadUser();
+
+        setUser(userData);
         setTimeout(() => {
           navigate('/channel');
         }, 1000);
       } catch (error) {
         // 로그인 오류
+        alert('로그인 실패!');
         console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     }, 600);
   };
@@ -77,6 +92,7 @@ const LoginPage = ({ movePage }: { movePage: () => void }) => {
               loginUser();
             }
           }}
+          disabled={isLoading}
         />
       </label>
       <label
@@ -94,11 +110,13 @@ const LoginPage = ({ movePage }: { movePage: () => void }) => {
               loginUser();
             }
           }}
+          disabled={isLoading}
         />
       </label>
       <button
         className={`btn-mint hover:brightness-125 transition mt-1 py-[0.2rem] ease-in-out duration-1000 ${moveBtn ? 'translate-y-0' : 'translate-y-[100vh]'} ${activateBtn[0] ? 'animate-clickbtn' : ''}`}
         onClick={loginUser}
+        disabled={isLoading}
       >
         로그인
       </button>
@@ -114,6 +132,7 @@ const LoginPage = ({ movePage }: { movePage: () => void }) => {
             }, 1000);
           }, 600);
         }}
+        disabled={isLoading}
       >
         회원가입
       </button>

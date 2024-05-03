@@ -1,6 +1,6 @@
 package com.ssafy.apm.common.domain;
 
-import com.ssafy.apm.common.dto.request.S3FileRequestDto;
+import com.ssafy.apm.common.dto.S3FileRequestDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

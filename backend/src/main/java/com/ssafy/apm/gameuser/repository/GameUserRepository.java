@@ -18,4 +18,6 @@ public interface GameUserRepository extends CrudRepository<GameUserEntity, Long>
 
     Optional<GameUserEntity> findByGameIdAndUserId(Long gameId, Long UserId);
 
+    Optional<GameUserEntity> findByUserId(Long userId);
+
 }

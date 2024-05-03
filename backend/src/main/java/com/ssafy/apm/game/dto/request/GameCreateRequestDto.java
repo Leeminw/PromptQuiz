@@ -17,7 +17,7 @@ import java.util.UUID;
 public class GameCreateRequestDto {
     private Long channelId;
     private Integer type;
-    private Integer style;
+    private String style;
     private String title;
     private String password;
     private Boolean status;

@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface UserChannelRepository extends JpaRepository<UserChannelEntity, Long> {
     List<UserChannelEntity> findAllByChannelId(Long channelId);
     Optional<UserChannelEntity> findByUserId(Long userId);
+
+    Optional<UserChannelEntity> findByUserIdAndChannelId(Long userId, Long channelId);
 }

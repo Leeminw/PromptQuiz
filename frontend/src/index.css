@@ -8,16 +8,19 @@
     src: url(/public/font/NanumSquareRoundOTFL.woff2) format('woff2');
     font-weight: 300;
   }
+
   @font-face {
     font-family: 'NanumSquareRound';
     src: url(/public/font/NanumSquareRoundOTFR.woff2) format('woff2');
     font-weight: 400;
   }
+
   @font-face {
     font-family: 'NanumSquareRound';
     src: url(/public/font/NanumSquareRoundOTFB.woff2) format('woff2');
     font-weight: 700;
   }
+
   @font-face {
     font-family: 'NanumSquareRound';
     src: url(/public/font/NanumSquareRoundOTFEB.woff2) format('woff2');
@@ -43,4 +46,30 @@ body {
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.chat {
+  overflow: auto;
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-anchor: auto !important;
+}
+
+body::-webkit-scrollbar {
+  width: 0px;
+}
+
+.chat::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #359DB0;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: white;
+  border: #d5e7eb solid 1px;
+  border-radius: 999px;
 }

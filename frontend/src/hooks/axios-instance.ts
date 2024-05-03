@@ -1,12 +1,14 @@
 import axios, {AxiosInstance} from "axios";
-const BASE_URL = 'http://localhost:8080/api/v1'
+import useUserStore from "../stores/userStore";
+
+const BASE_URL = process.env.REACT_APP_SERVER;
 
 const instance = axios.create({
     baseURL : BASE_URL,
     timeout : 5000,
 });
 
-const capiclient = axios.create({
+const apiClient = axios.create({
     baseURL : BASE_URL,
     timeout :5000,
 })
@@ -28,10 +30,11 @@ instance.interceptors.response.use(
     },
     async error => { 
         const originalRequest = error.config;
+        console.log("send refresh")
         if(error.response.status === 401){
             try {
                 const refreshToken = localStorage.getItem("refreshToken");
-                const response = await capiclient.get("/user", {
+                const response = await apiClient.get("/user", {
                     headers:{
                         Authorization:`Bearer ${refreshToken}`
                     }
@@ -43,14 +46,16 @@ instance.interceptors.response.use(
             }
             catch (_error) {
                 // 로그아웃 
-                localStorage.removeItem("accessToken")
-                localStorage.removeItem("refreshToken")
+                // localStorage.removeItem("accessToken")
+                // localStorage.removeItem("refreshToken")
+                // useUserStore.getState().clearUser();
                 return Promise.reject(_error);
             }
         }
         else{
-            localStorage.removeItem("accessToken")
-            localStorage.removeItem("refreshToken")
+            // localStorage.removeItem("accessToken")
+            // localStorage.removeItem("refreshToken")
+            // useUserStore.getState().clearUser();
             return Promise.reject(error);
 
         }

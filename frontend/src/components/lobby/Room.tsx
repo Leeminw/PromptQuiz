@@ -1,26 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { IoIosLock } from 'react-icons/io';
-// {
-//   ""status"": ""success"",
-//   ""message"": ""방 목록 조회 완료"",
-//   ""data"": [
-//       {
-//           ""id"": 8144742847851927974,
-//           ""channelId"": 1,
-//           ""type"": 1,
-//           ""style"": 0,
-//           ""code"": ""20b3ed3c-965c-40c0-ad7c-62c9bdd29b3e"",
-//           ""title"": ""들어와2"",
-//           ""password"": null,
-//           ""status"": true,
-//           ""isTeam"": false,
-//           ""curRound"": 0,
-//           ""rounds"": 0,
-//           ""curPlayers"": 1,
-//           ""maxPlayers"": 8
-//       }
-//   ]
-// }
 
 interface Props {
   id: number;
@@ -66,7 +45,6 @@ const Room = ({
   return (
     <div className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 border-mint rounded-3xl ">
       <div>
-        {}
         {title}
         {password == null ? '' : <IoIosLock />}
       </div>
