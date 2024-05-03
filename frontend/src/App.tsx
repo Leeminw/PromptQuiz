@@ -58,7 +58,7 @@ const App = () => {
           </div>
         </div>
       </dialog>
-      <div className="absolute top-8 right-8 flex flex-col gap-3">
+      <div className="absolute top-6 right-6 flex flex-col gap-3">
         <button
           className={`btn-mint hover:brightness-125 hover:scale-105 transition text-sm ${activateBtn[0] ? 'animate-clickbtn scale-105' : ''}`}
           onClick={() => {

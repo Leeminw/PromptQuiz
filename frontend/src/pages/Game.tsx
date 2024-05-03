@@ -156,8 +156,8 @@ const GamePage = () => {
     console.log(gameReady);
     //
     try {
-      const response = await instance.post('game/start', gameReady);
-      console.log(response);
+      // const response = await instance.post('game/start', gameReady);
+      // console.log(response);
       console.log('start!!!');
       handleGamestart();
       setIsStart(true);
@@ -217,7 +217,7 @@ const GamePage = () => {
 
   return (
     <div
-      className={`bg-white/80 w-[75vw] h-[90vh] min-w-[50rem] min-h-[40rem] z-10 
+      className={`bg-white/80 w-[70rem] h-[42rem] min-w-[40rem] min-h-[40rem] max-w-[80vw] z-10 
       rounded-3xl drop-shadow-lg px-8 py-6 flex flex-col items-center justify-center 
       ${earthquake ? 'animate-earthquake' : ''}`}
     >
@@ -227,18 +227,18 @@ const GamePage = () => {
         transition ease-in duration-500 ${gamestart ? 'block translate-y-0' : 'translate-y-[-100vh]'}`}
       ></div>
       {/* 상단 : 제목, 버튼 */}
-      <div className="w-full h-10 flex gap-4 mb-2">
+      <div className="w-full h-10 grid grid-cols-5 gap-3 mb-2">
         {/* 채널 */}
-        <label className="flex items-center w-1/3 py-4 border-custom-mint bg-white text-sm">
+        <label className="flex items-center border-custom-mint bg-white text-sm h-full">
           <p className="text-center w-full text-nowrap">{game?.channelId}채널</p>
         </label>
         {/* 제목 */}
-        <label className="flex items-center w-full grow py-4 border-custom-mint bg-white text-sm">
+        <label className="flex items-center justify-center col-span-3 w-full border-custom-mint bg-white text-sm">
           <div className="border-r border-gray-200 pl-3 pr-2.5">{roomId}</div>
           <p className="text-center w-full text-nowrap line-clamp-1">{game?.title}</p>
         </label>
         {/* 버튼 */}
-        <div className="w-1/3 flex gap-4">
+        <div className="flex gap-3">
           <button
             className={`
             transition text-sm w-1/2 text-white ${activateBtn[0] ? 'animate-clickbtn scale-105' : ''}
@@ -260,7 +260,7 @@ const GamePage = () => {
             >
               <FaUserPlus className="min-w-5 min-h-5 mb-0.5" />
               <p
-                className="text-center w-full text-nowrap text-sm overflow-hidden 
+                className="text-center w-full text-nowrap text-xs overflow-hidden 
               text-ellipsis xl:flex max-xl:hidden"
               >
                 초대하기
@@ -276,7 +276,7 @@ const GamePage = () => {
           >
             <label className="flex gap-1 items-center px-2 cursor-pointer overflow-hidden max-xl:justify-center">
               <IoLogOut className="min-w-6 min-h-6 mb-0.5" />
-              <p className="text-center w-full text-nowrap text-sm overflow-hidden text-ellipsis xl:flex max-xl:hidden">
+              <p className="text-center w-full text-nowrap text-xs overflow-hidden text-ellipsis xl:flex max-xl:hidden">
                 나가기
               </p>
             </label>
@@ -284,36 +284,27 @@ const GamePage = () => {
         </div>
       </div>
       {/* 중간 : 플레이어, 문제 화면 */}
-      <div className="w-full h-[22rem] flex flex-col items-center mb-4">
-        <div className="w-full h-full flex gap-4 pt-5">
-          {/* 좌파 */}
-          <div className="w-1/3 flex flex-col gap-3">
-            {Array.from({ length: 6 }, (_, index) => (
-              <GamePlayer key={index} idx={index + 1} />
-            ))}
+      <div className="w-full h-[22rem] mt-2 mb-4 grid grid-rows-6 grid-cols-5 grid-flow-row gap-3">
+        {/* 방장 */}
+        <GamePlayer idx={1} />
+        {/* 문제 화면, 타이머 */}
+        <div className="w-full grow flex flex-col row-span-6 col-span-3">
+          <div className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint border relative overflow-hidden flex">
+            <div className="w-full h-full rounded-full -translate-x-[50%] transition-transform duration-1000 bg-mint absolute"></div>
           </div>
-          {/* 문제 화면, 타이머 */}
-          <div className="w-full grow flex flex-col">
-            <div className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint border relative overflow-hidden flex">
-              <div className="w-full h-full rounded-full -translate-x-[50%] transition-transform duration-1000 bg-mint absolute"></div>
+          <div className="border-custom- w-full h-full flex items-center justify-center relative">
+            <div className="w-16 h-7 absolute top-2 left-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
+              {round} / {maxRound}
             </div>
-            <div className="border-custom- w-full h-full flex items-center justify-center relative">
-              <div className="w-16 h-7 absolute top-2 left-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
-                {round} / {maxRound}
-              </div>
-              <div className="w-fit h-7 px-3 absolute top-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
-                남은시간 : {time}
-              </div>
-              <div className="w-full h-full bg-[url(https://contents-cdn.viewus.co.kr/image/2023/08/CP-2023-0056/image-7adf97c8-ef11-4def-81e8-fe2913667983.jpeg)] bg-cover bg-center"></div>
+            <div className="w-fit h-7 px-3 absolute top-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
+              남은시간 : {time}
             </div>
-          </div>
-          {/* 우파 */}
-          <div className="w-1/3 flex flex-col gap-3">
-            {Array.from({ length: 6 }, (_, index) => (
-              <GamePlayer key={index} idx={index + 7} />
-            ))}
+            <div className="w-full h-full bg-[url(https://contents-cdn.viewus.co.kr/image/2023/08/CP-2023-0056/image-7adf97c8-ef11-4def-81e8-fe2913667983.jpeg)] bg-cover bg-center"></div>
           </div>
         </div>
+        {Array.from({ length: 11 }, (_, index) => (
+          <GamePlayer key={index} idx={index + 2} />
+        ))}
       </div>
       {/* 광고, 채팅창, 게임 설정 */}
       <div className="w-full h-48 flex gap-4">
@@ -437,7 +428,7 @@ const GamePage = () => {
              ${
                isStart
                  ? 'border-custom-gray bg-[#999999] cursor-default text-white'
-                 : ' btn-mint-border-white hover:brightness-125 hover:scale-110 cursor-pointer'
+                 : 'btn-mint-border-white hover:brightness-125 hover:scale-110 cursor-pointer'
              }
              `}
             onClick={() => {
