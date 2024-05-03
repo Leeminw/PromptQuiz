@@ -9,4 +9,8 @@ public interface ChannelService {
     ChannelGetResponseDto createChannel(ChannelCreateRequestDto dto);
 
     List<ChannelGetResponseDto> getChannelList();
+
+    ChannelGetResponseDto getChannel(Long channelId);
+
+    ChannelGetResponseDto getChannelByCode(String code);
 }
