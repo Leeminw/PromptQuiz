@@ -14,23 +14,23 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {
-  private final ChatRepository chatRepository;
+    private final ChatRepository chatRepository;
 
-  @Override
-  public Chat insertChannelChat(ChannelChatDto request) {
-    Chat input = new Chat(Instant.now(), request.getUuid(), request.getNickname(), request.getContent());
-    chatRepository.save(input);
-    return input;
-  }
+    @Override
+    public Chat insertGameChat(GameChatDto request) {
+        Chat input = new Chat(Instant.now(), request.getUuid(), request.getNickname(), request.getContent());
+        chatRepository.save(input);
+        return input;
+    }
 
-  @Override
-  public Chat insertGameChat(GameChatDto request) {
-    Chat input = new Chat(Instant.now(), request.getUuid(), request.getNickname(), request.getContent());
-    chatRepository.save(input);
-    return input;
-  }
+    @Override
+    public Chat insertChannelChat(ChannelChatDto request) {
+        Chat input = new Chat(Instant.now(), request.getUuid(), request.getNickname(), request.getContent());
+        chatRepository.save(input);
+        return input;
+    }
 
-  public List<Chat> getChatListUsingHour(Integer hour) {
-    return chatRepository.findByHourDuration(hour);
-  }
+    public List<Chat> getChatListByTimeRange(Integer hour) {
+        return chatRepository.findByHourDuration(hour);
+    }
 }
