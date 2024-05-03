@@ -11,4 +11,6 @@ public interface ChannelService {
     List<ChannelGetResponseDto> getChannelList();
 
     ChannelGetResponseDto getChannel(Long channelId);
+
+    ChannelGetResponseDto getChannelByCode(String code);
 }

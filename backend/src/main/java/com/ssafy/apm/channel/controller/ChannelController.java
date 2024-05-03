@@ -43,4 +43,10 @@ public class ChannelController {
         ChannelGetResponseDto response = channelService.getChannel(channelId);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("채널 조회 완료", response));
     }
+
+    @GetMapping("/code/{code}")
+    public ResponseEntity<ResponseData<?>> getChannelByCode(@PathVariable("code") String code) {
+        ChannelGetResponseDto response = channelService.getChannelByCode(code);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("채널 조회 완료", response));
+    }
 }
