@@ -1,7 +1,7 @@
 package com.ssafy.apm.socket.dto.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Data
