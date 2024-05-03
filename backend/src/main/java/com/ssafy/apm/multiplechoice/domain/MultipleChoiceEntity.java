@@ -17,10 +17,6 @@ public class MultipleChoiceEntity {
     @Indexed
     private Long gameQuizId;
     @Indexed
-    private Long choiceId1;
-    @Indexed
-    private Long choiceId2;
-    @Indexed
-    private Long choiceId3;
+    private Long quizId;
 
 }

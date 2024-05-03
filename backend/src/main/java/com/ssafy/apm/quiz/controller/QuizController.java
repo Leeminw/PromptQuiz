@@ -30,13 +30,13 @@ public class QuizController {
     }
 
     @PutMapping("")
-    public ResponseEntity<ResponseData<?>> updatePrompt(@RequestBody QuizRequestDto requestDto) {
+    public ResponseEntity<ResponseData<?>> updateQuiz(@RequestBody QuizRequestDto requestDto) {
         QuizDetailResponseDto responseDto = service.updateQuiz(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseData<?>> deletePrompt(@PathVariable Long id) {
+    public ResponseEntity<ResponseData<?>> deleteQuiz(@PathVariable Long id) {
         QuizDetailResponseDto responseDto = service.deleteQuiz(id);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }
@@ -66,7 +66,7 @@ public class QuizController {
     }
 
     @GetMapping("/random")
-    public ResponseEntity<ResponseData<?>> randomPrompts(
+    public ResponseEntity<ResponseData<?>> randomQuizs(
             @RequestParam(value = "limit", required = false) Integer limit,
             @RequestParam(value = "groupCode", required = false) String groupCode) {
         if (groupCode == null && limit == null) {

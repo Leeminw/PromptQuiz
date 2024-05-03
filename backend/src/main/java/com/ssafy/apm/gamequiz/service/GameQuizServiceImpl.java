@@ -7,10 +7,11 @@ import com.ssafy.apm.gamequiz.dto.response.GameQuizGetResponseDto;
 import com.ssafy.apm.gamequiz.repository.GameQuizRepository;
 import com.ssafy.apm.gameuser.domain.GameUserEntity;
 import com.ssafy.apm.gameuser.repository.GameUserRepository;
+import com.ssafy.apm.multiplechoice.domain.MultipleChoiceEntity;
+import com.ssafy.apm.multiplechoice.repository.MultipleChoiceRepository;
 import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.quiz.repository.QuizRepository;
 import com.ssafy.apm.user.domain.User;
-import com.ssafy.apm.user.repository.UserRepository;
 import com.ssafy.apm.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ import java.util.Random;
 @Transactional(readOnly = true)
 public class GameQuizServiceImpl implements GameQuizService {
 
+    private final MultipleChoiceRepository multipleChoiceRepository;
     private final GameQuizRepository gameQuizRepository;
     private final GameUserRepository gameUserRepository;
     private final GameRepository gameRepository;
@@ -42,7 +44,7 @@ public class GameQuizServiceImpl implements GameQuizService {
         Integer round = gameEntity.getCurRound();
 //        현재 라운드에 해당하는 정답 주는거
         GameQuizEntity entity = gameQuizRepository.findByGameIdAndRound(gameId, round)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 퀴즈입니다."));
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 답안입니다."));
 
         GameQuizGetResponseDto response = new GameQuizGetResponseDto(entity);
 
@@ -57,7 +59,7 @@ public class GameQuizServiceImpl implements GameQuizService {
                 .orElseThrow(() -> new NoSuchElementException("이 유저는 게임방에 접속해 있지 않습니다."));
 
 //        방장이 아니면 게임 시작할 수 없음
-        if(!gameUser.getIsHost()){
+        if (!gameUser.getIsHost()) {
             return false;
         }
 
@@ -68,7 +70,7 @@ public class GameQuizServiceImpl implements GameQuizService {
 
         List<Quiz> quizList;
 
-        if(gameStyle.equals("random")){
+        if (gameStyle.equals("random")) {
             quizList = quizRepository.extractRandomQuizs(gameEntity.getRounds())
                     .orElseThrow(() -> new NoSuchElementException("랜덤 스타일의 정답을 추출하는데 실패했습니다."));
         } else {
@@ -120,6 +122,22 @@ public class GameQuizServiceImpl implements GameQuizService {
             int[] numbers = {1, 2, 4}; // 선택하고 싶은 숫자들을 배열에 저장
             createGameQuizEntityList(gameId, quizList, gameQuizEntityList, currentRound, random, numbers);
 
+        }
+
+        for (GameQuizEntity entity : gameQuizEntityList) {
+            Quiz quiz = quizRepository.findById(entity.getQuizId())
+                    .orElseThrow(() -> new NoSuchElementException("존재하지 않는 퀴즈입니다."));
+            List<Quiz> quizListByGroupCode = quizRepository.extractRandomQuizsByGroupCode(quiz.getGroupCode(), 3)
+                    .orElseThrow(() -> new NoSuchElementException("그룹 코드로 퀴즈를 추출하는데 실패했습니다."));
+
+            for(Quiz q: quizListByGroupCode){
+                MultipleChoiceEntity multipleChoice = MultipleChoiceEntity.builder()
+                        .gameQuizId(entity.getId())
+                        .quizId(q.getId())
+                        .build();
+
+                multipleChoiceRepository.save(multipleChoice);
+            }
         }
 
         gameQuizRepository.saveAll(gameQuizEntityList);
