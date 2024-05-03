@@ -1,8 +1,6 @@
 package com.ssafy.apm.socket.service;
 
-import com.ssafy.apm.user.domain.User;
 import com.ssafy.apm.socket.domain.Session;
-import com.ssafy.apm.user.service.UserService;
 import com.ssafy.apm.socket.repository.SocketRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -13,14 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class SocketServiceImpl implements SocketService {
-    private final UserService userService;
     private final SocketRepository socketRepository;
-
-    @Override
-    public void printSession(String sessionId) {
-        // 디버깅용
-        System.out.println(socketRepository.findBySessionId(sessionId));
-    }
 
     @Override
     @Transactional
