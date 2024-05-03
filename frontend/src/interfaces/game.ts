@@ -13,7 +13,11 @@ interface Game {
     curPlayers: number,
     maxPlayers: number
 }
-
+interface GameRoomSettingProps {
+    teammode: boolean;
+    gamemode: string;
+    round: number;
+  }
 interface GameChat{
     userId: bigint,
     nickname: string,
