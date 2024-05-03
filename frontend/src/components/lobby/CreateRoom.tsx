@@ -117,8 +117,9 @@ const CreateRoom = ({ channelId }: Props) => {
     console.log(Room);
 
     const { data } = await LobbyApi.createRoom(Room);
+
     setTimeout(() => {
-      navigate('/game');
+      navigate(`/game/${data.id}`);
     }, 1000);
   };
   return (
