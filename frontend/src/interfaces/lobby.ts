@@ -1,5 +1,5 @@
 interface Room {
-  userId: number;
+  userId: bigint;
   channelId: number;
   type: number;
   style: number; // number -> string

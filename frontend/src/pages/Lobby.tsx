@@ -17,6 +17,11 @@ const Lobby = () => {
   const location = useLocation();
   const channelId = location.state?.channelId;
   const [roomList, setRoomList] = useState<RoomProps[]>([]);
+
+  const handleState = (data: RoomProps[]) => {
+    setRoomList(data);
+  };
+
   useEffect(() => {
     // 방정보 가져오기
     const response = LobbyApi.getGameList(channelId)
@@ -67,7 +72,7 @@ const Lobby = () => {
 
   return (
     <div className="flex flex-col items-center w-3/4 bg-white opacity-80">
-      <Header channelId={channelId} />
+      <Header channelId={channelId} handleState={handleState} />
       {/* <div className="h-[100px] w-[100px] bg-yellow-300">광고</div> */}
       <CurrentUserList />
       {/* <Chatting /> */}
