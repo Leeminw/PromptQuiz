@@ -43,6 +43,8 @@ public class MultipleChoiceServiceImpl implements MultipleChoiceService {
         GameQuizEntity gameQuiz = gameQuizRepository.findByGameIdAndRound(gameId, curRound)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 답안입니다."));
 
+//        여기서 gameQuiz의 타입을 확인해서 타
+
         Quiz answer = quizRepository.findById(gameQuiz.getQuizId())
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 퀴즈입니다."));
 
