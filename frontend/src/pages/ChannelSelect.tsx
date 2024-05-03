@@ -1,89 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import ChannelBox from '../components/channel/ChannelBox';
+import { ChannelApi } from '../hooks/axois-channel';
 // import ChannelBox from '../components/channel/ChannelBox';
-// import BackgroundImg from '../../public/background.png';
 
 const ChannelSelectPage = () => {
   const [channelArray, setChannelList] = useState<Channel[]>([]);
   useEffect(() => {
     // 채널리트스 가져오기
-    const response = {
-      status: 'success',
-      message: 'The request has been processed successfully.',
-      data: [
-        {
-          id: 1,
-          code: 'code1',
-          name: '1채널',
-          curPlayers: 100,
-          maxPlayers: 100,
-        },
-        {
-          id: 2,
-          code: 'code2',
-          name: '2채널',
-          curPlayers: 100,
-          maxPlayers: 100,
-        },
-        {
-          id: 3,
-          code: 'code3',
-          name: '3채널',
-          curPlayers: 97,
-          maxPlayers: 100,
-        },
-        {
-          id: 4,
-          code: 'code4',
-          name: '4채널',
-          curPlayers: 95,
-          maxPlayers: 100,
-        },
-        {
-          id: 5,
-          code: 'code5',
-          name: '5채널',
-          curPlayers: 85,
-          maxPlayers: 100,
-        },
-        {
-          id: 6,
-          code: 'code6',
-          name: '6채널',
-          curPlayers: 76,
-          maxPlayers: 100,
-        },
-        {
-          id: 7,
-          code: 'code7',
-          name: '7채널',
-          curPlayers: 50,
-          maxPlayers: 100,
-        },
-        {
-          id: 8,
-          code: 'code8',
-          name: '8채널',
-          curPlayers: 32,
-          maxPlayers: 100,
-        },
-        {
-          id: 9,
-          code: 'code9',
-          name: '9채널',
-          curPlayers: 16,
-          maxPlayers: 100,
-        },
-        {
-          id: 10,
-          code: 'code10',
-          name: '10채널',
-          curPlayers: 3,
-          maxPlayers: 100,
-        },
-      ],
-    };
-    setChannelList(response.data);
+    const response = ChannelApi.getChannelList()
+      .then((response) => {
+        setChannelList(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
 
   const headerStyle = {
@@ -109,18 +39,8 @@ const ChannelSelectPage = () => {
   };
   return (
     <div
-      className="w-fit p-2 m-4"
-      style={{
-        // backgroundColor: 'yellow',
-        width: '80%',
-        height: '80%',
-      }}
-    >
-      <div
         className="container"
         style={{
-          width: '80%',
-          height: '80%',
           //   display: 'flex',
           //   justifyContent: 'center',
         }}
@@ -139,7 +59,6 @@ const ChannelSelectPage = () => {
           ))}
         </div>
       </div>
-    </div>
   );
 };
 

@@ -1,6 +1,6 @@
 package com.ssafy.apm.common.service;
 
-import com.ssafy.apm.common.dto.response.S3FileResponseDto;
+import com.ssafy.apm.common.dto.S3FileResponseDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;

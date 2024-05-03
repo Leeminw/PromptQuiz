@@ -1,8 +1,10 @@
 import React from 'react';
 import App from '../App';
-import LoginPage from '../pages/Login';
-import Join from '../pages/Join';
 import ChannelSelectPage from '../pages/ChannelSelect';
+import MainPage from '../pages/Main';
+import GamePage from '../pages/Game';
+import TestPage from '../pages/Test';
+import Lobby from '../pages/Lobby';
 
 const RouterInfo = [
   {
@@ -11,20 +13,31 @@ const RouterInfo = [
     children: [
       {
         index: true,
-        element: <LoginPage />,
-        label: 'login',
-      },
-      {
-        path: '/join',
-        element: <Join />,
-        label: 'join',
+        element: <MainPage />,
+        label: 'main',
       },
       {
         path: '/channel',
         element: <ChannelSelectPage />,
         label: 'channel',
       },
+      {
+        path: '/game/:roomId',
+        element: <GamePage />,
+        label: 'game',
+      },
+      {
+        // 동적 라우팅 설정
+        path: '/lobby/:id',
+        element: <Lobby />,
+        label: 'lobby',
+      },
     ],
+  },
+  {
+    path: '/test',
+    element: <TestPage />,
+    label: 'test',
   },
 ];
 

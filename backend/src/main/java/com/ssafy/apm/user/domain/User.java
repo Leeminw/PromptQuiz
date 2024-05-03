@@ -40,18 +40,18 @@ public class User {
         this.password = encodedPassword;
     }
 
-    public void updateProfile(String profileUrl){
+    public void updateProfile(String profileUrl) {
         this.picture = profileUrl;
     }
 
-    public void updateStatusMessage(String message){
+    public void updateStatusMessage(String message) {
         this.statusMessage = message;
     }
 
-    public void updateScore(UserScoreUpdateRequestDto requestDto){
-        this.totalScore = requestDto.getTotalScore();
-        this.soloScore = requestDto.getSoloScore();
-        this.teamScore = requestDto.getTeamScore();
+    public void updateScore(UserScoreUpdateRequestDto requestDto) {
+        this.totalScore += requestDto.getTotalScore();
+        this.soloScore += requestDto.getSoloScore();
+        this.teamScore += requestDto.getTeamScore();
     }
 
 }

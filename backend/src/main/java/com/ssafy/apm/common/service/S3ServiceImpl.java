@@ -2,8 +2,8 @@ package com.ssafy.apm.common.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.ssafy.apm.common.dto.request.S3FileRequestDto;
-import com.ssafy.apm.common.dto.response.S3FileResponseDto;
+import com.ssafy.apm.common.dto.S3FileRequestDto;
+import com.ssafy.apm.common.dto.S3FileResponseDto;
 import com.ssafy.apm.common.repository.S3FileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

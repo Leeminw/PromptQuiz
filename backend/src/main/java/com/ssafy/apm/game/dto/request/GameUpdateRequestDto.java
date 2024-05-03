@@ -11,7 +11,7 @@ public class GameUpdateRequestDto {
     private Long id;
     private Long channelId;
     private Integer type;
-    private Integer style;
+    private String style;
     private String code;
     private String title;
     private String password;

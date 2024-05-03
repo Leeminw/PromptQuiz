@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { UserApi } from '../hooks/axios-user';
 import { useNavigate } from 'react-router-dom';
-const Join = () => {
+const Join = ({ movePage }: { movePage: () => void }) => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -102,6 +102,7 @@ const Join = () => {
         ))}
       </select>
       <br />
+      <button onClick={movePage}>뒤로가기</button>
       <button onClick={joinUser} className="border">
         회원 가입
       </button>

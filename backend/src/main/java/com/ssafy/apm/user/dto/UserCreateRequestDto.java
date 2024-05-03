@@ -16,7 +16,7 @@ public class UserCreateRequestDto {
     private String password;
     private String picture;
 
-    public User toEntity(){
+    public User toEntity() {
         return User.builder()
                 .userName(this.userName)
                 .nickName(this.nickName)

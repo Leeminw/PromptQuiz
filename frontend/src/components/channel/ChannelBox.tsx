@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AiOutlineRight } from 'react-icons/ai';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   id: number;
@@ -10,6 +11,13 @@ interface Props {
 }
 const ChannelBox = ({ id, code, name, curPlayers, maxPlayers }: Props) => {
   const percentage = Math.floor((curPlayers / maxPlayers) * 100);
+  const navigate = useNavigate();
+  const enterLobby = () => {
+    setTimeout(() => {
+      // navigate(`/lobby/${code}`);
+      navigate(`/lobby/${code}`, { state: { channelId: id } });
+    }, 1000);
+  };
   return (
     <div
       className="channelBox"
@@ -33,7 +41,7 @@ const ChannelBox = ({ id, code, name, curPlayers, maxPlayers }: Props) => {
         <div>{id}채널</div>
         {/* <div>
         </div> */}
-        <button>
+        <button onClick={enterLobby}>
           <AiOutlineRight style={{ fontSize: '15px', marginTop: '5px' }} />
         </button>
       </div>

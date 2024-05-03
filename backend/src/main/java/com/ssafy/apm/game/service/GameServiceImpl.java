@@ -26,6 +26,7 @@ public class GameServiceImpl implements GameService {
     private final GameUserRepository gameUserRepository;
     private final GameQuizRepository gameQuizRepository;
     private final UserService userService;
+
     @Override
     @Transactional
     public GameGetResponseDto createGame(GameCreateRequestDto gameCreateRequestDto) {
@@ -33,8 +34,8 @@ public class GameServiceImpl implements GameService {
         GameEntity gameEntity = gameCreateRequestDto.toEntity();
         gameEntity = gameRepository.save(gameEntity);
         /*
-        * 방 만든 사람의 GameUser Entity도 생성해서 저장
-        * */
+         * 방 만든 사람의 GameUser Entity도 생성해서 저장
+         * */
         GameUserEntity gameUserEntity = GameUserEntity.builder()
                 .gameId(gameEntity.getId())
                 .userId(userEntity.getId())
@@ -81,15 +82,20 @@ public class GameServiceImpl implements GameService {
 
     @Override
     @Transactional
-    public Integer updateGameRoundCnt(Long gameId) {
+    public Integer updateGameRoundCnt(Long gameId, Boolean flag) {
         GameEntity gameEntity = gameRepository.findById(gameId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
-
+        Integer response = 0;
+        if (flag) {
+//            curRound 1로 초기화
+            response = gameEntity.updateCurRound();
+        } else {
 //        마지막 라운드라면
-        if(gameEntity.getCurRound() >= gameEntity.getRounds()) {
-            return -1;
+            if (gameEntity.getCurRound() >= gameEntity.getRounds()) {
+                return -1;
+            }
+            response = gameEntity.increaseRound();
         }
-        Integer response = gameEntity.increaseRound();
         gameRepository.save(gameEntity);
         return response;
     }

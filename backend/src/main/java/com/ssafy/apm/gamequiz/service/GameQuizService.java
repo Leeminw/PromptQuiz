@@ -4,4 +4,6 @@ import com.ssafy.apm.gamequiz.dto.response.GameQuizGetResponseDto;
 
 public interface GameQuizService {
     GameQuizGetResponseDto getGameQuizDetail(Long gameId);
+
+    Boolean createAnswerGameQuiz(Long gameId);
 }

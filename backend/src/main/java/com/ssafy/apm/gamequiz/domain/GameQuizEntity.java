@@ -10,7 +10,7 @@ import org.springframework.data.redis.core.index.Indexed;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@RedisHash(value = "game-quiz")
+@RedisHash(value = "game-quiz", timeToLive = 600)
 public class GameQuizEntity {
     @Id
     private Long id;
@@ -18,6 +18,7 @@ public class GameQuizEntity {
     private Long gameId;
     @Indexed
     private Long quizId;
+    //    객관식, 빈칸객관식, 빈칸주관식
     private Integer type;
     @Indexed
     private Integer round;
