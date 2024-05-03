@@ -59,7 +59,7 @@ interface GameLeave {
 
 interface RecieveData {
     tag: string,
-    data : GameChatRecieve
+    data : GameChatRecieve|GameTimer|GameReady|GameLeave|GameStatus|bigint
 }
 
 interface GameChatRecieve {
@@ -70,14 +70,30 @@ interface GameChatRecieve {
     round: number|null,
     content: string|null,
     createdDate: string|null,
-    time: number|null
 }
+
 interface GameTimer {
     time : number,
-    round : number
+    round : number,
+    state : string,
 }
 interface GameReady{
     gameId: bigint,
     uuid : string
+}
+interface GameStatus {
+    type : string,
+    content: RoundInfo
+}
+
+interface RoundInfo {
+    round : number,
+    roundList : RoundUser[]|null
+}
+
+interface RoundUser {
+    userId : bigint,
+    score : number,
+    correct : boolean
 }
 
