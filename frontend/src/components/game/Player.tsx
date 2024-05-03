@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 interface GamePlayerProps {
-  idx: number;
+  // idx: number;
+  userInfo: GameUser;
 }
 
-const GamePlayer = ({ idx }: GamePlayerProps) => {
+const GamePlayer = ({ userInfo }: GamePlayerProps) => {
   return (
     <div className="border-custom-green bg-customGreen h-1/6 relative flex items-center">
       <div className="absolute w-full -translate-y-8">
@@ -17,12 +18,14 @@ const GamePlayer = ({ idx }: GamePlayerProps) => {
           <path d="M 0 0 V 10 L 7 0" stroke="#dde5e3" strokeWidth={1} fill="white"></path>
         </svg>
       </div>
-      <div className='pl-1 w-full flex items-center'>
+      <div className="pl-1 w-full flex items-center">
         <div className="rounded-full bg-[url(https://contents-cdn.viewus.co.kr/image/2023/08/CP-2023-0056/image-7adf97c8-ef11-4def-81e8-fe2913667983.jpeg)] bg-cover w-8 h-8 aspect-square"></div>
         <p className="pl-2 w-full text-xs font-bold text-white line-clamp-2 text-ellipsis">
-          플레이어{idx}
+          {userInfo.nickName}
         </p>
-        <p className="h-full text-nowrap text-white text-sm pr-1 pl-1 flex items-center">0점</p>
+        <p className="h-full text-nowrap text-white text-sm pr-1 pl-1 flex items-center">
+          {userInfo.score}점
+        </p>
       </div>
     </div>
   );

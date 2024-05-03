@@ -25,12 +25,12 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
     async (response) => {
-        console.log("response : ", response);
+        // console.log("response : ", response);
         return response;
     },
     async error => { 
         const originalRequest = error.config;
-        console.log("send refresh")
+        // console.log("send refresh")
         if(error.response.status === 401){
             try {
                 const refreshToken = localStorage.getItem("refreshToken");

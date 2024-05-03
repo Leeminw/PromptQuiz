@@ -21,9 +21,7 @@ const GamePage = () => {
   const [game, setGame] = useState<Game | null>(null);
   const { roomId } = useParams();
   const [chat, setChat] = useState<GameChatRecieve[]>([]);
-  const client = useRef<Client | null>(null);
   const { user } = useUserStore();
-  const [text, setText] = useState('');
   const [time, setTime] = useState<number>(0);
   const [maxRound, setMaxRound] = useState<number>(0);
   const [round, setRound] = useState<number>(0);
@@ -32,12 +30,15 @@ const GamePage = () => {
   const chatInput = useRef(null);
   const chatBtn = useRef(null);
   const [chatOpen, setChatOpen] = useState(false);
-
+  const [gameUserList, setGameUserList] = useState<GameUser[]>([]);
   const getGameData = async () => {
     const response = await GameApi.getGame(roomId);
     const responseGame: Game = response.data;
-    console.log(responseGame);
+    const userResponse = await GameApi.getUserList(roomId);
+    // console.log(responseGame);
+    console.log(userResponse.data);
     setGame(responseGame);
+    setGameUserList(userResponse.data);
     setMaxRound(responseGame.rounds);
     // enterGame();
   };
@@ -95,12 +96,13 @@ const GamePage = () => {
     }
   };
 
-  const gameController = (recieve: RecieveData) => {
+  const gameController = async (recieve: RecieveData) => {
     console.log(recieve);
+    const data: GameChatRecieve = recieve.data;
     if (recieve.tag === 'chat') {
-      setChat((prevItems) => [...prevItems, recieve.data]);
-      // setChat((prevItems) => [...prevItems, body]);
+      setChat((prevItems) => [...prevItems, data]);
     } else if (recieve.tag === 'enter') {
+      console.log('entered');
       // console.log(body.data);
       // const data: GameChatRecieve = {
       //   userId: -1,
@@ -112,11 +114,12 @@ const GamePage = () => {
       //   createdDate: '',
       // };
       // setChat((prevItems) => [...prevItems, data]);
+      const userResponse = await GameApi.getUserList(roomId);
+      setGameUserList(userResponse.data);
     } else if (recieve.tag === 'leave') {
     } else if (recieve.tag === 'timer') {
-      console.log(recieve.data);
-      setTime(recieve.data.time);
-      setRound(recieve.data.round);
+      setTime(data.time);
+      setRound(data.round);
     } else if (recieve.tag === 'wrongSignal') {
     } else if (recieve.tag === 'similarity') {
     } else if (recieve.tag === 'game') {
@@ -288,9 +291,9 @@ const GamePage = () => {
         <div className="w-full h-full flex gap-4 pt-5">
           {/* 좌파 */}
           <div className="w-1/3 flex flex-col gap-3">
-            {Array.from({ length: 6 }, (_, index) => (
-              <GamePlayer key={index} idx={index + 1} />
-            ))}
+            {gameUserList.map((userInfo: GameUser, index) =>
+              index % 2 === 0 ? <GamePlayer key={index} userInfo={userInfo} /> : null
+            )}
           </div>
           {/* 문제 화면, 타이머 */}
           <div className="w-full grow flex flex-col">
@@ -309,9 +312,9 @@ const GamePage = () => {
           </div>
           {/* 우파 */}
           <div className="w-1/3 flex flex-col gap-3">
-            {Array.from({ length: 6 }, (_, index) => (
-              <GamePlayer key={index} idx={index + 7} />
-            ))}
+            {gameUserList.map((userInfo: GameUser, index) =>
+              index % 2 === 1 ? <GamePlayer key={index} userInfo={userInfo} /> : null
+            )}
           </div>
         </div>
       </div>
