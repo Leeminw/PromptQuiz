@@ -8,22 +8,26 @@ import { MdAddHome } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import CreateRoom from './CreateRoom';
 import { LobbyApi } from '../../hooks/axios-lobby';
+// interface Props {
+//   channelId: number;
+// }
 interface Props {
   channelId: number;
+  handleState: (data: RoomProps[]) => void;
 }
-const Header = ({ channelId }: Props) => {
-  const createRoom = () => {
-    alert('방 생성 모달창 띄움');
-  };
+// const Header = ({ channelId }: Props, handleState: (data: RoomProps[]) => void) => {
+const Header = ({ channelId, handleState }: Props) => {
   const fastMatching = () => {
     alert('빠른대전 매칭완료!');
   };
   const refresh = async () => {
-    // const { data } = await UserApi.login(loginForm);
     alert('새로고침 버튼 누름');
 
     const { data } = await LobbyApi.getGameList(channelId);
+    console.log('이거는 패치할 데이터 정보임');
+
     console.log(data);
+    handleState(data);
   };
   const ranking = () => {};
 
