@@ -83,7 +83,7 @@ const LoginPage = ({ movePage }: { movePage: () => void }) => {
         <FaUser className="min-w-[1rem] min-h-[1rem] opacity-80 text-mint ml-2" />
         <input
           type="text"
-          className="grow text-mint font-bold overflow-hidden pr-2"
+          className="grow text-mint font-bold overflow-hidden pr-2 placeholder-mint"
           placeholder="아이디"
           value={userName}
           onChange={userNameHandler}
@@ -101,7 +101,7 @@ const LoginPage = ({ movePage }: { movePage: () => void }) => {
         <IoMdLock className="min-w-[1.3rem] min-h-[1.3rem] opacity-80 text-mint ml-1.5" />
         <input
           type="password"
-          className="grow text-mint font-bold overflow-hidden pr-2"
+          className="grow text-mint font-bold overflow-hidden pr-2 placeholder-mint"
           placeholder="비밀번호"
           value={password}
           onChange={passwordHandler}
