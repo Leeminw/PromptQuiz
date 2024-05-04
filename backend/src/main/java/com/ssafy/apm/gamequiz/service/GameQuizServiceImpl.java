@@ -10,7 +10,6 @@ import com.ssafy.apm.gameuser.repository.GameUserRepository;
 import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.quiz.repository.QuizRepository;
 import com.ssafy.apm.user.domain.User;
-import com.ssafy.apm.user.repository.UserRepository;
 import com.ssafy.apm.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -69,10 +68,10 @@ public class GameQuizServiceImpl implements GameQuizService {
         List<Quiz> quizList;
 
         if(gameStyle.equals("random")){
-            quizList = quizRepository.extractRandomQuizs(gameEntity.getRounds())
+            quizList = quizRepository.extractRandomQuizzes(gameEntity.getRounds())
                     .orElseThrow(() -> new NoSuchElementException("랜덤 스타일의 정답을 추출하는데 실패했습니다."));
         } else {
-            quizList = quizRepository.extractRandomQuizsByStyle(gameStyle, gameEntity.getRounds())
+            quizList = quizRepository.extractRandomQuizzesByStyle(gameStyle, gameEntity.getRounds())
                     .orElseThrow(() -> new NoSuchElementException(gameStyle + "타입의 정답을 추출하는데 실패했습니다."));
         }
 
