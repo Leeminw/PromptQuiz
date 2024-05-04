@@ -328,7 +328,9 @@ const GamePage = () => {
       {/* 중간 : 플레이어, 문제 화면 */}
       <div className="w-full h-[22rem] mt-2 mb-4 grid grid-rows-6 grid-cols-5 grid-flow-row gap-3">
         {/* 첫번째 플레이어 */}
-        <GamePlayer userInfo={gameUserList[0]} />
+        <div className="w-full h-full">
+          {gameUserList.length > 0 && <GamePlayer userInfo={gameUserList[0]} />}
+        </div>
         {/* 문제 화면, 타이머 */}
         <div className="w-full grow flex flex-col row-span-6 col-span-3">
           <div className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint border relative overflow-hidden flex">
@@ -354,6 +356,9 @@ const GamePage = () => {
           (userInfo: GameUser, index) =>
             index !== 0 && <GamePlayer key={index} userInfo={userInfo} />
         )}
+        {Array.from({ length: 12 - gameUserList.length }, (_, index) => (
+          <div className="w-full h-full border-custom-gray bg-[#999999]"></div>
+        ))}
       </div>
       {/* 광고, 채팅창, 게임 설정 */}
       <div className="w-full h-48 flex gap-4">
@@ -440,6 +445,25 @@ const GamePage = () => {
               `}
               onClick={() => {
                 handleClick(2);
+                gameUserList.push({
+                  userId: BigInt(123),
+                  userName: '123',
+                  nickName: '123',
+                  picture: '',
+                  statusMessage: '',
+                  totalScore: 1,
+                  teamScore: 1,
+                  soloScore: 1,
+                  created_date: '',
+                  updated_date: '',
+                  gameUserId: BigInt(123),
+                  gameId: BigInt(123),
+                  isHost: false,
+                  isReady: false,
+                  score: 123,
+                  team: '',
+                  ranking: 1,
+                });
               }}
             >
               1팀
