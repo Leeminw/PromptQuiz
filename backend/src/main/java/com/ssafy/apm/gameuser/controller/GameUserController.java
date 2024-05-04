@@ -34,6 +34,12 @@ public class GameUserController {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
 
+    @GetMapping("/{gameUserId}")
+    public ResponseEntity<ResponseData<?>> getGameUser(@PathVariable(name = "gameUserId") Long gameUserId) {
+        GameUserGetResponseDto response = gameUserService.getGameUser(gameUserId);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
+    }
+
     //    게임 입장할 때 GameUserEntity 생성
     @PostMapping("/enterGame/{gameId}")
     public ResponseEntity<ResponseData<?>> postEnterGame(@PathVariable(name = "gameId") Long gameId) {

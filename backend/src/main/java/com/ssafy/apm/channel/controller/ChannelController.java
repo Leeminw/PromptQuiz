@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,5 +36,17 @@ public class ChannelController {
     public ResponseEntity<ResponseData<?>> getChannelList() {
         List<ChannelGetResponseDto> response = channelService.getChannelList();
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("채널 리스트 조회 완료", response));
+    }
+
+    @GetMapping("/{channelId}")
+    public ResponseEntity<ResponseData<?>> getChannel(@PathVariable("channelId") Long channelId) {
+        ChannelGetResponseDto response = channelService.getChannel(channelId);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("채널 조회 완료", response));
+    }
+
+    @GetMapping("/code/{code}")
+    public ResponseEntity<ResponseData<?>> getChannelByCode(@PathVariable("code") String code) {
+        ChannelGetResponseDto response = channelService.getChannelByCode(code);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("채널 조회 완료", response));
     }
 }

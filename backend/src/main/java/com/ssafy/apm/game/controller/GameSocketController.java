@@ -1,25 +1,28 @@
 package com.ssafy.apm.game.controller;
 
-import com.ssafy.apm.common.domain.ResponseData;
+import com.ssafy.apm.chat.domain.Chat;
+import com.ssafy.apm.chat.service.ChatService;
+
 import com.ssafy.apm.game.service.GameService;
-import com.ssafy.apm.gameuser.service.GameUserService;
 import com.ssafy.apm.quiz.service.QuizService;
 import com.ssafy.apm.socket.util.GameRoomStatus;
+import com.ssafy.apm.common.domain.ResponseData;
 import com.ssafy.apm.socket.dto.response.PlayerDto;
 import com.ssafy.apm.socket.dto.request.GameChatDto;
-import com.ssafy.apm.socket.dto.request.EnterUserMessageDto;
 import com.ssafy.apm.socket.dto.request.GameReadyDto;
 import com.ssafy.apm.gamequiz.service.GameQuizService;
+import com.ssafy.apm.gameuser.service.GameUserService;
 import com.ssafy.apm.socket.dto.response.GameAnswerCheck;
 import com.ssafy.apm.socket.dto.response.GameResponseDto;
+import com.ssafy.apm.socket.dto.request.EnterUserMessageDto;
 import com.ssafy.apm.socket.dto.response.GameSystemContentDto;
 import com.ssafy.apm.socket.dto.response.GameTimerResponseDto;
 import com.ssafy.apm.socket.dto.response.GameSystemResponseDto;
 
 import java.util.*;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,13 +30,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = {"*"}, methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
-    RequestMethod.POST}, maxAge = 6000)
+        RequestMethod.POST}, maxAge = 6000)
 public class GameSocketController {
-
+    private final ChatService chatService;
     private final QuizService quizService;
     private final GameService gameService;
     private final GameQuizService gameQuizService;
@@ -41,14 +45,13 @@ public class GameSocketController {
     private final SimpMessagingTemplate template;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // 현재 게임 진행중인 리스트 (max_time 초 대기)
-    private static final HashMap<Long, GameRoomStatus> gameOngoingList = new HashMap<>();
-    // 라운드 끝나고 결과확인 리스트 (REST_TIME 초 대기)
-    private static final HashMap<Long, GameRoomStatus> gameReadyList = new HashMap<>();
+    private static final int REST_TIME = 3;
     // 라운드 끝나고 대기중인 리스트 (REST_TIME 초 대기)
     private static final HashMap<Long, GameRoomStatus> gameEndList = new HashMap<>();
-    private static final int REST_TIME = 3;
+    // 라운드 끝나고 결과확인 리스트 (REST_TIME 초 대기)
+    private static final HashMap<Long, GameRoomStatus> gameReadyList = new HashMap<>();
+    // 현재 게임 진행중인 리스트 (max_time 초 대기)
+    private static final HashMap<Long, GameRoomStatus> gameOngoingList = new HashMap<>();
 
     // 현재 진행중인 게임 관리 스케줄러
     @Scheduled(fixedRate = 1000) // 1초마다 실행
@@ -60,14 +63,11 @@ public class GameSocketController {
                 continue;
             }
 
-            // 시간 초 증가 시키기
-            game.time++;
-
-            if (game.time > game.maxTime) {
+            if (game.time == 0) {
                 // 게임 종료 (timeout)
                 gameEndList.put(game.gameId, game);
                 gameOngoingList.remove(game.gameId);
-                game.time = 0;
+                game.time = REST_TIME;
 
                 // 게임 종료 메세지 전송
                 sendRoundEndMessage(game);
@@ -78,12 +78,14 @@ public class GameSocketController {
                 // 게임 종료 (정답자가 나왔을 경우)
                 gameEndList.put(game.gameId, game);
                 gameOngoingList.remove(game.gameId);
-                game.time = 0;
+                game.time = REST_TIME;
 
             } else {
                 // 각각의 시간초 보내주기
                 template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
-                    new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round)));
+                        new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round, "ongoing")));
+                // 시간 초 감소 시키기
+                game.time--;
             }
         }
     }
@@ -98,12 +100,9 @@ public class GameSocketController {
                 continue;
             }
 
-            // 시간 초 증가
-            game.time++;
-
-            // 3초가 됐다면 이제 게임 시작하기
-            if (game.time >= REST_TIME) {
-                game.time = 0;
+            // 0초가 됐다면 이제 게임 시작하기
+            if (game.time <= 0) {
+                game.time = game.maxTime;
                 gameOngoingList.put(game.gameId, game);
                 gameReadyList.remove(game.gameId);
 
@@ -112,7 +111,9 @@ public class GameSocketController {
             } else {
                 // 각각의 시간초 보내주기
                 template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
-                    new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round)));
+                        new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round, "ready")));
+                // 시간 초 감소
+                game.time--;
             }
         }
     }
@@ -127,12 +128,9 @@ public class GameSocketController {
                 continue;
             }
 
-            // 시간 초 증가
-            game.time++;
-
             // 3초가 됐다면 이제 준비로 보내기 시작하기
-            if (game.time >= REST_TIME) {
-                game.time = 0;
+            if (game.time <= 0) {
+                game.time = REST_TIME;
                 gameReadyList.put(game.gameId, game);
                 gameEndList.remove(game.gameId);
 
@@ -141,7 +139,9 @@ public class GameSocketController {
             } else {
                 // 각각의 시간초 보내주기
                 template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
-                    new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round)));
+                        new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round, "end")));
+                // 시간 초 감소
+                game.time--;
             }
         }
     }
@@ -154,7 +154,7 @@ public class GameSocketController {
     public void enterGameUser(@Payload EnterUserMessageDto user) {
         // 새로운 플레이어 입장
         template.convertAndSend("/ws/sub/game?uuid=" + user.getUuid(),
-            new GameResponseDto("enter", user));
+                new GameResponseDto("enter", user));
     }
 
     // 퇴장 메세지
@@ -162,7 +162,7 @@ public class GameSocketController {
     public void leaveGameUser(@Payload EnterUserMessageDto user) {
         // 플레이어 퇴장
         template.convertAndSend("/ws/sub/game?uuid=" + user.getUuid(),
-            new GameResponseDto("leave", user));
+                new GameResponseDto("leave", user));
     }
 
     // (플레이어 입력) 플레이어는 채팅 or 정답을 입력한다
@@ -175,7 +175,7 @@ public class GameSocketController {
             // 입력 메세지를 먼저 확인한 이후 정답일 경우에는 result에 true가 된다.
             // 빈칸 주관식의 경우 유사도가 함께 포함된다.
             GameAnswerCheck check = quizService.checkAnswer(chatMessage,
-                game.playerSimilarityMap.keySet());
+                    game.playerSimilarityMap.keySet());
 
             // (오답) 타입마다 처리
             switch (check.getType()) {
@@ -189,7 +189,7 @@ public class GameSocketController {
                     } else {
                         // 오답 여부 해당 사용자에게 알려주기
                         template.convertAndSend("/ws/sub/game?uuid=" + chatMessage.
-                            getUuid(), new GameResponseDto("wrongSignal", chatMessage.getUserId()));
+                                getUuid(), new GameResponseDto("wrongSignal", chatMessage.getUserId()));
                     }
                     break;
                 case 4:
@@ -203,27 +203,29 @@ public class GameSocketController {
                         setRoundToEnd(game);
                     } else {
                         template.convertAndSend("/ws/sub/game?uuid=" + chatMessage.
-                            getUuid(), new GameResponseDto("similarity", game.playerSimilarityMap));
+                                getUuid(), new GameResponseDto("similarity", game.playerSimilarityMap));
                     }
                     break;
             }
         }
 
+        Chat chat = chatService.insertGameChat(chatMessage);
+        chatMessage.setCreatedDate(chat.getLocalTime());
+
         // 정답이든 아니든 일단 채팅은 전체 전파하기
         template.convertAndSend("/ws/sub/game?uuid=" + chatMessage.
-            getUuid(), new GameResponseDto("chat", chatMessage));
+                getUuid(), new GameResponseDto("chat", chatMessage));
     }
 
     // test dump list
     List<PlayerDto> list = Arrays.asList(
-
-        new PlayerDto(0L, 10, false),
-        new PlayerDto(1L, 30, false),
-        new PlayerDto(2L, 40, false),
-        new PlayerDto(3L, 0, false)
+            new PlayerDto(0L, 10, false),
+            new PlayerDto(1L, 30, false),
+            new PlayerDto(2L, 40, false),
+            new PlayerDto(3L, 0, false)
     );
 
-    // (게임 시작) 스케쥴러에 게임을 등록하고 준비 메세지 전송
+    // (게임 시작) 스케쥴러에 게임을 등록하고 준      비 메세지 전송
     @PostMapping("/api/v1/game/start")
     public ResponseEntity<?> setGameStart(@RequestBody GameReadyDto ready) {
         log.debug("game start! ");
@@ -232,7 +234,7 @@ public class GameSocketController {
             log.debug("do if ");
             log.debug("ready , {} , {}", ready.getGameId(), ready.getUuid());
             GameRoomStatus newGame = new GameRoomStatus(ready.getGameId(), ready.getUuid(), 0, 10,
-                0);
+                    0);
 
             // 방장일 경우에만 게임 보기가 생성됩니다
             if (gameQuizService.createAnswerGameQuiz(ready.getGameId())) {
@@ -269,7 +271,7 @@ public class GameSocketController {
         GameSystemContentDto temp = new GameSystemContentDto(game.round);
 
         template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
-            new GameResponseDto("game", GameSystemResponseDto.ready(temp)));
+                new GameResponseDto("game", GameSystemResponseDto.ready(temp)));
     }
 
     // (라운드 시작) 라운드 시작 메세지 전송
@@ -277,7 +279,7 @@ public class GameSocketController {
         GameSystemContentDto temp = new GameSystemContentDto(game.round);
 
         template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
-            new GameResponseDto("game", GameSystemResponseDto.start(temp)));
+                new GameResponseDto("game", GameSystemResponseDto.start(temp)));
     }
 
     // (라운드 종료) 라운드 종료 메세지 전송
@@ -286,7 +288,7 @@ public class GameSocketController {
         GameSystemContentDto temp = new GameSystemContentDto(game.round, list);
 
         template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
-            new GameResponseDto("game", GameSystemResponseDto.end(temp)));
+                new GameResponseDto("game", GameSystemResponseDto.end(temp)));
     }
 
     // (라운드 종료) 현재 게임 라운드 종료상태로 만들기
@@ -324,7 +326,7 @@ public class GameSocketController {
         GameSystemContentDto temp = new GameSystemContentDto(list);
 
         template.convertAndSend("/ws/sub/game?uuid=" + game.uuid,
-            new GameResponseDto("game", GameSystemResponseDto.result(temp)));
+                new GameResponseDto("game", GameSystemResponseDto.result(temp)));
     }
 
     // (게임 종료) 전체 게임 종료 이후 사용자 접수 업데이트

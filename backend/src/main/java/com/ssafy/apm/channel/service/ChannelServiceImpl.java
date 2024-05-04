@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -18,7 +19,6 @@ import java.util.UUID;
 public class ChannelServiceImpl implements ChannelService {
 
     private final ChannelRepository channelRepository;
-    private final UserChannelRepository userChannelRepository;
 
     @Transactional
     @Override
@@ -34,5 +34,19 @@ public class ChannelServiceImpl implements ChannelService {
         return channelEntityList.stream()
                 .map(ChannelGetResponseDto::new)
                 .toList();
+    }
+
+    @Override
+    public ChannelGetResponseDto getChannel(Long channelId) {
+        ChannelEntity channelEntity = channelRepository.findById(channelId)
+                .orElseThrow(() -> new NoSuchElementException("채널 정보가 존재하지 않습니다."));
+        return new ChannelGetResponseDto(channelEntity);
+    }
+
+    @Override
+    public ChannelGetResponseDto getChannelByCode(String code) {
+        ChannelEntity channelEntity = channelRepository.findByCode(code)
+                .orElseThrow(() -> new NoSuchElementException("채널 정보가 존재하지 않습니다."));
+        return new ChannelGetResponseDto(channelEntity);
     }
 }

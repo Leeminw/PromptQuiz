@@ -4,22 +4,7 @@ import { LobbyApi } from '../../hooks/axios-lobby';
 
 import instance from '../../hooks/axios-instance';
 import { useNavigate } from 'react-router-dom';
-// 방생성 BE API
-// "{
-//     ""userId"" : 1,
-//     ""channelId"" : 1,
-//     ""type"" : 1,
-//      ""style"" : 0,
-//     ""title"" : ""들어와"",
-//     ""password"" : null,
-//     ""status"" : true,
-//     ""isTeam"" : false,
-//     ""curRound"" : 0,
-//     ""maxRound"" : 0,
-//     ""curPlayers"" : 1,
-//     ""maxPlayers"" : 8
-// }"
-
+import useUserStore from '../../stores/userStore';
 interface Props {
   channelId: number;
 }
@@ -31,7 +16,8 @@ const CreateRoom = ({ channelId }: Props) => {
   const [maxPlayers, setMaxPlayers] = useState(1);
   const [maxRound, setMaxRound] = useState(1);
   /**로그인 상태 정보를 가져오기 전에 임시로 userId 값을 부여 */
-  const [userId, setUserId] = useState(3);
+  // const [userId, setUserId] = useState(3);
+  const { user } = useUserStore();
   // const [channelId, setChannelId] = useState(1);
   const [status, setStatus] = useState(false);
   const curPlayers = 1;
@@ -86,7 +72,7 @@ const CreateRoom = ({ channelId }: Props) => {
     }
 
     const Room: Room = {
-      userId,
+      userId: user.userId,
       channelId,
       type,
       style,
@@ -100,7 +86,7 @@ const CreateRoom = ({ channelId }: Props) => {
       maxPlayers,
     };
     console.log('방 생성 정보 받음');
-    console.log('사용자id:' + userId);
+    console.log('사용자id:' + user.userId);
     console.log('채널id:' + channelId);
     console.log('방유형:' + type);
     console.log('그림체:' + style);
@@ -117,8 +103,9 @@ const CreateRoom = ({ channelId }: Props) => {
     console.log(Room);
 
     const { data } = await LobbyApi.createRoom(Room);
+
     setTimeout(() => {
-      navigate('/game');
+      navigate(`/game/${data.id}`);
     }, 1000);
   };
   return (
