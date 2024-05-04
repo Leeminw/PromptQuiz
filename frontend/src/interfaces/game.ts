@@ -13,6 +13,25 @@ interface Game {
     curPlayers: number,
     maxPlayers: number
 }
+interface GameUser {
+    userId: bigint,
+    userName: string,
+    nickName: string,
+    picture: string,
+    statusMessage: string|null,
+    totalScore: number,
+    teamScore: number,
+    soloScore: number,
+    created_date: string,
+    updated_date: string,
+    gameUserId: bigint,
+    gameId: bigint,
+    isHost: boolean,
+    isReady: boolean,
+    score: number,
+    team: string,
+    ranking: number
+}
 interface GameRoomSettingProps {
     teammode: boolean;
     gamemode: string;
@@ -32,6 +51,16 @@ interface GameEnter{
     uuid: string,
     nickname:string
 }
+interface GameLeave {
+    userId:bigint,
+    uuid : string,
+    nickname:string
+}
+
+interface RecieveData {
+    tag: string,
+    data : GameChatRecieve|GameTimer|GameReady|GameLeave|GameStatus|bigint
+}
 
 interface GameChatRecieve {
     userId: bigint|null,
@@ -41,19 +70,30 @@ interface GameChatRecieve {
     round: number|null,
     content: string|null,
     createdDate: string|null,
-    time : number|null,
-}
-interface RecieveData {
-    tag: string,
-    data : GameChatRecieve
 }
 
+interface GameTimer {
+    time : number,
+    round : number,
+    state : string,
+}
 interface GameReady{
     gameId: bigint,
     uuid : string
 }
-
-interface GameTime {
-    time : number,
-    round : number
+interface GameStatus {
+    type : string,
+    content: RoundInfo
 }
+
+interface RoundInfo {
+    round : number,
+    roundList : RoundUser[]|null
+}
+
+interface RoundUser {
+    userId : bigint,
+    score : number,
+    correct : boolean
+}
+
