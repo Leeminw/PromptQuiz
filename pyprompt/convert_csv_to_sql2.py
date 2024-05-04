@@ -6,7 +6,7 @@ BATCH_SIZE = 30000
 SAVE_PATH = 'datasets'
 CSV_FILENAME = 'sentences2.csv'
 SQL_FILENAME = 'sentences2.sql'
-DATABASE_TABLE_NAME = 'prompt'
+DATABASE_TABLE_NAME = 'quiz'
 
 
 def convert_csv_to_sql():
