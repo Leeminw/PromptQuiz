@@ -114,7 +114,7 @@ def generate_sentence():
 def save_as_csv(sentences):
     # CSV 파일로 저장
     os.makedirs('datasets', exist_ok=True)
-    with open('datasets/sentences2.csv', 'w', newline='', encoding='cp949') as file:
+    with open('datasets/sentences1.csv', 'w', newline='', encoding='cp949') as file:
         writer = csv.writer(file)
         writer.writerow([
             "eng_sentence", "eng_subject", "eng_verb", "eng_object", "eng_adjective", "eng_adverb",

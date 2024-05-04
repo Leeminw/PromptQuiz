@@ -2,8 +2,8 @@ import os
 import pandas as pd
 
 SAVE_PATH = 'datasets'
-CSV_FILENAME = 'sentences2.csv'
-SQL_FILENAME = 'sentences2.sql'
+CSV_FILENAME = 'sentences1.csv'
+SQL_FILENAME = 'sentences1.sql'
 DATABASE_TABLE_NAME = 'prompt'
 
 
