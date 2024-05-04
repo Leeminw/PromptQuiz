@@ -192,7 +192,7 @@ def generate_sentence():
                 for eng_obj_adjective, kor_obj_adjective in zip(eng_obj_adjectives, kor_obj_adjectives):    # 5개 목적어 형용사
                     for style in ('anime', 'cartoon', 'realistic'):     # 3개 스타일
                         indefinite_article = 'An' if eng_sub_adjective[0] in ['a', 'e', 'i', 'o', 'u'] else 'A'
-                        eng_sentence = f'{indefinite_article} {eng_sub_adjective} is {eng_subject} {eng_verb} {eng_obj_adjective} {eng_object}.'
+                        eng_sentence = f'{indefinite_article} {eng_sub_adjective} {eng_subject} is {eng_verb} {eng_obj_adjective} {eng_object}.'
                         kor_sentence = f'{kor_sub_adjective} {kor_subject}이(가) {kor_obj_adjective} {kor_object}을(를) {kor_verb}.'
                         sentences.append([
                             eng_sentence, eng_subject, eng_verb, eng_object, eng_sub_adjective, eng_obj_adjective,
@@ -224,4 +224,4 @@ def save_as_csv(sentences):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     sentences = generate_sentence()
-    # save_as_csv(sentences)
+    save_as_csv(sentences)
