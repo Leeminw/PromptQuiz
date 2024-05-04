@@ -1,15 +1,12 @@
 package com.ssafy.apm.quiz.service;
 
-import com.ssafy.apm.prompt.domain.Prompt;
-import com.ssafy.apm.prompt.dto.PromptResponseDto;
-import com.ssafy.apm.prompt.exception.PromptNotFoundException;
 import com.ssafy.apm.quiz.dto.request.QuizRequestDto;
 import com.ssafy.apm.quiz.exception.QuizNotFoundException;
 import com.ssafy.apm.socket.dto.request.GameChatDto;
 import com.ssafy.apm.socket.dto.response.GameAnswerCheck;
 import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.quiz.repository.QuizRepository;
-import com.ssafy.apm.quiz.dto.response.QuizDetailResponseDto;
+import com.ssafy.apm.quiz.dto.response.QuizResponseDto;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
@@ -57,76 +54,80 @@ public class QuizServiceImpl implements QuizService {
         return response;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
-    public QuizDetailResponseDto createQuiz(QuizRequestDto requestDto) {
+    public QuizResponseDto createQuiz(QuizRequestDto requestDto) {
         Quiz quiz = quizRepository.save(requestDto.toEntity());
-        return new QuizDetailResponseDto(quiz);
+        return new QuizResponseDto(quiz);
     }
 
     @Override
-    public QuizDetailResponseDto updateQuiz(QuizRequestDto requestDto) {
+    public QuizResponseDto updateQuiz(QuizRequestDto requestDto) {
         Quiz quiz = quizRepository.findById(requestDto.getId()).orElseThrow(
                 () -> new QuizNotFoundException(requestDto.getId()));
-        return new QuizDetailResponseDto(quiz.update(requestDto));
+        return new QuizResponseDto(quiz.update(requestDto));
     }
 
     @Override
-    public QuizDetailResponseDto deleteQuiz(Long id) {
+    public QuizResponseDto deleteQuiz(Long id) {
         Quiz quiz = quizRepository.findById(id).orElseThrow(
                 () -> new QuizNotFoundException(id));
         quizRepository.delete(quiz);
-        return new QuizDetailResponseDto(quiz);
+        return new QuizResponseDto(quiz);
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
-    public QuizDetailResponseDto findQuizById(Long id) {
+    public QuizResponseDto findQuizById(Long id) {
         Quiz quiz = quizRepository.findById(id).orElseThrow(
                 () -> new QuizNotFoundException(id));
-        return new QuizDetailResponseDto(quiz);
+        return new QuizResponseDto(quiz);
     }
 
     @Override
-    public List<QuizDetailResponseDto> findAllQuizs() {
+    public List<QuizResponseDto> findAllQuizzes() {
         List<Quiz> quizs = quizRepository.findAll();
-        return quizs.stream().map(QuizDetailResponseDto::new).toList();
+        return quizs.stream().map(QuizResponseDto::new).toList();
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
-    public List<QuizDetailResponseDto> filterQuizByStyle(String style) {
+    public List<QuizResponseDto> filterQuizByStyle(String style) {
         List<Quiz> quizs = quizRepository.findAllByStyle(style).orElseThrow(
                 () -> new QuizNotFoundException(style));
-        return quizs.stream().map(QuizDetailResponseDto::new).toList();
+        return quizs.stream().map(QuizResponseDto::new).toList();
     }
 
     @Override
-    public List<QuizDetailResponseDto> filterQuizsByGroupCode(String groupCode) {
+    public List<QuizResponseDto> filterQuizzesByGroupCode(String groupCode) {
         List<Quiz> quizs = quizRepository.findAllByGroupCode(groupCode).orElseThrow(
                 () -> new QuizNotFoundException(groupCode));
-        return quizs.stream().map(QuizDetailResponseDto::new).toList();
+        return quizs.stream().map(QuizResponseDto::new).toList();
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
-    public QuizDetailResponseDto extractRandomQuiz() {
+    public QuizResponseDto extractRandomQuiz() {
         Quiz quiz = quizRepository.extractRandomQuiz().orElseThrow(
                 () -> new QuizNotFoundException("No entities exists!"));
-        return new QuizDetailResponseDto(quiz);
+        return new QuizResponseDto(quiz);
     }
 
     @Override
-    public List<QuizDetailResponseDto> extractRandomQuizs(Integer limit) {
-        List<Quiz> quizs = quizRepository.extractRandomQuizs(limit).orElseThrow(
+    public List<QuizResponseDto> extractRandomQuizzes(Integer limit) {
+        List<Quiz> quizs = quizRepository.extractRandomQuizzes(limit).orElseThrow(
                 () -> new QuizNotFoundException("No entities exists!"));
-        return quizs.stream().map(QuizDetailResponseDto::new).toList();
+        return quizs.stream().map(QuizResponseDto::new).toList();
     }
 
     @Override
-    public List<QuizDetailResponseDto> extractRandomQuizsByGroupCode(String groupCode, Integer limit) {
-        List<Quiz> quizs = quizRepository.extractRandomQuizsByGroupCode(groupCode, limit).orElseThrow(
+    public List<QuizResponseDto> extractRandomQuizzesByGroupCode(String groupCode, Integer limit) {
+        List<Quiz> quizs = quizRepository.extractRandomQuizzesByGroupCode(groupCode, limit).orElseThrow(
                 () -> new QuizNotFoundException("No entities exists!"));
-        return quizs.stream().map(QuizDetailResponseDto::new).toList();
+        return quizs.stream().map(QuizResponseDto::new).toList();
     }
 
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // (객관식 체크) 객관식 체크 메서드
     public Boolean multipleChoiceCheck(GameChatDto answer) {
         // 현재 라운드와 입력 라운드가 다르다면 false
