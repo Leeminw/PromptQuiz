@@ -33,36 +33,28 @@ public class MultipleChoiceServiceImpl implements MultipleChoiceService {
     @Override
     public List<QuizDetailResponseDto> getMultipleChoiceListByGameId(Long gameId) {
 
-        List<Quiz> multipleChoiceList = new ArrayList<>();
+        List<Quiz> response = new ArrayList<>();
 
         GameEntity game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
 
-        Integer curRound = game.getCurRound();
-
-        GameQuizEntity gameQuiz = gameQuizRepository.findByGameIdAndRound(gameId, curRound)
+        GameQuizEntity gameQuiz = gameQuizRepository.findByGameIdAndRound(gameId, game.getCurRound())
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 답안입니다."));
 
 //        여기서 gameQuiz의 타입을 확인해서 타
 
-        Quiz answer = quizRepository.findById(gameQuiz.getQuizId())
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 퀴즈입니다."));
-
-//        정답 넣고
-        multipleChoiceList.add(answer);
-
-        List<MultipleChoiceEntity> wrongList = multipleChoiceRepository.findAllByGameQuizId(gameQuiz.getId())
+        List<MultipleChoiceEntity> multipleChoiceList = multipleChoiceRepository.findAllByGameQuizId(gameQuiz.getId())
                 .orElseThrow(() -> new NoSuchElementException("보기 리스트들을 찾을 수 없습니다."));
 
-        for (MultipleChoiceEntity entity : wrongList) { // 보기에 해당하는 quiz를 찾아서 리스트에 add
+        for (MultipleChoiceEntity entity : multipleChoiceList) { // 보기에 해당하는 quiz를 찾아서 리스트에 add
             Quiz temp = quizRepository.findById(entity.getQuizId())
                     .orElseThrow(() -> new NoSuchElementException("존재하지 않는 퀴즈입니다."));
-            multipleChoiceList.add(temp);
+            response.add(temp);
         }
 
-        Collections.shuffle(multipleChoiceList);
+        Collections.shuffle(response);
 
-        return multipleChoiceList
+        return response
                 .stream()
                 .map(QuizDetailResponseDto::new)
                 .toList();
