@@ -19,25 +19,23 @@ public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;
 
     @Override
-    public Chat insertGameChat(GameChatDto request) {
+    public void insertGameChat(GameChatDto request) {
         try{
             Chat input = new Chat(Instant.now(), request.getUuid(), request.getNickname(), request.getContent());
-            return chatRepository.save(input);
+            chatRepository.save(input);
         }catch (Exception e){
             log.debug("InsertGameChat Error : {}", e.getMessage());
         }
-        return null;
     }
 
     @Override
-    public Chat insertChannelChat(ChannelChatDto request) {
+    public void insertChannelChat(ChannelChatDto request) {
         try{
             Chat input = new Chat(Instant.now(), request.getUuid(), request.getNickname(), request.getContent());
-            return chatRepository.save(input);
+            chatRepository.save(input);
         }catch (Exception e){
             log.debug("InsertChannelChat Error : {}", e.getMessage());
         }
-        return null;
     }
 
     public List<Chat> getChatListByTimeRange(Integer hour) {
