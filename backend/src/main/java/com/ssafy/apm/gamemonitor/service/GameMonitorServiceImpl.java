@@ -4,6 +4,7 @@ import com.ssafy.apm.socket.util.GameRoomStatus;
 import com.ssafy.apm.gamemonitor.domain.GameMonitor;
 import com.ssafy.apm.gamemonitor.repository.GameMonitorRepository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -19,12 +20,14 @@ public class GameMonitorServiceImpl implements GameMonitorService {
     private final GameMonitorRepository gameMonitorRepository;
 
     @Override
-    public void save(List<GameRoomStatus> list) {
+    public void saveRoomList(HashMap<Long, GameRoomStatus> gameEndMap, HashMap<Long, GameRoomStatus> gameReadyMap, HashMap<Long, GameRoomStatus> gameOngoingMap) {
         try{
             List<GameMonitor> gameMonitorList = new ArrayList<>();
 
             Instant currentTime = Instant.now();
-            list.forEach( item -> gameMonitorList.add(GameMonitor.fromRoomStatus(item,currentTime)));
+            gameEndMap.values().forEach( item -> gameMonitorList.add(GameMonitor.fromRoomStatus(item,currentTime)));
+            gameReadyMap.values().forEach( item -> gameMonitorList.add(GameMonitor.fromRoomStatus(item,currentTime)));
+            gameOngoingMap.values().forEach( item -> gameMonitorList.add(GameMonitor.fromRoomStatus(item,currentTime)));
 
             gameMonitorRepository.saves(gameMonitorList);
         }catch (Exception e){

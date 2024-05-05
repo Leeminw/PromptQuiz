@@ -4,6 +4,7 @@ import com.ssafy.apm.chat.domain.Chat;
 import com.ssafy.apm.chat.service.ChatService;
 
 import com.ssafy.apm.game.service.GameService;
+import com.ssafy.apm.gamemonitor.service.GameMonitorService;
 import com.ssafy.apm.quiz.service.QuizService;
 import com.ssafy.apm.socket.util.GameRoomStatus;
 import com.ssafy.apm.common.domain.ResponseData;
@@ -42,39 +43,38 @@ public class GameSocketController {
     private final GameService gameService;
     private final GameQuizService gameQuizService;
     private final GameUserService gameUserService;
+    private final GameMonitorService gameMonitorService;
     private final SimpMessagingTemplate template;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     private static final int REST_TIME = 3;
     // 라운드 끝나고 대기중인 리스트 (REST_TIME 초 대기)
-    private static final HashMap<Long, GameRoomStatus> gameEndList = new HashMap<>();
+    private static final HashMap<Long, GameRoomStatus> gameEndMap = new HashMap<>();
     // 라운드 끝나고 결과확인 리스트 (REST_TIME 초 대기)
-    private static final HashMap<Long, GameRoomStatus> gameReadyList = new HashMap<>();
+    private static final HashMap<Long, GameRoomStatus> gameReadyMap = new HashMap<>();
     // 현재 게임 진행중인 리스트 (max_time 초 대기)
-    private static final HashMap<Long, GameRoomStatus> gameOngoingList = new HashMap<>();
+    private static final HashMap<Long, GameRoomStatus> gameOngoingMap = new HashMap<>();
 
     // 현재 진행중인 게임방 목록 저장
-    @Scheduled(fixedRate = 1000) // 1초마다 실행
+    @Scheduled(fixedRate = 360000) // 1시간마다 실행
     private void saveCurrentGameList(){
-
+        gameMonitorService.saveRoomList(gameEndMap, gameReadyMap, gameOngoingMap);
     }
-
-
 
     // 현재 진행중인 게임 관리 스케줄러
     @Scheduled(fixedRate = 1000) // 1초마다 실행
     private void roundOngoingScheduler() {
-        List<GameRoomStatus> list = new ArrayList<>(gameOngoingList.values());
+        List<GameRoomStatus> list = new ArrayList<>(gameOngoingMap.values());
         for (GameRoomStatus game : list) {
             // 만약 list에 없다면 지워진 아이디 이므로 넘어가기
-            if (!gameOngoingList.containsKey(game.gameId) || game.round < 0) {
+            if (!gameOngoingMap.containsKey(game.gameId) || game.round < 0) {
                 continue;
             }
 
             if (game.time == 0) {
                 // 게임 종료 (timeout)
-                gameEndList.put(game.gameId, game);
-                gameOngoingList.remove(game.gameId);
+                gameEndMap.put(game.gameId, game);
+                gameOngoingMap.remove(game.gameId);
                 game.time = REST_TIME;
 
                 // 게임 종료 메세지 전송
@@ -84,8 +84,8 @@ public class GameSocketController {
                 setRoundToEnd(game);
             } else if (game.time < 0) {
                 // 게임 종료 (정답자가 나왔을 경우)
-                gameEndList.put(game.gameId, game);
-                gameOngoingList.remove(game.gameId);
+                gameEndMap.put(game.gameId, game);
+                gameOngoingMap.remove(game.gameId);
                 game.time = REST_TIME;
 
             } else {
@@ -101,18 +101,18 @@ public class GameSocketController {
     @Scheduled(fixedRate = 1000) // 1초마다 실행
     private void roundReadyScheduler() {
         // 전체 준비에 들어온 게임의 대기 시간을 증가시키기
-        List<GameRoomStatus> list = new ArrayList<>(gameReadyList.values());
+        List<GameRoomStatus> list = new ArrayList<>(gameReadyMap.values());
         for (GameRoomStatus game : list) {
             // 만약 list에 없다면 지워진 아이디 이므로 넘어가기
-            if (!gameReadyList.containsKey(game.gameId) || game.round < 0) {
+            if (!gameReadyMap.containsKey(game.gameId) || game.round < 0) {
                 continue;
             }
 
             // 0초가 됐다면 이제 게임 시작하기
             if (game.time <= 0) {
                 game.time = game.maxTime;
-                gameOngoingList.put(game.gameId, game);
-                gameReadyList.remove(game.gameId);
+                gameOngoingMap.put(game.gameId, game);
+                gameReadyMap.remove(game.gameId);
 
                 // 시작 메세지 전송
                 sendRoundStartMessage(game);
@@ -129,18 +129,18 @@ public class GameSocketController {
     @Scheduled(fixedRate = 1000) // 1초마다 실행
     private void roundEndScheduler() {
         // 전체 준비에 들어온 게임의 대기 시간을 증가시키기
-        List<GameRoomStatus> list = new ArrayList<>(gameEndList.values());
+        List<GameRoomStatus> list = new ArrayList<>(gameEndMap.values());
         for (GameRoomStatus game : list) {
             // 만약 list에 없다면 지워진 아이디 이므로 넘어가기
-            if (!gameEndList.containsKey(game.gameId) || game.round < 0) {
+            if (!gameEndMap.containsKey(game.gameId) || game.round < 0) {
                 continue;
             }
 
             // 3초가 됐다면 이제 준비로 보내기 시작하기
             if (game.time <= 0) {
                 game.time = REST_TIME;
-                gameReadyList.put(game.gameId, game);
-                gameEndList.remove(game.gameId);
+                gameReadyMap.put(game.gameId, game);
+                gameEndMap.remove(game.gameId);
 
                 // 준비 메세지 전송
                 sendRoundReadyMessage(game);
@@ -176,7 +176,7 @@ public class GameSocketController {
     // (플레이어 입력) 플레이어는 채팅 or 정답을 입력한다
     @MessageMapping("/game/chat/send")
     public void sendGameChat(@Payload GameChatDto chatMessage) {
-        GameRoomStatus game = gameOngoingList.get(chatMessage.getGameId());
+        GameRoomStatus game = gameOngoingMap.get(chatMessage.getGameId());
 
         // 입력이 들어왔는데 만약 현재 라운드와 전혀 다른 입력이 들어왔을 때는 채팅만 전파하기
         if (game != null && chatMessage.getRound().equals(game.round)) {
@@ -238,7 +238,7 @@ public class GameSocketController {
     public ResponseEntity<?> setGameStart(@RequestBody GameReadyDto ready) {
         log.debug("game start! ");
         // 게임방에 등록되어 있지 않다면 등록시키기
-        if (!gameReadyList.containsKey(ready.getGameId())) {
+        if (!gameReadyMap.containsKey(ready.getGameId())) {
             log.debug("do if ");
             log.debug("ready , {} , {}", ready.getGameId(), ready.getUuid());
             GameRoomStatus newGame = new GameRoomStatus(ready.getGameId(), ready.getUuid(), 0, 10,
@@ -267,7 +267,7 @@ public class GameSocketController {
                 sendRoundReadyMessage(newGame);
 
                 // 스케쥴러 시작
-                gameReadyList.put(ready.getGameId(), newGame);
+                gameReadyMap.put(ready.getGameId(), newGame);
             }
         }
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("start game"));
@@ -343,10 +343,10 @@ public class GameSocketController {
         gameUserService.updateUserScore(game.gameId);
 
         // 일단 게임 스케쥴러 종료
-        gameOngoingList.remove(game.gameId);
+        gameOngoingMap.remove(game.gameId);
 
         // 혹시 모르니 EndList와 ReadyList에서도 삭제
-        gameEndList.remove(game.gameId);
-        gameReadyList.remove(game.gameId);
+        gameEndMap.remove(game.gameId);
+        gameReadyMap.remove(game.gameId);
     }
 }
