@@ -12,6 +12,7 @@ import com.ssafy.apm.user.dto.UserScoreUpdateRequestDto;
 import com.ssafy.apm.user.repository.UserRepository;
 import com.ssafy.apm.user.service.UserService;
 import com.ssafy.apm.userchannel.domain.UserChannelEntity;
+import com.ssafy.apm.userchannel.repository.UserChannelRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +27,9 @@ import java.util.NoSuchElementException;
 @Transactional(readOnly = true)
 public class GameUserServiceImpl implements GameUserService {
 
-    private final GameRepository gameRepository;
+    private final UserChannelRepository userChannelRepository;
     private final GameUserRepository gameUserRepository;
+    private final GameRepository gameRepository;
     private final UserRepository userRepository;
     private final UserService userService;
 
@@ -88,6 +90,9 @@ public class GameUserServiceImpl implements GameUserService {
 
         GameEntity gameEntity = gameRepository.findById(gameId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
+        if(!gameEntity.getStatus()) { // 접속 불가능한 방이면
+            throw new RuntimeException("접속 불가능한 방입니다.");
+        }
 //        방에 접속 중인 인원 하나 늘려줌
         gameEntity.increaseCurPlayers();
 
@@ -95,6 +100,50 @@ public class GameUserServiceImpl implements GameUserService {
         entity = gameUserRepository.save(entity);
 
         return new GameUserGetResponseDto(entity);
+    }
+
+    @Override
+    @Transactional
+    public GameUserGetResponseDto postFastEnterGame() {
+//        Todo: 프론트에 던져줄 CustomException 만들기
+//        로그인 한놈 유저 정보 불러오기
+        User user = userService.loadUser();
+        Long userId = user.getId();
+
+        UserChannelEntity userChannel = userChannelRepository.findByUserId(userId)
+                .orElseThrow(() -> new NoSuchElementException("해당 유저는 채널에 접속중이지 않습니다."));
+
+        List<GameEntity> gameEntityList = gameRepository.findAllByChannelId(userChannel.getChannelId())
+                .orElseThrow(null);// 채널에 생성된 방이 없다면
+
+        if(gameEntityList == null){// 해당 채널에 방이 없을때는 방을 만들어야함
+//            방 만드는 화면을 프론트에서 띄워야해
+        }
+
+        for (GameEntity entity: gameEntityList) {
+            if (entity.getStatus() && entity.getCurPlayers() < entity.getMaxPlayers()) { // 아직 입장할 수 있고 curPlayers가 maxPlayers보다 작을 때
+                //        일반유저
+                GameUserEntity gameUser = GameUserEntity.builder()
+                        .gameId(entity.getId())
+                        .userId(userId)
+                        .isHost(false)
+                        .isReady(false)
+                        .score(0)
+                        .team("NOTHING")
+                        .build();
+
+                //        방에 접속 중인 인원 하나 늘려줌
+                entity.increaseCurPlayers();
+
+                gameRepository.save(entity);
+                gameUser = gameUserRepository.save(gameUser);
+
+                return new GameUserGetResponseDto(gameUser);
+            }
+        }
+//        입장 가능한 방이 없으므로 방을 만들어야 한다고 프론트에 전달
+
+        return null;
     }
 
     @Override

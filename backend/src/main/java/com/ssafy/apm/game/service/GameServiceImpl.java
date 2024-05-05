@@ -52,7 +52,8 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public List<GameGetResponseDto> getGameList(Long channelId) {
-        List<GameEntity> entityList = gameRepository.findAllByChannelId(channelId);
+        List<GameEntity> entityList = gameRepository.findAllByChannelId(channelId)
+                .orElseThrow(() -> new NoSuchElementException("채널에 게임방이 존재하지 않습니다."));// 예외가 아니라 빈 리스트라도 던져야하나
 
         return entityList.stream()
                 .map(GameGetResponseDto::new)
