@@ -53,6 +53,14 @@ public class GameSocketController {
     // 현재 게임 진행중인 리스트 (max_time 초 대기)
     private static final HashMap<Long, GameRoomStatus> gameOngoingList = new HashMap<>();
 
+    // 현재 진행중인 게임방 목록 저장
+    @Scheduled(fixedRate = 1000) // 1초마다 실행
+    private void saveCurrentGameList(){
+
+    }
+
+
+
     // 현재 진행중인 게임 관리 스케줄러
     @Scheduled(fixedRate = 1000) // 1초마다 실행
     private void roundOngoingScheduler() {

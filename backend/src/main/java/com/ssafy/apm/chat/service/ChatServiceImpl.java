@@ -8,9 +8,11 @@ import com.ssafy.apm.channel.dto.request.ChannelChatDto;
 import java.util.List;
 import java.time.Instant;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {
@@ -18,16 +20,24 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public Chat insertGameChat(GameChatDto request) {
-        Chat input = new Chat(Instant.now(), request.getUuid(), request.getNickname(), request.getContent());
-        chatRepository.save(input);
-        return input;
+        try{
+            Chat input = new Chat(Instant.now(), request.getUuid(), request.getNickname(), request.getContent());
+            return chatRepository.save(input);
+        }catch (Exception e){
+            log.debug("InsertGameChat Error : {}", e.getMessage());
+        }
+        return null;
     }
 
     @Override
     public Chat insertChannelChat(ChannelChatDto request) {
-        Chat input = new Chat(Instant.now(), request.getUuid(), request.getNickname(), request.getContent());
-        chatRepository.save(input);
-        return input;
+        try{
+            Chat input = new Chat(Instant.now(), request.getUuid(), request.getNickname(), request.getContent());
+            return chatRepository.save(input);
+        }catch (Exception e){
+            log.debug("InsertChannelChat Error : {}", e.getMessage());
+        }
+        return null;
     }
 
     public List<Chat> getChatListByTimeRange(Integer hour) {

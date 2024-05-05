@@ -1,7 +1,7 @@
 package com.ssafy.apm.chat.repository;
 
 import com.ssafy.apm.chat.domain.Chat;
-import com.ssafy.apm.chat.config.InfluxDBConfig;
+import com.ssafy.apm.common.config.InfluxDBConfig;
 import com.ssafy.apm.chat.exception.ChatNotFoundException;
 import com.ssafy.apm.chat.exception.ChatValidationException;
 
