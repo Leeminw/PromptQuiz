@@ -1,8 +1,5 @@
 package com.ssafy.apm.quiz.service;
 
-import com.ssafy.apm.prompt.domain.Prompt;
-import com.ssafy.apm.prompt.dto.PromptResponseDto;
-import com.ssafy.apm.prompt.exception.PromptNotFoundException;
 import com.ssafy.apm.quiz.dto.request.QuizRequestDto;
 import com.ssafy.apm.quiz.exception.QuizNotFoundException;
 import com.ssafy.apm.socket.dto.request.GameChatDto;
@@ -114,14 +111,14 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public List<QuizDetailResponseDto> extractRandomQuizs(Integer limit) {
-        List<Quiz> quizs = quizRepository.extractRandomQuizs(limit).orElseThrow(
+        List<Quiz> quizs = quizRepository.extractRandomQuizzes(limit).orElseThrow(
                 () -> new QuizNotFoundException("No entities exists!"));
         return quizs.stream().map(QuizDetailResponseDto::new).toList();
     }
 
     @Override
     public List<QuizDetailResponseDto> extractRandomQuizsByGroupCode(String groupCode, Integer limit) {
-        List<Quiz> quizs = quizRepository.extractRandomQuizsByGroupCode(groupCode, limit).orElseThrow(
+        List<Quiz> quizs = quizRepository.extractRandomQuizzesByGroupCode(groupCode, limit).orElseThrow(
                 () -> new QuizNotFoundException("No entities exists!"));
         return quizs.stream().map(QuizDetailResponseDto::new).toList();
     }

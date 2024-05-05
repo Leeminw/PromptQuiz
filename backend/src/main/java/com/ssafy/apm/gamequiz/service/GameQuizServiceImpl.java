@@ -71,10 +71,10 @@ public class GameQuizServiceImpl implements GameQuizService {
         List<Quiz> quizList;
 
         if (gameStyle.equals("random")) {
-            quizList = quizRepository.extractRandomQuizs(gameEntity.getRounds())
+            quizList = quizRepository.extractRandomQuizzes(gameEntity.getRounds())
                     .orElseThrow(() -> new NoSuchElementException("랜덤 스타일의 정답을 추출하는데 실패했습니다."));
         } else {
-            quizList = quizRepository.extractRandomQuizsByStyle(gameStyle, gameEntity.getRounds())
+            quizList = quizRepository.extractRandomQuizzesByStyle(gameStyle, gameEntity.getRounds())
                     .orElseThrow(() -> new NoSuchElementException(gameStyle + "타입의 정답을 추출하는데 실패했습니다."));
         }
 
@@ -125,60 +125,27 @@ public class GameQuizServiceImpl implements GameQuizService {
         }
 
         for (GameQuizEntity entity : gameQuizEntityList) {
-//            Todo: 보기를 랜덤하게 뽑을 때 스타일이 같은 놈들의 퀴즈를 넣어줘야해
-//            Todo: Refactoring 해야해
-//            객관식일 때 그룹 코드 같은 놈을 넣어
+//            객관식일 때
             if(entity.getType() == 1) {
-                Quiz quiz = quizRepository.findById(entity.getQuizId())
+                Quiz quiz = quizRepository.findById(entity.getQuizId())// 정답 quiz찾아
                         .orElseThrow(() -> new NoSuchElementException("존재하지 않는 퀴즈입니다."));
-                List<Quiz> quizListByGroupCode = quizRepository.extractRandomQuizsByGroupCode(quiz.getGroupCode(), 3)
-                        .orElseThrow(() -> new NoSuchElementException("그룹 코드로 퀴즈를 추출하는데 실패했습니다."));
+                List<Quiz> quizListByGroupCode = quizRepository.extractRandomQuizzesByStyleAndGroupCode(quiz.getStyle(), quiz.getGroupCode(), 3)
+                        .orElseThrow(() -> new NoSuchElementException("그룹 코드로 퀴즈를 추출하는데 실패했습니다."));// 오답 quiz 리스트 찾아
 
-                MultipleChoiceEntity answer = MultipleChoiceEntity.builder()
-                        .gameQuizId(entity.getId())
-                        .quizId(quiz.getId())
-                        .build();
+//                정답, 오답 리스트를 받아 문제 보기 리스트를 생성하는 함수
+                List<MultipleChoiceEntity> multipleChoiceEntityList = createMultipleChoiceList(entity.getId(), quiz.getId(), quizListByGroupCode);
 
-                List<MultipleChoiceEntity> multipleChoiceEntityList = new ArrayList<>();
-
-                multipleChoiceEntityList.add(answer);
-
-                for (Quiz q : quizListByGroupCode) {
-                    MultipleChoiceEntity multipleChoice = MultipleChoiceEntity.builder()
-                            .gameQuizId(entity.getId())
-                            .quizId(q.getId())
-                            .build();
-
-                    multipleChoiceEntityList.add(multipleChoice);
-                }
-
-                multipleChoiceRepository.saveAll(multipleChoiceEntityList);
+                multipleChoiceRepository.saveAll(multipleChoiceEntityList);// 보기들 저장
             }
 //            빈칸 객관식일 때
             else if(entity.getType() == 2) {
 
                 Quiz quiz = quizRepository.findById(entity.getQuizId())
                         .orElseThrow(() -> new NoSuchElementException("존재하지 않는 퀴즈입니다."));
-                List<Quiz> randomQuizList = quizRepository.extractRandomQuizs(3) // 그냥 아무거나 3개 추출
+                List<Quiz> randomQuizList = quizRepository.extractRandomQuizzesByStyle(quiz.getStyle(), 3) // 같은 스타일의 quiz 찾아
                         .orElseThrow(() -> new NoSuchElementException("그룹 코드로 퀴즈를 추출하는데 실패했습니다."));
 
-                MultipleChoiceEntity answer = MultipleChoiceEntity.builder()
-                        .gameQuizId(entity.getId())
-                        .quizId(quiz.getId())
-                        .build();
-
-                List<MultipleChoiceEntity> multipleChoiceEntityList = new ArrayList<>();
-
-                multipleChoiceEntityList.add(answer);
-
-                for (Quiz q : randomQuizList) {
-                    MultipleChoiceEntity multipleChoice = MultipleChoiceEntity.builder()
-                            .gameQuizId(entity.getId())
-                            .quizId(q.getId())
-                            .build();
-
-                    multipleChoiceEntityList.add(multipleChoice);
-                }
+                List<MultipleChoiceEntity> multipleChoiceEntityList = createMultipleChoiceList(entity.getId(), quiz.getId(), randomQuizList);
 
                 multipleChoiceRepository.saveAll(multipleChoiceEntityList);
             }
@@ -187,17 +154,42 @@ public class GameQuizServiceImpl implements GameQuizService {
                 Quiz quiz = quizRepository.findById(entity.getQuizId())
                         .orElseThrow(() -> new NoSuchElementException("존재하지 않는 퀴즈입니다."));
 
-                MultipleChoiceEntity multipleChoice = MultipleChoiceEntity.builder()
+                MultipleChoiceEntity answer = MultipleChoiceEntity.builder()
                         .gameQuizId(entity.getId())
                         .quizId(quiz.getId())
                         .build();
 
-                multipleChoiceRepository.save(multipleChoice);
+                multipleChoiceRepository.save(answer);
             }
         }
 
         gameQuizRepository.saveAll(gameQuizEntityList);
         return true;
+    }
+
+//    문제 보기를 만드는 함수
+    private List<MultipleChoiceEntity> createMultipleChoiceList(Long gameQuizId,
+                                                                Long answerQuizId,
+                                                                List<Quiz> randomQuizList){
+        MultipleChoiceEntity answer = MultipleChoiceEntity.builder()
+                .gameQuizId(gameQuizId)
+                .quizId(answerQuizId)
+                .build();
+
+        List<MultipleChoiceEntity> multipleChoiceEntityList = new ArrayList<>();
+
+        multipleChoiceEntityList.add(answer);
+
+        for (Quiz q : randomQuizList) {
+            MultipleChoiceEntity multipleChoice = MultipleChoiceEntity.builder()
+                    .gameQuizId(gameQuizId)
+                    .quizId(q.getId())
+                    .build();
+
+            multipleChoiceEntityList.add(multipleChoice);
+        }
+
+        return multipleChoiceEntityList;
     }
 
     private void createGameQuizEntityList(Long gameId, List<Quiz> quizList, List<GameQuizEntity> gameQuizEntityList, Integer currentRound, Random random, int[] numbers) {
