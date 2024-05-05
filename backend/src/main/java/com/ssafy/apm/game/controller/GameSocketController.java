@@ -1,10 +1,7 @@
 package com.ssafy.apm.game.controller;
 
-import com.ssafy.apm.chat.domain.Chat;
 import com.ssafy.apm.chat.service.ChatService;
-
 import com.ssafy.apm.game.service.GameService;
-import com.ssafy.apm.gamemonitor.service.GameMonitorService;
 import com.ssafy.apm.quiz.service.QuizService;
 import com.ssafy.apm.socket.util.GameRoomStatus;
 import com.ssafy.apm.common.domain.ResponseData;
@@ -15,6 +12,7 @@ import com.ssafy.apm.gamequiz.service.GameQuizService;
 import com.ssafy.apm.gameuser.service.GameUserService;
 import com.ssafy.apm.socket.dto.response.GameAnswerCheck;
 import com.ssafy.apm.socket.dto.response.GameResponseDto;
+import com.ssafy.apm.gamemonitor.service.GameMonitorService;
 import com.ssafy.apm.socket.dto.request.EnterUserMessageDto;
 import com.ssafy.apm.socket.dto.response.GameSystemContentDto;
 import com.ssafy.apm.socket.dto.response.GameTimerResponseDto;
@@ -25,6 +23,7 @@ import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -49,11 +48,11 @@ public class GameSocketController {
     ////////////////////////////////////////////////////////////////////////////////////////////////
     private static final int REST_TIME = 3;
     // 라운드 끝나고 대기중인 리스트 (REST_TIME 초 대기)
-    private static final HashMap<Long, GameRoomStatus> gameEndMap = new HashMap<>();
+    private static final ConcurrentHashMap<Long, GameRoomStatus> gameEndMap = new ConcurrentHashMap<>();
     // 라운드 끝나고 결과확인 리스트 (REST_TIME 초 대기)
-    private static final HashMap<Long, GameRoomStatus> gameReadyMap = new HashMap<>();
+    private static final ConcurrentHashMap<Long, GameRoomStatus> gameReadyMap = new ConcurrentHashMap<>();
     // 현재 게임 진행중인 리스트 (max_time 초 대기)
-    private static final HashMap<Long, GameRoomStatus> gameOngoingMap = new HashMap<>();
+    private static final ConcurrentHashMap<Long, GameRoomStatus> gameOngoingMap = new ConcurrentHashMap<>();
 
     // 현재 진행중인 게임방 목록 저장
     @Scheduled(fixedRate = 360000) // 1시간마다 실행
@@ -217,12 +216,11 @@ public class GameSocketController {
             }
         }
 
-        Chat chat = chatService.insertGameChat(chatMessage);
-        chatMessage.setCreatedDate(chat.getLocalTime());
+        GameChatDto chat = chatService.insertGameChat(chatMessage);
 
         // 정답이든 아니든 일단 채팅은 전체 전파하기
-        template.convertAndSend("/ws/sub/game?uuid=" + chatMessage.
-                getUuid(), new GameResponseDto("chat", chatMessage));
+        template.convertAndSend("/ws/sub/game?uuid=" + chat.
+                getUuid(), new GameResponseDto("chat", chat));
     }
 
     // test dump list

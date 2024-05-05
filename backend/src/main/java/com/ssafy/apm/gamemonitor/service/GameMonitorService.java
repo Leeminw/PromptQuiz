@@ -2,8 +2,8 @@ package com.ssafy.apm.gamemonitor.service;
 
 import com.ssafy.apm.socket.util.GameRoomStatus;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public interface GameMonitorService {
-    void saveRoomList(HashMap<Long, GameRoomStatus> gameEndMap, HashMap<Long, GameRoomStatus> gameReadyMap, HashMap<Long, GameRoomStatus> gameOngoingMap);
+    void saveRoomList(ConcurrentHashMap<Long, GameRoomStatus> gameEndMap, ConcurrentHashMap<Long, GameRoomStatus> gameReadyMap, ConcurrentHashMap<Long, GameRoomStatus> gameOngoingMap);
 }

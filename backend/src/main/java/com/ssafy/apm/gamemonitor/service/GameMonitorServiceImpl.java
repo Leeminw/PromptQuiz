@@ -4,12 +4,12 @@ import com.ssafy.apm.socket.util.GameRoomStatus;
 import com.ssafy.apm.gamemonitor.domain.GameMonitor;
 import com.ssafy.apm.gamemonitor.repository.GameMonitorRepository;
 
-import java.util.HashMap;
 import java.util.List;
 import java.time.Instant;
 import java.util.ArrayList;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
+import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -20,7 +20,7 @@ public class GameMonitorServiceImpl implements GameMonitorService {
     private final GameMonitorRepository gameMonitorRepository;
 
     @Override
-    public void saveRoomList(HashMap<Long, GameRoomStatus> gameEndMap, HashMap<Long, GameRoomStatus> gameReadyMap, HashMap<Long, GameRoomStatus> gameOngoingMap) {
+    public void saveRoomList(ConcurrentHashMap<Long, GameRoomStatus> gameEndMap, ConcurrentHashMap<Long, GameRoomStatus> gameReadyMap, ConcurrentHashMap<Long, GameRoomStatus> gameOngoingMap) {
         try{
             List<GameMonitor> gameMonitorList = new ArrayList<>();
 
