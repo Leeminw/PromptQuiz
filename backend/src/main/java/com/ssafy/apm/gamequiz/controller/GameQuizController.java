@@ -30,4 +30,10 @@ public class GameQuizController {
         Boolean response = gameQuizService.createAnswerGameQuiz(gameId);
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success(response));
     }
+
+    @DeleteMapping("/deleteQuiz/{gameId}")
+    public ResponseEntity<ResponseData<?>> deleteGameQuiz(@PathVariable Long gameId) {
+        Long response = gameQuizService.deleteGameQuiz(gameId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success(response));
+    }
 }

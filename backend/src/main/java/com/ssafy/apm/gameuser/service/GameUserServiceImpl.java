@@ -119,11 +119,9 @@ public class GameUserServiceImpl implements GameUserService {
                 .orElseThrow(() -> new UserChannelNotFoundException(userId));
 
         List<GameEntity> gameEntityList = gameRepository.findAllByChannelId(userChannel.getChannelId())
-                .orElseThrow(null);// 채널에 생성된 방이 없다면
+                .orElseThrow(() -> new GameNotFoundException(userChannel.getChannelId()));// 채널에 생성된 방이 없다면
 
-        if(gameEntityList == null){// 해당 채널에 방이 없을때는 방을 만들어야함
-//            방 만드는 화면을 프론트에서 띄워야해
-        }
+//        에러 코드를 프론트에서 받아 방을 만들 수 있게 처리해야함
 
         for (GameEntity entity: gameEntityList) {
             if (entity.getStatus() && entity.getCurPlayers() < entity.getMaxPlayers()) { // 아직 입장할 수 있고 curPlayers가 maxPlayers보다 작을 때

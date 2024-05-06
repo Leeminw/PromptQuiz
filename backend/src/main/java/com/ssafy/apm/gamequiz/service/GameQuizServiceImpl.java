@@ -11,6 +11,7 @@ import com.ssafy.apm.gameuser.domain.GameUserEntity;
 import com.ssafy.apm.gameuser.exception.GameUserNotFoundException;
 import com.ssafy.apm.gameuser.repository.GameUserRepository;
 import com.ssafy.apm.multiplechoice.domain.MultipleChoiceEntity;
+import com.ssafy.apm.multiplechoice.exception.MultipleChoiceNotFoundException;
 import com.ssafy.apm.multiplechoice.repository.MultipleChoiceRepository;
 import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.quiz.exception.QuizNotFoundException;
@@ -171,7 +172,25 @@ public class GameQuizServiceImpl implements GameQuizService {
         return true;
     }
 
-//    문제 보기를 만드는 함수
+    @Override
+    @Transactional
+    public Long deleteGameQuiz(Long gameId) {
+        List<GameQuizEntity> gameQuizEntityList = gameQuizRepository.findAllByGameId(gameId)
+                .orElseThrow(() -> new GameQuizNotFoundException(gameId));// 정답 리스트 받아서
+
+        for(GameQuizEntity gameQuiz: gameQuizEntityList) {// 각 정답에 해당하는 보기들 찾아서
+            List<MultipleChoiceEntity> multipleChoiceEntityList = multipleChoiceRepository
+                    .findAllByGameQuizId(gameQuiz.getId())
+                    .orElseThrow(() -> new MultipleChoiceNotFoundException(gameQuiz.getId()));
+            multipleChoiceRepository.deleteAll(multipleChoiceEntityList);// 보기 다 지움
+        }
+
+        gameQuizRepository.deleteAll(gameQuizEntityList);// 정답 리스트 다 지워
+
+        return gameId;
+    }
+
+    //    문제 보기를 만드는 함수
     private List<MultipleChoiceEntity> createMultipleChoiceList(Long gameQuizId,
                                                                 Long answerQuizId,
                                                                 List<Quiz> randomQuizList){
