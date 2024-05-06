@@ -3,6 +3,7 @@ package com.ssafy.apm.channel.service;
 import com.ssafy.apm.channel.domain.ChannelEntity;
 import com.ssafy.apm.channel.dto.request.ChannelCreateRequestDto;
 import com.ssafy.apm.channel.dto.response.ChannelGetResponseDto;
+import com.ssafy.apm.channel.exception.ChannelNotFoundException;
 import com.ssafy.apm.channel.repository.ChannelRepository;
 import com.ssafy.apm.userchannel.repository.UserChannelRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,14 +40,14 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public ChannelGetResponseDto getChannel(Long channelId) {
         ChannelEntity channelEntity = channelRepository.findById(channelId)
-                .orElseThrow(() -> new NoSuchElementException("채널 정보가 존재하지 않습니다."));
+                .orElseThrow(() -> new ChannelNotFoundException(channelId));
         return new ChannelGetResponseDto(channelEntity);
     }
 
     @Override
     public ChannelGetResponseDto getChannelByCode(String code) {
         ChannelEntity channelEntity = channelRepository.findByCode(code)
-                .orElseThrow(() -> new NoSuchElementException("채널 정보가 존재하지 않습니다."));
+                .orElseThrow(() -> new ChannelNotFoundException(code));
         return new ChannelGetResponseDto(channelEntity);
     }
 }

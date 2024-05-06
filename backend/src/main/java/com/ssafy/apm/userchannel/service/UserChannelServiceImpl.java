@@ -1,6 +1,7 @@
 package com.ssafy.apm.userchannel.service;
 
 import com.ssafy.apm.channel.domain.ChannelEntity;
+import com.ssafy.apm.channel.exception.ChannelNotFoundException;
 import com.ssafy.apm.channel.repository.ChannelRepository;
 import com.ssafy.apm.user.domain.User;
 import com.ssafy.apm.user.dto.UserDetailResponseDto;
@@ -8,6 +9,7 @@ import com.ssafy.apm.user.repository.UserRepository;
 import com.ssafy.apm.user.service.UserService;
 import com.ssafy.apm.userchannel.domain.UserChannelEntity;
 import com.ssafy.apm.userchannel.dto.response.UserChannelGetResponseDto;
+import com.ssafy.apm.userchannel.exception.UserChannelNotFoundException;
 import com.ssafy.apm.userchannel.repository.UserChannelRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -52,7 +54,7 @@ public class UserChannelServiceImpl implements UserChannelService {
                 .build();
 
         ChannelEntity channelEntity = channelRepository.findById(channelId)
-                .orElseThrow(() -> new NoSuchElementException("해당 채널을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ChannelNotFoundException(channelId));
         channelEntity.increaseCurPlayers();
 
         channelRepository.save(channelEntity);
@@ -67,11 +69,11 @@ public class UserChannelServiceImpl implements UserChannelService {
 
         User user = userService.loadUser();
         UserChannelEntity entity = userChannelRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new NoSuchElementException("현재 채널에 접속중이지 않습니다."));
+                .orElseThrow(() -> new UserChannelNotFoundException(user.getId()));
         Long response = entity.getId();
 
         ChannelEntity channel = channelRepository.findById(entity.getChannelId())
-                .orElseThrow(() -> new NoSuchElementException("해당 채널을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ChannelNotFoundException(entity.getChannelId()));
         channel.decreaseCurPlayers();
 
         channelRepository.save(channel);
@@ -84,11 +86,11 @@ public class UserChannelServiceImpl implements UserChannelService {
     public Long deleteExitUserChannelByChannelCodeAndUserId(Long userId, String channelCode) {
 
         ChannelEntity channelEntity = channelRepository.findByCode(channelCode)
-                .orElseThrow(() -> new NoSuchElementException("채널 코드에 해당하는 채널이 존재하지 않습니다."));
+                .orElseThrow(() -> new ChannelNotFoundException(channelCode));
         channelEntity.decreaseCurPlayers();
 
         UserChannelEntity entity = userChannelRepository.findByUserIdAndChannelId(userId, channelEntity.getId())
-                .orElseThrow(() -> new NoSuchElementException("유저의 Id와 채널 코드에 해당하는 채널 접속자 정보가 없습니다."));
+                .orElseThrow(() -> new UserChannelNotFoundException(userId));
         Long response = entity.getId();
 
         channelRepository.save(channelEntity);

@@ -1,17 +1,21 @@
 package com.ssafy.apm.gameuser.service;
 
 import com.ssafy.apm.game.domain.GameEntity;
+import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.game.repository.GameRepository;
 import com.ssafy.apm.gameuser.domain.GameUserEntity;
 import com.ssafy.apm.gameuser.dto.response.GameUserDetailResponseDto;
 import com.ssafy.apm.gameuser.dto.response.GameUserGetResponseDto;
+import com.ssafy.apm.gameuser.exception.GameUserNotFoundException;
 import com.ssafy.apm.gameuser.repository.GameUserRepository;
 import com.ssafy.apm.user.domain.User;
 import com.ssafy.apm.user.dto.UserDetailResponseDto;
 import com.ssafy.apm.user.dto.UserScoreUpdateRequestDto;
+import com.ssafy.apm.user.exceptions.UserNotFoundException;
 import com.ssafy.apm.user.repository.UserRepository;
 import com.ssafy.apm.user.service.UserService;
 import com.ssafy.apm.userchannel.domain.UserChannelEntity;
+import com.ssafy.apm.userchannel.exception.UserChannelNotFoundException;
 import com.ssafy.apm.userchannel.repository.UserChannelRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,7 +40,8 @@ public class GameUserServiceImpl implements GameUserService {
     @Override
     public List<GameUserDetailResponseDto> getGameUserList(Long gameId) {
 //        GameId로 게임방 안에 있는 게임유저 데이터들을 가져옴
-        List<GameUserEntity> gameUserEntityList = gameUserRepository.findAllByGameId(gameId);
+        List<GameUserEntity> gameUserEntityList = gameUserRepository.findAllByGameId(gameId)
+                .orElseThrow(() -> new GameUserNotFoundException(gameId));
 //        userId들 추출
         List<Long> userIds = gameUserEntityList.stream()
                 .map(GameUserEntity::getUserId)
@@ -65,7 +70,7 @@ public class GameUserServiceImpl implements GameUserService {
     public GameUserGetResponseDto getGameUser(Long gameUserId) {
 
         GameUserEntity entity = gameUserRepository.findById(gameUserId)
-                .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다."));
+                .orElseThrow(() -> new GameUserNotFoundException(gameUserId));
 
         return new GameUserGetResponseDto(entity);
     }
@@ -89,7 +94,7 @@ public class GameUserServiceImpl implements GameUserService {
                 .build();
 
         GameEntity gameEntity = gameRepository.findById(gameId)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
+                .orElseThrow(() -> new GameNotFoundException(gameId));
         if(!gameEntity.getStatus()) { // 접속 불가능한 방이면
             throw new RuntimeException("접속 불가능한 방입니다.");
         }
@@ -111,7 +116,7 @@ public class GameUserServiceImpl implements GameUserService {
         Long userId = user.getId();
 
         UserChannelEntity userChannel = userChannelRepository.findByUserId(userId)
-                .orElseThrow(() -> new NoSuchElementException("해당 유저는 채널에 접속중이지 않습니다."));
+                .orElseThrow(() -> new UserChannelNotFoundException(userId));
 
         List<GameEntity> gameEntityList = gameRepository.findAllByChannelId(userChannel.getChannelId())
                 .orElseThrow(null);// 채널에 생성된 방이 없다면
@@ -151,7 +156,7 @@ public class GameUserServiceImpl implements GameUserService {
     public GameUserGetResponseDto updateGameUserScore(Integer score) {
         User user = userService.loadUser();
         GameUserEntity gameUserEntity = gameUserRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다."));
+                .orElseThrow(() -> new GameUserNotFoundException(user.getId()));
 
 //        점수 업데이트
         gameUserEntity.updateScore(score);
@@ -166,7 +171,7 @@ public class GameUserServiceImpl implements GameUserService {
     public GameUserGetResponseDto updateGameUserIsReady(Boolean isReady) {
         User user = userService.loadUser();
         GameUserEntity gameUserEntity = gameUserRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
+                .orElseThrow(() -> new GameUserNotFoundException(user.getId()));
 
         gameUserEntity.updateIsReady(isReady);
 
@@ -179,7 +184,7 @@ public class GameUserServiceImpl implements GameUserService {
     public GameUserGetResponseDto updateGameUserTeam(String team) {
         User user = userService.loadUser();
         GameUserEntity gameUserEntity = gameUserRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
+                .orElseThrow(() -> new GameUserNotFoundException(user.getId()));
 
         gameUserEntity.updateTeam(team);
 
@@ -191,8 +196,9 @@ public class GameUserServiceImpl implements GameUserService {
     @Transactional
     public void updateUserScore(Long gameId) {
         GameEntity game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new NoSuchElementException("그런 게임방이 존재하지 않습니다"));
-        List<GameUserEntity> gameUserEntityList = gameUserRepository.findAllByGameId(gameId);
+                .orElseThrow(() -> new GameNotFoundException(gameId));
+        List<GameUserEntity> gameUserEntityList = gameUserRepository.findAllByGameId(gameId)
+                .orElseThrow(()-> new GameUserNotFoundException(gameId));
         List<User> userList = new ArrayList<>();
 
 //        Todo: Game-User의 Ranking을 여기서 구하고 점수를 넣는건지, 라운드마다 Ranking을 업데이트 하는지 상의하고 구현해야함.
@@ -256,7 +262,7 @@ public class GameUserServiceImpl implements GameUserService {
             for (int i = 0; i < winnerListSize; i++) {
                 GameUserEntity entity = GameUsers.get(i);
                 User user = userRepository.findById(entity.getUserId())
-                        .orElseThrow(() -> new NoSuchElementException("그런 유저는 없다."));
+                        .orElseThrow(() -> new UserNotFoundException(entity.getUserId()));
 
                 int earnUserScore = (int) Math.round(getWinnerMaxScore * Math.pow(0.8, i));
 
@@ -274,7 +280,7 @@ public class GameUserServiceImpl implements GameUserService {
             for (int i = winnerListSize; i < GameUsers.size(); i++) {
                 GameUserEntity entity = GameUsers.get(i);
                 User user = userRepository.findById(entity.getUserId())
-                        .orElseThrow(() -> new NoSuchElementException("그런 유저는 없다."));
+                        .orElseThrow(() -> new UserNotFoundException(entity.getUserId()));
 
                 int loseUserScore = -1 * (int) Math.round(getWinnerMaxScore * Math.pow(0.8, loserListSize - j++));
 
@@ -299,10 +305,10 @@ public class GameUserServiceImpl implements GameUserService {
         User user = userService.loadUser();
         Long userId = user.getId();
         GameUserEntity gameUserEntity = gameUserRepository.findByGameIdAndUserId(gameId, userId)
-                .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
+                .orElseThrow(() -> new GameUserNotFoundException(gameId));
 
         GameEntity gameEntity = gameRepository.findById(gameId)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
+                .orElseThrow(() -> new GameNotFoundException(gameId));
 
         Long gameUserId = gameUserEntity.getId();
 
@@ -312,7 +318,8 @@ public class GameUserServiceImpl implements GameUserService {
             gameEntity.decreaseCurPlayers();// 방 현재 인원 수를 줄임
             gameRepository.save(gameEntity);
             if (gameUserEntity.getIsHost()) {// 나가는 유저가 방장이라면
-                List<GameUserEntity> userList = gameUserRepository.findAllByGameId(gameEntity.getId());// 방 안에 있는 유저 목록 가져와서
+                List<GameUserEntity> userList = gameUserRepository.findAllByGameId(gameEntity.getId())
+                        .orElseThrow(() -> new GameUserNotFoundException(gameEntity.getId()));// 방 안에 있는 유저 목록 가져와서
                 for (GameUserEntity entity : userList) {
                     if (!entity.getIsHost()) {// 방장이 아닌 놈을 찾아서 방장 권한을 준다
                         entity.updateIsHost(true);
@@ -332,10 +339,10 @@ public class GameUserServiceImpl implements GameUserService {
     public Long deleteExitGameByUserId(Long userId, String gameCode) {
 
         GameEntity gameEntity = gameRepository.findByCode(gameCode)
-                .orElseThrow(() -> new NoSuchElementException("해당 code를 가진 게임을 찾을 수 없습니다."));
+                .orElseThrow(() -> new GameNotFoundException("해당 code를 가진 게임을 찾을 수 없습니다."));
 
         GameUserEntity gameUserEntity = gameUserRepository.findByGameIdAndUserId(gameEntity.getId(), userId)
-                .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
+                .orElseThrow(() -> new GameUserNotFoundException("게임 유저 테이블을 찾지 못했습니다"));
         Long gameUserId = gameUserEntity.getId();
 
         if (gameEntity.getCurPlayers() == 1) {// 방에 방장 혼자였다면
@@ -344,7 +351,8 @@ public class GameUserServiceImpl implements GameUserService {
             gameEntity.decreaseCurPlayers();// 방 현재 인원 수를 줄임
             gameRepository.save(gameEntity);
             if (gameUserEntity.getIsHost()) {// 나가는 유저가 방장이라면
-                List<GameUserEntity> userList = gameUserRepository.findAllByGameId(gameEntity.getId());// 방 안에 있는 유저 목록 가져와서
+                List<GameUserEntity> userList = gameUserRepository.findAllByGameId(gameEntity.getId())
+                        .orElseThrow(() -> new GameUserNotFoundException(gameEntity.getId()));// 방 안에 있는 유저 목록 가져와서
                 for (GameUserEntity entity : userList) {
                     if (!entity.getIsHost()) {// 방장이 아닌 놈을 찾아서 방장 권한을 준다
                         entity.updateIsHost(true);
@@ -366,7 +374,7 @@ public class GameUserServiceImpl implements GameUserService {
         for (int i = 0; i < winnerTeamEntity.size(); i++) {
             GameUserEntity entity = winnerTeamEntity.get(i);
             User user = userRepository.findById(entity.getUserId())
-                    .orElseThrow(() -> new NoSuchElementException("해당 ID를 가진 유저를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new UserNotFoundException(entity.getUserId()));
 
             int earnUserScore = (int) Math.round(getWinnerMaxScore * Math.pow(0.8, i));
 
@@ -387,7 +395,7 @@ public class GameUserServiceImpl implements GameUserService {
         for (int i = 0; i < loserTeamEntity.size(); i++) {
             GameUserEntity entity = loserTeamEntity.get(i);
             User user = userRepository.findById(entity.getUserId())
-                    .orElseThrow(() -> new NoSuchElementException("그런 유저는 없다."));
+                    .orElseThrow(() -> new UserNotFoundException(entity.getUserId()));
 
             int loseUserScore = -1 * (int) Math.round(getWinnerMaxScore * Math.pow(0.8, loserTeamEntity.size() - j++));
 

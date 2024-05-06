@@ -4,9 +4,11 @@ import com.ssafy.apm.game.domain.GameEntity;
 import com.ssafy.apm.game.dto.request.GameCreateRequestDto;
 import com.ssafy.apm.game.dto.request.GameUpdateRequestDto;
 import com.ssafy.apm.game.dto.response.GameGetResponseDto;
+import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.game.repository.GameRepository;
 import com.ssafy.apm.gamequiz.repository.GameQuizRepository;
 import com.ssafy.apm.gameuser.domain.GameUserEntity;
+import com.ssafy.apm.gameuser.exception.GameUserNotFoundException;
 import com.ssafy.apm.gameuser.repository.GameUserRepository;
 import com.ssafy.apm.user.domain.User;
 import com.ssafy.apm.user.service.UserService;
@@ -53,7 +55,7 @@ public class GameServiceImpl implements GameService {
     @Override
     public List<GameGetResponseDto> getGameList(Long channelId) {
         List<GameEntity> entityList = gameRepository.findAllByChannelId(channelId)
-                .orElseThrow(() -> new NoSuchElementException("채널에 게임방이 존재하지 않습니다."));// 예외가 아니라 빈 리스트라도 던져야하나
+                .orElseThrow(() -> new GameNotFoundException(channelId));// 예외가 아니라 빈 리스트라도 던져야하나
 
         return entityList.stream()
                 .map(GameGetResponseDto::new)
@@ -64,7 +66,7 @@ public class GameServiceImpl implements GameService {
     @Override
     public GameGetResponseDto getGameInfo(Long gameId) {
         GameEntity gameEntity = gameRepository.findById(gameId)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
+                .orElseThrow(() -> new GameNotFoundException(gameId));
 
         return new GameGetResponseDto(gameEntity);
     }
@@ -73,7 +75,7 @@ public class GameServiceImpl implements GameService {
     @Transactional
     public GameGetResponseDto updateGameInfo(GameUpdateRequestDto gameUpdateRequestDto) {
         GameEntity gameEntity = gameRepository.findById(gameUpdateRequestDto.getId())
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
+                .orElseThrow(() -> new GameNotFoundException(gameUpdateRequestDto.getId()));
 
         gameEntity.update(gameUpdateRequestDto);
         gameRepository.save(gameEntity);
@@ -85,7 +87,7 @@ public class GameServiceImpl implements GameService {
     @Transactional
     public Integer updateGameRoundCnt(Long gameId, Boolean flag) {
         GameEntity gameEntity = gameRepository.findById(gameId)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
+                .orElseThrow(() -> new GameNotFoundException(gameId));
         Integer response = 0;
         if (flag) {
 //            curRound 1로 초기화
@@ -105,8 +107,9 @@ public class GameServiceImpl implements GameService {
     @Transactional
     public Long deleteGame(Long gameId) {
         GameEntity gameEntity = gameRepository.findById(gameId)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
-        List<GameUserEntity> list = gameUserRepository.findAllByGameId(gameId);
+                .orElseThrow(() -> new GameNotFoundException(gameId));
+        List<GameUserEntity> list = gameUserRepository.findAllByGameId(gameId)
+                .orElseThrow(() -> new GameUserNotFoundException(gameId));
 
         gameUserRepository.deleteAll(list);
         gameRepository.delete(gameEntity);
