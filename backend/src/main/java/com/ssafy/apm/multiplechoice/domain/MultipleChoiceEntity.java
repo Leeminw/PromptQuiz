@@ -1,4 +1,4 @@
-package com.ssafy.apm.gamequiz.domain;
+package com.ssafy.apm.multiplechoice.domain;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -10,17 +10,13 @@ import org.springframework.data.redis.core.index.Indexed;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@RedisHash(value = "game-quiz", timeToLive = 3600)
-public class GameQuizEntity {
+@RedisHash(value = "multiple-choice", timeToLive = 3600)
+public class MultipleChoiceEntity {
     @Id
     private Long id;
     @Indexed
-    private Long gameId;
+    private Long gameQuizId;
     @Indexed
     private Long quizId;
-    //    객관식, 빈칸객관식, 빈칸주관식
-    private Integer type;
-    @Indexed
-    private Integer round;
 
 }

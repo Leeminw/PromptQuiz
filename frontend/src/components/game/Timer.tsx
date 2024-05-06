@@ -3,7 +3,7 @@ interface TimerProps {
   idx: number;
 }
 
-const GamePlayer = () => {
+const Timer = () => {
   return (
     <div
       className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint
@@ -17,4 +17,4 @@ const GamePlayer = () => {
   );
 };
 
-export default GamePlayer;
+export default Timer;

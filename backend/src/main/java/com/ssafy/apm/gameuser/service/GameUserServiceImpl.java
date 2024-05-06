@@ -59,6 +59,15 @@ public class GameUserServiceImpl implements GameUserService {
         return responseDtos;
     }
 
+    @Override
+    public GameUserGetResponseDto getGameUser(Long gameUserId) {
+
+        GameUserEntity entity = gameUserRepository.findById(gameUserId)
+                .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다."));
+
+        return new GameUserGetResponseDto(entity);
+    }
+
     //    게임 입장할때
     @Override
     @Transactional
@@ -77,6 +86,12 @@ public class GameUserServiceImpl implements GameUserService {
                 .team("NOTHING")
                 .build();
 
+        GameEntity gameEntity = gameRepository.findById(gameId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
+//        방에 접속 중인 인원 하나 늘려줌
+        gameEntity.increaseCurPlayers();
+
+        gameRepository.save(gameEntity);
         entity = gameUserRepository.save(entity);
 
         return new GameUserGetResponseDto(entity);
@@ -87,7 +102,7 @@ public class GameUserServiceImpl implements GameUserService {
     public GameUserGetResponseDto updateGameUserScore(Integer score) {
         User user = userService.loadUser();
         GameUserEntity gameUserEntity = gameUserRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
+                .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다."));
 
 //        점수 업데이트
         gameUserEntity.updateScore(score);
@@ -104,10 +119,8 @@ public class GameUserServiceImpl implements GameUserService {
         GameUserEntity gameUserEntity = gameUserRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
 
-//        레디 상태 업데이트
         gameUserEntity.updateIsReady(isReady);
 
-//        DB에 반영
         gameUserEntity = gameUserRepository.save(gameUserEntity);
         return new GameUserGetResponseDto(gameUserEntity);
     }
@@ -119,10 +132,8 @@ public class GameUserServiceImpl implements GameUserService {
         GameUserEntity gameUserEntity = gameUserRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
 
-//        팀 업데이트
         gameUserEntity.updateTeam(team);
 
-//        DB에 반영
         gameUserEntity = gameUserRepository.save(gameUserEntity);
         return new GameUserGetResponseDto(gameUserEntity);
     }
@@ -150,7 +161,6 @@ public class GameUserServiceImpl implements GameUserService {
 
 //        팀전일때
         if (game.getIsTeam()) {
-//            Todo:팀전일 때 점수 구하는 로직 작성해야 합니다.
 //            테스트 완료되면 리팩토링 해야합니다 ㅎㅎ..
             int redTeamTotalScore = 0, blueTeamTotalScore = 0;
             List<GameUserEntity> redTeamEntity = new ArrayList<>();
@@ -179,7 +189,6 @@ public class GameUserServiceImpl implements GameUserService {
         }
 //        개인전일때
         else {
-//            Todo:개인전일 때 점수 구하는 로직 작성해야 합니다.
 //            점수 받는 놈들 로직
             /* 10라운드 6명 기준
              * getWinnerMaxScore = 10*10(10라운드) * (curPlayers/maxPlayers) = 50( 6명이서 게임할 때 1등이 받을 점수 )
@@ -237,27 +246,33 @@ public class GameUserServiceImpl implements GameUserService {
     @Override
     @Transactional
     public Long deleteExitGame(Long gameId) {
+
         User user = userService.loadUser();
         Long userId = user.getId();
         GameUserEntity gameUserEntity = gameUserRepository.findByGameIdAndUserId(gameId, userId)
                 .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
 
+        GameEntity gameEntity = gameRepository.findById(gameId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
+
         Long gameUserId = gameUserEntity.getId();
 
-        if (gameUserEntity.getIsHost()) {
-//            방 안에 있는 유저 목록 가져와서
-            List<GameUserEntity> userList = gameUserRepository.findAllByGameId(gameId);
-            for (GameUserEntity entity : userList) {
-//                방장이 아닌 놈을 찾아서
-                if (!entity.getIsHost()) {
-//                    방장 주고
-                    entity.updateIsHost(true);
-                    break;
+        if (gameEntity.getCurPlayers() == 1) {// 방에 방장 혼자였다면
+            gameRepository.delete(gameEntity);// 방 자체를 지움
+        } else {
+            gameEntity.decreaseCurPlayers();// 방 현재 인원 수를 줄임
+            gameRepository.save(gameEntity);
+            if (gameUserEntity.getIsHost()) {// 나가는 유저가 방장이라면
+                List<GameUserEntity> userList = gameUserRepository.findAllByGameId(gameEntity.getId());// 방 안에 있는 유저 목록 가져와서
+                for (GameUserEntity entity : userList) {
+                    if (!entity.getIsHost()) {// 방장이 아닌 놈을 찾아서 방장 권한을 준다
+                        entity.updateIsHost(true);
+                        gameUserRepository.save(entity);
+                        break;
+                    }
                 }
             }
-//            더티 체킹으로 알아서 업데이트
         }
-
         gameUserRepository.delete(gameUserEntity);
 
         return gameUserId;
@@ -266,13 +281,30 @@ public class GameUserServiceImpl implements GameUserService {
     @Override
     @Transactional
     public Long deleteExitGameByUserId(Long userId, String gameCode) {
+
         GameEntity gameEntity = gameRepository.findByCode(gameCode)
                 .orElseThrow(() -> new NoSuchElementException("해당 code를 가진 게임을 찾을 수 없습니다."));
 
         GameUserEntity gameUserEntity = gameUserRepository.findByGameIdAndUserId(gameEntity.getId(), userId)
                 .orElseThrow(() -> new NoSuchElementException("게임 유저 테이블을 찾지 못했습니다"));
-
         Long gameUserId = gameUserEntity.getId();
+
+        if (gameEntity.getCurPlayers() == 1) {// 방에 방장 혼자였다면
+            gameRepository.delete(gameEntity);// 방 자체를 지움
+        } else {
+            gameEntity.decreaseCurPlayers();// 방 현재 인원 수를 줄임
+            gameRepository.save(gameEntity);
+            if (gameUserEntity.getIsHost()) {// 나가는 유저가 방장이라면
+                List<GameUserEntity> userList = gameUserRepository.findAllByGameId(gameEntity.getId());// 방 안에 있는 유저 목록 가져와서
+                for (GameUserEntity entity : userList) {
+                    if (!entity.getIsHost()) {// 방장이 아닌 놈을 찾아서 방장 권한을 준다
+                        entity.updateIsHost(true);
+                        gameUserRepository.save(entity);
+                        break;
+                    }
+                }
+            }
+        }
 
         gameUserRepository.delete(gameUserEntity);
 

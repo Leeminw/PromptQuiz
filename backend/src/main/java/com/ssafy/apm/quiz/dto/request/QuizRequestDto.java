@@ -1,6 +1,5 @@
 package com.ssafy.apm.quiz.dto.request;
 
-import com.ssafy.apm.prompt.domain.Prompt;
 import com.ssafy.apm.quiz.domain.Quiz;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,19 +16,19 @@ public class QuizRequestDto {
     private String style;
     private String groupCode;
 
-    private String engSentence;
-    private String engSubject;
-    private String engObject;
     private String engVerb;
-    private String engAdverb;
-    private String engAdjective;
+    private String engObject;
+    private String engSubject;
+    private String engSentence;
+    private String engSubAdjective;
+    private String engObjAdjective;
 
-    private String korSentence;
-    private String korSubject;
-    private String korObject;
     private String korVerb;
-    private String korAdverb;
-    private String korAdjective;
+    private String korObject;
+    private String korSubject;
+    private String korSentence;
+    private String korSubAdjective;
+    private String korObjAdjective;
 
     public Quiz toEntity() {
         return Quiz.builder()
@@ -37,18 +36,19 @@ public class QuizRequestDto {
                 .url(this.url)
                 .style(this.style)
                 .groupCode(this.groupCode)
-                .engSentence(this.engSentence)
-                .engSubject(this.engSubject)
-                .engObject(this.engObject)
                 .engVerb(this.engVerb)
-                .engAdverb(this.engAdverb)
-                .engAdjective(this.engAdjective)
-                .korSentence(this.korSentence)
-                .korSubject(this.korSubject)
-                .korObject(this.korObject)
+                .engObject(this.engObject)
+                .engSubject(this.engSubject)
+                .engSentence(this.engSentence)
+                .engSubAdjective(this.engSubAdjective)
+                .engObjAdjective(this.engObjAdjective)
                 .korVerb(this.korVerb)
-                .korAdverb(this.korAdverb)
-                .korAdjective(this.korAdjective)
+                .korObject(this.korObject)
+                .korSubject(this.korSubject)
+                .korSentence(this.korSentence)
+                .korSubAdjective(this.korSubAdjective)
+                .korObjAdjective(this.korObjAdjective)
                 .build();
     }
+
 }
