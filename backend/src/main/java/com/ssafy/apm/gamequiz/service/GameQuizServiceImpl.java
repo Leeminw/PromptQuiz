@@ -7,10 +7,11 @@ import com.ssafy.apm.gamequiz.dto.response.GameQuizGetResponseDto;
 import com.ssafy.apm.gamequiz.repository.GameQuizRepository;
 import com.ssafy.apm.gameuser.domain.GameUserEntity;
 import com.ssafy.apm.gameuser.repository.GameUserRepository;
+import com.ssafy.apm.multiplechoice.domain.MultipleChoiceEntity;
+import com.ssafy.apm.multiplechoice.repository.MultipleChoiceRepository;
 import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.quiz.repository.QuizRepository;
 import com.ssafy.apm.user.domain.User;
-import com.ssafy.apm.user.repository.UserRepository;
 import com.ssafy.apm.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ import java.util.Random;
 @Transactional(readOnly = true)
 public class GameQuizServiceImpl implements GameQuizService {
 
+    private final MultipleChoiceRepository multipleChoiceRepository;
     private final GameQuizRepository gameQuizRepository;
     private final GameUserRepository gameUserRepository;
     private final GameRepository gameRepository;
@@ -42,7 +44,7 @@ public class GameQuizServiceImpl implements GameQuizService {
         Integer round = gameEntity.getCurRound();
 //        현재 라운드에 해당하는 정답 주는거
         GameQuizEntity entity = gameQuizRepository.findByGameIdAndRound(gameId, round)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 퀴즈입니다."));
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 답안입니다."));
 
         GameQuizGetResponseDto response = new GameQuizGetResponseDto(entity);
 
@@ -57,7 +59,7 @@ public class GameQuizServiceImpl implements GameQuizService {
                 .orElseThrow(() -> new NoSuchElementException("이 유저는 게임방에 접속해 있지 않습니다."));
 
 //        방장이 아니면 게임 시작할 수 없음
-        if(!gameUser.getIsHost()){
+        if (!gameUser.getIsHost()) {
             return false;
         }
 
@@ -68,11 +70,11 @@ public class GameQuizServiceImpl implements GameQuizService {
 
         List<Quiz> quizList;
 
-        if(gameStyle.equals("random")){
-            quizList = quizRepository.extractRandomQuizs(gameEntity.getRounds())
+        if (gameStyle.equals("random")) {
+            quizList = quizRepository.extractRandomQuizzes(gameEntity.getRounds())
                     .orElseThrow(() -> new NoSuchElementException("랜덤 스타일의 정답을 추출하는데 실패했습니다."));
         } else {
-            quizList = quizRepository.extractRandomQuizsByStyle(gameStyle, gameEntity.getRounds())
+            quizList = quizRepository.extractRandomQuizzesByStyle(gameStyle, gameEntity.getRounds())
                     .orElseThrow(() -> new NoSuchElementException(gameStyle + "타입의 정답을 추출하는데 실패했습니다."));
         }
 
@@ -122,8 +124,72 @@ public class GameQuizServiceImpl implements GameQuizService {
 
         }
 
+        for (GameQuizEntity entity : gameQuizEntityList) {
+//            객관식일 때
+            if(entity.getType() == 1) {
+                Quiz quiz = quizRepository.findById(entity.getQuizId())// 정답 quiz찾아
+                        .orElseThrow(() -> new NoSuchElementException("존재하지 않는 퀴즈입니다."));
+                List<Quiz> quizListByGroupCode = quizRepository.extractRandomQuizzesByStyleAndGroupCode(quiz.getStyle(), quiz.getGroupCode(), 3)
+                        .orElseThrow(() -> new NoSuchElementException("그룹 코드로 퀴즈를 추출하는데 실패했습니다."));// 오답 quiz 리스트 찾아
+
+//                정답, 오답 리스트를 받아 문제 보기 리스트를 생성하는 함수
+                List<MultipleChoiceEntity> multipleChoiceEntityList = createMultipleChoiceList(entity.getId(), quiz.getId(), quizListByGroupCode);
+
+                multipleChoiceRepository.saveAll(multipleChoiceEntityList);// 보기들 저장
+            }
+//            빈칸 객관식일 때
+            else if(entity.getType() == 2) {
+
+                Quiz quiz = quizRepository.findById(entity.getQuizId())
+                        .orElseThrow(() -> new NoSuchElementException("존재하지 않는 퀴즈입니다."));
+                List<Quiz> randomQuizList = quizRepository.extractRandomQuizzesByStyle(quiz.getStyle(), 3) // 같은 스타일의 quiz 찾아
+                        .orElseThrow(() -> new NoSuchElementException("그룹 코드로 퀴즈를 추출하는데 실패했습니다."));
+
+                List<MultipleChoiceEntity> multipleChoiceEntityList = createMultipleChoiceList(entity.getId(), quiz.getId(), randomQuizList);
+
+                multipleChoiceRepository.saveAll(multipleChoiceEntityList);
+            }
+//            빈칸 주관식일 때는 보기에 정답 하나만 담아
+            else if(entity.getType() == 4) {
+                Quiz quiz = quizRepository.findById(entity.getQuizId())
+                        .orElseThrow(() -> new NoSuchElementException("존재하지 않는 퀴즈입니다."));
+
+                MultipleChoiceEntity answer = MultipleChoiceEntity.builder()
+                        .gameQuizId(entity.getId())
+                        .quizId(quiz.getId())
+                        .build();
+
+                multipleChoiceRepository.save(answer);
+            }
+        }
+
         gameQuizRepository.saveAll(gameQuizEntityList);
         return true;
+    }
+
+//    문제 보기를 만드는 함수
+    private List<MultipleChoiceEntity> createMultipleChoiceList(Long gameQuizId,
+                                                                Long answerQuizId,
+                                                                List<Quiz> randomQuizList){
+        MultipleChoiceEntity answer = MultipleChoiceEntity.builder()
+                .gameQuizId(gameQuizId)
+                .quizId(answerQuizId)
+                .build();
+
+        List<MultipleChoiceEntity> multipleChoiceEntityList = new ArrayList<>();
+
+        multipleChoiceEntityList.add(answer);
+
+        for (Quiz q : randomQuizList) {
+            MultipleChoiceEntity multipleChoice = MultipleChoiceEntity.builder()
+                    .gameQuizId(gameQuizId)
+                    .quizId(q.getId())
+                    .build();
+
+            multipleChoiceEntityList.add(multipleChoice);
+        }
+
+        return multipleChoiceEntityList;
     }
 
     private void createGameQuizEntityList(Long gameId, List<Quiz> quizList, List<GameQuizEntity> gameQuizEntityList, Integer currentRound, Random random, int[] numbers) {

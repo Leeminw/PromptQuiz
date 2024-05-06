@@ -1,11 +1,9 @@
 package com.ssafy.apm.quiz.service;
 
-import com.ssafy.apm.prompt.dto.PromptRequestDto;
-import com.ssafy.apm.prompt.dto.PromptResponseDto;
 import com.ssafy.apm.quiz.dto.request.QuizRequestDto;
 import com.ssafy.apm.socket.dto.request.GameChatDto;
 import com.ssafy.apm.socket.dto.response.GameAnswerCheck;
-import com.ssafy.apm.quiz.dto.response.QuizDetailResponseDto;
+import com.ssafy.apm.quiz.dto.response.QuizResponseDto;
 
 import java.util.List;
 import java.util.Set;
@@ -14,20 +12,22 @@ public interface QuizService {
 
     GameAnswerCheck checkAnswer(GameChatDto answer, Set<String> checkPrompt);
 
-    QuizDetailResponseDto createQuiz(QuizRequestDto requestDto);
-    QuizDetailResponseDto updateQuiz(QuizRequestDto requestDto);
-    QuizDetailResponseDto deleteQuiz(Long id);
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    QuizResponseDto createQuiz(QuizRequestDto requestDto);
+    QuizResponseDto updateQuiz(QuizRequestDto requestDto);
+    QuizResponseDto deleteQuiz(Long id);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    QuizDetailResponseDto findQuizById(Long id);
-    List<QuizDetailResponseDto> findAllQuizs();
+    QuizResponseDto findQuizById(Long id);
+    List<QuizResponseDto> findAllQuizzes();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    List<QuizDetailResponseDto> filterQuizByStyle(String style);
-    List<QuizDetailResponseDto> filterQuizsByGroupCode(String groupCode);
+    List<QuizResponseDto> filterQuizByStyle(String style);
+    List<QuizResponseDto> filterQuizzesByGroupCode(String groupCode);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    QuizDetailResponseDto extractRandomQuiz();
-    List<QuizDetailResponseDto> extractRandomQuizs(Integer limit);
-    List<QuizDetailResponseDto> extractRandomQuizsByGroupCode(String groupCode, Integer limit);
+    QuizResponseDto extractRandomQuiz();
+    List<QuizResponseDto> extractRandomQuizzes(Integer limit);
+    List<QuizResponseDto> extractRandomQuizzesByGroupCode(String groupCode, Integer limit);
+
 }
