@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Slf4j
 @ControllerAdvice
 public class QuizExceptionHandler {
+
     @ExceptionHandler(QuizNotFoundException.class)
     public ResponseEntity<?> handleCustomNotFoundException(QuizNotFoundException e) {
         log.error("QuizNotFoundException : " + e.getMessage());
@@ -25,4 +26,5 @@ public class QuizExceptionHandler {
         log.error("QuizValidationException: " + e.getMessage());
         return new ResponseEntity<>(ResponseData.failure(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
+
 }

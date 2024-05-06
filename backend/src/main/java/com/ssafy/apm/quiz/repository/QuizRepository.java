@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
+
     Optional<List<Quiz>> findAllByStyle(String style);
     Optional<List<Quiz>> findAllByGroupCode(String groupCode);
 

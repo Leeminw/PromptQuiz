@@ -1,7 +1,5 @@
 package com.ssafy.apm.quiz.domain;
 
-import com.ssafy.apm.prompt.domain.Prompt;
-import com.ssafy.apm.prompt.dto.PromptRequestDto;
 import com.ssafy.apm.quiz.dto.request.QuizRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,7 +13,6 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "quiz")
 public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,15 +25,15 @@ public class Quiz {
     private String engSubject;
     private String engObject;
     private String engVerb;
-    private String engAdverb;
-    private String engAdjective;
+    private String engSubAdjective;
+    private String engObjAdjective;
 
     private String korSentence;
     private String korSubject;
     private String korObject;
     private String korVerb;
-    private String korAdverb;
-    private String korAdjective;
+    private String korSubAdjective;
+    private String korObjAdjective;
 
     @CreationTimestamp
     private LocalDateTime createdDate;
@@ -48,19 +45,19 @@ public class Quiz {
         if (requestDto.getStyle() != null) this.style = requestDto.getStyle();
         if (requestDto.getGroupCode() != null) this.groupCode = requestDto.getGroupCode();
 
-        if (requestDto.getEngAdjective() != null) this.engAdjective = requestDto.getEngAdjective();
-        if (requestDto.getEngSentence() != null) this.engSentence = requestDto.getEngSentence();
-        if (requestDto.getEngSubject() != null) this.engSubject = requestDto.getEngSubject();
-        if (requestDto.getEngObject() != null) this.engObject = requestDto.getEngObject();
-        if (requestDto.getEngAdverb() != null) this.engAdverb = requestDto.getEngAdverb();
         if (requestDto.getEngVerb() != null) this.engVerb = requestDto.getEngVerb();
+        if (requestDto.getEngObject() != null) this.engObject = requestDto.getEngObject();
+        if (requestDto.getEngSubject() != null) this.engSubject = requestDto.getEngSubject();
+        if (requestDto.getEngSentence() != null) this.engSentence = requestDto.getEngSentence();
+        if (requestDto.getEngSubAdjective() != null) this.engSubAdjective = requestDto.getEngSubAdjective();
+        if (requestDto.getEngObjAdjective() != null) this.engObjAdjective = requestDto.getEngObjAdjective();
 
-        if (requestDto.getKorAdjective() != null) this.korAdjective = requestDto.getKorAdjective();
-        if (requestDto.getKorSentence() != null) this.korSentence = requestDto.getKorSentence();
-        if (requestDto.getKorSubject() != null) this.korSubject = requestDto.getKorSubject();
-        if (requestDto.getKorObject() != null) this.korObject = requestDto.getKorObject();
-        if (requestDto.getKorAdverb() != null) this.korAdverb = requestDto.getKorAdverb();
         if (requestDto.getKorVerb() != null) this.korVerb = requestDto.getKorVerb();
+        if (requestDto.getKorObject() != null) this.korObject = requestDto.getKorObject();
+        if (requestDto.getKorSubject() != null) this.korSubject = requestDto.getKorSubject();
+        if (requestDto.getKorSentence() != null) this.korSentence = requestDto.getKorSentence();
+        if (requestDto.getKorSubAdjective() != null) this.korSubAdjective = requestDto.getKorSubAdjective();
+        if (requestDto.getKorObjAdjective() != null) this.korObjAdjective = requestDto.getKorObjAdjective();
 
         return this;
     }
