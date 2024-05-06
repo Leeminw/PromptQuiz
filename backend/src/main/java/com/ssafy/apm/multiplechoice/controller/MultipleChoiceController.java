@@ -1,10 +1,8 @@
 package com.ssafy.apm.multiplechoice.controller;
 
 import com.ssafy.apm.common.domain.ResponseData;
-import com.ssafy.apm.gameuser.dto.response.GameUserGetResponseDto;
-import com.ssafy.apm.multiplechoice.dto.response.MultipleChoiceGetResponseDto;
 import com.ssafy.apm.multiplechoice.service.MultipleChoiceService;
-import com.ssafy.apm.quiz.dto.response.QuizDetailResponseDto;
+import com.ssafy.apm.quiz.dto.response.QuizResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,7 +24,7 @@ public class MultipleChoiceController {
 
     @GetMapping("/multipleChoiceList/{gameId}")
     public ResponseEntity<ResponseData<?>> getMultipleChoiceListByGameId(@PathVariable(name = "gameId") Long gameId) {
-        List<QuizDetailResponseDto> response = multipleChoiceService.getMultipleChoiceListByGameId(gameId);
+        List<QuizResponseDto> response = multipleChoiceService.getMultipleChoiceListByGameId(gameId);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
 }

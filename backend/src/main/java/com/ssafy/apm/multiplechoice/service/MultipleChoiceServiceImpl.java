@@ -1,6 +1,5 @@
 package com.ssafy.apm.multiplechoice.service;
 
-import com.ssafy.apm.channel.dto.response.ChannelGetResponseDto;
 import com.ssafy.apm.game.domain.GameEntity;
 import com.ssafy.apm.game.repository.GameRepository;
 import com.ssafy.apm.gamequiz.domain.GameQuizEntity;
@@ -8,7 +7,7 @@ import com.ssafy.apm.gamequiz.repository.GameQuizRepository;
 import com.ssafy.apm.multiplechoice.domain.MultipleChoiceEntity;
 import com.ssafy.apm.multiplechoice.repository.MultipleChoiceRepository;
 import com.ssafy.apm.quiz.domain.Quiz;
-import com.ssafy.apm.quiz.dto.response.QuizDetailResponseDto;
+import com.ssafy.apm.quiz.dto.response.QuizResponseDto;
 import com.ssafy.apm.quiz.repository.QuizRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,7 @@ public class MultipleChoiceServiceImpl implements MultipleChoiceService {
 
 
     @Override
-    public List<QuizDetailResponseDto> getMultipleChoiceListByGameId(Long gameId) {
+    public List<QuizResponseDto> getMultipleChoiceListByGameId(Long gameId) {
 
         List<Quiz> response = new ArrayList<>();
 
@@ -56,7 +55,7 @@ public class MultipleChoiceServiceImpl implements MultipleChoiceService {
 
         return response
                 .stream()
-                .map(QuizDetailResponseDto::new)
+                .map(QuizResponseDto::new)
                 .toList();
     }
 }
