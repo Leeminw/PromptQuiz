@@ -49,7 +49,7 @@ public class GameQuizServiceImpl implements GameQuizService {
         Integer round = gameEntity.getCurRound();
 //        현재 라운드에 해당하는 정답 주는거
         GameQuizEntity entity = gameQuizRepository.findByGameIdAndRound(gameId, round)
-                .orElseThrow(() -> new GameQuizNotFoundException("No entities exists!"));
+                .orElseThrow(() -> new GameQuizNotFoundException("No entities exists by gameId, round"));
 
         GameQuizGetResponseDto response = new GameQuizGetResponseDto(entity);
 
@@ -61,7 +61,7 @@ public class GameQuizServiceImpl implements GameQuizService {
     public Boolean createAnswerGameQuiz(Long gameId) {
         User user = userService.loadUser();
         GameUserEntity gameUser = gameUserRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new GameUserNotFoundException(user.getId()));
+                .orElseThrow(() -> new GameUserNotFoundException("No entities exists by userId"));
 
 //        방장이 아니면 게임 시작할 수 없음
         if (!gameUser.getIsHost()) {
@@ -176,12 +176,12 @@ public class GameQuizServiceImpl implements GameQuizService {
     @Transactional
     public Long deleteGameQuiz(Long gameId) {
         List<GameQuizEntity> gameQuizEntityList = gameQuizRepository.findAllByGameId(gameId)
-                .orElseThrow(() -> new GameQuizNotFoundException(gameId));// 정답 리스트 받아서
+                .orElseThrow(() -> new GameQuizNotFoundException("No entities exists by gameId"));// 정답 리스트 받아서
 
         for(GameQuizEntity gameQuiz: gameQuizEntityList) {// 각 정답에 해당하는 보기들 찾아서
             List<MultipleChoiceEntity> multipleChoiceEntityList = multipleChoiceRepository
                     .findAllByGameQuizId(gameQuiz.getId())
-                    .orElseThrow(() -> new MultipleChoiceNotFoundException(gameQuiz.getId()));
+                    .orElseThrow(() -> new MultipleChoiceNotFoundException("No entities exists by gameQuizId"));
             multipleChoiceRepository.deleteAll(multipleChoiceEntityList);// 보기 다 지움
         }
 

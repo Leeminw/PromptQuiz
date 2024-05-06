@@ -47,7 +47,7 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public ChannelGetResponseDto getChannelByCode(String code) {
         ChannelEntity channelEntity = channelRepository.findByCode(code)
-                .orElseThrow(() -> new ChannelNotFoundException(code));
+                .orElseThrow(() -> new ChannelNotFoundException("No entities exists by code"));
         return new ChannelGetResponseDto(channelEntity);
     }
 }

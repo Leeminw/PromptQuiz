@@ -69,7 +69,7 @@ public class UserChannelServiceImpl implements UserChannelService {
 
         User user = userService.loadUser();
         UserChannelEntity entity = userChannelRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new UserChannelNotFoundException(user.getId()));
+                .orElseThrow(() -> new UserChannelNotFoundException("No entity exist by userId!"));
         Long response = entity.getId();
 
         ChannelEntity channel = channelRepository.findById(entity.getChannelId())
@@ -86,11 +86,11 @@ public class UserChannelServiceImpl implements UserChannelService {
     public Long deleteExitUserChannelByChannelCodeAndUserId(Long userId, String channelCode) {
 
         ChannelEntity channelEntity = channelRepository.findByCode(channelCode)
-                .orElseThrow(() -> new ChannelNotFoundException(channelCode));
+                .orElseThrow(() -> new ChannelNotFoundException("No entity exist by channelCode!"));
         channelEntity.decreaseCurPlayers();
 
         UserChannelEntity entity = userChannelRepository.findByUserIdAndChannelId(userId, channelEntity.getId())
-                .orElseThrow(() -> new UserChannelNotFoundException(userId));
+                .orElseThrow(() -> new UserChannelNotFoundException("No entity exist by userId, channelId!"));
         Long response = entity.getId();
 
         channelRepository.save(channelEntity);

@@ -41,7 +41,7 @@ public class GameUserServiceImpl implements GameUserService {
     public List<GameUserDetailResponseDto> getGameUserList(Long gameId) {
 //        GameId로 게임방 안에 있는 게임유저 데이터들을 가져옴
         List<GameUserEntity> gameUserEntityList = gameUserRepository.findAllByGameId(gameId)
-                .orElseThrow(() -> new GameUserNotFoundException(gameId));
+                .orElseThrow(() -> new GameUserNotFoundException("No entities exists by gameId!"));
 //        userId들 추출
         List<Long> userIds = gameUserEntityList.stream()
                 .map(GameUserEntity::getUserId)
@@ -116,10 +116,10 @@ public class GameUserServiceImpl implements GameUserService {
         Long userId = user.getId();
 
         UserChannelEntity userChannel = userChannelRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserChannelNotFoundException(userId));
+                .orElseThrow(() -> new UserChannelNotFoundException("No entity exist by userId!"));
 
         List<GameEntity> gameEntityList = gameRepository.findAllByChannelId(userChannel.getChannelId())
-                .orElseThrow(() -> new GameNotFoundException(userChannel.getChannelId()));// 채널에 생성된 방이 없다면
+                .orElseThrow(() -> new GameNotFoundException("No entities exists by channelId!"));// 채널에 생성된 방이 없다면
 
 //        에러 코드를 프론트에서 받아 방을 만들 수 있게 처리해야함
 
@@ -154,7 +154,7 @@ public class GameUserServiceImpl implements GameUserService {
     public GameUserGetResponseDto updateGameUserScore(Integer score) {
         User user = userService.loadUser();
         GameUserEntity gameUserEntity = gameUserRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new GameUserNotFoundException(user.getId()));
+                .orElseThrow(() -> new GameUserNotFoundException("No entity exist by userId!"));
 
 //        점수 업데이트
         gameUserEntity.updateScore(score);
@@ -169,7 +169,7 @@ public class GameUserServiceImpl implements GameUserService {
     public GameUserGetResponseDto updateGameUserIsReady(Boolean isReady) {
         User user = userService.loadUser();
         GameUserEntity gameUserEntity = gameUserRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new GameUserNotFoundException(user.getId()));
+                .orElseThrow(() -> new GameUserNotFoundException("No entity exist by userId!"));
 
         gameUserEntity.updateIsReady(isReady);
 
@@ -182,7 +182,7 @@ public class GameUserServiceImpl implements GameUserService {
     public GameUserGetResponseDto updateGameUserTeam(String team) {
         User user = userService.loadUser();
         GameUserEntity gameUserEntity = gameUserRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new GameUserNotFoundException(user.getId()));
+                .orElseThrow(() -> new GameUserNotFoundException("No entity exist by userId!"));
 
         gameUserEntity.updateTeam(team);
 
@@ -196,7 +196,7 @@ public class GameUserServiceImpl implements GameUserService {
         GameEntity game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new GameNotFoundException(gameId));
         List<GameUserEntity> gameUserEntityList = gameUserRepository.findAllByGameId(gameId)
-                .orElseThrow(()-> new GameUserNotFoundException(gameId));
+                .orElseThrow(()-> new GameUserNotFoundException("No entities exists by gameId!"));
         List<User> userList = new ArrayList<>();
 
 //        Todo: Game-User의 Ranking을 여기서 구하고 점수를 넣는건지, 라운드마다 Ranking을 업데이트 하는지 상의하고 구현해야함.
@@ -303,7 +303,7 @@ public class GameUserServiceImpl implements GameUserService {
         User user = userService.loadUser();
         Long userId = user.getId();
         GameUserEntity gameUserEntity = gameUserRepository.findByGameIdAndUserId(gameId, userId)
-                .orElseThrow(() -> new GameUserNotFoundException(gameId));
+                .orElseThrow(() -> new GameUserNotFoundException("No entity exist by gameId, userId"));
 
         GameEntity gameEntity = gameRepository.findById(gameId)
                 .orElseThrow(() -> new GameNotFoundException(gameId));
@@ -317,7 +317,7 @@ public class GameUserServiceImpl implements GameUserService {
             gameRepository.save(gameEntity);
             if (gameUserEntity.getIsHost()) {// 나가는 유저가 방장이라면
                 List<GameUserEntity> userList = gameUserRepository.findAllByGameId(gameEntity.getId())
-                        .orElseThrow(() -> new GameUserNotFoundException(gameEntity.getId()));// 방 안에 있는 유저 목록 가져와서
+                        .orElseThrow(() -> new GameUserNotFoundException("No entities exists by gameId"));// 방 안에 있는 유저 목록 가져와서
                 for (GameUserEntity entity : userList) {
                     if (!entity.getIsHost()) {// 방장이 아닌 놈을 찾아서 방장 권한을 준다
                         entity.updateIsHost(true);
@@ -337,10 +337,10 @@ public class GameUserServiceImpl implements GameUserService {
     public Long deleteExitGameByUserId(Long userId, String gameCode) {
 
         GameEntity gameEntity = gameRepository.findByCode(gameCode)
-                .orElseThrow(() -> new GameNotFoundException("해당 code를 가진 게임을 찾을 수 없습니다."));
+                .orElseThrow(() -> new GameNotFoundException("No entity exist by code!"));
 
         GameUserEntity gameUserEntity = gameUserRepository.findByGameIdAndUserId(gameEntity.getId(), userId)
-                .orElseThrow(() -> new GameUserNotFoundException("게임 유저 테이블을 찾지 못했습니다"));
+                .orElseThrow(() -> new GameUserNotFoundException("No entity exist by gameId, userId!"));
         Long gameUserId = gameUserEntity.getId();
 
         if (gameEntity.getCurPlayers() == 1) {// 방에 방장 혼자였다면
@@ -350,7 +350,7 @@ public class GameUserServiceImpl implements GameUserService {
             gameRepository.save(gameEntity);
             if (gameUserEntity.getIsHost()) {// 나가는 유저가 방장이라면
                 List<GameUserEntity> userList = gameUserRepository.findAllByGameId(gameEntity.getId())
-                        .orElseThrow(() -> new GameUserNotFoundException(gameEntity.getId()));// 방 안에 있는 유저 목록 가져와서
+                        .orElseThrow(() -> new GameUserNotFoundException("No entities exists by gameId!"));// 방 안에 있는 유저 목록 가져와서
                 for (GameUserEntity entity : userList) {
                     if (!entity.getIsHost()) {// 방장이 아닌 놈을 찾아서 방장 권한을 준다
                         entity.updateIsHost(true);

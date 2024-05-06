@@ -42,12 +42,12 @@ public class MultipleChoiceServiceImpl implements MultipleChoiceService {
                 .orElseThrow(() -> new GameNotFoundException(gameId));
 
         GameQuizEntity gameQuiz = gameQuizRepository.findByGameIdAndRound(gameId, game.getCurRound())
-                .orElseThrow(() -> new GameQuizNotFoundException(gameId));
+                .orElseThrow(() -> new GameQuizNotFoundException("No entity exist by gameId, round!"));
 
 //        여기서 gameQuiz의 타입을 확인해서 타
 
         List<MultipleChoiceEntity> multipleChoiceList = multipleChoiceRepository.findAllByGameQuizId(gameQuiz.getId())
-                .orElseThrow(() -> new MultipleChoiceNotFoundException(gameQuiz.getId()));
+                .orElseThrow(() -> new MultipleChoiceNotFoundException("No entities exists by gameQuizId!"));
 
         for (MultipleChoiceEntity entity : multipleChoiceList) { // 보기에 해당하는 quiz를 찾아서 리스트에 add
             Quiz temp = quizRepository.findById(entity.getQuizId())

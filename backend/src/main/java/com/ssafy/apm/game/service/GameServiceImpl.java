@@ -55,7 +55,7 @@ public class GameServiceImpl implements GameService {
     @Override
     public List<GameGetResponseDto> getGameList(Long channelId) {
         List<GameEntity> entityList = gameRepository.findAllByChannelId(channelId)
-                .orElseThrow(() -> new GameNotFoundException(channelId));// 예외가 아니라 빈 리스트라도 던져야하나
+                .orElseThrow(() -> new GameNotFoundException("No entities exists by channelId"));// 예외가 아니라 빈 리스트라도 던져야하나
 
         return entityList.stream()
                 .map(GameGetResponseDto::new)
@@ -109,7 +109,7 @@ public class GameServiceImpl implements GameService {
         GameEntity gameEntity = gameRepository.findById(gameId)
                 .orElseThrow(() -> new GameNotFoundException(gameId));
         List<GameUserEntity> list = gameUserRepository.findAllByGameId(gameId)
-                .orElseThrow(() -> new GameUserNotFoundException(gameId));
+                .orElseThrow(() -> new GameUserNotFoundException("No entities exists by gameId"));
 
         gameUserRepository.deleteAll(list);
         gameRepository.delete(gameEntity);
