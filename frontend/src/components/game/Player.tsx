@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 interface GamePlayerProps {
   // idx: number;
-  userInfo: GameUser;
+  userInfo: GameUser | null;
 }
 // { idx }: GamePlayerProps
 // const GamePlayer = forwardRef((props, ref) => {
@@ -11,12 +11,15 @@ interface GamePlayerProps {
 //   };
 
 const GamePlayer = ({ userInfo }: GamePlayerProps) => {
+  useEffect(() => {
+    console.log(userInfo);
+  }, []);
   return (
     <div className="border-custom-green bg-customGreen w-full h-full relative flex items-center">
       <div className="absolute w-full -translate-y-8">
         <div
           // ref={chatBubbleBox}
-          className="min-w-20 min-h-6 w-fit h-fit bg-white border border-gray-200 rounded-lg text-xs px-2 py-0.5 line-clamp-2
+          className="min-w-20 min-h-6 w-fit h-fit bg-white border border-gray-200 rounded-lg text-sm px-2 py-0.5 line-clamp-2 text-black
         "
         >
           가

@@ -24,4 +24,10 @@ public class GameQuizController {
         GameQuizGetResponseDto response = gameQuizService.getGameQuizDetail(gameId);
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success(response));
     }
+
+    @GetMapping("/createQuiz/{gameId}")
+    public ResponseEntity<ResponseData<?>> createAnswerGameQuiz(@PathVariable Long gameId) {
+        Boolean response = gameQuizService.createAnswerGameQuiz(gameId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success(response));
+    }
 }

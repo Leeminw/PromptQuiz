@@ -27,4 +27,7 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
     @Query(value = "SELECT * FROM quiz WHERE group_code = :groupCode ORDER BY RAND() LIMIT :limit", nativeQuery = true)
     Optional<List<Quiz>> extractRandomQuizzesByGroupCode(@Param("groupCode") String groupCode, @Param("limit") Integer limit);
 
+    @Query(value = "SELECT * FROM quiz WHERE style = :style AND group_code = :groupCode ORDER BY RAND() LIMIT :limit", nativeQuery = true)
+    Optional<List<Quiz>> extractRandomQuizzesByStyleAndGroupCode(@Param("style") String style, @Param("groupCode") String groupCode, @Param("limit") Integer limit);
+
 }
