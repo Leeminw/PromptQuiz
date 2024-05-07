@@ -5,6 +5,7 @@ import com.ssafy.apm.user.dto.*;
 import com.ssafy.apm.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,6 +65,12 @@ public class UserController {
     @PutMapping("/score")
     public ResponseEntity<?> updateScore(@RequestBody UserScoreUpdateRequestDto requestDto) {
         UserDetailResponseDto responseDto = userService.updateUserScore(requestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
+    }
+
+    @GetMapping("/rank")
+    public ResponseEntity<?> getRanking() {
+        UserRankingResponseDto responseDto = userService.getUserRanking();
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }
 }
