@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface GameUserRepository extends CrudRepository<GameUser, Long> {
+public interface GameUserRepository extends CrudRepository<GameUser, String> {
 
     Optional<GameUser> findByUserId(Long userId);
 
