@@ -1,6 +1,5 @@
 package com.ssafy.apm.channel.controller;
 
-import com.ssafy.apm.chat.domain.Chat;
 import com.ssafy.apm.chat.service.ChatService;
 import com.ssafy.apm.channel.dto.request.ChannelChatDto;
 
@@ -24,11 +23,10 @@ public class ChannelSocketController {
 
     @MessageMapping("/channel/chat/send")
     public void sendChannelChat(@Payload ChannelChatDto chatMessage) {
-        Chat chat = chatService.insertChannelChat(chatMessage);
-        chatMessage.setCreatedDate(chat.getLocalTime());
+        ChannelChatDto chat = chatService.insertChannelChat(chatMessage);
 
-        template.convertAndSend("/ws/sub/channel?uuid=" + chatMessage
-                .getUuid(), chatMessage);
+        template.convertAndSend("/ws/sub/channel?uuid=" + chat
+                .getUuid(), chat);
     }
 
 }
