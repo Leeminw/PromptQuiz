@@ -1,8 +1,6 @@
 package com.ssafy.apm.game.domain;
 
-import com.ssafy.apm.game.dto.request.GameCreateRequestDto;
 import com.ssafy.apm.game.dto.request.GameUpdateRequestDto;
-import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
@@ -17,47 +15,48 @@ import org.springframework.data.redis.core.index.Indexed;
 public class GameEntity {
 
     @Id
-    private Long id;
-    @Indexed
-    private Long channelId;
-    private Integer type;
-    private String style;
-    @Indexed
     private String code;
-    private String title;
-    private String password;
     @Indexed
-    private Boolean status;
+    private String channelCode;
+    private String title;
+    private String style;
+    private Integer mode;
+    private String password;
     private Boolean isTeam;
-    private Integer curRound;
-    private Integer rounds;
+    private Boolean isPrivate;
+    @Indexed
+    private Boolean isStarted;
+    private Integer timeLimited;
     @Indexed
     private Integer curPlayers;
     @Indexed
     private Integer maxPlayers;
+    private Integer curRounds;
+    private Integer maxRounds;
 
 
     public void update(GameUpdateRequestDto dto) {
-        this.id = dto.getId();
-        this.channelId = dto.getChannelId();
-        this.type = dto.getType();
-        this.style = dto.getStyle();
         this.code = dto.getCode();
+        this.channelCode = dto.getChannelCode();
         this.title = dto.getTitle();
+        this.style = dto.getStyle();
+        this.mode = dto.getMode();
         if (dto.getPassword() != null) this.password = dto.getPassword();
-        this.status = dto.getStatus();
         this.isTeam = dto.getIsTeam();
-        this.curRound = dto.getCurRound();
-        this.rounds = dto.getRounds();
+        this.isPrivate = dto.getIsPrivate();
+        this.isStarted = dto.getIsStarted();
+        this.timeLimited = dto.getTimeLimited();
         this.curPlayers = dto.getCurPlayers();
         this.maxPlayers = dto.getMaxPlayers();
+        this.curRounds = dto.getCurRounds();
+        this.maxRounds = dto.getMaxRounds();
     }
 
-    public void updateId(Long id) {
-        this.id = id;
+    public void updateCode(String code) {
+        this.code = code;
     }
 
-    public void updateStatus(Boolean status) {
+    public void updateIsStarted(Boolean status) {
         this.status = status;
     }
 
