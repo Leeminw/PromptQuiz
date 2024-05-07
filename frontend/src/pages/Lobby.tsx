@@ -48,8 +48,10 @@ const Lobby = () => {
   useEffect(() => {
     // 게임 로드하면 구독하기
     connectWebSocket(`/ws/sub/channel?uuid=${channelUuid}`, recieveChat, enterGame);
+    document.addEventListener('click', handleOutsideClick);
+    document.addEventListener('keydown', handleChatKey);
     return () => {
-      disconnectWebSocket();
+      document.removeEventListener('click', handleOutsideClick);
     };
   }, []);
   const recieveChat = (message: IMessage) => {
@@ -74,8 +76,20 @@ const Lobby = () => {
     setChatOpen(false);
   };
   const chatFocus = () => {
-    chatInput.current.focus();
+    chatInput.current?.focus();
     setChatOpen(true);
+  };
+  const handleChatKey = (event: KeyboardEvent) => {
+    const target = event.target as Node;
+    if (event.key === 'Enter' && !chatInput.current?.contains(target) && !chatOpen) {
+      chatFocus();
+    }
+  };
+  const handleOutsideClick = (event: MouseEvent) => {
+    const target = event.target as Node;
+    if (target && !chatInput.current?.contains(target) && !chatBtn.current?.contains(target)) {
+      chatFocusOut();
+    }
   };
 
   return (
