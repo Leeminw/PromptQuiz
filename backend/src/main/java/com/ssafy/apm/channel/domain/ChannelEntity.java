@@ -1,7 +1,7 @@
 package com.ssafy.apm.channel.domain;
 
-import jakarta.persistence.*;
 import lombok.*;
+import jakarta.persistence.*;
 
 @Entity
 @Getter
@@ -11,6 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @Table(name = "channel")
 public class ChannelEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,11 +20,16 @@ public class ChannelEntity {
     private Integer curPlayers;
     private Integer maxPlayers;
 
+    public boolean checkChannelAccess() {
+        return curPlayers < maxPlayers;
+    }
+
     public void decreaseCurPlayers() {
-        this.curPlayers -= 1;
+        this.curPlayers--;
     }
 
     public void increaseCurPlayers() {
-        this.curPlayers += 1;
+        this.curPlayers++;
     }
+
 }

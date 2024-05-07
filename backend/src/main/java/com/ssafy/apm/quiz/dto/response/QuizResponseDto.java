@@ -1,10 +1,11 @@
 package com.ssafy.apm.quiz.dto.response;
 
 import com.ssafy.apm.quiz.domain.Quiz;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+
 import lombok.Data;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
 

@@ -1,17 +1,16 @@
 package com.ssafy.apm.user.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserUpdateRequestDto {
+
     private Long userId;
     private String userName;
     private String nickName;
@@ -20,4 +19,5 @@ public class UserUpdateRequestDto {
     private Integer totalScore;
     private Integer teamScore;
     private Integer soloScore;
+
 }

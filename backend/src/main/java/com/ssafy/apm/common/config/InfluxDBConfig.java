@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class InfluxDBConfig {
+
     @Value("${spring.influx.org}")
     private String org;
     @Value("${spring.influx.bucket}")
@@ -19,4 +20,5 @@ public class InfluxDBConfig {
     public InfluxDBClient getConnectionInfluxDBClient() {
         return InfluxDBClientFactory.create(url, token, org, bucket);
     }
+
 }
