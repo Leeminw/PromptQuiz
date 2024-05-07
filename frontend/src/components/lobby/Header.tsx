@@ -32,32 +32,33 @@ const Header = ({ channelId, handleState }: Props) => {
   const ranking = () => {};
 
   return (
-    <nav className="flex flex-col w-full">
-      <div className="w-full h-[10vh] bg-red-200">자유 {channelId} 채널</div>
-      <div className="w-full h-[10vh] flex">
-        <CreateRoom channelId={channelId} />
-        <button className="w-1/4 h-[10vh] btn-mint" onClick={fastMatching}>
-          <FaForward />
-          빠른대전
+    <nav className="w-full h-[2rem] flex gap-4">
+      <CreateRoom channelId={channelId} />
+      <button
+        className="w-fit h-full btn-mint hover:brightness-110 flex justify-center items-center gap-2 px-2"
+        onClick={fastMatching}
+      >
+        <FaForward className="min-w-4 min-h-4 " />
+        <p className="text-nowrap">빠른대전</p>
+      </button>
+      <button
+        className="w-fit h-full btn-mint hover:brightness-110 flex justify-center items-center gap-2 pr-2 pl-1"
+        onClick={refresh}
+      >
+        <IoMdRefresh className="min-w-5 min-h-5 " />
+        <p className="text-nowrap">새로고침</p>
+      </button>
+      <button className="w-fit h-full border-custom-yellow bg-customYellow text-white font-extrabold hover:brightness-110 flex justify-center items-center gap-2 px-2">
+        <BsFillTrophyFill className="min-w-4 min-h-4 " />
+        <p className="text-nowrap">랭킹</p>
+      </button>
+      <div className='grow'/>
+      <Link to={'/channel'}>
+        <button className="w-fit h-full border-custom-red bg-customRed text-white font-extrabold hover:brightness-110 flex justify-center items-center gap-2 px-2 mr-2">
+          <ImExit className="min-w-4 min-h-4 " />
+          <p className="text-nowrap">나가기</p>
         </button>
-        <button className="w-1/4 h-[10vh] btn-mint" onClick={refresh}>
-          <IoMdRefresh />
-          새로고침
-        </button>
-        <button className="w-1/4 h-[10vh] btn-mint">
-          <BsFillTrophyFill />
-          랭킹
-        </button>
-      </div>
-
-      <div>
-        <Link to="/channel">
-          <button className="w-1/4 h-[10vh] bg-red-500">
-            <ImExit />
-            나가기
-          </button>
-        </Link>
-      </div>
+      </Link>
     </nav>
   );
 };

@@ -46,6 +46,7 @@ interface GameChat{
     content: string,
 }
 
+
 interface GameEnter{
     userId:bigint,
     uuid: string,

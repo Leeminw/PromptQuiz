@@ -34,13 +34,14 @@ const GamePage = () => {
   const [roundState, setRoundState] = useState<string>('wait');
   const [result, setResult] = useState<RoundUser[]>([]);
   const [isQuiz, setIsQuiz] = useState<boolean>(false);
-  const [messageMap, setMessageMap] = useState<Map<bigint, string>>(new Map());
+  const [messageMap, setMessageMap] = useState<Map<bigint, GameChatRecieve>>(new Map());
 
   //  문제를 받았는지 ?
   // false, , timer로받았을때>> 현재게임상태 ' '
 
   const getGameData = async () => {
     const response = await GameApi.getGame(roomId);
+    console.log('first response', response);
     const responseGame: Game = response.data;
     const userResponse = await GameApi.getUserList(roomId);
 
@@ -50,9 +51,9 @@ const GamePage = () => {
     // enterGame();
   };
   useEffect(() => {
-    const updatedUserMap = new Map<bigint, string>();
+    const updatedUserMap = new Map<bigint, GameChatRecieve>();
     gameUserList.forEach((user) => {
-      updatedUserMap.set(user.userId, '');
+      updatedUserMap.set(user.userId, null);
     });
     setMessageMap(updatedUserMap);
   }, [gameUserList]);
@@ -113,16 +114,19 @@ const GamePage = () => {
     }
   };
   const gameController = async (recieve: RecieveData) => {
-    console.log(recieve);
+    console.log('gameController : recieve', recieve);
     if (recieve.tag === 'chat') {
       const data: GameChatRecieve = recieve.data as GameChatRecieve;
       // 로고
+      // if(data.createdDate < )
       setChat((prevItems) => [...prevItems, data]);
+      console.log("chat : ", chat);
       setMessageMap((prevMap) => {
         const updatedMap = new Map(prevMap);
-        updatedMap.set(data.userId, data.content);
+        updatedMap.set(data.userId, data);
         return updatedMap;
       });
+
       console.log(messageMap);
     } else if (recieve.tag === 'enter') {
       const userResponse = await GameApi.getUserList(roomId);
@@ -344,7 +348,7 @@ const GamePage = () => {
           {gameUserList.length > 0 && (
             <GamePlayer
               userInfo={gameUserList[0]}
-              message={messageMap.get(gameUserList[0].userId)}
+              gameChat={messageMap.get(gameUserList[0].userId)}
             />
           )}
         </div>
@@ -375,7 +379,7 @@ const GamePage = () => {
               <GamePlayer
                 key={index}
                 userInfo={userInfo}
-                message={messageMap.get(userInfo.userId)}
+                gameChat={messageMap.get(userInfo.userId)}
               />
             )
         )}
