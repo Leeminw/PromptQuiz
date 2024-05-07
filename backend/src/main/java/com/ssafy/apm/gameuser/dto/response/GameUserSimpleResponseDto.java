@@ -8,7 +8,7 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class GameUserResponseDto {
+public class GameUserSimpleResponseDto {
     private String code;
     private String gameCode;
     private Long userId;
@@ -16,7 +16,7 @@ public class GameUserResponseDto {
     private Integer score;
     private Boolean isHost;
 
-    public GameUserResponseDto(GameUser entity) {
+    public GameUserSimpleResponseDto(GameUser entity) {
         this.code = entity.getCode();
         this.gameCode = entity.getGameCode();
         this.userId = entity.getUserId();
