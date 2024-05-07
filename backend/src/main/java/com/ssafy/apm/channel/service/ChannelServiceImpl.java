@@ -1,18 +1,18 @@
 package com.ssafy.apm.channel.service;
 
 import com.ssafy.apm.channel.domain.ChannelEntity;
-import com.ssafy.apm.channel.dto.request.ChannelCreateRequestDto;
-import com.ssafy.apm.channel.dto.response.ChannelGetResponseDto;
-import com.ssafy.apm.channel.exception.ChannelNotFoundException;
 import com.ssafy.apm.channel.repository.ChannelRepository;
-import com.ssafy.apm.userchannel.repository.UserChannelRepository;
+import com.ssafy.apm.channel.exception.ChannelNotFoundException;
+import com.ssafy.apm.channel.dto.response.ChannelGetResponseDto;
+import com.ssafy.apm.channel.dto.request.ChannelCreateRequestDto;
+
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -50,4 +50,5 @@ public class ChannelServiceImpl implements ChannelService {
                 .orElseThrow(() -> new ChannelNotFoundException("No entities exists by code"));
         return new ChannelGetResponseDto(channelEntity);
     }
+
 }
