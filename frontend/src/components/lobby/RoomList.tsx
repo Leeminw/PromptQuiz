@@ -54,19 +54,10 @@ const RoomList = (roomList: RoomProps[]) => {
     return <div>게임방이 없습니다.</div>;
   }
   return (
-<<<<<<< HEAD
     <div className="w-full h-full bg-white-300 gap-1 border-2 border-mint rounded-3xl ">
       <div className="flex ">
           {roomArray.map((item, index) => (
             // <p key={index}>{item.channelId}</p>
-=======
-    <div className="w-2/3 h-[100px] bg-white-300 gap-1 border-2 border-mint rounded-3xl ">
-      <div>
-        방 내용
-        <div className="flex ">
-          {/* {roomArray.map((item, index) => ( */}
-          {curRoomList.map((item, index) => (
->>>>>>> 0f49ba8f22ce524996b53ed0df25b62fdbd0c37b
             <Room
               id={item.id}
               channelId={item.channelId}
