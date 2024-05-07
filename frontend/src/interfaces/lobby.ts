@@ -2,13 +2,13 @@ interface Room {
   userId: bigint;
   channelId: number;
   type: number;
-  style: number; // number -> string
+  style: string; // number -> string
   title: string;
   password: null | string;
   status: boolean;
   isTeam: boolean;
   curRound: number;
-  maxRound: number;
+  rounds: number;
   curPlayers: number;
   maxPlayers: number;
 }

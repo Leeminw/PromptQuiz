@@ -9,26 +9,42 @@ const RoomList = (roomList: RoomProps[]) => {
   console.log(roomArray);
 
   // 페이지네이션 처리 관련 변수들
-  const [totalPageNum, setTotalPageNum] = useState<number>(2);
+  const [totalPageNum, setTotalPageNum] = useState<number>(0);
   const [curPageNum, setCurPageNum] = useState<number>(1);
   const [curRoomList, setCurRoomList] = useState<RoomProps[]>([]);
   const totalGameNum = roomArray.length;
 
+  const updateRoomList = () => {};
   // 이전 페이지로 이동(왼쪽 버튼)
   const getPrevPage = () => {
     alert('이전페이지로!!');
     if (curPageNum === 1) return;
+    setCurPageNum(curPageNum - 1);
   };
   // 다음 페이지로 이동(오른쪽 버튼)
   const getNextPage = () => {
     alert('다음페이지로!!');
+    if (curPageNum === totalPageNum) return;
+    setCurPageNum(curPageNum + 1);
   };
 
+  const initiateTotalPageNum = (roomLength: number) => {
+    // alert(`현재 확인된 정보`);
+    if (roomLength <= 6) {
+      setTotalPageNum(1);
+      return;
+    }
+    setTotalPageNum(Math.ceil(roomLength / 6));
+  };
   useEffect(() => {
     setCurRoomList(roomArray);
-    setCurPageNum(9999);
-    setTotalPageNum(1);
-    if (roomArray.length > 6) setTotalPageNum(Math.ceil(roomArray.length / 6));
+    setCurPageNum(3);
+    console.log(roomArray);
+
+    // alert(`${roomArray.length % 6}`);
+    setTotalPageNum(roomArray.length % 6);
+    initiateTotalPageNum(roomArray.length);
+    // if (roomArray.length > 6) setTotalPageNum(Math.ceil(roomArray.length / 6));
   }, []);
 
   if (!Array.isArray(roomArray)) {
@@ -40,7 +56,6 @@ const RoomList = (roomList: RoomProps[]) => {
         방 내용
         <div className="flex ">
           {roomArray.map((item, index) => (
-            // <p key={index}>{item.channelId}</p>
             <Room
               id={item.id}
               channelId={item.channelId}
@@ -62,7 +77,7 @@ const RoomList = (roomList: RoomProps[]) => {
           <button onClick={getPrevPage}>
             <FaPlay className="rotate-180" />
           </button>
-          <span>
+          <span style={{ color: 'red' }}>
             {curPageNum}/{totalPageNum}
           </span>
           <button onClick={getNextPage}>

@@ -14,7 +14,7 @@ const CreateRoom = ({ channelId }: Props) => {
   const [isTeam, setIsTeam] = useState(false);
   const [type, setType] = useState(0);
   const [maxPlayers, setMaxPlayers] = useState(1);
-  const [maxRound, setMaxRound] = useState(1);
+  const [rounds, setRounds] = useState(1);
   /**로그인 상태 정보를 가져오기 전에 임시로 userId 값을 부여 */
   // const [userId, setUserId] = useState(3);
   const { user } = useUserStore();
@@ -44,8 +44,8 @@ const CreateRoom = ({ channelId }: Props) => {
     console.log(maxPlayers);
   };
   const maxRoundHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setMaxRound(Number(event.target.value));
-    console.log(maxRound);
+    setRounds(Number(event.target.value));
+    console.log(rounds);
   };
   const styleHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStyleIndex(Number(event.target.value));
@@ -63,8 +63,8 @@ const CreateRoom = ({ channelId }: Props) => {
   const createRoom = async () => {
     const styleArr = ['realistic', 'anime', 'cartoon', 'random'];
     const stateNum = status ? 1 : 0;
-    // const style = styleArr[styleIndex];
-    const style = 2; // 임시값
+    const style = styleArr[styleIndex];
+    // const style = 2; // 임시값
 
     if (privacyStatus === 1 && password.trim().length === 0) {
       alert('비공개 방의 비밀번호를 입력해주세요');
@@ -81,7 +81,7 @@ const CreateRoom = ({ channelId }: Props) => {
       status,
       isTeam,
       curRound, // 게임 시작전 현재 라운드는 0라운드로 간주
-      maxRound,
+      rounds,
       curPlayers, // 초기 플레이어는 방장 1명
       maxPlayers,
     };
@@ -95,7 +95,7 @@ const CreateRoom = ({ channelId }: Props) => {
     console.log('방상태:' + status);
     console.log('팀전여부:' + isTeam);
     console.log('현재라운드:' + curRound);
-    console.log('최대라운드:' + maxRound);
+    console.log('최대라운드:' + rounds);
     console.log('현재플레이어:' + curPlayers);
     console.log('최대플레이어:' + maxPlayers);
 
