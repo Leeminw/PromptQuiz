@@ -42,4 +42,5 @@ public class GameChatResponseDto {
     public static String getLocalTime() {
         return LocalTime.ofInstant(Instant.now(), ZoneId.of("UTC")).toString();
     }
+
 }

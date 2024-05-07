@@ -1,6 +1,7 @@
 package com.ssafy.apm.socket.domain;
 
 import lombok.*;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
@@ -11,6 +12,7 @@ import org.springframework.data.redis.core.RedisHash;
 @AllArgsConstructor
 @RedisHash(value = "session", timeToLive = 36000)
 public class Session {
+
     @Id
     private String sessionId;
     private Long userId;
@@ -21,4 +23,5 @@ public class Session {
         this.uuid = uuid;
         this.type = type;
     }
+
 }
