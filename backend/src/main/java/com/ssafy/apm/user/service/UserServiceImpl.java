@@ -15,7 +15,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -120,5 +124,22 @@ public class UserServiceImpl implements UserService{
         String token = header.replace("Bearer ","");
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findById(token);
         refreshToken.ifPresent(refreshTokenRepository::delete);
+    }
+
+    @Override
+    public UserRankingResponseDto getUserRanking() {
+        List<UserDetailResponseDto> soloRanking = getUserRanking(userRepository::findTop10ByOrderBySoloScoreDesc);
+        List<UserDetailResponseDto> teamRanking = getUserRanking(userRepository::findTop10ByOrderByTeamScoreDesc);
+        List<UserDetailResponseDto> totalRanking = getUserRanking(userRepository::findTop10ByOrderByTotalScoreDesc);
+
+        return new UserRankingResponseDto(teamRanking,soloRanking,totalRanking);
+    }
+
+    private List<UserDetailResponseDto> getUserRanking(Supplier<Optional<List<User>>> rankingSupplier) {
+        return rankingSupplier.get()
+                .orElseThrow(() -> new NoSuchElementException("No entities"))
+                .stream()
+                .map(UserDetailResponseDto::new)
+                .toList();
     }
 }

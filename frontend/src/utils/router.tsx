@@ -28,7 +28,7 @@ const RouterInfo = [
       },
       {
         // 동적 라우팅 설정
-        path: '/lobby/:id',
+        path: '/lobby/:channelUuid',
         element: <Lobby />,
         label: 'lobby',
       },

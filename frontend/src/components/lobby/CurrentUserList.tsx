@@ -78,6 +78,7 @@ const CurrentUserList = () => {
       <div>
         {dummyUserList.map((item, index) => (
           <CurrentUser
+            key={index}
             userId={item.userId}
             userName={item.userName}
             nickName={item.nickName}
