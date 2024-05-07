@@ -152,12 +152,9 @@ public class GameUserServiceImpl implements GameUserService {
         User user = userService.loadUser();
         GameUserEntity gameUserEntity = gameUserRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new GameUserNotFoundException("No entity exist by userId!"));
-
-//        점수 업데이트
         gameUserEntity.updateScore(score);
-
-//        점수 DB에 반영
         gameUserEntity = gameUserRepository.save(gameUserEntity);
+
         return new GameUserGetResponseDto(gameUserEntity);
     }
 
@@ -167,10 +164,9 @@ public class GameUserServiceImpl implements GameUserService {
         User user = userService.loadUser();
         GameUserEntity gameUserEntity = gameUserRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new GameUserNotFoundException("No entity exist by userId!"));
-
         gameUserEntity.updateTeam(team);
-
         gameUserEntity = gameUserRepository.save(gameUserEntity);
+
         return new GameUserGetResponseDto(gameUserEntity);
     }
 
@@ -218,7 +214,9 @@ public class GameUserServiceImpl implements GameUserService {
                 winnerTeamScore(userList, redTeamEntity, getWinnerMaxScore);
                 loserTeamScore(userList, blueTeamEntity, getWinnerMaxScore);
             }
-//            동점일 때가 없네...
+            else if(redTeamTotalScore == blueTeamTotalScore){
+//                Todo: 두 팀중에 누가 1등이 점수가 더 높은지 판별해서 이긴팀 진팀 가려
+            }
 //            Blue팀의 점수가 더 높다면
             else {
                 winnerTeamScore(userList, blueTeamEntity, getWinnerMaxScore);
@@ -344,7 +342,6 @@ public class GameUserServiceImpl implements GameUserService {
                 }
             }
         }
-
         gameUserRepository.delete(gameUserEntity);
 
         return gameUserCode;
