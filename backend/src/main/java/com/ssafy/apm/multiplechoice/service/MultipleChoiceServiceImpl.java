@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +40,7 @@ public class MultipleChoiceServiceImpl implements MultipleChoiceService {
         GameEntity game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new GameNotFoundException(gameId));
 
-        GameQuizEntity gameQuiz = gameQuizRepository.findByGameIdAndRound(gameId, game.getCurRound())
+        GameQuizEntity gameQuiz = gameQuizRepository.findByGameCodeAndRound(gameId, game.getCurRound())
                 .orElseThrow(() -> new GameQuizNotFoundException("No entity exist by gameId, round!"));
 
 //        여기서 gameQuiz의 타입을 확인해서 타

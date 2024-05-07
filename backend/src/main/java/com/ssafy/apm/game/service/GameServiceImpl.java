@@ -122,6 +122,7 @@ public class GameServiceImpl implements GameService {
         return gameCode;
     }
 
+    @Override
     @Transactional
     public Boolean createGameQuiz(String gameCode) {
         User user = userService.loadUser();

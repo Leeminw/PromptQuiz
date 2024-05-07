@@ -21,14 +21,13 @@ public class GameController {
 
     private final GameService gameService;
 
-    /*    Todo: 빠른 대전시 방 목록을 뒤져서 빈 방에 들어가게 할건지( 빈 방이 없다면 방 생성 )
-     *           아니면 채널마다 큐를 만들어서 이 큐에 넣을건지( 좀 복잡해 ) 선택하고 API 만들어야함
-     *
-     * */
-
+    @GetMapping("/createQuiz/{gameCode}")
+    public ResponseEntity<ResponseData<?>> createAnswerGameQuiz(@PathVariable(name = "gameCode") String gameCode) {
+        Boolean response = gameService.createGameQuiz(gameCode);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success(response));
+    }
 
     //    방 생성
-//    방 만드는 사람의 gameUser data생성( 방장이니까 )
     @PostMapping("")
     public ResponseEntity<ResponseData<?>> createGame(@RequestBody GameCreateRequestDto gameCreateRequestDto) {
         GameGetResponseDto response = gameService.createGame(gameCreateRequestDto);

@@ -2,10 +2,14 @@ package com.ssafy.apm.gamequiz.service;
 
 import com.ssafy.apm.gamequiz.dto.response.GameQuizGetResponseDto;
 
+import java.util.List;
+
 public interface GameQuizService {
-    GameQuizGetResponseDto getGameQuizDetail(Long gameId);
+    List<GameQuizGetResponseDto> getGameQuizListEachRoundByGameCode(String gameCode);
 
-    Boolean createAnswerGameQuiz(Long gameId);
+    List<GameQuizGetResponseDto> getAllGameQuizListByGameCode(String gameCode);
 
-    Long deleteGameQuiz(Long gameId);
+    //////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////
+    String deleteGameQuiz(String gameCode);
 }

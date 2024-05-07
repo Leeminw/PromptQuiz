@@ -12,6 +12,9 @@ public interface GameService {
      *   현재 라운드의 게임-문제 매핑 테이블 리턴
      *
      * */
+
+    Boolean createGameQuiz(String gameCode);
+
     GameGetResponseDto createGame(GameCreateRequestDto gameCreateRequestDto);
 
     List<GameGetResponseDto> getGameList(String channelCode);

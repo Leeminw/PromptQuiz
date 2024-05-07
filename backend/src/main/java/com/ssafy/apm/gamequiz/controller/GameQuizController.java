@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/game-quiz")
@@ -19,21 +21,20 @@ public class GameQuizController {
 
     private final GameQuizService gameQuizService;
 
-    @GetMapping("/{gameId}")
-    public ResponseEntity<ResponseData<?>> getGameQuizDetail(@PathVariable Long gameId) {
-        GameQuizGetResponseDto response = gameQuizService.getGameQuizDetail(gameId);
+    @GetMapping("/{gameCode}")
+    public ResponseEntity<ResponseData<?>> getGameQuizListEachRoundByGameCode(@PathVariable(name = "gameCode") String gameCode) {
+        List<GameQuizGetResponseDto> response = gameQuizService.getGameQuizListEachRoundByGameCode(gameCode);
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success(response));
     }
-
-    @GetMapping("/createQuiz/{gameId}")
-    public ResponseEntity<ResponseData<?>> createAnswerGameQuiz(@PathVariable Long gameId) {
-        Boolean response = gameQuizService.createAnswerGameQuiz(gameId);
+    @GetMapping("/search/{gameCode}")
+    public ResponseEntity<ResponseData<?>> getAllGameQuizListByGameCode(@PathVariable(name = "gameCode") String gameCode) {
+        List<GameQuizGetResponseDto> response = gameQuizService.getAllGameQuizListByGameCode(gameCode);
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success(response));
     }
 
     @DeleteMapping("/deleteQuiz/{gameId}")
-    public ResponseEntity<ResponseData<?>> deleteGameQuiz(@PathVariable Long gameId) {
-        Long response = gameQuizService.deleteGameQuiz(gameId);
+    public ResponseEntity<ResponseData<?>> deleteGameQuiz(@PathVariable(name = "gameCode") String gameCode) {
+        String response = gameQuizService.deleteGameQuiz(gameCode);
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success(response));
     }
 }
