@@ -1,15 +1,16 @@
 package com.ssafy.apm.gamemonitor.domain;
 
-import com.influxdb.annotations.Column;
 import com.influxdb.query.FluxRecord;
+import com.influxdb.annotations.Column;
+import com.influxdb.annotations.Measurement;
 import com.ssafy.apm.socket.util.GameRoomStatus;
-import java.time.Instant;
-import java.time.LocalTime;
-import java.time.ZoneId;
+
 import lombok.Data;
 import lombok.Builder;
+import java.time.ZoneId;
+import java.time.Instant;
+import java.time.LocalTime;
 import lombok.AllArgsConstructor;
-import com.influxdb.annotations.Measurement;
 
 @Data
 @Builder

@@ -1,6 +1,7 @@
 package com.ssafy.apm.gamemonitor.repository;
 
 import com.influxdb.client.InfluxDBClient;
+import com.influxdb.client.domain.WritePrecision;
 import com.ssafy.apm.common.config.InfluxDBConfig;
 import com.ssafy.apm.gamemonitor.domain.GameMonitor;
 import com.ssafy.apm.gamemonitor.exception.GameMonitorValidationException;
