@@ -20,7 +20,16 @@ interface UserInfo {
 const RankingBox = ({ key, userInfo }: Props) => {
   return (
     <div className="w-2/3 h-[100px] bg-white-300 gap-1 border-2 border-mint rounded-3xl ">
+      <div>{userInfo.userId}</div>
+      <div>{userInfo.userName}</div>
       <div>{userInfo.nickName}</div>
+      <div>{userInfo.picture}</div>
+      <div>{userInfo.statusMessage}</div>
+      <div>{userInfo.totalScore}</div>
+      <div>{userInfo.teamScore}</div>
+      <div>{userInfo.soloScore}</div>
+      <div>{userInfo.created_date}</div>
+      <div>{userInfo.updated_date}</div>
     </div>
   );
 };
