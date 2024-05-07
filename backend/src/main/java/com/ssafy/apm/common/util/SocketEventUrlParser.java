@@ -1,4 +1,4 @@
-package com.ssafy.apm.socket.util;
+package com.ssafy.apm.common.util;
 
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 public class SocketEventUrlParser {
 
-    private final Integer GAME = 1, CHANNEL = 2;
+    private static final Integer GAME = 1, CHANNEL = 2;
     private final Matcher matcher;
 
     public SocketEventUrlParser(String url) {

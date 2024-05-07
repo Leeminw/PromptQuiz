@@ -1,6 +1,6 @@
 package com.ssafy.apm.gamemonitor.service;
 
-import com.ssafy.apm.socket.util.GameRoomStatus;
+import com.ssafy.apm.common.util.GameRoomStatus;
 
 import java.util.concurrent.ConcurrentHashMap;
 

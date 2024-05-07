@@ -1,7 +1,7 @@
-package com.ssafy.apm.socket.service;
+package com.ssafy.apm.common.service;
 
-import com.ssafy.apm.socket.domain.Session;
-import com.ssafy.apm.socket.repository.SocketRepository;
+import com.ssafy.apm.common.domain.Session;
+import com.ssafy.apm.common.repository.SocketRepository;
 
 import lombok.RequiredArgsConstructor;
 

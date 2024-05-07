@@ -3,7 +3,7 @@ package com.ssafy.apm.gamemonitor.domain;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.annotations.Column;
 import com.influxdb.annotations.Measurement;
-import com.ssafy.apm.socket.util.GameRoomStatus;
+import com.ssafy.apm.common.util.GameRoomStatus;
 
 import lombok.Data;
 import lombok.Builder;

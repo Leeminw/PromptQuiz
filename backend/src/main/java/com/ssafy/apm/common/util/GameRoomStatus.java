@@ -1,4 +1,4 @@
-package com.ssafy.apm.socket.util;
+package com.ssafy.apm.common.util;
 
 import com.ssafy.apm.socket.dto.response.SimilarityResponseDto;
 

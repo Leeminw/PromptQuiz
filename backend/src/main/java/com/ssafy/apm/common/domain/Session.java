@@ -1,4 +1,4 @@
-package com.ssafy.apm.socket.domain;
+package com.ssafy.apm.common.domain;
 
 import lombok.*;
 

@@ -1,6 +1,6 @@
-package com.ssafy.apm.socket.repository;
+package com.ssafy.apm.common.repository;
 
-import com.ssafy.apm.socket.domain.Session;
+import com.ssafy.apm.common.domain.Session;
 
 import java.util.Optional;
 

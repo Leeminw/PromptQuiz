@@ -4,7 +4,7 @@ import com.ssafy.apm.chat.service.ChatService;
 import com.ssafy.apm.game.service.GameService;
 import com.ssafy.apm.quiz.service.QuizService;
 import com.ssafy.apm.socket.dto.response.*;
-import com.ssafy.apm.socket.util.GameRoomStatus;
+import com.ssafy.apm.common.util.GameRoomStatus;
 import com.ssafy.apm.common.domain.ResponseData;
 import com.ssafy.apm.socket.dto.request.GameChatRequestDto;
 import com.ssafy.apm.socket.dto.request.GameReadyDto;

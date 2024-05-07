@@ -1,7 +1,7 @@
-package com.ssafy.apm.socket.config;
+package com.ssafy.apm.common.listener;
 
-import com.ssafy.apm.socket.service.SocketService;
-import com.ssafy.apm.socket.util.SocketEventUrlParser;
+import com.ssafy.apm.common.service.SocketService;
+import com.ssafy.apm.common.util.SocketEventUrlParser;
 
 import lombok.RequiredArgsConstructor;
 
