@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Slf4j
 @ControllerAdvice
 public class GameMonitorExceptionHandler {
+
     @ExceptionHandler(GameMonitorValidationException.class)
     public void handleCustomValidationException(GameMonitorValidationException e) {
         log.error("GameMonitorValidationException: " + e.getMessage());
     }
+
 }

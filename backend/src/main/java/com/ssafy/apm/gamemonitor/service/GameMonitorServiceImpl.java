@@ -4,13 +4,12 @@ import com.ssafy.apm.common.util.GameRoomStatus;
 import com.ssafy.apm.gamemonitor.domain.GameMonitor;
 import com.ssafy.apm.gamemonitor.repository.GameMonitorRepository;
 
-import java.util.List;
-import java.time.Instant;
-import java.util.ArrayList;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Service;
@@ -37,4 +36,5 @@ public class GameMonitorServiceImpl implements GameMonitorService {
             log.debug(e.getMessage());
         }
     }
+    
 }

@@ -18,6 +18,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @Measurement(name = "game_monitor")
 public class GameMonitor {
+
     @Column(timestamp = true)
     private Instant time;
     @Column(tag = true)
@@ -35,4 +36,5 @@ public class GameMonitor {
     public static GameMonitor fromRoomStatus(GameRoomStatus game, Instant time) {
         return GameMonitor.builder().time(time).uuid(game.uuid).build();
     }
+
 }
