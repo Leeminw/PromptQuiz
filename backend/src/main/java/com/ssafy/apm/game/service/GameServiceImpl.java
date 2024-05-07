@@ -1,8 +1,12 @@
 package com.ssafy.apm.game.service;
 
+import com.ssafy.apm.channel.domain.ChannelEntity;
+import com.ssafy.apm.channel.exception.ChannelNotFoundException;
+import com.ssafy.apm.channel.repository.ChannelRepository;
 import com.ssafy.apm.game.domain.GameEntity;
 import com.ssafy.apm.game.dto.request.GameCreateRequestDto;
 import com.ssafy.apm.game.dto.request.GameUpdateRequestDto;
+import com.ssafy.apm.game.dto.response.GameAndChannelGetResponseDto;
 import com.ssafy.apm.game.dto.response.GameGetResponseDto;
 import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.game.repository.GameRepository;
@@ -24,10 +28,11 @@ import java.util.NoSuchElementException;
 @Transactional(readOnly = true)
 public class GameServiceImpl implements GameService {
 
+    private final UserService userService;
     private final GameRepository gameRepository;
+    private final ChannelRepository channelRepository;
     private final GameUserRepository gameUserRepository;
     private final GameQuizRepository gameQuizRepository;
-    private final UserService userService;
 
     @Override
     @Transactional
@@ -64,11 +69,18 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public GameGetResponseDto getGameInfo(Long gameId) {
+    public GameAndChannelGetResponseDto getGameInfo(Long gameId) {
         GameEntity gameEntity = gameRepository.findById(gameId)
                 .orElseThrow(() -> new GameNotFoundException(gameId));
 
-        return new GameGetResponseDto(gameEntity);
+        ChannelEntity channelEntity = channelRepository.findById(gameEntity.getChannelId())
+                .orElseThrow(() -> new ChannelNotFoundException(gameEntity.getChannelId()));
+
+        GameAndChannelGetResponseDto dto = new GameAndChannelGetResponseDto(gameEntity);
+        dto.updateChannelInfo(channelEntity);
+
+
+        return dto;
     }
 
     @Override
