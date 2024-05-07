@@ -1,16 +1,18 @@
 package com.ssafy.apm.user.dto;
 
 import com.ssafy.apm.user.domain.User;
-import lombok.AllArgsConstructor;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserCreateRequestDto {
+
     private String userName;
     private String nickName;
     private String password;
@@ -28,4 +30,5 @@ public class UserCreateRequestDto {
                 .totalScore(0)
                 .build();
     }
+
 }

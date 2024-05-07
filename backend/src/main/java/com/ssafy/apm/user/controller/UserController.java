@@ -1,22 +1,25 @@
 package com.ssafy.apm.user.controller;
 
-import com.ssafy.apm.common.domain.ResponseData;
 import com.ssafy.apm.user.dto.*;
 import com.ssafy.apm.user.service.UserService;
-import lombok.RequiredArgsConstructor;
+import com.ssafy.apm.common.domain.ResponseData;
+
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@RequiredArgsConstructor
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/user")
 public class UserController {
+
     private final UserService userService;
 
     @PostMapping("/create")
@@ -66,4 +69,5 @@ public class UserController {
         UserDetailResponseDto responseDto = userService.updateUserScore(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }
+
 }

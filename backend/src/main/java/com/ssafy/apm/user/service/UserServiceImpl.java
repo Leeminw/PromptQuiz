@@ -1,27 +1,29 @@
 package com.ssafy.apm.user.service;
 
-import com.ssafy.apm.common.domain.JwtProvider;
-import com.ssafy.apm.user.domain.RefreshToken;
-import com.ssafy.apm.user.domain.User;
 import com.ssafy.apm.user.dto.*;
+import com.ssafy.apm.user.domain.User;
+import com.ssafy.apm.user.domain.RefreshToken;
+import com.ssafy.apm.common.domain.JwtProvider;
+import com.ssafy.apm.user.repository.UserRepository;
 import com.ssafy.apm.user.exceptions.UserNotFoundException;
 import com.ssafy.apm.user.repository.RefreshTokenRepository;
-import com.ssafy.apm.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
 
+import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService{
+
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
@@ -121,4 +123,5 @@ public class UserServiceImpl implements UserService{
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findById(token);
         refreshToken.ifPresent(refreshTokenRepository::delete);
     }
+
 }
