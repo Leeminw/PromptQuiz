@@ -1,15 +1,17 @@
 package com.ssafy.apm.gamemonitor.domain;
 
-import com.influxdb.annotations.Column;
 import com.influxdb.query.FluxRecord;
+import com.influxdb.annotations.Column;
+import com.influxdb.annotations.Measurement;
 import com.ssafy.apm.socket.util.GameRoomStatus;
-import java.time.Instant;
-import java.time.LocalTime;
-import java.time.ZoneId;
+
 import lombok.Data;
 import lombok.Builder;
 import lombok.AllArgsConstructor;
-import com.influxdb.annotations.Measurement;
+
+import java.time.ZoneId;
+import java.time.Instant;
+import java.time.LocalTime;
 
 @Data
 @Builder
@@ -30,7 +32,7 @@ public class GameMonitor {
         return LocalTime.ofInstant(this.time, ZoneId.of("UTC")).toString();
     }
 
-    public static GameMonitor fromRoomStatus(GameRoomStatus game, Instant time){
+    public static GameMonitor fromRoomStatus(GameRoomStatus game, Instant time) {
         return GameMonitor.builder().time(time).uuid(game.uuid).build();
     }
 }
