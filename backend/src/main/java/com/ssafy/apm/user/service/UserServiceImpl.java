@@ -143,5 +143,5 @@ public class UserServiceImpl implements UserService{
                 .map(UserDetailResponseDto::new)
                 .toList();
     }
->>>>>>> dee6ae60e2a4e9ff1b6dbdeeca3d156711c8f840
+
 }
