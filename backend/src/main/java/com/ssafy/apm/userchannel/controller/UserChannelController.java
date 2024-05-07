@@ -26,7 +26,6 @@ public class UserChannelController {
     private final UserChannelService userChannelService;
 
 //    채널 내에 접속한 유저 정보를 리턴하는 API
-
     @GetMapping("/userChannelList/{channelId}")
     public ResponseEntity<ResponseData<?>> getUserChannelList(@PathVariable(name = "channelId") Long channelId) {
         List<UserDetailResponseDto> response = userChannelService.getUserChannelList(channelId);
@@ -34,18 +33,31 @@ public class UserChannelController {
     }
 
 //    채널 입장
-//    로그인 필요
     @PostMapping("/{channelId}")
     public ResponseEntity<ResponseData<?>> enterUserChannel(@PathVariable(name = "channelId") Long channelId) {
         UserChannelGetResponseDto response = userChannelService.enterUserChannel(channelId);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
 
+//    채널 코드로 입장
+    @PostMapping("/{code}")
+    public ResponseEntity<ResponseData<?>> enterUserChannelByCode(@PathVariable(name = "channelCode") String code) {
+        UserChannelGetResponseDto response = userChannelService.enterUserChannelByCode(code);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
+    }
+
 //    채널 퇴장
-//    로그인 필요
     @DeleteMapping("")
     public ResponseEntity<ResponseData<?>> deleteExitUserChannel() {
         Long response = userChannelService.deleteExitUserChannel();
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
+
+    @DeleteMapping("/{userId}/{channelCode}")
+    public ResponseEntity<ResponseData<?>> deleteExitUserChannelByChannelCodeAndUserId(@PathVariable(name = "userId") Long userId, @PathVariable(name = "channelCode") String code) {
+        Long response = userChannelService.deleteExitUserChannelByChannelCodeAndUserId(userId, code);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
+    }
+
+
 }
