@@ -41,6 +41,7 @@ const GamePage = () => {
   const [testTime, setTestTime] = useState<number[]>([]);
   const getGameData = async () => {
     const response = await GameApi.getGame(roomId);
+    console.log("first response", response);
     const responseGame: Game = response.data;
     const userResponse = await GameApi.getUserList(roomId);
     // console.log(responseGame);

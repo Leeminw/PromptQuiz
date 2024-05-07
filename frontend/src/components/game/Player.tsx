@@ -22,7 +22,7 @@ const GamePlayer = ({ userInfo }: GamePlayerProps) => {
           className="min-w-20 min-h-6 w-fit h-fit bg-white border border-gray-200 rounded-lg text-sm px-2 py-0.5 line-clamp-2 text-black
         "
         >
-          가
+          가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사
         </div>
         <svg className="absolute z-10 w-3 h-3 translate-x-8 -translate-y-[0.05rem]">
           <path d="M 0 0 V 10 L 7 0" stroke="#dde5e3" strokeWidth={1} fill="white"></path>
