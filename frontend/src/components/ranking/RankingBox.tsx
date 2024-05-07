@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import RankingBox from './RankingBox';
+
 interface Props {
-  rankingTitle: string;
-  users: User[];
+  key: number;
+  userInfo: UserInfo;
 }
-interface User {
+interface UserInfo {
   userId: number;
   userName: string;
   nickName: string;
@@ -17,15 +17,12 @@ interface User {
   updated_date: string;
 }
 
-const RankingList = ({ rankingTitle, users }: Props) => {
+const RankingBox = ({ key, userInfo }: Props) => {
   return (
     <div className="w-2/3 h-[100px] bg-white-300 gap-1 border-2 border-mint rounded-3xl ">
-      <div>{rankingTitle}</div>
-      {users.map(
-        (userInfo: User, index) => index !== 0 && <RankingBox key={index} userInfo={userInfo} />
-      )}
+      <div>{userInfo.nickName}</div>
     </div>
   );
 };
 
-export default RankingList;
+export default RankingBox;
