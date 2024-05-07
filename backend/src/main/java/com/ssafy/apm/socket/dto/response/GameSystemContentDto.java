@@ -10,11 +10,8 @@ import java.util.List;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class GameSystemContentDto {
-    // 게임에서 현재 라운드
-    // 초기값 0
-    private Integer round;
 
-    // (라운드 결과) 유저 리스트 , null 값 일 수 있음
+    private Integer round;
     private List<PlayerDto> roundList;
 
     public GameSystemContentDto(Integer round){
@@ -26,4 +23,5 @@ public class GameSystemContentDto {
         this.round = 0;
         this.roundList = roundList;
     }
+
 }

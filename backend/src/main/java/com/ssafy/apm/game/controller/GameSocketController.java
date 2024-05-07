@@ -3,20 +3,15 @@ package com.ssafy.apm.game.controller;
 import com.ssafy.apm.chat.service.ChatService;
 import com.ssafy.apm.game.service.GameService;
 import com.ssafy.apm.quiz.service.QuizService;
-import com.ssafy.apm.socket.util.GameRoomStatus;
+import com.ssafy.apm.socket.dto.response.*;
+import com.ssafy.apm.common.util.GameRoomStatus;
 import com.ssafy.apm.common.domain.ResponseData;
-import com.ssafy.apm.socket.dto.response.PlayerDto;
-import com.ssafy.apm.socket.dto.request.GameChatDto;
+import com.ssafy.apm.socket.dto.request.GameChatRequestDto;
 import com.ssafy.apm.socket.dto.request.GameReadyDto;
 import com.ssafy.apm.gamequiz.service.GameQuizService;
 import com.ssafy.apm.gameuser.service.GameUserService;
-import com.ssafy.apm.socket.dto.response.GameAnswerCheck;
-import com.ssafy.apm.socket.dto.response.GameResponseDto;
 import com.ssafy.apm.gamemonitor.service.GameMonitorService;
 import com.ssafy.apm.socket.dto.request.EnterUserMessageDto;
-import com.ssafy.apm.socket.dto.response.GameSystemContentDto;
-import com.ssafy.apm.socket.dto.response.GameTimerResponseDto;
-import com.ssafy.apm.socket.dto.response.GameSystemResponseDto;
 
 import java.util.*;
 
@@ -174,7 +169,7 @@ public class GameSocketController {
 
     // (플레이어 입력) 플레이어는 채팅 or 정답을 입력한다
     @MessageMapping("/game/chat/send")
-    public void sendGameChat(@Payload GameChatDto chatMessage) {
+    public void sendGameChat(@Payload GameChatRequestDto chatMessage) {
         GameRoomStatus game = gameOngoingMap.get(chatMessage.getGameId());
 
         // 입력이 들어왔는데 만약 현재 라운드와 전혀 다른 입력이 들어왔을 때는 채팅만 전파하기
@@ -216,7 +211,7 @@ public class GameSocketController {
             }
         }
 
-        GameChatDto chat = chatService.insertGameChat(chatMessage);
+        GameChatResponseDto chat = chatService.insertGameChat(chatMessage);
 
         // 정답이든 아니든 일단 채팅은 전체 전파하기
         template.convertAndSend("/ws/sub/game?uuid=" + chat.
@@ -338,7 +333,8 @@ public class GameSocketController {
     // (게임 종료) 전체 게임 종료 이후 사용자 접수 업데이트
     public void setGameResult(GameRoomStatus game) {
         // 게임 점수 적용
-        gameUserService.updateUserScore(game.gameId);
+        /* FIXME: GameService 에서 결과 처리 시 스코어 업데이트도 함께하도록 수정 예정 */
+        // gameUserService.updateUserScore(game.gameId);
 
         // 일단 게임 스케쥴러 종료
         gameOngoingMap.remove(game.gameId);

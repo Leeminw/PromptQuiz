@@ -13,4 +13,5 @@ public class GameMonitorValidationException extends RuntimeException {
     public GameMonitorValidationException(String message, Throwable cause) {
         super(message, cause);
     }
+
 }

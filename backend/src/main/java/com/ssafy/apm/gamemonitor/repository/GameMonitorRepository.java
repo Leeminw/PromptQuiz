@@ -16,12 +16,11 @@ import org.springframework.beans.factory.annotation.Value;
 @Repository
 @RequiredArgsConstructor
 public class GameMonitorRepository {
+
     private final InfluxDBConfig influxDBConfig;
 
-    // 기본 DB 정보 로드
     @Value("${spring.influx.org}")
     private String org;
-
     @Value("${spring.influx.bucket}")
     private String bucket;
 
@@ -32,4 +31,5 @@ public class GameMonitorRepository {
             throw new GameMonitorValidationException(e.getMessage());
         }
     }
+
 }

@@ -8,9 +8,7 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class GameResponseDto {
-    // 소켓 메세지 태그를 나타냅니다 (game, lobby, chat)
-    private String tag;
 
-    // data에는 내용에 해당하는 response dto가 들어갑니다.
+    private String tag;
     private Object data;
 }

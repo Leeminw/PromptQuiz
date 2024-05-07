@@ -12,21 +12,22 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/v1/channel")
-@RequiredArgsConstructor
 @Slf4j
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/channel")
 public class ChannelController {
+
     private final ChannelService channelService;
 
-    //    채널 등록
+    // 채널 등록
     @PostMapping("")
     public ResponseEntity<ResponseData<?>> createChannel(@RequestBody ChannelCreateRequestDto channelCreateRequestDto) {
         ChannelGetResponseDto response = channelService.createChannel(channelCreateRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success("채널 생성 완료", response));
     }
 
-    //    채널 목록 조회
+    // 채널 목록 조회
     @GetMapping("/channelList")
     public ResponseEntity<ResponseData<?>> getChannelList() {
         List<ChannelGetResponseDto> response = channelService.getChannelList();
@@ -44,4 +45,5 @@ public class ChannelController {
         ChannelGetResponseDto response = channelService.getChannelByCode(code);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("채널 조회 완료", response));
     }
+
 }
