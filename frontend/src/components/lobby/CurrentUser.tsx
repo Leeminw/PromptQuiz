@@ -27,7 +27,7 @@ const CurrentUser = ({
   updated_date,
 }: Props) => {
   return (
-    <div className="w-full h-14 flex items-center pl-1 border-custom-mint bg-white overflow-hidden py-4">
+    <div className="w-full h-12 flex items-center pl-1 border-custom-mint bg-white overflow-hidden py-4">
       {/* <div>URL로 프로필 사진을 가져올부분</div> */}
       <div className="rounded-full bg-[url(https://contents-cdn.viewus.co.kr/image/2023/08/CP-2023-0056/image-7adf97c8-ef11-4def-81e8-fe2913667983.jpeg)] bg-cover w-8 h-8 aspect-square"></div>
         <div className='flex flex-col items-start pl-2'>

@@ -169,7 +169,7 @@ const CurrentUserList = () => {
     alert('예시 함수');
   };
   return (
-    <div className="w-full h-full max-h-80 flex flex-col gap-3 overflow-y-scroll userList border-custom-white bg-white pt-1 pr-2 pl-1">
+    <div className="w-full h-full flex flex-col gap-3 overflow-y-scroll userList border-custom-white bg-white pt-1 pr-2 pl-1">
       {dummyUserList.map((item, index) => (
         <CurrentUser
           userId={item.userId}
