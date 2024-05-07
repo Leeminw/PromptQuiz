@@ -3,16 +3,11 @@ package com.ssafy.apm.channel.controller;
 import com.ssafy.apm.channel.dto.request.ChannelCreateRequestDto;
 import com.ssafy.apm.channel.dto.response.ChannelGetResponseDto;
 import com.ssafy.apm.channel.service.ChannelService;
-import com.ssafy.apm.channel.service.ChannelServiceImpl;
 import com.ssafy.apm.common.domain.ResponseData;
-import com.ssafy.apm.game.dto.request.GameCreateRequestDto;
-import com.ssafy.apm.game.dto.response.GameGetResponseDto;
-import com.ssafy.apm.game.service.GameServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

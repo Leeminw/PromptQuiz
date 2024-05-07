@@ -1,8 +1,6 @@
 package com.ssafy.apm.gamequiz.controller;
 
 import com.ssafy.apm.common.domain.ResponseData;
-import com.ssafy.apm.game.dto.request.GameCreateRequestDto;
-import com.ssafy.apm.game.dto.response.GameGetResponseDto;
 import com.ssafy.apm.gamequiz.dto.response.GameQuizGetResponseDto;
 import com.ssafy.apm.gamequiz.service.GameQuizService;
 import lombok.RequiredArgsConstructor;
