@@ -7,9 +7,9 @@ import com.ssafy.apm.channel.dto.request.ChannelChatDto;
 import java.util.List;
 
 public interface ChatService {
-    Chat insertGameChat(GameChatDto request);
+    GameChatDto insertGameChat(GameChatDto request);
 
-    Chat insertChannelChat(ChannelChatDto request);
+    ChannelChatDto insertChannelChat(ChannelChatDto request);
 
     List<Chat> getChatListByTimeRange(Integer hour);
 }
