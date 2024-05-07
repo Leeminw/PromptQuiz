@@ -19,17 +19,22 @@ const RoomList = (roomList: RoomProps[]) => {
   const getPrevPage = () => {
     alert('이전페이지로!!');
     if (curPageNum === 1) return;
+    // 이제 앞에 6개 리스트 내용을 보여준다.
     setCurPageNum(curPageNum - 1);
+    setCurRoomList(roomArray.slice((curPageNum - 1) * 6, curPageNum * 6));
   };
   // 다음 페이지로 이동(오른쪽 버튼)
   const getNextPage = () => {
     alert('다음페이지로!!');
+
     if (curPageNum === totalPageNum) return;
     setCurPageNum(curPageNum + 1);
+    if (curPageNum < totalPageNum)
+      setCurRoomList(roomArray.slice((curPageNum - 1) * 6, curPageNum * 6));
+    else setCurRoomList(roomArray.slice((curPageNum - 1) * 6));
   };
 
   const initiateTotalPageNum = (roomLength: number) => {
-    // alert(`현재 확인된 정보`);
     if (roomLength <= 6) {
       setTotalPageNum(1);
       return;
@@ -37,15 +42,13 @@ const RoomList = (roomList: RoomProps[]) => {
     setTotalPageNum(Math.ceil(roomLength / 6));
   };
   useEffect(() => {
-    setCurRoomList(roomArray);
-    setCurPageNum(3);
+    setCurRoomList(roomArray.slice(0, 6));
+    setCurPageNum(1);
     console.log(roomArray);
 
-    // alert(`${roomArray.length % 6}`);
-    setTotalPageNum(roomArray.length % 6);
     initiateTotalPageNum(roomArray.length);
     // if (roomArray.length > 6) setTotalPageNum(Math.ceil(roomArray.length / 6));
-  }, []);
+  }, [roomList]);
 
   if (!Array.isArray(roomArray)) {
     return <div>게임방이 없습니다.</div>;
@@ -55,7 +58,8 @@ const RoomList = (roomList: RoomProps[]) => {
       <div>
         방 내용
         <div className="flex ">
-          {roomArray.map((item, index) => (
+          {/* {roomArray.map((item, index) => ( */}
+          {curRoomList.map((item, index) => (
             <Room
               id={item.id}
               channelId={item.channelId}
@@ -77,7 +81,7 @@ const RoomList = (roomList: RoomProps[]) => {
           <button onClick={getPrevPage}>
             <FaPlay className="rotate-180" />
           </button>
-          <span style={{ color: 'red' }}>
+          <span style={{ color: 'red', fontSize: '30px' }}>
             {curPageNum}/{totalPageNum}
           </span>
           <button onClick={getNextPage}>
