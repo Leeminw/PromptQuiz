@@ -8,29 +8,27 @@ import java.util.List;
 
 public interface GameUserService {
 
-    List<GameUserDetailResponseDto> getGameUserList(Long gameId);
+    List<GameUserDetailResponseDto> getGameUserList(String gameCode);
 
-    GameUserGetResponseDto getGameUser(Long gameUserId);
+    GameUserGetResponseDto getGameUser(String code);
 
     /////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////
-    GameUserGetResponseDto postEnterGame(Long gameId);
+    GameUserGetResponseDto postEnterGame(String gameCode);
 
-    GameUserGetResponseDto postFastEnterGame();
+//    GameUserGetResponseDto postFastEnterGame();
 
     /////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////
     GameUserGetResponseDto updateGameUserScore(Integer score);
 
-    GameUserGetResponseDto updateGameUserIsReady(Boolean isReady);
-
     GameUserGetResponseDto updateGameUserTeam(String team);
 
-    void updateUserScore(Long gameId);
+    void updateUserScore(String gameCode);
     /////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////
 
-    Long deleteExitGame(Long gameId);
+    String deleteExitGame(String gameCode);
 
-    Long deleteExitGameByUserId(Long userId, String gameCode);
+    String deleteExitGameByUserId(Long userId, String gameCode);
 }

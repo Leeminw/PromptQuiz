@@ -56,29 +56,26 @@ public class GameEntity {
         this.code = code;
     }
 
-    public void updateIsStarted(Boolean status) {
-        this.status = status;
+    public void updateIsStarted(Boolean isStarted) {
+        this.isStarted = isStarted;
     }
 
-    public Integer updateCurRound() {
-        this.curRound = 1;
-        return this.curRound;
+    public Integer updateCurRounds() {
+        this.curRounds = 1;
+        return this.curRounds;
     }
 
-    public Integer increaseRound() {
-        this.curRound += 1;
-        return this.curRound;
+    public Integer increaseRounds() {
+        this.curRounds++;
+        return this.curRounds;
     }
 
     public void increaseCurPlayers() {
-        this.curPlayers += 1;
-        if(this.curPlayers.equals(this.maxPlayers)){ // 방이 꽉차면
-            this.status = false; // 입장 불가
-        }
+        this.curPlayers++;
     }
 
     public void decreaseCurPlayers() {
-        this.curPlayers -= 1;
+        this.curPlayers--;
     }
 
 }

@@ -9,33 +9,35 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GameGetResponseDto {
-    private String id;
-    private Long channelId;
-    private Integer type;
-    private String style;
     private String code;
+    private String channelCode;
     private String title;
+    private String style;
+    private Integer mode;
     private String password;
-    private Boolean status;
     private Boolean isTeam;
-    private Integer curRound;
-    private Integer rounds;
+    private Boolean isPrivate;
+    private Boolean isStarted;
+    private Integer timeLimited;
     private Integer curPlayers;
     private Integer maxPlayers;
+    private Integer curRounds;
+    private Integer maxRounds;
 
     public GameGetResponseDto(GameEntity game) {
-        this.id = game.getId().toString();
-        this.channelId = game.getChannelId();
-        this.type = game.getType();
-        this.style = game.getStyle();
         this.code = game.getCode();
+        this.channelCode = game.getChannelCode();
         this.title = game.getTitle();
+        this.style = game.getStyle();
+        this.mode = game.getMode();
         this.password = game.getPassword();
-        this.status = game.getStatus();
         this.isTeam = game.getIsTeam();
-        this.curRound = game.getCurRound();
-        this.rounds = game.getRounds();
+        this.isPrivate = game.getIsPrivate();
+        this.isStarted = game.getIsStarted();
+        this.timeLimited = game.getTimeLimited();
         this.curPlayers = game.getCurPlayers();
         this.maxPlayers = game.getMaxPlayers();
+        this.curRounds = game.getCurRounds();
+        this.maxRounds = game.getMaxRounds();
     }
 }

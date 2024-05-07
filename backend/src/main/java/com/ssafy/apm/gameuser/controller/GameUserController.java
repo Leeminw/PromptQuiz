@@ -28,22 +28,22 @@ public class GameUserController {
      * */
 
     //    게임방 안에 있는 유저들 목록 가져옴( UserDB와 GameUserDB에 있는 데이터 불러옴)
-    @GetMapping("/gameUserList/{gameId}")
-    public ResponseEntity<ResponseData<?>> getGameUserList(@PathVariable(name = "gameId") Long gameId) {
-        List<GameUserDetailResponseDto> response = gameUserService.getGameUserList(gameId);
+    @GetMapping("/gameUserList/{gameCode}")
+    public ResponseEntity<ResponseData<?>> getGameUserList(@PathVariable(name = "gameCode") String gameCode) {
+        List<GameUserDetailResponseDto> response = gameUserService.getGameUserList(gameCode);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
 
-    @GetMapping("/{gameUserId}")
-    public ResponseEntity<ResponseData<?>> getGameUser(@PathVariable(name = "gameUserId") Long gameUserId) {
-        GameUserGetResponseDto response = gameUserService.getGameUser(gameUserId);
+    @GetMapping("/{gameUserCode}")
+    public ResponseEntity<ResponseData<?>> getGameUser(@PathVariable(name = "gameUserCode") String gameUserCode) {
+        GameUserGetResponseDto response = gameUserService.getGameUser(gameUserCode);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
 
     //    게임 입장할 때 GameUserEntity 생성
-    @PostMapping("/enterGame/{gameId}")
-    public ResponseEntity<ResponseData<?>> postEnterGame(@PathVariable(name = "gameId") Long gameId) {
-        GameUserGetResponseDto response = gameUserService.postEnterGame(gameId);
+    @PostMapping("/enterGame/{gameCode}")
+    public ResponseEntity<ResponseData<?>> postEnterGame(@PathVariable(name = "gameCode") String gameCode) {
+        GameUserGetResponseDto response = gameUserService.postEnterGame(gameCode);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
 
@@ -54,10 +54,10 @@ public class GameUserController {
     }
 
     //    게임 퇴장할 때 GameUserEntity 삭제
-    @DeleteMapping("/exitGame/{gameId}")
-    public ResponseEntity<ResponseData<?>> deleteExitGame(@PathVariable(name = "gameId") Long gameId) {
+    @DeleteMapping("/exitGame/{gameCode}")
+    public ResponseEntity<ResponseData<?>> deleteExitGame(@PathVariable(name = "gameCode") String gameCode) {
 //        삭제된 gameUserId 리턴
-        Long response = gameUserService.deleteExitGame(gameId);
+        Long response = gameUserService.deleteExitGame(gameCode);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
 }

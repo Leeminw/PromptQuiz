@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -32,7 +33,25 @@ public class BlankSubjectiveService {
                     .isAnswer(true)
                     .build();
             response.add(entity);
+            curRound++;
         }
         return response;
+    }
+
+    public GameQuizEntity createGameQuiz(GameEntity gameEntity, Quiz quiz, int curRound) {
+//        GameQuizEntity response = GameQuizEntity.builder()
+//                .gameCode(gameEntity.getCode())
+//                .quizId(quiz.getId())
+//                .type(4)
+//                .round(curRound)
+//                .isAnswer(true)
+//                .build();
+        return GameQuizEntity.builder()
+                .gameCode(gameEntity.getCode())
+                .quizId(quiz.getId())
+                .type(4)
+                .round(curRound)
+                .isAnswer(true)
+                .build();
     }
 }

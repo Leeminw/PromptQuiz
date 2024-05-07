@@ -9,7 +9,6 @@ import com.ssafy.apm.gameuser.dto.response.GameUserGetResponseDto;
 import com.ssafy.apm.gameuser.exception.GameUserNotFoundException;
 import com.ssafy.apm.gameuser.repository.GameUserRepository;
 import com.ssafy.apm.user.domain.User;
-import com.ssafy.apm.user.dto.UserDetailResponseDto;
 import com.ssafy.apm.user.dto.UserScoreUpdateRequestDto;
 import com.ssafy.apm.user.exceptions.UserNotFoundException;
 import com.ssafy.apm.user.repository.UserRepository;
@@ -24,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -38,10 +36,10 @@ public class GameUserServiceImpl implements GameUserService {
     private final UserService userService;
 
     @Override
-    public List<GameUserDetailResponseDto> getGameUserList(Long gameId) {
+    public List<GameUserDetailResponseDto> getGameUserList(String gameCode) {
 //        GameId로 게임방 안에 있는 게임유저 데이터들을 가져옴
-        List<GameUserEntity> gameUserEntityList = gameUserRepository.findAllByGameId(gameId)
-                .orElseThrow(() -> new GameUserNotFoundException("No entities exists by gameId!"));
+        List<GameUserEntity> gameUserEntityList = gameUserRepository.findAllByGameCode(gameCode)
+                .orElseThrow(() -> new GameUserNotFoundException("No entities exists by gameCode!"));
 //        userId들 추출
         List<Long> userIds = gameUserEntityList.stream()
                 .map(GameUserEntity::getUserId)
@@ -67,10 +65,10 @@ public class GameUserServiceImpl implements GameUserService {
     }
 
     @Override
-    public GameUserGetResponseDto getGameUser(Long gameUserId) {
+    public GameUserGetResponseDto getGameUser(String code) {
 
-        GameUserEntity entity = gameUserRepository.findById(gameUserId)
-                .orElseThrow(() -> new GameUserNotFoundException(gameUserId));
+        GameUserEntity entity = gameUserRepository.findByCode(code)
+                .orElseThrow(() -> new GameUserNotFoundException(code));
 
         return new GameUserGetResponseDto(entity);
     }
@@ -78,25 +76,24 @@ public class GameUserServiceImpl implements GameUserService {
     //    게임 입장할때
     @Override
     @Transactional
-    public GameUserGetResponseDto postEnterGame(Long gameId) {
+    public GameUserGetResponseDto postEnterGame(String gameCode) {
 //        로그인 한놈 유저 정보 불러오기
         User user = userService.loadUser();
         Long userId = user.getId();
 
 //        일반유저
         GameUserEntity entity = GameUserEntity.builder()
-                .gameId(gameId)
+                .gameCode(gameCode)
                 .userId(userId)
                 .isHost(false)
-                .isReady(false)
                 .score(0)
                 .team("NOTHING")
                 .build();
 
-        GameEntity gameEntity = gameRepository.findById(gameId)
-                .orElseThrow(() -> new GameNotFoundException(gameId));
-        if(!gameEntity.getStatus()) { // 접속 불가능한 방이면
-            throw new RuntimeException("접속 불가능한 방입니다.");
+        GameEntity gameEntity = gameRepository.findByCode(gameCode)
+                .orElseThrow(() -> new GameNotFoundException(gameCode));
+        if(!gameEntity.getIsStarted()) {
+            throw new RuntimeException("이미 시작한 방입니다.");
         }
 //        방에 접속 중인 인원 하나 늘려줌
         gameEntity.increaseCurPlayers();
@@ -107,47 +104,47 @@ public class GameUserServiceImpl implements GameUserService {
         return new GameUserGetResponseDto(entity);
     }
 
-    @Override
-    @Transactional
-    public GameUserGetResponseDto postFastEnterGame() {
-//        Todo: 프론트에 던져줄 CustomException 만들기
-//        로그인 한놈 유저 정보 불러오기
-        User user = userService.loadUser();
-        Long userId = user.getId();
-
-        UserChannelEntity userChannel = userChannelRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserChannelNotFoundException("No entity exist by userId!"));
-
-        List<GameEntity> gameEntityList = gameRepository.findAllByChannelId(userChannel.getChannelId())
-                .orElseThrow(() -> new GameNotFoundException("No entities exists by channelId!"));// 채널에 생성된 방이 없다면
-
-//        에러 코드를 프론트에서 받아 방을 만들 수 있게 처리해야함
-
-        for (GameEntity entity: gameEntityList) {
-            if (entity.getStatus() && entity.getCurPlayers() < entity.getMaxPlayers()) { // 아직 입장할 수 있고 curPlayers가 maxPlayers보다 작을 때
-                //        일반유저
-                GameUserEntity gameUser = GameUserEntity.builder()
-                        .gameId(entity.getId())
-                        .userId(userId)
-                        .isHost(false)
-                        .isReady(false)
-                        .score(0)
-                        .team("NOTHING")
-                        .build();
-
-                //        방에 접속 중인 인원 하나 늘려줌
-                entity.increaseCurPlayers();
-
-                gameRepository.save(entity);
-                gameUser = gameUserRepository.save(gameUser);
-
-                return new GameUserGetResponseDto(gameUser);
-            }
-        }
-//        입장 가능한 방이 없으므로 방을 만들어야 한다고 프론트에 전달
-
-        return null;
-    }
+//    @Override
+//    @Transactional
+//    public GameUserGetResponseDto postFastEnterGame() {
+////        Todo: 프론트에 던져줄 CustomException 만들기
+////        로그인 한놈 유저 정보 불러오기
+//        User user = userService.loadUser();
+//        Long userId = user.getId();
+//
+//        UserChannelEntity userChannel = userChannelRepository.findByUserId(userId)
+//                .orElseThrow(() -> new UserChannelNotFoundException("No entity exist by userId!"));
+//
+//        List<GameEntity> gameEntityList = gameRepository.findAllByChannelCode(userChannel.getChannelId())
+//                .orElseThrow(() -> new GameNotFoundException("No entities exists by channelId!"));// 채널에 생성된 방이 없다면
+//
+////        에러 코드를 프론트에서 받아 방을 만들 수 있게 처리해야함
+//
+//        for (GameEntity entity: gameEntityList) {
+//            if (entity.getStatus() && entity.getCurPlayers() < entity.getMaxPlayers()) { // 아직 입장할 수 있고 curPlayers가 maxPlayers보다 작을 때
+//                //        일반유저
+//                GameUserEntity gameUser = GameUserEntity.builder()
+//                        .gameId(entity.getId())
+//                        .userId(userId)
+//                        .isHost(false)
+//                        .isReady(false)
+//                        .score(0)
+//                        .team("NOTHING")
+//                        .build();
+//
+//                //        방에 접속 중인 인원 하나 늘려줌
+//                entity.increaseCurPlayers();
+//
+//                gameRepository.save(entity);
+//                gameUser = gameUserRepository.save(gameUser);
+//
+//                return new GameUserGetResponseDto(gameUser);
+//            }
+//        }
+////        입장 가능한 방이 없으므로 방을 만들어야 한다고 프론트에 전달
+//
+//        return null;
+//    }
 
     @Override
     @Transactional
@@ -160,19 +157,6 @@ public class GameUserServiceImpl implements GameUserService {
         gameUserEntity.updateScore(score);
 
 //        점수 DB에 반영
-        gameUserEntity = gameUserRepository.save(gameUserEntity);
-        return new GameUserGetResponseDto(gameUserEntity);
-    }
-
-    @Override
-    @Transactional
-    public GameUserGetResponseDto updateGameUserIsReady(Boolean isReady) {
-        User user = userService.loadUser();
-        GameUserEntity gameUserEntity = gameUserRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new GameUserNotFoundException("No entity exist by userId!"));
-
-        gameUserEntity.updateIsReady(isReady);
-
         gameUserEntity = gameUserRepository.save(gameUserEntity);
         return new GameUserGetResponseDto(gameUserEntity);
     }
@@ -192,17 +176,17 @@ public class GameUserServiceImpl implements GameUserService {
 
     @Override
     @Transactional
-    public void updateUserScore(Long gameId) {
-        GameEntity game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new GameNotFoundException(gameId));
-        List<GameUserEntity> gameUserEntityList = gameUserRepository.findAllByGameId(gameId)
-                .orElseThrow(()-> new GameUserNotFoundException("No entities exists by gameId!"));
+    public void updateUserScore(String gameCode) {
+        GameEntity game = gameRepository.findByCode(gameCode)
+                .orElseThrow(() -> new GameNotFoundException(gameCode));
+        List<GameUserEntity> gameUserEntityList = gameUserRepository.findAllByGameCode(gameCode)
+                .orElseThrow(()-> new GameUserNotFoundException("No entities exists by gameCode!"));
         List<User> userList = new ArrayList<>();
 
 //        Todo: Game-User의 Ranking을 여기서 구하고 점수를 넣는건지, 라운드마다 Ranking을 업데이트 하는지 상의하고 구현해야함.
         int winnerListSize = gameUserEntityList.size() / 2;
         int loserListSize = winnerListSize + gameUserEntityList.size() % 2;
-        int totalScore = 10 * game.getRounds();
+        int totalScore = 10 * game.getMaxRounds();
 //        12가 최대 게임 참여자 수
         int getWinnerMaxScore = Math.round(totalScore * (Math.min(game.getCurPlayers(), 12) / 12));
 
@@ -221,7 +205,7 @@ public class GameUserServiceImpl implements GameUserService {
 
 //            누가 이겼는가
             for (GameUserEntity entity : GameUsers) {
-                if (entity.getTeam() == "RED") {
+                if (entity.getTeam().equals("RED")) {
                     redTeamTotalScore += entity.getScore();
                     redTeamEntity.add(entity);
                 } else {
@@ -234,6 +218,7 @@ public class GameUserServiceImpl implements GameUserService {
                 winnerTeamScore(userList, redTeamEntity, getWinnerMaxScore);
                 loserTeamScore(userList, blueTeamEntity, getWinnerMaxScore);
             }
+//            동점일 때가 없네...
 //            Blue팀의 점수가 더 높다면
             else {
                 winnerTeamScore(userList, blueTeamEntity, getWinnerMaxScore);
@@ -298,17 +283,16 @@ public class GameUserServiceImpl implements GameUserService {
     //    게임 나갈때
     @Override
     @Transactional
-    public Long deleteExitGame(Long gameId) {
+    public String deleteExitGame(String gameCode) {
 
         User user = userService.loadUser();
         Long userId = user.getId();
-        GameUserEntity gameUserEntity = gameUserRepository.findByGameIdAndUserId(gameId, userId)
-                .orElseThrow(() -> new GameUserNotFoundException("No entity exist by gameId, userId"));
+        GameUserEntity gameUserEntity = gameUserRepository.findByGameCodeAndUserId(gameCode, userId)
+                .orElseThrow(() -> new GameUserNotFoundException("No entity exist by gameCode, userId"));
+        GameEntity gameEntity = gameRepository.findByCode(gameCode)
+                .orElseThrow(() -> new GameNotFoundException(gameCode));
 
-        GameEntity gameEntity = gameRepository.findById(gameId)
-                .orElseThrow(() -> new GameNotFoundException(gameId));
-
-        Long gameUserId = gameUserEntity.getId();
+        String gameUserCode = gameUserEntity.getCode();
 
         if (gameEntity.getCurPlayers() == 1) {// 방에 방장 혼자였다면
             gameRepository.delete(gameEntity);// 방 자체를 지움
@@ -316,7 +300,7 @@ public class GameUserServiceImpl implements GameUserService {
             gameEntity.decreaseCurPlayers();// 방 현재 인원 수를 줄임
             gameRepository.save(gameEntity);
             if (gameUserEntity.getIsHost()) {// 나가는 유저가 방장이라면
-                List<GameUserEntity> userList = gameUserRepository.findAllByGameId(gameEntity.getId())
+                List<GameUserEntity> userList = gameUserRepository.findAllByGameCode(gameEntity.getCode())
                         .orElseThrow(() -> new GameUserNotFoundException("No entities exists by gameId"));// 방 안에 있는 유저 목록 가져와서
                 for (GameUserEntity entity : userList) {
                     if (!entity.getIsHost()) {// 방장이 아닌 놈을 찾아서 방장 권한을 준다
@@ -329,19 +313,19 @@ public class GameUserServiceImpl implements GameUserService {
         }
         gameUserRepository.delete(gameUserEntity);
 
-        return gameUserId;
+        return gameUserCode;
     }
 
     @Override
     @Transactional
-    public Long deleteExitGameByUserId(Long userId, String gameCode) {
+    public String deleteExitGameByUserId(Long userId, String gameCode) {
 
         GameEntity gameEntity = gameRepository.findByCode(gameCode)
                 .orElseThrow(() -> new GameNotFoundException("No entity exist by code!"));
+        GameUserEntity gameUserEntity = gameUserRepository.findByGameCodeAndUserId(gameEntity.getCode(), userId)
+                .orElseThrow(() -> new GameUserNotFoundException("No entity exist by gameCode, userId!"));
 
-        GameUserEntity gameUserEntity = gameUserRepository.findByGameIdAndUserId(gameEntity.getId(), userId)
-                .orElseThrow(() -> new GameUserNotFoundException("No entity exist by gameId, userId!"));
-        Long gameUserId = gameUserEntity.getId();
+        String gameUserCode = gameUserEntity.getCode();
 
         if (gameEntity.getCurPlayers() == 1) {// 방에 방장 혼자였다면
             gameRepository.delete(gameEntity);// 방 자체를 지움
@@ -349,8 +333,8 @@ public class GameUserServiceImpl implements GameUserService {
             gameEntity.decreaseCurPlayers();// 방 현재 인원 수를 줄임
             gameRepository.save(gameEntity);
             if (gameUserEntity.getIsHost()) {// 나가는 유저가 방장이라면
-                List<GameUserEntity> userList = gameUserRepository.findAllByGameId(gameEntity.getId())
-                        .orElseThrow(() -> new GameUserNotFoundException("No entities exists by gameId!"));// 방 안에 있는 유저 목록 가져와서
+                List<GameUserEntity> userList = gameUserRepository.findAllByGameCode(gameEntity.getCode())
+                        .orElseThrow(() -> new GameUserNotFoundException("No entities exists by gameCode!"));// 방 안에 있는 유저 목록 가져와서
                 for (GameUserEntity entity : userList) {
                     if (!entity.getIsHost()) {// 방장이 아닌 놈을 찾아서 방장 권한을 준다
                         entity.updateIsHost(true);
@@ -363,7 +347,7 @@ public class GameUserServiceImpl implements GameUserService {
 
         gameUserRepository.delete(gameUserEntity);
 
-        return gameUserId;
+        return gameUserCode;
     }
 
 

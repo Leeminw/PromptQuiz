@@ -22,23 +22,19 @@ public class GameUserDetailResponseDto {
     private Integer soloScore;
     private LocalDateTime created_date;
     private LocalDateTime updated_date;
-    private String gameUserId;
-    private String gameId;
+    private String gameUserCode;
+    private String gameCode;
     private Boolean isHost;
-    private Boolean isReady;
     private Integer score;
     private String team;
-    private Integer ranking;
 
     public GameUserDetailResponseDto(GameUserEntity entity) {
         this.userId = entity.getUserId();
-        this.gameUserId = entity.getId().toString();
-        this.gameId = entity.getGameId().toString();
+        this.gameUserCode = entity.getCode();
+        this.gameCode = entity.getGameCode();
         this.isHost = entity.getIsHost();
-        this.isReady = entity.getIsReady();
         this.score = entity.getScore();
         this.team = entity.getTeam();
-        this.ranking = entity.getRanking();
     }
 
     public void setUser(User entity) {

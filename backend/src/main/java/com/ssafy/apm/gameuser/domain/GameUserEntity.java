@@ -13,25 +13,18 @@ import org.springframework.data.redis.core.index.Indexed;
 @RedisHash(value = "game-user", timeToLive = 3600)
 public class GameUserEntity {
     @Id
-    private Long id;
+    private String code;
     @Indexed
-    private Long gameId;
+    private String gameCode;
     @Indexed
     private Long userId;
     private Boolean isHost;
-    private Boolean isReady;
     private Integer score;
     private String team;
-    private Integer ranking;
 
     //    정답, 오답시 스코어 더해주는 API
     public void updateScore(Integer score) {
         this.score += score;
-    }
-
-    //    레디 상태 변경
-    public void updateIsReady(Boolean isReady) {
-        this.isReady = isReady;
     }
 
     //    팀 상태 변경
