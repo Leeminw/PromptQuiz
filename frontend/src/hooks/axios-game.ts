@@ -20,6 +20,7 @@ const GameApi = {
             return Promise.reject(error)
         }
     }
+    // getGameDetail : async ()
 }
 
 

@@ -38,15 +38,12 @@ const GamePage = () => {
 
   //  문제를 받았는지 ?
   // false, , timer로받았을때>> 현재게임상태 ' '
-  //test
-  const [testTime, setTestTime] = useState<number[]>([]);
+
   const getGameData = async () => {
     const response = await GameApi.getGame(roomId);
     const responseGame: Game = response.data;
     const userResponse = await GameApi.getUserList(roomId);
-    // console.log(responseGame);
-    console.log('game room data', response.data);
-    console.log(userResponse.data);
+
     setGame(responseGame);
     setGameUserList(userResponse.data);
     setMaxRound(responseGame.rounds);
@@ -92,7 +89,11 @@ const GamePage = () => {
       disconnectWebSocket();
     };
   }, [game]);
-
+  useEffect(() => {
+    if (isQuiz) {
+      console.log('isQuiz updated:', isQuiz);
+    }
+  }, [isQuiz]);
   // 채팅창 열기
   const chatFocus = () => {
     chatInput.current.focus();
@@ -111,7 +112,6 @@ const GamePage = () => {
       gameController(body);
     }
   };
-
   const gameController = async (recieve: RecieveData) => {
     console.log(recieve);
     if (recieve.tag === 'chat') {
@@ -135,10 +135,6 @@ const GamePage = () => {
       setRoundState(data.state);
       setTime(data.time);
       setRound(data.round);
-      if (!isQuiz && roundState === 'ongoing') {
-        // 퀴즈를 가져와서 뿌려
-        setIsQuiz(false);
-      }
     } else if (recieve.tag === 'wrongSignal') {
       const data: bigint = recieve.data as bigint;
       if (data === user.userId) {
@@ -151,6 +147,7 @@ const GamePage = () => {
       if (data.type === 'ready') {
         setIsQuiz(false);
       } else if (data.type === 'start') {
+        setIsQuiz(true);
       } else if (data.type === 'end') {
         setIsQuiz(false);
         const roundInfo = data.content;
@@ -399,7 +396,7 @@ const GamePage = () => {
         <div className="w-full flex grow flex-col items-center justify-end">
           <div className="w-full h-36 mb-2 relative">
             {/* 객관식 선택 */}
-            <SelectionGame />
+            {isQuiz ? <SelectionGame /> : <div>no game</div>}
           </div>
           {/* 채팅 */}
           <div className="w-full">
