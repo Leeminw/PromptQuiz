@@ -1,18 +1,20 @@
 package com.ssafy.apm.common.dto;
 
 import com.ssafy.apm.common.domain.S3File;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+
+import lombok.Data;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class S3FileResponseDto {
+
     private Long id;
     private String url;
     private Long filesize;

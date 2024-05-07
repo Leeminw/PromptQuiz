@@ -1,7 +1,7 @@
 package com.ssafy.apm.common.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Data

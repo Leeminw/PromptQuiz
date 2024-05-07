@@ -9,36 +9,64 @@ const RoomList = (roomList: RoomProps[]) => {
   console.log(roomArray);
 
   // 페이지네이션 처리 관련 변수들
-  const [totalPageNum, setTotalPageNum] = useState<number>(2);
+  const [totalPageNum, setTotalPageNum] = useState<number>(0);
   const [curPageNum, setCurPageNum] = useState<number>(1);
   const [curRoomList, setCurRoomList] = useState<RoomProps[]>([]);
   const totalGameNum = roomArray.length;
 
+  const updateRoomList = () => {};
   // 이전 페이지로 이동(왼쪽 버튼)
   const getPrevPage = () => {
     alert('이전페이지로!!');
     if (curPageNum === 1) return;
+    // 이제 앞에 6개 리스트 내용을 보여준다.
+    setCurPageNum(curPageNum - 1);
+    setCurRoomList(roomArray.slice((curPageNum - 1) * 6, curPageNum * 6));
   };
   // 다음 페이지로 이동(오른쪽 버튼)
   const getNextPage = () => {
     alert('다음페이지로!!');
+
+    if (curPageNum === totalPageNum) return;
+    setCurPageNum(curPageNum + 1);
+    if (curPageNum < totalPageNum)
+      setCurRoomList(roomArray.slice((curPageNum - 1) * 6, curPageNum * 6));
+    else setCurRoomList(roomArray.slice((curPageNum - 1) * 6));
   };
 
+  const initiateTotalPageNum = (roomLength: number) => {
+    if (roomLength <= 6) {
+      setTotalPageNum(1);
+      return;
+    }
+    setTotalPageNum(Math.ceil(roomLength / 6));
+  };
   useEffect(() => {
-    setCurRoomList(roomArray);
-    setCurPageNum(9999);
-    setTotalPageNum(1);
-    if (roomArray.length > 6) setTotalPageNum(Math.ceil(roomArray.length / 6));
-  }, []);
+    setCurRoomList(roomArray.slice(0, 6));
+    setCurPageNum(1);
+    console.log(roomArray);
+
+    initiateTotalPageNum(roomArray.length);
+    // if (roomArray.length > 6) setTotalPageNum(Math.ceil(roomArray.length / 6));
+  }, [roomList]);
 
   if (!Array.isArray(roomArray)) {
     return <div>게임방이 없습니다.</div>;
   }
   return (
+<<<<<<< HEAD
     <div className="w-full h-full bg-white-300 gap-1 border-2 border-mint rounded-3xl ">
       <div className="flex ">
           {roomArray.map((item, index) => (
             // <p key={index}>{item.channelId}</p>
+=======
+    <div className="w-2/3 h-[100px] bg-white-300 gap-1 border-2 border-mint rounded-3xl ">
+      <div>
+        방 내용
+        <div className="flex ">
+          {/* {roomArray.map((item, index) => ( */}
+          {curRoomList.map((item, index) => (
+>>>>>>> 0f49ba8f22ce524996b53ed0df25b62fdbd0c37b
             <Room
               id={item.id}
               channelId={item.channelId}
@@ -60,7 +88,7 @@ const RoomList = (roomList: RoomProps[]) => {
           <button onClick={getPrevPage}>
             <FaPlay className="rotate-180" />
           </button>
-          <span>
+          <span style={{ color: 'red', fontSize: '30px' }}>
             {curPageNum}/{totalPageNum}
           </span>
           <button onClick={getNextPage}>

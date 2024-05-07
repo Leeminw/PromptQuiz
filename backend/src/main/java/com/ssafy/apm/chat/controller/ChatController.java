@@ -2,7 +2,7 @@ package com.ssafy.apm.chat.controller;
 
 import com.ssafy.apm.chat.service.ChatService;
 import com.ssafy.apm.common.domain.ResponseData;
-import com.ssafy.apm.channel.dto.request.ChannelChatDto;
+import com.ssafy.apm.channel.dto.request.ChannelChatRequestDto;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/test/v1")
 public class ChatController {
+
     private final ChatService service;
 
     @GetMapping("/write/{content}")
     public ResponseEntity<?> writeTest(@PathVariable String content) {
-        // 컨트롤러는 사용하지 않으니 일단 channel 채팅으로 가정하고 저장
-        ChannelChatDto channel = new ChannelChatDto("testNickName", "saew23sdw", content, null);
+        ChannelChatRequestDto channel = new ChannelChatRequestDto("testNickName", "saew23sdw", content);
         service.insertChannelChat(channel);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("채팅 저장 완료", "OK"));
     }

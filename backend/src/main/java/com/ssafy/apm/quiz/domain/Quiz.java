@@ -1,12 +1,14 @@
 package com.ssafy.apm.quiz.domain;
 
 import com.ssafy.apm.quiz.dto.request.QuizRequestDto;
-import jakarta.persistence.*;
+
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Getter

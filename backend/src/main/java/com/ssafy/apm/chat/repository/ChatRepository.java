@@ -1,7 +1,7 @@
 package com.ssafy.apm.chat.repository;
 
 import com.ssafy.apm.chat.domain.Chat;
-import com.ssafy.apm.chat.config.InfluxDBConfig;
+import com.ssafy.apm.common.config.InfluxDBConfig;
 import com.ssafy.apm.chat.exception.ChatNotFoundException;
 import com.ssafy.apm.chat.exception.ChatValidationException;
 
@@ -10,12 +10,13 @@ import com.influxdb.query.FluxRecord;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.domain.WritePrecision;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-import org.springframework.beans.factory.annotation.Value;
-
 import java.util.List;
 import java.util.ArrayList;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Value;
 
 @Repository
 @RequiredArgsConstructor
@@ -23,10 +24,8 @@ public class ChatRepository {
 
     private final InfluxDBConfig influxDBConfig;
 
-    // 기본 DB 정보 로드
     @Value("${spring.influx.org}")
     private String org;
-
     @Value("${spring.influx.bucket}")
     private String bucket;
 
@@ -66,10 +65,4 @@ public class ChatRepository {
         return list;
     }
 
-  /* 예시 flux 쿼리입니다
-    String flux = "from(bucket: \"" + bucket + "\")\n"
-            + "  |> range(start: "+hour+"h)\n"
-            + "  |> filter(fn: (r) => r._measurement == \"chat\" and r.nickname == \"nickname\")\n"
-            + "  |> sort(columns: [\"_time\"], desc: false)";
-  */
 }
