@@ -8,26 +8,38 @@ import com.ssafy.apm.channel.dto.request.ChannelChatDto;
 import java.util.List;
 import java.time.Instant;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;
 
     @Override
-    public Chat insertGameChat(GameChatDto request) {
-        Chat input = new Chat(Instant.now(), request.getUuid(), request.getNickname(), request.getContent());
-        chatRepository.save(input);
-        return input;
+    public GameChatDto insertGameChat(GameChatDto request) {
+        try{
+            Chat input = new Chat(Instant.now(), request.getUuid(), request.getNickname(), request.getContent());
+            chatRepository.save(input);
+            request.setCreatedDate(input.getLocalTime());
+        }catch (Exception e){
+            log.debug("InsertGameChat Error : {}", e.getMessage());
+        }
+        return request;
     }
 
     @Override
-    public Chat insertChannelChat(ChannelChatDto request) {
-        Chat input = new Chat(Instant.now(), request.getUuid(), request.getNickname(), request.getContent());
-        chatRepository.save(input);
-        return input;
+    public ChannelChatDto insertChannelChat(ChannelChatDto request) {
+        try{
+            Chat input = new Chat(Instant.now(), request.getUuid(), request.getNickname(), request.getContent());
+            chatRepository.save(input);
+            request.setCreatedDate(input.getLocalTime());
+        }catch (Exception e){
+            log.debug("InsertChannelChat Error : {}", e.getMessage());
+        }
+        return request;
     }
 
     public List<Chat> getChatListByTimeRange(Integer hour) {

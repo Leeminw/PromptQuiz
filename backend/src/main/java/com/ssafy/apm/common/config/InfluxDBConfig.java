@@ -1,4 +1,4 @@
-package com.ssafy.apm.chat.config;
+package com.ssafy.apm.common.config;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
