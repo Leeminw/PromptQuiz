@@ -34,6 +34,7 @@ const GamePage = () => {
   const [roundState, setRoundState] = useState<string>('wait');
   const [result, setResult] = useState<RoundUser[]>([]);
   const [isQuiz, setIsQuiz] = useState<boolean>(false);
+  const [messageMap, setMessageMap] = useState<Map<bigint, GameChatRecieve>>(new Map());
 
   //  문제를 받았는지 ?
   // false, , timer로받았을때>> 현재게임상태 ' '
@@ -41,17 +42,24 @@ const GamePage = () => {
   const [testTime, setTestTime] = useState<number[]>([]);
   const getGameData = async () => {
     const response = await GameApi.getGame(roomId);
-    console.log("first response", response);
+    console.log('first response', response);
     const responseGame: Game = response.data;
     const userResponse = await GameApi.getUserList(roomId);
     // console.log(responseGame);
+    console.log('game room data', response.data);
     console.log(userResponse.data);
     setGame(responseGame);
     setGameUserList(userResponse.data);
     setMaxRound(responseGame.rounds);
     // enterGame();
   };
-
+  useEffect(() => {
+    const updatedUserMap = new Map<bigint, GameChatRecieve>();
+    gameUserList.forEach((user) => {
+      updatedUserMap.set(user.userId, null);
+    });
+    setMessageMap(updatedUserMap);
+  }, [gameUserList]);
   useEffect(() => {
     getGameData();
     // 채팅 입력 바깥 클릭 시 채팅창 닫기
@@ -106,10 +114,20 @@ const GamePage = () => {
   };
 
   const gameController = async (recieve: RecieveData) => {
-    console.log(recieve);
+    console.log('gameController : recieve', recieve);
     if (recieve.tag === 'chat') {
       const data: GameChatRecieve = recieve.data as GameChatRecieve;
+      // 로고
+      // if(data.createdDate < )
       setChat((prevItems) => [...prevItems, data]);
+      console.log("chat : ", chat);
+      setMessageMap((prevMap) => {
+        const updatedMap = new Map(prevMap);
+        updatedMap.set(data.userId, data);
+        return updatedMap;
+      });
+
+      console.log(messageMap);
     } else if (recieve.tag === 'enter') {
       const userResponse = await GameApi.getUserList(roomId);
       setGameUserList(userResponse.data);
@@ -200,7 +218,7 @@ const GamePage = () => {
     };
     try {
       const response = await instance.post('game/start', gameReady);
-      // console.log(response);
+      console.log(response);
       console.log('start!!!');
       handleGamestart();
       setIsStart(true);
@@ -330,7 +348,12 @@ const GamePage = () => {
       <div className="w-full h-[22rem] mt-2 mb-4 grid grid-rows-6 grid-cols-5 grid-flow-row gap-3">
         {/* 첫번째 플레이어 */}
         <div className="w-full h-full">
-          {gameUserList.length > 0 && <GamePlayer userInfo={gameUserList[0]} />}
+          {gameUserList.length > 0 && (
+            <GamePlayer
+              userInfo={gameUserList[0]}
+              gameChat={messageMap.get(gameUserList[0].userId)}
+            />
+          )}
         </div>
         {/* 문제 화면, 타이머 */}
         <div className="w-full grow flex flex-col row-span-6 col-span-3">
@@ -355,7 +378,13 @@ const GamePage = () => {
         {/* 나머지 플레이어 */}
         {gameUserList.map(
           (userInfo: GameUser, index) =>
-            index !== 0 && <GamePlayer key={index} userInfo={userInfo} />
+            index !== 0 && (
+              <GamePlayer
+                key={index}
+                userInfo={userInfo}
+                gameChat={messageMap.get(userInfo.userId)}
+              />
+            )
         )}
         {Array.from({ length: 12 - gameUserList.length }, (_, index) => (
           <div className="w-full h-full border-custom-gray bg-[#999999]"></div>

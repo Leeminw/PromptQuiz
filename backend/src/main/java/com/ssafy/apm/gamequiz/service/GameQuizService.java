@@ -6,4 +6,6 @@ public interface GameQuizService {
     GameQuizGetResponseDto getGameQuizDetail(Long gameId);
 
     Boolean createAnswerGameQuiz(Long gameId);
+
+    Long deleteGameQuiz(Long gameId);
 }

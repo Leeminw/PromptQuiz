@@ -3,6 +3,7 @@ package com.ssafy.apm.game.controller;
 import com.ssafy.apm.common.domain.ResponseData;
 import com.ssafy.apm.game.dto.request.GameCreateRequestDto;
 import com.ssafy.apm.game.dto.request.GameUpdateRequestDto;
+import com.ssafy.apm.game.dto.response.GameAndChannelGetResponseDto;
 import com.ssafy.apm.game.dto.response.GameGetResponseDto;
 import com.ssafy.apm.game.service.GameService;
 import com.ssafy.apm.game.service.GameServiceImpl;
@@ -43,11 +44,11 @@ public class GameController {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("방 목록 조회 완료", response));
     }
 
-    //    방 상세 정보 조회
+    //    방, 채널 상세 정보 조회
     @GetMapping("/gameInfo/{gameId}")
-    public ResponseEntity<ResponseData<?>> getGameInfo(@PathVariable(name = "gameId") Long gameId) {
-        GameGetResponseDto response = gameService.getGameInfo(gameId);
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("방 상세 정보 조회 완료", response));
+    public ResponseEntity<ResponseData<?>> getGameAndChannelInfo(@PathVariable(name = "gameId") Long gameId) {
+        GameAndChannelGetResponseDto response = gameService.getGameInfo(gameId);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("방, 채널 상세 정보 조회 완료", response));
     }
 
     //    방 정보 수정 API

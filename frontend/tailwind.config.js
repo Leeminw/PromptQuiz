@@ -92,8 +92,19 @@ module.exports = {
           '0%, 50%, 100%': {
             transform: 'translateY(1vh)',
           },
-          '25%, 75%' : {
-            transform: 'translateY(-1vh)'
+          '25%, 75%': {
+            transform: 'translateY(-1vh)',
+          },
+        },
+        chatBubble: {
+          from: {
+            opacity: 1,
+          },
+          to: {
+            opacity: 0,
+          },
+          '0%': {
+            display: 'hidden',
           },
         },
       },
@@ -104,6 +115,7 @@ module.exports = {
         clickbtn: 'clickbtn 0.1s linear infinite',
         clickwhitebtn: 'clickwhitebtn 0.1s linear infinite',
         earthquake: 'earthquake 0.1s linear infinite',
+        chatBubble: 'chatBubble 1s ease-out',
       },
     },
   },

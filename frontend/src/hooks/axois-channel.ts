@@ -7,7 +7,7 @@ const BASE_URL = process.env.REACT_APP_SERVER
     // 채널 목록 조회
     getChannelList : async () => {
         try{
-            const response = await axios.get(
+            const response = await instance.get(
                 BASE_URL + `/channel/channelList`, 
             )
             return response.data

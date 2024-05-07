@@ -1,7 +1,9 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import customSetTimeout from '../../hooks/CustomSetTimeout';
 interface GamePlayerProps {
   // idx: number;
   userInfo: GameUser | null;
+  gameChat: GameChatRecieve | null;
 }
 // { idx }: GamePlayerProps
 // const GamePlayer = forwardRef((props, ref) => {
@@ -10,19 +12,33 @@ interface GamePlayerProps {
 //     console.log('HI');
 //   };
 
-const GamePlayer = ({ userInfo }: GamePlayerProps) => {
-  useEffect(() => {
-    console.log(userInfo);
-  }, []);
+const GamePlayer = ({ userInfo, gameChat }: GamePlayerProps) => {
+  const [showChat, setShowChat] = useState<boolean>(false);
+  const [startChat, setStartChat] = useState<boolean>(false);
+  customSetTimeout(
+    () => {
+      if (gameChat !== null && gameChat !== undefined && gameChat?.content !== '') {
+        setStartChat(true);
+        setShowChat(true);
+      }
+    },
+    () => {
+      setShowChat(false);
+    },
+    gameChat?.content.length * 100 + 3000,
+    [gameChat?.createdDate]
+  );
   return (
     <div className="border-custom-green bg-customGreen w-full h-full relative flex items-center">
-      <div className="absolute w-full -translate-y-8">
+      <div
+        className={`absolute w-full -translate-y-8 opacity-0 ${startChat && (showChat ? 'opacity-100' : 'animate-chatBubble')}`}
+      >
         <div
-          // ref={chatBubbleBox}
-          className="min-w-20 min-h-6 w-fit h-fit bg-white border border-gray-200 rounded-lg text-sm px-2 py-0.5 line-clamp-2 text-black
-        "
+          className={`min-w-12 min-h-6 w-fit h-fit bg-white border border-gray-200 rounded-lg text-sm px-3 pt-1 line-clamp-2 leading-4 text-black
+          ${gameChat?.content.length < 10 && 'text-center'}
+          `}
         >
-          가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사
+          {gameChat?.content}
         </div>
         <svg className="absolute z-10 w-3 h-3 translate-x-8 -translate-y-[0.05rem]">
           <path d="M 0 0 V 10 L 7 0" stroke="#dde5e3" strokeWidth={1} fill="white"></path>
