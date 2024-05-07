@@ -5,11 +5,10 @@ import lombok.AllArgsConstructor;
 
 @Data
 @AllArgsConstructor
-public class ChannelChatDto {
+public class ChannelChatRequestDto {
 
-    private String nickname;
     private String uuid;
+    private String nickname;
     private String content;
-    private String createdDate;
 
 }

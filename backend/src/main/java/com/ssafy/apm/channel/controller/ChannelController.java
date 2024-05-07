@@ -26,7 +26,6 @@ public class ChannelController {
     @PostMapping("")
     public ResponseEntity<ResponseData<?>> createChannel(@RequestBody ChannelCreateRequestDto channelCreateRequestDto) {
         ChannelGetResponseDto response = channelService.createChannel(channelCreateRequestDto);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success("채널 생성 완료", response));
     }
 
@@ -34,7 +33,6 @@ public class ChannelController {
     @GetMapping("/channelList")
     public ResponseEntity<ResponseData<?>> getChannelList() {
         List<ChannelGetResponseDto> response = channelService.getChannelList();
-
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("채널 리스트 조회 완료", response));
     }
 
@@ -42,7 +40,6 @@ public class ChannelController {
     @GetMapping("/{channelId}")
     public ResponseEntity<ResponseData<?>> getChannelById(@PathVariable("channelId") Long channelId) {
         ChannelGetResponseDto response = channelService.getChannel(channelId);
-
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("채널 조회 완료", response));
     }
 
@@ -50,7 +47,6 @@ public class ChannelController {
     @GetMapping("/code/{code}")
     public ResponseEntity<ResponseData<?>> getChannelByCode(@PathVariable("code") String code) {
         ChannelGetResponseDto response = channelService.getChannelByCode(code);
-
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("채널 조회 완료", response));
     }
 

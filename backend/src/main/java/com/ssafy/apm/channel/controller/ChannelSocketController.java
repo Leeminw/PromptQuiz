@@ -1,7 +1,8 @@
 package com.ssafy.apm.channel.controller;
 
+import com.ssafy.apm.channel.dto.response.ChannelChatResponseDto;
 import com.ssafy.apm.chat.service.ChatService;
-import com.ssafy.apm.channel.dto.request.ChannelChatDto;
+import com.ssafy.apm.channel.dto.request.ChannelChatRequestDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,11 +23,9 @@ public class ChannelSocketController {
     private final SimpMessagingTemplate template;
 
     @MessageMapping("/channel/chat/send")
-    public void sendChannelChat(@Payload ChannelChatDto chatMessage) {
-        ChannelChatDto chat = chatService.insertChannelChat(chatMessage);
-
-        template.convertAndSend("/ws/sub/channel?uuid=" + chat
-                .getUuid(), chat);
+    public void sendChannelChat(@Payload ChannelChatRequestDto chatMessage) {
+        ChannelChatResponseDto chat = chatService.insertChannelChat(chatMessage);
+        template.convertAndSend("/ws/sub/channel?uuid=" + chat.getUuid(), chat);
     }
 
 }

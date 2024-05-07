@@ -2,7 +2,7 @@ package com.ssafy.apm.quiz.service;
 
 import com.ssafy.apm.quiz.dto.request.QuizRequestDto;
 import com.ssafy.apm.quiz.exception.QuizNotFoundException;
-import com.ssafy.apm.socket.dto.request.GameChatDto;
+import com.ssafy.apm.socket.dto.request.GameChatRequestDto;
 import com.ssafy.apm.socket.dto.response.GameAnswerCheck;
 import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.quiz.repository.QuizRepository;
@@ -25,7 +25,7 @@ public class QuizServiceImpl implements QuizService {
     private final QuizRepository quizRepository;
 
     @Override
-    public GameAnswerCheck checkAnswer(GameChatDto answer, Set<String> checkPrompt) {
+    public GameAnswerCheck checkAnswer(GameChatRequestDto answer, Set<String> checkPrompt) {
         // 초기값 설정은 false로 설정
         GameAnswerCheck response = new GameAnswerCheck();
 
@@ -129,7 +129,7 @@ public class QuizServiceImpl implements QuizService {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // (객관식 체크) 객관식 체크 메서드
-    public Boolean multipleChoiceCheck(GameChatDto answer) {
+    public Boolean multipleChoiceCheck(GameChatRequestDto answer) {
         // 현재 라운드와 입력 라운드가 다르다면 false
 
         // 라운드로 퀴즈 아이디 조회
@@ -145,7 +145,7 @@ public class QuizServiceImpl implements QuizService {
     }
 
     // (빈칸 주관식) 빈칸 주관식 유사도 체크 메서드
-    public HashMap<String, Double> blankShortAnswerCheck(GameChatDto answer, Set<String> checkPrompt) {
+    public HashMap<String, Double> blankShortAnswerCheck(GameChatRequestDto answer, Set<String> checkPrompt) {
         // 라운드로 퀴즈 아이디 조회
         Long quizId = 0L;
 
@@ -161,7 +161,7 @@ public class QuizServiceImpl implements QuizService {
     }
 
     // (빈칸 객관식) 빈칸 객관식 체크 메서드
-    public Boolean blankMultipleChoiceCheck(GameChatDto answer) {
+    public Boolean blankMultipleChoiceCheck(GameChatRequestDto answer) {
         // 라운드로 퀴즈 아이디 조회
         Long quizId = 0L;
 
