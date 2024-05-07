@@ -110,12 +110,12 @@ const CreateRoom = ({ channelId }: Props) => {
   };
   return (
     // className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 "
-    <div>
+    <div className='w-fit h-full'>
       <button
-        className="btn"
+        className="w-full h-full btn-mint flex justify-center items-center gap-2 px-1 hover:brightness-110"
         onClick={() => (document.getElementById('my_modal_1') as HTMLDialogElement).showModal()}
       >
-        <MdAddHome />방 만들기
+        <MdAddHome className='min-w-5 min-h-5 ' /><p className='text-nowrap'>방 만들기</p>
       </button>
       <dialog id="my_modal_1" className="modal">
         <div className="modal-box">
