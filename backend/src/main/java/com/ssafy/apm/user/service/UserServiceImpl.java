@@ -11,7 +11,10 @@ import com.ssafy.apm.user.repository.RefreshTokenRepository;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.NoSuchElementException;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -124,4 +127,21 @@ public class UserServiceImpl implements UserService{
         refreshToken.ifPresent(refreshTokenRepository::delete);
     }
 
+    @Override
+    public UserRankingResponseDto getUserRanking() {
+        List<UserDetailResponseDto> soloRanking = getUserRanking(userRepository::findTop10ByOrderBySoloScoreDesc);
+        List<UserDetailResponseDto> teamRanking = getUserRanking(userRepository::findTop10ByOrderByTeamScoreDesc);
+        List<UserDetailResponseDto> totalRanking = getUserRanking(userRepository::findTop10ByOrderByTotalScoreDesc);
+
+        return new UserRankingResponseDto(teamRanking,soloRanking,totalRanking);
+    }
+
+    private List<UserDetailResponseDto> getUserRanking(Supplier<Optional<List<User>>> rankingSupplier) {
+        return rankingSupplier.get()
+                .orElseThrow(() -> new NoSuchElementException("No entities"))
+                .stream()
+                .map(UserDetailResponseDto::new)
+                .toList();
+    }
+>>>>>>> dee6ae60e2a4e9ff1b6dbdeeca3d156711c8f840
 }

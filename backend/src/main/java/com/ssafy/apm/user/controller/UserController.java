@@ -70,4 +70,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }
 
+    @GetMapping("/rank")
+    public ResponseEntity<?> getRanking() {
+        UserRankingResponseDto responseDto = userService.getUserRanking();
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
+    }
+
 }

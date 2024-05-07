@@ -24,6 +24,9 @@ public interface UserService {
     UserDetailResponseDto updateUserScore(UserScoreUpdateRequestDto requestDto);
 
     void logoutUser(String header);
+    UserRankingResponseDto getUserRanking();
+
+
 
 
 }
