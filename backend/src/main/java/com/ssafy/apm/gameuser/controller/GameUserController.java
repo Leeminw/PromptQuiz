@@ -47,6 +47,12 @@ public class GameUserController {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
 
+    @PostMapping("/fastEnter")
+    public ResponseEntity<ResponseData<?>> postFastEnterGame() {
+        GameUserGetResponseDto response = gameUserService.postFastEnterGame();
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
+    }
+
     //    게임 퇴장할 때 GameUserEntity 삭제
     @DeleteMapping("/exitGame/{gameId}")
     public ResponseEntity<ResponseData<?>> deleteExitGame(@PathVariable(name = "gameId") Long gameId) {

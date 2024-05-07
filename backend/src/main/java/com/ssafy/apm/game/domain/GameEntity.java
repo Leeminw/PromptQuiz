@@ -26,16 +26,16 @@ public class GameEntity {
     private String code;
     private String title;
     private String password;
+    @Indexed
     private Boolean status;
     private Boolean isTeam;
     private Integer curRound;
     private Integer rounds;
+    @Indexed
     private Integer curPlayers;
+    @Indexed
     private Integer maxPlayers;
 
-    public void updateId(Long id) {
-        this.id = id;
-    }
 
     public void update(GameUpdateRequestDto dto) {
         this.id = dto.getId();
@@ -53,6 +53,14 @@ public class GameEntity {
         this.maxPlayers = dto.getMaxPlayers();
     }
 
+    public void updateId(Long id) {
+        this.id = id;
+    }
+
+    public void updateStatus(Boolean status) {
+        this.status = status;
+    }
+
     public Integer updateCurRound() {
         this.curRound = 1;
         return this.curRound;
@@ -65,6 +73,9 @@ public class GameEntity {
 
     public void increaseCurPlayers() {
         this.curPlayers += 1;
+        if(this.curPlayers.equals(this.maxPlayers)){ // 방이 꽉차면
+            this.status = false; // 입장 불가
+        }
     }
 
     public void decreaseCurPlayers() {

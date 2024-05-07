@@ -1,15 +1,20 @@
 package com.ssafy.apm.gamequiz.service;
 
 import com.ssafy.apm.game.domain.GameEntity;
+import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.game.repository.GameRepository;
 import com.ssafy.apm.gamequiz.domain.GameQuizEntity;
 import com.ssafy.apm.gamequiz.dto.response.GameQuizGetResponseDto;
+import com.ssafy.apm.gamequiz.exception.GameQuizNotFoundException;
 import com.ssafy.apm.gamequiz.repository.GameQuizRepository;
 import com.ssafy.apm.gameuser.domain.GameUserEntity;
+import com.ssafy.apm.gameuser.exception.GameUserNotFoundException;
 import com.ssafy.apm.gameuser.repository.GameUserRepository;
 import com.ssafy.apm.multiplechoice.domain.MultipleChoiceEntity;
+import com.ssafy.apm.multiplechoice.exception.MultipleChoiceNotFoundException;
 import com.ssafy.apm.multiplechoice.repository.MultipleChoiceRepository;
 import com.ssafy.apm.quiz.domain.Quiz;
+import com.ssafy.apm.quiz.exception.QuizNotFoundException;
 import com.ssafy.apm.quiz.repository.QuizRepository;
 import com.ssafy.apm.user.domain.User;
 import com.ssafy.apm.user.service.UserService;
@@ -38,13 +43,13 @@ public class GameQuizServiceImpl implements GameQuizService {
     @Override
     public GameQuizGetResponseDto getGameQuizDetail(Long gameId) {
         GameEntity gameEntity = gameRepository.findById(gameId)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
+                .orElseThrow(() -> new GameNotFoundException(gameId));
 
 //        현재 라운드 가져와서
         Integer round = gameEntity.getCurRound();
 //        현재 라운드에 해당하는 정답 주는거
         GameQuizEntity entity = gameQuizRepository.findByGameIdAndRound(gameId, round)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 답안입니다."));
+                .orElseThrow(() -> new GameQuizNotFoundException("No entities exists by gameId, round"));
 
         GameQuizGetResponseDto response = new GameQuizGetResponseDto(entity);
 
@@ -56,7 +61,7 @@ public class GameQuizServiceImpl implements GameQuizService {
     public Boolean createAnswerGameQuiz(Long gameId) {
         User user = userService.loadUser();
         GameUserEntity gameUser = gameUserRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new NoSuchElementException("이 유저는 게임방에 접속해 있지 않습니다."));
+                .orElseThrow(() -> new GameUserNotFoundException("No entities exists by userId"));
 
 //        방장이 아니면 게임 시작할 수 없음
         if (!gameUser.getIsHost()) {
@@ -64,7 +69,7 @@ public class GameQuizServiceImpl implements GameQuizService {
         }
 
         GameEntity gameEntity = gameRepository.findById(gameId)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임방입니다."));
+                .orElseThrow(() -> new GameNotFoundException(gameId));
 
         String gameStyle = gameEntity.getStyle();
 
@@ -72,10 +77,10 @@ public class GameQuizServiceImpl implements GameQuizService {
 
         if (gameStyle.equals("random")) {
             quizList = quizRepository.extractRandomQuizzes(gameEntity.getRounds())
-                    .orElseThrow(() -> new NoSuchElementException("랜덤 스타일의 정답을 추출하는데 실패했습니다."));
+                    .orElseThrow(() -> new QuizNotFoundException("No entities exists by random!"));
         } else {
             quizList = quizRepository.extractRandomQuizzesByStyle(gameStyle, gameEntity.getRounds())
-                    .orElseThrow(() -> new NoSuchElementException(gameStyle + "타입의 정답을 추출하는데 실패했습니다."));
+                    .orElseThrow(() -> new QuizNotFoundException("No entities exists by style!"));
         }
 
         List<GameQuizEntity> gameQuizEntityList = new ArrayList<>();
@@ -128,9 +133,9 @@ public class GameQuizServiceImpl implements GameQuizService {
 //            객관식일 때
             if(entity.getType() == 1) {
                 Quiz quiz = quizRepository.findById(entity.getQuizId())// 정답 quiz찾아
-                        .orElseThrow(() -> new NoSuchElementException("존재하지 않는 퀴즈입니다."));
+                        .orElseThrow(() -> new QuizNotFoundException(entity.getQuizId()));
                 List<Quiz> quizListByGroupCode = quizRepository.extractRandomQuizzesByStyleAndGroupCode(quiz.getStyle(), quiz.getGroupCode(), 3)
-                        .orElseThrow(() -> new NoSuchElementException("그룹 코드로 퀴즈를 추출하는데 실패했습니다."));// 오답 quiz 리스트 찾아
+                        .orElseThrow(() -> new QuizNotFoundException("No entities exists by groupCode!"));// 오답 quiz 리스트 찾아
 
 //                정답, 오답 리스트를 받아 문제 보기 리스트를 생성하는 함수
                 List<MultipleChoiceEntity> multipleChoiceEntityList = createMultipleChoiceList(entity.getId(), quiz.getId(), quizListByGroupCode);
@@ -141,9 +146,9 @@ public class GameQuizServiceImpl implements GameQuizService {
             else if(entity.getType() == 2) {
 
                 Quiz quiz = quizRepository.findById(entity.getQuizId())
-                        .orElseThrow(() -> new NoSuchElementException("존재하지 않는 퀴즈입니다."));
+                        .orElseThrow(() -> new QuizNotFoundException(entity.getQuizId()));
                 List<Quiz> randomQuizList = quizRepository.extractRandomQuizzesByStyle(quiz.getStyle(), 3) // 같은 스타일의 quiz 찾아
-                        .orElseThrow(() -> new NoSuchElementException("그룹 코드로 퀴즈를 추출하는데 실패했습니다."));
+                        .orElseThrow(() -> new QuizNotFoundException("No entities exists by style!"));
 
                 List<MultipleChoiceEntity> multipleChoiceEntityList = createMultipleChoiceList(entity.getId(), quiz.getId(), randomQuizList);
 
@@ -152,7 +157,7 @@ public class GameQuizServiceImpl implements GameQuizService {
 //            빈칸 주관식일 때는 보기에 정답 하나만 담아
             else if(entity.getType() == 4) {
                 Quiz quiz = quizRepository.findById(entity.getQuizId())
-                        .orElseThrow(() -> new NoSuchElementException("존재하지 않는 퀴즈입니다."));
+                        .orElseThrow(() -> new QuizNotFoundException(entity.getQuizId()));
 
                 MultipleChoiceEntity answer = MultipleChoiceEntity.builder()
                         .gameQuizId(entity.getId())
@@ -167,7 +172,25 @@ public class GameQuizServiceImpl implements GameQuizService {
         return true;
     }
 
-//    문제 보기를 만드는 함수
+    @Override
+    @Transactional
+    public Long deleteGameQuiz(Long gameId) {
+        List<GameQuizEntity> gameQuizEntityList = gameQuizRepository.findAllByGameId(gameId)
+                .orElseThrow(() -> new GameQuizNotFoundException("No entities exists by gameId"));// 정답 리스트 받아서
+
+        for(GameQuizEntity gameQuiz: gameQuizEntityList) {// 각 정답에 해당하는 보기들 찾아서
+            List<MultipleChoiceEntity> multipleChoiceEntityList = multipleChoiceRepository
+                    .findAllByGameQuizId(gameQuiz.getId())
+                    .orElseThrow(() -> new MultipleChoiceNotFoundException("No entities exists by gameQuizId"));
+            multipleChoiceRepository.deleteAll(multipleChoiceEntityList);// 보기 다 지움
+        }
+
+        gameQuizRepository.deleteAll(gameQuizEntityList);// 정답 리스트 다 지워
+
+        return gameId;
+    }
+
+    //    문제 보기를 만드는 함수
     private List<MultipleChoiceEntity> createMultipleChoiceList(Long gameQuizId,
                                                                 Long answerQuizId,
                                                                 List<Quiz> randomQuizList){
