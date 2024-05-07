@@ -3,10 +3,8 @@ package com.ssafy.apm.game.controller;
 import com.ssafy.apm.common.domain.ResponseData;
 import com.ssafy.apm.game.dto.request.GameCreateRequestDto;
 import com.ssafy.apm.game.dto.request.GameUpdateRequestDto;
-import com.ssafy.apm.game.dto.response.GameAndChannelGetResponseDto;
-import com.ssafy.apm.game.dto.response.GameGetResponseDto;
+import com.ssafy.apm.game.dto.response.GameResponseDto;
 import com.ssafy.apm.game.service.GameService;
-import com.ssafy.apm.game.service.GameServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -32,35 +30,35 @@ public class GameController {
     //    방 생성
 //    방 만드는 사람의 gameUser data생성( 방장이니까 )
     @PostMapping("")
-    public ResponseEntity<ResponseData<?>> createGame(@RequestBody GameCreateRequestDto gameCreateRequestDto) {
-        GameGetResponseDto response = gameService.createGame(gameCreateRequestDto);
+    public ResponseEntity<ResponseData<?>> createGame(@RequestBody GameCreateRequestDto requestDto) {
+        GameResponseDto response = gameService.createGame(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success("방 생성 완료", response));
     }
 
     //    방 목록들 조회
-    @GetMapping("/gameList/{channelId}")
-    public ResponseEntity<ResponseData<?>> getGameList(@PathVariable(name = "channelId") Long channelId) {
-        List<GameGetResponseDto> response = gameService.getGameList(channelId);
+    @GetMapping("/gameList/{channelCode}")
+    public ResponseEntity<ResponseData<?>> getGameList(@PathVariable(name = "channelCode") String channelCode) {
+        List<GameResponseDto> response = gameService.findGamesByChannelCode(channelCode);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("방 목록 조회 완료", response));
     }
 
     //    방, 채널 상세 정보 조회
-    @GetMapping("/gameInfo/{gameId}")
-    public ResponseEntity<ResponseData<?>> getGameAndChannelInfo(@PathVariable(name = "gameId") Long gameId) {
-        GameAndChannelGetResponseDto response = gameService.getGameInfo(gameId);
+    @GetMapping("/gameInfo/{gameCode}")
+    public ResponseEntity<ResponseData<?>> getGameAndChannelInfo(@PathVariable(name = "gameCode") String gameCode) {
+        GameResponseDto response = gameService.findGameByGameCode(gameCode);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("방, 채널 상세 정보 조회 완료", response));
     }
 
     //    방 정보 수정 API
     @PutMapping("/gameInfo")
-    public ResponseEntity<ResponseData<?>> updateGameInfo(@RequestBody GameUpdateRequestDto gameUpdateRequestDto) {
-        GameGetResponseDto response = gameService.updateGameInfo(gameUpdateRequestDto);
+    public ResponseEntity<ResponseData<?>> updateGameInfo(@RequestBody GameUpdateRequestDto requestDto) {
+        GameResponseDto response = gameService.updateGame(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("방 설정 수정 완료", response));
     }
 
-    @DeleteMapping("/{gameId}")
-    public ResponseEntity<ResponseData<?>> deleteGame(@PathVariable(name = "gameId") Long gameId) {
-        Long response = gameService.deleteGame(gameId);
+    @DeleteMapping("/{gameCode}")
+    public ResponseEntity<ResponseData<?>> deleteGame(@PathVariable(name = "gameCode") String gameCode) {
+        GameResponseDto response = gameService.deleteGame(gameCode);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("방 삭제 완료", response));
     }
 }

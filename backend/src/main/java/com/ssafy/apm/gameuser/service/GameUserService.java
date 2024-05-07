@@ -1,32 +1,31 @@
 package com.ssafy.apm.gameuser.service;
 
 import com.ssafy.apm.gameuser.dto.response.GameUserDetailResponseDto;
-import com.ssafy.apm.gameuser.dto.response.GameUserGetResponseDto;
-import com.ssafy.apm.user.dto.UserDetailResponseDto;
+import com.ssafy.apm.gameuser.dto.response.GameUserResponseDto;
 
 import java.util.List;
 
 public interface GameUserService {
 
-    List<GameUserDetailResponseDto> getGameUserList(Long gameId);
+    List<GameUserDetailResponseDto> getGameUserList(String gameCode);
 
-    GameUserGetResponseDto getGameUser(Long gameUserId);
-
-    /////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////
-    GameUserGetResponseDto postEnterGame(Long gameId);
-
-    GameUserGetResponseDto postFastEnterGame();
+    GameUserResponseDto getGameUser(Long gameUserId);
 
     /////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////
-    GameUserGetResponseDto updateGameUserScore(Integer score);
+    GameUserResponseDto postEnterGame(String gameCode);
 
-    GameUserGetResponseDto updateGameUserIsReady(Boolean isReady);
+    GameUserResponseDto postFastEnterGame();
 
-    GameUserGetResponseDto updateGameUserTeam(String team);
+    /////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////
+    GameUserResponseDto updateGameUserScore(Integer score);
 
-    void updateUserScore(Long gameId);
+    GameUserResponseDto updateGameUserIsReady(Boolean isReady);
+
+    GameUserResponseDto updateGameUserTeam(String team);
+
+    void updateUserScore(String gameCode);
     /////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////
 

@@ -2,11 +2,8 @@ package com.ssafy.apm.gameuser.controller;
 
 import com.ssafy.apm.common.domain.ResponseData;
 import com.ssafy.apm.gameuser.dto.response.GameUserDetailResponseDto;
-import com.ssafy.apm.gameuser.dto.response.GameUserGetResponseDto;
+import com.ssafy.apm.gameuser.dto.response.GameUserResponseDto;
 import com.ssafy.apm.gameuser.service.GameUserService;
-import com.ssafy.apm.gameuser.service.GameUserServiceImpl;
-import com.ssafy.apm.user.dto.UserDetailResponseDto;
-import com.ssafy.apm.userchannel.service.UserChannelServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -36,20 +33,20 @@ public class GameUserController {
 
     @GetMapping("/{gameUserId}")
     public ResponseEntity<ResponseData<?>> getGameUser(@PathVariable(name = "gameUserId") Long gameUserId) {
-        GameUserGetResponseDto response = gameUserService.getGameUser(gameUserId);
+        GameUserResponseDto response = gameUserService.getGameUser(gameUserId);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
 
     //    게임 입장할 때 GameUserEntity 생성
     @PostMapping("/enterGame/{gameId}")
     public ResponseEntity<ResponseData<?>> postEnterGame(@PathVariable(name = "gameId") Long gameId) {
-        GameUserGetResponseDto response = gameUserService.postEnterGame(gameId);
+        GameUserResponseDto response = gameUserService.postEnterGame(gameId);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
 
     @PostMapping("/fastEnter")
     public ResponseEntity<ResponseData<?>> postFastEnterGame() {
-        GameUserGetResponseDto response = gameUserService.postFastEnterGame();
+        GameUserResponseDto response = gameUserService.postFastEnterGame();
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
 

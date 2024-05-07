@@ -1,13 +1,13 @@
 package com.ssafy.apm.gamequiz.service;
 
-import com.ssafy.apm.game.domain.GameEntity;
+import com.ssafy.apm.game.domain.Game;
 import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.game.repository.GameRepository;
 import com.ssafy.apm.gamequiz.domain.GameQuizEntity;
 import com.ssafy.apm.gamequiz.dto.response.GameQuizGetResponseDto;
 import com.ssafy.apm.gamequiz.exception.GameQuizNotFoundException;
 import com.ssafy.apm.gamequiz.repository.GameQuizRepository;
-import com.ssafy.apm.gameuser.domain.GameUserEntity;
+import com.ssafy.apm.gameuser.domain.GameUser;
 import com.ssafy.apm.gameuser.exception.GameUserNotFoundException;
 import com.ssafy.apm.gameuser.repository.GameUserRepository;
 import com.ssafy.apm.multiplechoice.domain.MultipleChoiceEntity;
@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Random;
 
 @Service
@@ -42,11 +41,11 @@ public class GameQuizServiceImpl implements GameQuizService {
     //    맨 앞에 있는 놈을 뽑아서 보내줌
     @Override
     public GameQuizGetResponseDto getGameQuizDetail(Long gameId) {
-        GameEntity gameEntity = gameRepository.findById(gameId)
+        Game game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new GameNotFoundException(gameId));
 
 //        현재 라운드 가져와서
-        Integer round = gameEntity.getCurRound();
+        Integer round = game.getCurRound();
 //        현재 라운드에 해당하는 정답 주는거
         GameQuizEntity entity = gameQuizRepository.findByGameIdAndRound(gameId, round)
                 .orElseThrow(() -> new GameQuizNotFoundException("No entities exists by gameId, round"));
@@ -60,7 +59,7 @@ public class GameQuizServiceImpl implements GameQuizService {
     @Transactional
     public Boolean createAnswerGameQuiz(Long gameId) {
         User user = userService.loadUser();
-        GameUserEntity gameUser = gameUserRepository.findByUserId(user.getId())
+        GameUser gameUser = gameUserRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new GameUserNotFoundException("No entities exists by userId"));
 
 //        방장이 아니면 게임 시작할 수 없음
@@ -68,24 +67,24 @@ public class GameQuizServiceImpl implements GameQuizService {
             return false;
         }
 
-        GameEntity gameEntity = gameRepository.findById(gameId)
+        Game game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new GameNotFoundException(gameId));
 
-        String gameStyle = gameEntity.getStyle();
+        String gameStyle = game.getStyle();
 
         List<Quiz> quizList;
 
         if (gameStyle.equals("random")) {
-            quizList = quizRepository.extractRandomQuizzes(gameEntity.getRounds())
+            quizList = quizRepository.extractRandomQuizzes(game.getRounds())
                     .orElseThrow(() -> new QuizNotFoundException("No entities exists by random!"));
         } else {
-            quizList = quizRepository.extractRandomQuizzesByStyle(gameStyle, gameEntity.getRounds())
+            quizList = quizRepository.extractRandomQuizzesByStyle(gameStyle, game.getRounds())
                     .orElseThrow(() -> new QuizNotFoundException("No entities exists by style!"));
         }
 
         List<GameQuizEntity> gameQuizEntityList = new ArrayList<>();
 //        게임 문제 유형
-        Integer gameType = gameEntity.getType();
+        Integer gameType = game.getMode();
 //        라운드 별로 문제 출제
         Integer currentRound = 1;
 //        랜덤 숫자
