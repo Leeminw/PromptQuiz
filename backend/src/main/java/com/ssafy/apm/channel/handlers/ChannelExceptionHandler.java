@@ -1,11 +1,11 @@
 package com.ssafy.apm.channel.handlers;
 
+import com.ssafy.apm.common.domain.ResponseData;
 import com.ssafy.apm.channel.exception.ChannelNotFoundException;
 import com.ssafy.apm.channel.exception.ChannelValidationException;
-import com.ssafy.apm.common.domain.ResponseData;
-import com.ssafy.apm.quiz.exception.QuizNotFoundException;
-import com.ssafy.apm.quiz.exception.QuizValidationException;
+
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

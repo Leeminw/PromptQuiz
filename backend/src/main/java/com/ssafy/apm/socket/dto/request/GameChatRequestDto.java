@@ -5,10 +5,13 @@ import lombok.AllArgsConstructor;
 
 @Data
 @AllArgsConstructor
-public class EnterUserMessageDto {
+public class GameChatRequestDto {
 
-    private String nickname;
     private Long userId;
+    private String nickname;
     private String uuid;
+    private Long gameId;
+    private Integer round;
+    private String content;
 
 }

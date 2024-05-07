@@ -1,10 +1,11 @@
 package com.ssafy.apm.quiz.repository;
 
 import com.ssafy.apm.quiz.domain.Quiz;
-import org.springframework.data.jpa.repository.JpaRepository;
+
+import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import java.util.Optional;
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
     Optional<List<Quiz>> findAllByStyle(String style);
+
     Optional<List<Quiz>> findAllByGroupCode(String groupCode);
 
     @Query(value = "SELECT * FROM quiz ORDER BY RAND() LIMIT 1", nativeQuery = true)

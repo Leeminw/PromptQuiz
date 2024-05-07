@@ -1,10 +1,11 @@
 package com.ssafy.apm.quiz.dto.request;
 
 import com.ssafy.apm.quiz.domain.Quiz;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+
 import lombok.Data;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Data
 @Builder

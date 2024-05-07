@@ -3,7 +3,7 @@ package com.ssafy.apm.channel.exception;
 public class ChannelValidationException extends RuntimeException {
 
     public ChannelValidationException(Long id) {
-        super("Invalidate Entity with id: " + id);
+        super("Invalidate Channel Entity with id: " + id);
     }
 
     public ChannelValidationException(String message) {

@@ -5,57 +5,58 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.ssafy.apm.common.dto.S3FileRequestDto;
 import com.ssafy.apm.common.dto.S3FileResponseDto;
 import com.ssafy.apm.common.repository.S3FileRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base64;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
+
 import java.util.UUID;
+import java.io.IOException;
+import java.io.ByteArrayInputStream;
+
+import org.springframework.stereotype.Service;
+import org.apache.commons.codec.binary.Base64;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.beans.factory.annotation.Value;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class S3ServiceImpl implements S3Service {
 
+    @Value("${cloud.aws.bucket.name}")
+    private String bucketName;
+
     private final S3FileRepository s3FileRepository;
 
     private final AmazonS3 amazonS3;
 
-    @Value("${cloud.aws.bucket.name}")
-    private String bucketName;
-
     @Override
     public S3FileResponseDto uploadFile(MultipartFile file) throws IOException {
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType(file.getContentType());
-        metadata.setContentLength(file.getSize());
-
-        String filename = "files/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
-        return uploadFileToS3(file, metadata, filename);
+        ObjectMetadata metadata = createMetadataFromMultipartFile(file);
+        return uploadFileToS3(file, metadata, s3FileNameFormat("files",file));
     }
 
     @Override
     public S3FileResponseDto uploadImage(MultipartFile file) throws IOException {
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType(file.getContentType());
-        metadata.setContentLength(file.getSize());
-
-        String filename = "images/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
-        return uploadFileToS3(file, metadata, filename);
+        ObjectMetadata metadata = createMetadataFromMultipartFile(file);
+        return uploadFileToS3(file, metadata, s3FileNameFormat("images",file));
     }
 
     @Override
     public S3FileResponseDto uploadVideo(MultipartFile file) throws IOException {
+        ObjectMetadata metadata = createMetadataFromMultipartFile(file);
+        return uploadFileToS3(file, metadata, s3FileNameFormat("videos",file));
+    }
+
+    public ObjectMetadata createMetadataFromMultipartFile(MultipartFile file){
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(file.getContentType());
         metadata.setContentLength(file.getSize());
+        return metadata;
+    }
 
-        String filename = "videos/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
-        return uploadFileToS3(file, metadata, filename);
+    public String s3FileNameFormat(String type, MultipartFile file){
+        return String.format("%s/%s_%s", type, UUID.randomUUID(), file.getOriginalFilename());
     }
 
     private S3FileResponseDto uploadFileToS3(MultipartFile file, ObjectMetadata metadata, String filename) throws IOException {
@@ -77,7 +78,7 @@ public class S3ServiceImpl implements S3Service {
     public String uploadBase64ImageToS3(String base64Image) {
         ObjectMetadata metadata = new ObjectMetadata();
         byte[] imageBytes = Base64.decodeBase64(base64Image);
-        String filename = "images/" + UUID.randomUUID() + ".png";
+        String filename = String.format("images/%s.png", UUID.randomUUID());
 
         amazonS3.putObject(bucketName, filename, new ByteArrayInputStream(imageBytes), metadata);
         return String.format("https://%s.s3.amazonaws.com/%s", bucketName, filename);

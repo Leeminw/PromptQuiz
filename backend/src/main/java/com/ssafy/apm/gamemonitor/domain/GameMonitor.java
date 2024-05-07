@@ -3,7 +3,7 @@ package com.ssafy.apm.gamemonitor.domain;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.annotations.Column;
 import com.influxdb.annotations.Measurement;
-import com.ssafy.apm.socket.util.GameRoomStatus;
+import com.ssafy.apm.common.util.GameRoomStatus;
 
 import lombok.Data;
 import lombok.Builder;
@@ -18,6 +18,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @Measurement(name = "game_monitor")
 public class GameMonitor {
+
     @Column(timestamp = true)
     private Instant time;
     @Column(tag = true)
@@ -35,4 +36,5 @@ public class GameMonitor {
     public static GameMonitor fromRoomStatus(GameRoomStatus game, Instant time) {
         return GameMonitor.builder().time(time).uuid(game.uuid).build();
     }
+
 }

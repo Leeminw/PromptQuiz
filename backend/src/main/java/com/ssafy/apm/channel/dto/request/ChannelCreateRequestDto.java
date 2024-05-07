@@ -1,6 +1,7 @@
 package com.ssafy.apm.channel.dto.request;
 
 import com.ssafy.apm.channel.domain.ChannelEntity;
+
 import lombok.*;
 
 import java.util.UUID;
@@ -11,6 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChannelCreateRequestDto {
+
     private String name;
     private Integer curPlayers;
     private Integer maxPlayers;

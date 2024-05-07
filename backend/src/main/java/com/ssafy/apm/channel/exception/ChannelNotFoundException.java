@@ -3,7 +3,7 @@ package com.ssafy.apm.channel.exception;
 public class ChannelNotFoundException extends RuntimeException {
 
     public ChannelNotFoundException(Long id) {
-        super("Entity Not Found with id: " + id);
+        super("Channel Entity Not Found with id: " + id);
     }
 
     public ChannelNotFoundException(String message) {
