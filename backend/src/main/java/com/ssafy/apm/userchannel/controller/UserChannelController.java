@@ -41,7 +41,7 @@ public class UserChannelController {
 
 //    채널 코드로 입장
     @PostMapping("/{code}")
-    public ResponseEntity<ResponseData<?>> enterUserChannelByCode(@PathVariable(name = "channelCode") String code) {
+    public ResponseEntity<ResponseData<?>> enterUserChannelByCode(@PathVariable(name = "code") String code) {
         UserChannelGetResponseDto response = userChannelService.enterUserChannelByCode(code);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
@@ -53,9 +53,10 @@ public class UserChannelController {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
 
-    @DeleteMapping("/{userId}/{channelCode}")
-    public ResponseEntity<ResponseData<?>> deleteExitUserChannelByChannelCodeAndUserId(@PathVariable(name = "userId") Long userId, @PathVariable(name = "channelCode") String code) {
-        Long response = userChannelService.deleteExitUserChannelByChannelCodeAndUserId(userId, code);
+    @DeleteMapping("/{userId}/{code}")
+    public ResponseEntity<ResponseData<?>> deleteExitUserChannelByUserIdAndCode(
+            @PathVariable(name = "userId") Long userId, @PathVariable(name = "code") String code) {
+        Long response = userChannelService.deleteExitUserChannelByUserIdAndCode(userId, code);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
 

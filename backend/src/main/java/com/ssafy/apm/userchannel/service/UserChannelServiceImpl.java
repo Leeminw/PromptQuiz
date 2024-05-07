@@ -98,9 +98,9 @@ public class UserChannelServiceImpl implements UserChannelService {
 
     @Override
     @Transactional
-    public Long deleteExitUserChannelByChannelCodeAndUserId(Long userId, String channelCode) {
-        ChannelEntity channelEntity = channelRepository.findByCode(channelCode)
-                .orElseThrow(() -> new ChannelNotFoundException("No entity exist by channelCode!"));
+    public Long deleteExitUserChannelByUserIdAndCode(Long userId, String code) {
+        ChannelEntity channelEntity = channelRepository.findByCode(code)
+                .orElseThrow(() -> new ChannelNotFoundException("No entity exist by code!"));
         channelEntity.decreaseCurPlayers();
 
         UserChannelEntity entity = userChannelRepository.findByUserIdAndChannelId(userId, channelEntity.getId())

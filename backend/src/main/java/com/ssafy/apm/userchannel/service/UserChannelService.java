@@ -12,5 +12,5 @@ public interface UserChannelService {
     UserChannelGetResponseDto enterUserChannelByCode(String code);
     Long deleteExitUserChannel();
 
-    Long deleteExitUserChannelByChannelCodeAndUserId(Long userId, String channelCode);
+    Long deleteExitUserChannelByUserIdAndCode(Long userId, String code);
 }
