@@ -3,7 +3,7 @@ import instance from "./axios-instance";
 const GameApi = {
     getGame: async (roomId:string) => {
         try{
-            const response = await instance.get(`game/gameInfo/${roomId}`)
+            const response = await instance.get(`game/${roomId}`)
             return response.data;
         }
         catch(error) {

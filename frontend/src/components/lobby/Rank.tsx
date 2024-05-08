@@ -80,11 +80,11 @@ const Rank = () => {
     // className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 "
     <div className="w-fit h-full">
       <button
-        className="w-full h-full bg-customYellow flex justify-center items-center gap-2 px-1 hover:brightness-110"
+        className="w-full h-full bg-customYellow border-custom-yellow text-white flex justify-center items-center gap-2 px-1 hover:brightness-110"
         onClick={() => (document.getElementById('ranking_modal') as HTMLDialogElement).showModal()}
       >
         <MdAddHome className="min-w-5 min-h-5 " />
-        <p className="text-nowrap">랭킹 표시</p>
+        <p className="text-nowrap">랭킹</p>
       </button>
       <dialog id="ranking_modal" className="modal">
         <div className="modal-box">
