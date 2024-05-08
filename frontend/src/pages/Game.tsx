@@ -191,6 +191,12 @@ const GamePage = () => {
   };
 
   const publishChat = () => {
+    let chatfilter = chatInput.current.value;
+    chatfilter = chatfilter.replaceAll("시발","이런");
+    chatfilter = chatfilter.replaceAll("씨발","이런");
+    chatfilter = chatfilter.replaceAll("존나","매우");
+    chatfilter = chatfilter.replaceAll("병신","아이");
+    chatfilter = chatfilter.replaceAll("좆","어머");
     const destination = '/ws/pub/game/chat/send';
     const gameChat: GameChat = {
       userId: user.userId,
@@ -198,7 +204,7 @@ const GamePage = () => {
       uuid: game.code,
       gameCode: game.code,
       round: 0,
-      content: chatInput.current.value,
+      content: chatfilter,
     };
     publish(destination, gameChat);
     chatInput.current.value = '';
@@ -384,7 +390,7 @@ const GamePage = () => {
         ))}
       </div>
       {/* 광고, 채팅창, 게임 설정 */}
-      <div className="w-full h-48 flex gap-4">
+      <div className="w-full h-[12.5rem] flex gap-4">
         {/* 광고 */}
         <div className="w-1/3 bg-red-200 flex justify-center items-center">
           광고
@@ -402,7 +408,7 @@ const GamePage = () => {
           <div className="w-full">
             <div className="relative w-full">
               <div
-                className={`absolute flex items-center w-full h-36 bottom-0 mb-2 transition-all origin-bottom duration-300 ${chatOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
+                className={`absolute flex items-center w-full h-[9.5rem] bottom-0 mb-2 transition-all origin-bottom duration-300 ${chatOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
               >
                 <div className="absolute w-full h-[90%] px-3 py-2 text-sm chat z-10">
                   <div className="z-10 text-gray-700" ref={chattingBox}>
@@ -456,7 +462,7 @@ const GamePage = () => {
           <GameRoomSetting gamestart={isStart} />
 
           {/* 팀 선택, 게임 시작 버튼 */}
-          <div className="w-full h-7 my-2 flex gap-2">
+          <div className="w-full h-7 my-3 flex gap-2">
             <button
               className={`w-1/3 h-full flex items-center justify-center text-white text-sm font-bold transition 
               ${activateBtn[2] ? 'animate-clickbtn scale-105' : ''}

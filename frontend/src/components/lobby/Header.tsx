@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import { ImExit } from 'react-icons/im';
-import { BsFillTrophyFill } from 'react-icons/bs';
 import { IoMdRefresh } from 'react-icons/io';
 import { FaForward } from 'react-icons/fa6';
 import { MdAddHome } from 'react-icons/md';
