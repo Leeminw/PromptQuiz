@@ -5,6 +5,7 @@ import com.ssafy.apm.game.dto.request.GameCreateRequestDto;
 import com.ssafy.apm.game.dto.request.GameUpdateRequestDto;
 import com.ssafy.apm.game.dto.response.GameResponseDto;
 import com.ssafy.apm.game.service.GameService;
+import com.ssafy.apm.gameuser.dto.response.GameUserSimpleResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,12 @@ public class GameController {
         GameResponseDto response = gameService.createGame(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success("방 생성 완료", response));
     }
+    //    // 게임 입장할 때 GameUserEntity 생성
+    @PostMapping("/enterGame/{gameCode}")
+    public ResponseEntity<ResponseData<?>> enterGame(@PathVariable(name = "gameCode") String gameCode) {
+        GameUserSimpleResponseDto response = gameService.enterGame(gameCode);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
+    }
 
     //    방 목록들 조회
     @GetMapping("/gameList/{channelCode}")
@@ -59,5 +66,17 @@ public class GameController {
     public ResponseEntity<ResponseData<?>> deleteGame(@PathVariable(name = "gameCode") String gameCode) {
         GameResponseDto response = gameService.deleteGame(gameCode);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("방 삭제 완료", response));
+    }
+    /* FIXME: GameController 로 이동하는 것이 나아보임 */
+    /* FIXME 1: 퇴장 조건을 GameService 에서 판단하고,
+     *   GameService 에서 deleteGameUser() 를 호출하는 것이 나아보임 */
+    /* FIXME 2: 혹은 단순 deleteGameUser API 호출을 통해 처리하고,
+     *   WebSocket 통신이 끊어지는 경우에도, deleteGameUser()를 호출하는 것이 나아보임*/
+//    // 게임 퇴장할 때 GameUserEntity 삭제
+    @DeleteMapping("/exitGame/{gameCode}")
+    public ResponseEntity<ResponseData<?>> exitGame(@PathVariable(name = "gameCode") String gameCode) {
+//        삭제된 gameUserId 리턴
+        String response = gameService.exitGame(gameCode);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
 }
