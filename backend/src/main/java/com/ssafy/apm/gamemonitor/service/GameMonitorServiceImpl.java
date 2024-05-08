@@ -22,7 +22,9 @@ public class GameMonitorServiceImpl implements GameMonitorService {
     private final GameMonitorRepository gameMonitorRepository;
 
     @Override
-    public void saveRoomList(ConcurrentHashMap<Long, GameRoomStatus> gameEndMap, ConcurrentHashMap<Long, GameRoomStatus> gameReadyMap, ConcurrentHashMap<Long, GameRoomStatus> gameOngoingMap) {
+    public void saveRoomList(ConcurrentHashMap<String, GameRoomStatus> gameEndMap,
+                             ConcurrentHashMap<String, GameRoomStatus> gameReadyMap,
+                             ConcurrentHashMap<String, GameRoomStatus> gameOngoingMap) {
         try {
             List<GameMonitor> gameMonitorList = new ArrayList<>();
 

@@ -1,5 +1,6 @@
 package com.ssafy.apm.socket.dto.response;
 
+import com.ssafy.apm.gameuser.dto.response.GameUserSimpleResponseDto;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -12,14 +13,14 @@ import java.util.List;
 public class GameSystemContentDto {
 
     private Integer round;
-    private List<PlayerDto> roundList;
+    private List<GameUserSimpleResponseDto> roundList;
 
     public GameSystemContentDto(Integer round){
         this.round = round;
         this.roundList = null;
     }
 
-    public GameSystemContentDto(List<PlayerDto> roundList){
+    public GameSystemContentDto(List<GameUserSimpleResponseDto> roundList){
         this.round = 0;
         this.roundList = roundList;
     }

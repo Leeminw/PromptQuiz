@@ -10,7 +10,7 @@ public class GameChatRequestDto {
     private Long userId;
     private String nickname;
     private String uuid;
-    private Long gameId;
+    private String gameCode;
     private Integer round;
     private String content;
 
