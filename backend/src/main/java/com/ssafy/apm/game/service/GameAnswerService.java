@@ -1,7 +1,8 @@
 package com.ssafy.apm.game.service;
 
-import com.ssafy.apm.socket.dto.request.GameChatRequestDto;
+import com.ssafy.apm.gamequiz.service.GameQuizService;
 import com.ssafy.apm.socket.dto.response.GameAnswerCheck;
+import com.ssafy.apm.socket.dto.request.GameChatRequestDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class GameAnswerService {
 
     private static final int MULTIPLECHOICE = 1, BLANKCHOICE = 2, BLANKSUBJECTIVE = 4;
-
+    private GameQuizService gameQuizService;
     private BlankSubjectiveService blankSubjectiveService;
     private BlankChoiceService blankChoiceService;
     private ChoiceService choiceService;
@@ -24,7 +25,7 @@ public class GameAnswerService {
         GameAnswerCheck response = new GameAnswerCheck();
 
         // 퀴즈 타입 찾기
-        int type = 4;
+        Integer type = gameQuizService.getCurrentGameQuizTypeByGameCode(answer.getGameCode());
 
         switch (type) {
             case MULTIPLECHOICE:
