@@ -7,8 +7,7 @@ import java.util.PriorityQueue;
 
 public class GameRoomStatus {
 
-    public Long gameId;
-    public String uuid;
+    public String gameCode;
     public Integer round;
     public Integer time;
     public Integer maxTime;
@@ -17,8 +16,8 @@ public class GameRoomStatus {
 
     private static final Double similarityRate = 0.9;
 
-    public GameRoomStatus(Long gameId, String uuid, Integer round, Integer maxTime, Integer time) {
-        this.gameId = gameId;
+    public GameRoomStatus(String gameCode, String uuid, Integer round, Integer maxTime, Integer time) {
+        this.gameCode = gameCode;
         this.uuid = uuid;
         this.round = round;
         this.maxTime = maxTime;
@@ -28,20 +27,15 @@ public class GameRoomStatus {
     }
 
     public void initSimilarity(HashMap<String, String> promptMap) {
-
-        playerSimilarityMap.clear();
-
-        for (String i : promptMap.keySet()) {
-            if (promptMap.get(i) == null) {
-                playerSimilarityMap.put(i, new PriorityQueue<>());
-            }
-        }
+        playerSimilarityMap.put("kor_object", new PriorityQueue<>());
+        playerSimilarityMap.put("kor_subject", new PriorityQueue<>());
+        playerSimilarityMap.put("kor_sub_adjective", new PriorityQueue<>());
+        playerSimilarityMap.put("kor_obj_adjective", new PriorityQueue<>());
 
         answerWordMap.putAll(promptMap);
     }
 
     public void addSimilarityAnswerToMap(String key, String value) {
-        // 새로운 정답이 나왔을 경우 정답 Map에 저장하고 유사도 목록 삭제하기
         answerWordMap.put(key, value);
         playerSimilarityMap.remove(key);
     }
@@ -67,4 +61,5 @@ public class GameRoomStatus {
     public boolean similarityGameEnd() {
         return playerSimilarityMap.isEmpty();
     }
+
 }

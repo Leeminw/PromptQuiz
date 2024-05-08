@@ -6,6 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public interface GameMonitorService {
 
-    void saveRoomList(ConcurrentHashMap<Long, GameRoomStatus> gameEndMap, ConcurrentHashMap<Long, GameRoomStatus> gameReadyMap, ConcurrentHashMap<Long, GameRoomStatus> gameOngoingMap);
+    void saveRoomList(ConcurrentHashMap<String, GameRoomStatus> gameEndMap,
+                      ConcurrentHashMap<String, GameRoomStatus> gameReadyMap,
+                      ConcurrentHashMap<String, GameRoomStatus> gameOngoingMap);
 
 }

@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class GameReadyDto {
 
-    private Long gameId;
+    private String gameCode;
     private String uuid;
 
 }
