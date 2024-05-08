@@ -8,6 +8,5 @@ import lombok.AllArgsConstructor;
 public class GameReadyDto {
 
     private String gameCode;
-    private String uuid;
 
 }

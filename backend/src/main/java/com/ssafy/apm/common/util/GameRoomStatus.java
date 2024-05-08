@@ -1,7 +1,7 @@
 package com.ssafy.apm.common.util;
 
-import com.ssafy.apm.gamequiz.dto.response.GameQuizGetResponseDto;
 import com.ssafy.apm.socket.dto.response.SimilarityResponseDto;
+import com.ssafy.apm.gamequiz.dto.response.GameQuizDetailResponseDto;
 
 import java.util.HashMap;
 import java.util.PriorityQueue;
@@ -17,7 +17,7 @@ public class GameRoomStatus {
 
     private static final Double similarityRate = 0.9;
 
-    public GameRoomStatus(String gameCode, String uuid, Integer round, Integer maxTime, Integer time) {
+    public GameRoomStatus(String gameCode, Integer round, Integer maxTime, Integer time) {
         this.gameCode = gameCode;
         this.round = round;
         this.maxTime = maxTime;
@@ -26,7 +26,7 @@ public class GameRoomStatus {
         this.answerWordMap = new HashMap<>();
     }
 
-    public void initSimilarity(GameQuizGetResponseDto quiz) {
+    public void initSimilarity(GameQuizDetailResponseDto quiz) {
         playerSimilarityMap.put("kor_object", new PriorityQueue<>());
         playerSimilarityMap.put("kor_subject", new PriorityQueue<>());
         playerSimilarityMap.put("kor_sub_adjective", new PriorityQueue<>());

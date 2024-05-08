@@ -12,8 +12,8 @@ import com.ssafy.apm.gamequiz.service.GameQuizService;
 import com.ssafy.apm.socket.dto.request.GameChatRequestDto;
 import com.ssafy.apm.socket.dto.request.EnterUserMessageDto;
 import com.ssafy.apm.gamemonitor.service.GameMonitorService;
-import com.ssafy.apm.gamequiz.dto.response.GameQuizGetResponseDto;
 import com.ssafy.apm.gameuser.dto.response.GameUserSimpleResponseDto;
+import com.ssafy.apm.gamequiz.dto.response.GameQuizDetailResponseDto;
 
 import java.util.*;
 
@@ -174,7 +174,7 @@ public class GameSocketController {
     @PostMapping("/api/v1/game/start")
     public ResponseEntity<?> setGameStart(@RequestBody GameReadyDto ready) {
         if (!gameReadyMap.containsKey(ready.getGameCode())) {
-            GameRoomStatus newGame = new GameRoomStatus(ready.getGameCode(), ready.getUuid(), 0, 10,0);
+            GameRoomStatus newGame = new GameRoomStatus(ready.getGameCode(), 0, 10,0);
 
             // 방장일 경우에만 게임 보기가 생성됩니다
             if (gameService.createGameQuiz(ready.getGameCode())) {
@@ -185,7 +185,7 @@ public class GameSocketController {
 
                 gameReadyMap.put(ready.getGameCode(), newGame);
 
-                GameQuizGetResponseDto quiz = gameQuizService.getCurRoundGameQuizByGameCode(newGame.gameCode);
+                GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(newGame.gameCode);
                 if(quiz.getType() == BLANKSUBJECTIVE){
                     newGame.initSimilarity(quiz);
                 }
@@ -240,7 +240,7 @@ public class GameSocketController {
             return;
         }
 
-        GameQuizGetResponseDto quiz = gameQuizService.getCurRoundGameQuizByGameCode(game.gameCode);
+        GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(game.gameCode);
         if(quiz.getType() == BLANKSUBJECTIVE){
             game.initSimilarity(quiz);
         }

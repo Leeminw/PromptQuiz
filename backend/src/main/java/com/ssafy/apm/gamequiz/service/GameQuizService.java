@@ -27,7 +27,8 @@ public interface GameQuizService {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     List<GameQuizSimpleResponseDto> findCurrentSimpleGameQuizzesByGameCode(String gameCode);
     List<GameQuizDetailResponseDto> findCurrentDetailGameQuizzesByGameCode(String gameCode);
-
+    GameQuizDetailResponseDto findFirstCurrentDetailGameQuizByGameCode(String gameCode);
     //////////////////////////////////////////////////////
     //////////////////////////////////////////////////////
+    Integer getCurrentGameQuizTypeByGameCode(String gameCode);
 }

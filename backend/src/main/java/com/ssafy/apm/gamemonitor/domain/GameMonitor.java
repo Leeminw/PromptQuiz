@@ -34,7 +34,7 @@ public class GameMonitor {
     }
 
     public static GameMonitor fromRoomStatus(GameRoomStatus game, Instant time) {
-        return GameMonitor.builder().time(time).uuid(game.uuid).build();
+        return GameMonitor.builder().time(time).uuid(game.gameCode).build();
     }
 
 }

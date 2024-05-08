@@ -1,12 +1,12 @@
 package com.ssafy.apm.game.service;
 
-import com.ssafy.apm.gamequiz.domain.GameQuizEntity;
 import com.ssafy.apm.gamequiz.service.GameQuizService;
-import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.socket.dto.request.GameChatRequestDto;
+import com.ssafy.apm.gamequiz.dto.response.GameQuizDetailResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.Set;
 import java.util.HashMap;
 
@@ -21,14 +21,18 @@ public class DumpServiceImpl {
 
     private final GameQuizService gameQuizService;
 
-    public void getQuizPrompt(GameChatRequestDto answer, Set<String> checkPrompt){
-
-        Quiz quiz = gameQuizService.getCurRoundGameQuizByGameCode(answer.getGameCode());
-
+    public HashMap<String, Double> evaluateAnswers(GameChatRequestDto answer, Set<String> checkPrompt){
+        GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(answer.getGameCode());
         HashMap<String, Double> resultMap = new HashMap<>();
-        for (String i : checkPrompt) {
-            Double rate = calculateSimilarity(quiz., answer.getContent());
-            resultMap.put(i, calculateSimilarity("테스트 입력입니다", answer.getContent()));
+        for (String prompt : checkPrompt) {
+            Double rate = 0.0;
+            switch (prompt){
+                case "kor_subject" -> rate = calculateSimilarity(quiz.getKorSubject(), answer.getContent());
+                case "kor_sub_adjective" -> rate = calculateSimilarity(quiz.getKorSubAdjective(), answer.getContent());
+                case "kor_object" -> rate = calculateSimilarity(quiz.getKorObject(), answer.getContent());
+                case "kor_obj_adjective" -> rate = calculateSimilarity(quiz.getKorObjAdjective(), answer.getContent());
+            }
+            resultMap.put(prompt, rate);
         }
 
         return resultMap;

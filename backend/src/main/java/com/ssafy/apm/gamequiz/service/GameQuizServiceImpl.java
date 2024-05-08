@@ -122,4 +122,24 @@ public class GameQuizServiceImpl implements GameQuizService {
         )).toList();
     }
 
+    @Override
+    public GameQuizDetailResponseDto findFirstCurrentDetailGameQuizByGameCode(String gameCode) {
+        Game game = gameRepository.findByCode(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+        GameQuiz gameQuiz = gameQuizRepository.findFirstByGameCodeAndRound(gameCode, game.getCurRounds())
+                .orElseThrow(() -> new GameQuizNotFoundException("GameQuiz Not Found with GameCode, Round" +
+                        gameCode + ", " + game.getCurRounds()));
+        return new GameQuizDetailResponseDto(gameQuiz, quizRepository.findById(gameQuiz.getQuizId())
+                .orElseThrow( () -> new QuizNotFoundException(gameQuiz.getQuizId())));
+    }
+
+    @Override
+    public Integer getCurrentGameQuizTypeByGameCode(String gameCode) {
+        Game game = gameRepository.findByCode(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+
+        GameQuiz gameQuiz = gameQuizRepository.findFirstByGameCodeAndRound(gameCode, game.getCurRounds())
+                .orElseThrow(() -> new GameQuizNotFoundException("GameQuiz Not Found with GameCode, Round" +
+                        gameCode + ", " + game.getCurRounds()));
+
+        return gameQuiz.getType();
+    }
 }
