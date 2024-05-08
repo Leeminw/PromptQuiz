@@ -31,7 +31,7 @@ public class UserChannelController {
         UserChannelGetResponseDto response = userChannelService.enterUserChannel(channelId);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
     }
-    @PostMapping("/{code}")
+    @PostMapping("/code/{code}")
     public ResponseEntity<ResponseData<?>> enterUserChannelByCode(@PathVariable(name = "code") String code) {
         UserChannelGetResponseDto response = userChannelService.enterUserChannelByCode(code);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
