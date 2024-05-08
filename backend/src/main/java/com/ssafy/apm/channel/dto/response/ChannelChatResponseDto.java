@@ -16,13 +16,15 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class ChannelChatResponseDto {
 
+    private Long userId;
     private String uuid;
     private String nickname;
     private String content;
     private String createdDate;
 
-    public static ChannelChatResponseDto buildFromEntity(Chat chat) {
+    public static ChannelChatResponseDto buildFromEntity(Chat chat, Long userId) {
         return ChannelChatResponseDto.builder()
+                .userId(userId)
                 .uuid(chat.getUuid())
                 .nickname(chat.getNickname())
                 .content(chat.getContent())
@@ -32,6 +34,7 @@ public class ChannelChatResponseDto {
 
     public static ChannelChatResponseDto buildFromRequest(ChannelChatRequestDto chat) {
         return ChannelChatResponseDto.builder()
+                .userId(chat.getUserId())
                 .uuid(chat.getUuid())
                 .nickname(chat.getNickname())
                 .content(chat.getContent())
