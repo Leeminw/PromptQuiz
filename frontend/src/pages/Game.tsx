@@ -44,7 +44,6 @@ const GamePage = () => {
     console.log('first response', response);
     const responseGame: Game = response.data;
     const userResponse = await GameApi.getUserList(roomId);
-
     setGame(responseGame);
     setGameUserList(userResponse.data);
     setMaxRound(responseGame.rounds);
@@ -120,7 +119,6 @@ const GamePage = () => {
       // 로고
       // if(data.createdDate < )
       setChat((prevItems) => [...prevItems, data]);
-      console.log("chat : ", chat);
       setMessageMap((prevMap) => {
         const updatedMap = new Map(prevMap);
         updatedMap.set(data.userId, data);
@@ -198,7 +196,7 @@ const GamePage = () => {
       userId: user.userId,
       nickname: user.nickName,
       uuid: game.code,
-      gameId: game.id,
+      gameCode: game.code,
       round: 0,
       content: chatInput.current.value,
     };
@@ -210,13 +208,12 @@ const GamePage = () => {
     // 모두 레디가 되있는지?
     // const destination = '/ws/pub/game/start';
     const gameReady: GameReady = {
-      gameId: game.id,
+      gameCode: game.code,
       uuid: game.code,
     };
     try {
       const response = await instance.post('game/start', gameReady);
       console.log(response);
-      console.log('start!!!');
       handleGamestart();
       setIsStart(true);
     } catch (error) {
@@ -288,7 +285,7 @@ const GamePage = () => {
       <div className="w-full h-10 grid grid-cols-5 gap-3 mb-2">
         {/* 채널 */}
         <label className="flex items-center border-custom-mint bg-white text-sm h-full">
-          <p className="text-center w-full text-nowrap">{game?.channelId}채널</p>
+          <p className="text-center w-full text-nowrap">{game?.channelCode}채널</p>
         </label>
         {/* 제목 */}
         <label className="flex items-center justify-center col-span-3 w-full border-custom-mint bg-white text-sm">
@@ -483,7 +480,7 @@ const GamePage = () => {
                   created_date: '',
                   updated_date: '',
                   gameUserId: BigInt(123),
-                  gameId: BigInt(123),
+                  gameCode: '123',
                   isHost: false,
                   isReady: false,
                   score: 123,
