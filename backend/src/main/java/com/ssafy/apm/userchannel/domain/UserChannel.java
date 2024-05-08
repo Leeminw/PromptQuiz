@@ -1,9 +1,6 @@
 package com.ssafy.apm.userchannel.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.redis.core.index.Indexed;
 
@@ -13,7 +10,8 @@ import org.springframework.data.redis.core.index.Indexed;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserChannelEntity {
+@Table(name = "user_channel")
+public class UserChannel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

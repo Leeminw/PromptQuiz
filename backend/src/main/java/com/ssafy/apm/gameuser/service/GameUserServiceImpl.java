@@ -1,7 +1,5 @@
 package com.ssafy.apm.gameuser.service;
 
-import com.ssafy.apm.game.domain.Game;
-import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.game.repository.GameRepository;
 import com.ssafy.apm.gameuser.domain.GameUser;
 import com.ssafy.apm.gameuser.dto.request.GameUserCreateRequestDto;
@@ -10,20 +8,13 @@ import com.ssafy.apm.gameuser.dto.response.GameUserDetailResponseDto;
 import com.ssafy.apm.gameuser.dto.response.GameUserSimpleResponseDto;
 import com.ssafy.apm.gameuser.exception.GameUserNotFoundException;
 import com.ssafy.apm.gameuser.repository.GameUserRepository;
-import com.ssafy.apm.user.domain.User;
-import com.ssafy.apm.user.dto.UserScoreUpdateRequestDto;
 import com.ssafy.apm.user.exceptions.UserNotFoundException;
 import com.ssafy.apm.user.repository.UserRepository;
 import com.ssafy.apm.user.service.UserService;
-import com.ssafy.apm.userchannel.domain.UserChannelEntity;
-import com.ssafy.apm.userchannel.exception.UserChannelNotFoundException;
-import com.ssafy.apm.userchannel.repository.UserChannelRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Service

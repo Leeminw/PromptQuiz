@@ -1,6 +1,6 @@
 package com.ssafy.apm.channel.service;
 
-import com.ssafy.apm.channel.domain.ChannelEntity;
+import com.ssafy.apm.channel.domain.Channel;
 import com.ssafy.apm.channel.repository.ChannelRepository;
 import com.ssafy.apm.channel.exception.ChannelNotFoundException;
 import com.ssafy.apm.channel.dto.response.ChannelGetResponseDto;
@@ -24,31 +24,31 @@ public class ChannelServiceImpl implements ChannelService {
     @Transactional
     @Override
     public ChannelGetResponseDto createChannel(ChannelCreateRequestDto dto) {
-        ChannelEntity channelEntity = dto.toEntity();
-        channelRepository.save(channelEntity);
-        return new ChannelGetResponseDto(channelEntity);
+        Channel channel = dto.toEntity();
+        channelRepository.save(channel);
+        return new ChannelGetResponseDto(channel);
     }
 
     @Override
     public List<ChannelGetResponseDto> getChannelList() {
-        List<ChannelEntity> channelEntityList = channelRepository.findAll();
-        return channelEntityList.stream()
+        List<Channel> channelList = channelRepository.findAll();
+        return channelList.stream()
                 .map(ChannelGetResponseDto::new)
                 .toList();
     }
 
     @Override
     public ChannelGetResponseDto getChannel(Long channelId) {
-        ChannelEntity channelEntity = channelRepository.findById(channelId)
+        Channel channel = channelRepository.findById(channelId)
                 .orElseThrow(() -> new ChannelNotFoundException(channelId));
-        return new ChannelGetResponseDto(channelEntity);
+        return new ChannelGetResponseDto(channel);
     }
 
     @Override
     public ChannelGetResponseDto getChannelByCode(String code) {
-        ChannelEntity channelEntity = channelRepository.findByCode(code)
+        Channel channel = channelRepository.findByCode(code)
                 .orElseThrow(() -> new ChannelNotFoundException("No entities exists by code"));
-        return new ChannelGetResponseDto(channelEntity);
+        return new ChannelGetResponseDto(channel);
     }
 
 }

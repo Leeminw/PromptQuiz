@@ -1,6 +1,6 @@
 package com.ssafy.apm.channel.dto.request;
 
-import com.ssafy.apm.channel.domain.ChannelEntity;
+import com.ssafy.apm.channel.domain.Channel;
 
 import lombok.*;
 
@@ -17,8 +17,8 @@ public class ChannelCreateRequestDto {
     private Integer curPlayers;
     private Integer maxPlayers;
 
-    public ChannelEntity toEntity() {
-        return ChannelEntity.builder()
+    public Channel toEntity() {
+        return Channel.builder()
                 .code(UUID.randomUUID().toString())
                 .name(this.name)
                 .curPlayers(this.curPlayers)
