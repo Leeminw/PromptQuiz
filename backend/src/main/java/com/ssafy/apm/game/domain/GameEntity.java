@@ -56,8 +56,9 @@ public class GameEntity {
         this.code = code;
     }
 
-    public void updateIsStarted(Boolean isStarted) {
+    public Boolean updateIsStarted(Boolean isStarted) {
         this.isStarted = isStarted;
+        return this.isStarted;
     }
 
     public Integer initCurRounds() {

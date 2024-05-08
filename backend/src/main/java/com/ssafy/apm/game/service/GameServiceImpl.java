@@ -1,7 +1,5 @@
 package com.ssafy.apm.game.service;
 
-import com.ssafy.apm.channel.domain.ChannelEntity;
-import com.ssafy.apm.channel.exception.ChannelNotFoundException;
 import com.ssafy.apm.channel.repository.ChannelRepository;
 import com.ssafy.apm.game.domain.GameEntity;
 import com.ssafy.apm.game.dto.request.GameCreateRequestDto;
@@ -35,7 +33,6 @@ public class GameServiceImpl implements GameService {
     private final UserService userService;
     private final GameRepository gameRepository;
     private final QuizRepository quizRepository;
-    private final ChannelRepository channelRepository;
     private final GameQuizRepository gameQuizRepository;
     private final GameUserRepository gameUserRepository;
     private final ChoiceService choiceService;
@@ -103,6 +100,17 @@ public class GameServiceImpl implements GameService {
             }
             response = gameEntity.increaseRounds();
         }
+        gameRepository.save(gameEntity);
+        return response;
+    }
+
+    @Override
+    @Transactional
+    public Boolean updateGameIsStarted(String gameCode, Boolean isStarted) {
+        GameEntity gameEntity = gameRepository.findByCode(gameCode)
+                .orElseThrow(() -> new GameNotFoundException(gameCode));
+
+        Boolean response = gameEntity.updateIsStarted(isStarted);
         gameRepository.save(gameEntity);
         return response;
     }

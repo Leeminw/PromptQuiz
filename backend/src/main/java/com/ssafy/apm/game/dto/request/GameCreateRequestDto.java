@@ -23,11 +23,8 @@ public class GameCreateRequestDto {
     private String password;
     private Boolean isTeam;
     private Boolean isPrivate;
-    private Boolean isStarted;
     private Integer timeLimited;
-    private Integer curPlayers;
     private Integer maxPlayers;
-    private Integer curRounds;
     private Integer maxRounds;
 
     public GameEntity toEntity() {
@@ -41,11 +38,11 @@ public class GameCreateRequestDto {
                 .password(this.password)
                 .isTeam(this.isTeam)
                 .isPrivate(this.isPrivate)
-                .isStarted(this.isStarted)
+                .isStarted(false)
                 .timeLimited(this.timeLimited)
-                .curPlayers(this.curPlayers)
+                .curPlayers(1)
                 .maxPlayers(this.maxPlayers)
-                .curRounds(this.curRounds)
+                .curRounds(0)
                 .maxRounds(this.maxRounds)
                 .build();
     }
