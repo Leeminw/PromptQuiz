@@ -3,10 +3,16 @@ package com.ssafy.apm.gamequiz.service;
 import com.ssafy.apm.game.domain.Game;
 import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.game.repository.GameRepository;
-import com.ssafy.apm.gamequiz.domain.GameQuizEntity;
 import com.ssafy.apm.gamequiz.repository.GameQuizRepository;
-import com.ssafy.apm.gamequiz.dto.response.GameQuizGetResponseDto;
 import com.ssafy.apm.gamequiz.exception.GameQuizNotFoundException;
+
+import com.ssafy.apm.gamequiz.domain.GameQuiz;
+import com.ssafy.apm.gamequiz.dto.request.GameQuizCreateRequestDto;
+import com.ssafy.apm.gamequiz.dto.request.GameQuizUpdateRequestDto;
+import com.ssafy.apm.gamequiz.dto.response.GameQuizDetailResponseDto;
+import com.ssafy.apm.gamequiz.dto.response.GameQuizSimpleResponseDto;
+import com.ssafy.apm.quiz.exception.QuizNotFoundException;
+import com.ssafy.apm.quiz.repository.QuizRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,45 +26,100 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class GameQuizServiceImpl implements GameQuizService {
 
-    private final GameQuizRepository gameQuizRepository;
     private final GameRepository gameRepository;
+    private final QuizRepository quizRepository;
+    private final GameQuizRepository gameQuizRepository;
 
     @Override
-    public List<GameQuizGetResponseDto> getGameQuizListEachRoundByGameCode(String gameCode) {
-        Game game = gameRepository.findByCode(gameCode)
-                .orElseThrow(() -> new GameNotFoundException(gameCode));
-        List<GameQuizEntity> gameQuizList = gameQuizRepository.findAllByGameCodeAndRound(gameCode, game.getCurRounds())
-                .orElseThrow(() -> new GameQuizNotFoundException("No entities exists by gameCode, round"));
-
-        return gameQuizList.stream().map(GameQuizGetResponseDto::new).toList();
+    public GameQuizSimpleResponseDto createGameQuiz(GameQuizCreateRequestDto requestDto) {
+        GameQuiz gameQuiz = gameQuizRepository.save(requestDto.toEntity());
+        return new GameQuizSimpleResponseDto(gameQuiz);
     }
 
     @Override
-    public GameQuizGetResponseDto getCurRoundGameQuizByGameCode(String gameCode) {
-        Game game = gameRepository.findByCode(gameCode)
-                .orElseThrow(() -> new GameNotFoundException(gameCode));
-
-        GameQuizEntity gameQuiz = gameQuizRepository.findByGameCodeAndRound(gameCode, game.getCurRounds())
-                .orElseThrow(() -> new GameQuizNotFoundException("No entities exists by gameCode, round"));
-
-        return new GameQuizGetResponseDto(gameQuiz);
+    public GameQuizSimpleResponseDto updateGameQuiz(GameQuizUpdateRequestDto requestDto) {
+        GameQuiz gameQuiz = gameQuizRepository.findById(requestDto.getCode()).orElseThrow(
+                () -> new GameQuizNotFoundException("GameQuiz Not Found with code: " + requestDto.getCode()));
+        return new GameQuizSimpleResponseDto(gameQuizRepository.save(gameQuiz.update(requestDto)));
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
-    public List<GameQuizGetResponseDto> getAllGameQuizListByGameCode(String gameCode) {
-        List<GameQuizEntity> gameQuizList = gameQuizRepository.findAllByGameCode(gameCode)
-                .orElseThrow(() -> new GameQuizNotFoundException("No entities exists by gameCode"));
-
-        return gameQuizList.stream().map(GameQuizGetResponseDto::new).toList();
+    @Transactional
+    public GameQuizSimpleResponseDto deleteGameQuiz(String code) {
+        GameQuiz gameQuiz = gameQuizRepository.findById(code).orElseThrow(
+                () -> new GameQuizNotFoundException("GameQuiz Not Found with code: " + code));
+        gameQuizRepository.delete(gameQuiz);
+        return new GameQuizSimpleResponseDto(gameQuiz);
     }
 
     @Override
     @Transactional
-    public String deleteGameQuiz(String gameCode) {
-        List<GameQuizEntity> gameQuizEntityList = gameQuizRepository.findAllByGameCode(gameCode)
-                .orElseThrow(() -> new GameQuizNotFoundException("No entities exists by gameCode"));
-
-        gameQuizRepository.deleteAll(gameQuizEntityList);
-        return gameCode;
+    public List<GameQuizSimpleResponseDto> deleteGameQuizzesByGameCode(String gameCode) {
+        List<GameQuiz> gameQuizzes = gameQuizRepository.findAllByGameCode(gameCode).orElseThrow(
+                () -> new GameQuizNotFoundException("GameQuizzes Not Found with GameCode: " + gameCode));
+        gameQuizRepository.deleteAll(gameQuizzes);
+        return gameQuizzes.stream().map(GameQuizSimpleResponseDto::new).toList();
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    @Override
+    public List<GameQuizSimpleResponseDto> findSimpleGameQuizzesByGameCode(String gameCode) {
+        List<GameQuiz> gameQuizzes = gameQuizRepository.findAllByGameCode(gameCode).orElseThrow(
+                () -> new GameQuizNotFoundException("GameQuizzes Not Found with GameCode: " + gameCode));
+        return gameQuizzes.stream().map(GameQuizSimpleResponseDto::new).toList();
+    }
+
+    @Override
+    public List<GameQuizSimpleResponseDto> findSimpleGameQuizzesByGameCodeAndRound(String gameCode, Integer round) {
+        List<GameQuiz> gameQuizzes = gameQuizRepository.findAllByGameCodeAndRound(gameCode, round).orElseThrow(
+                () -> new GameQuizNotFoundException("GameQuizzes Not Found with GameCode, Round" +
+                        gameCode + ", " + round));
+        return gameQuizzes.stream().map(GameQuizSimpleResponseDto::new).toList();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    @Override
+    public List<GameQuizDetailResponseDto> findDetailGameQuizzesByGameCode(String gameCode) {
+        List<GameQuiz> gameQuizzes = gameQuizRepository.findAllByGameCode(gameCode).orElseThrow(
+                () -> new GameQuizNotFoundException("GameQuizzes Not Found with GameCode: " + gameCode));
+        return gameQuizzes.stream().map(gameQuiz -> new GameQuizDetailResponseDto(gameQuiz,
+                quizRepository.findById(gameQuiz.getQuizId()).orElseThrow(
+                        () -> new QuizNotFoundException(gameQuiz.getQuizId()))
+        )).toList();
+    }
+
+    @Override
+    public List<GameQuizDetailResponseDto> findDetailGameQuizzesByGameCodeAndRound(String gameCode, Integer round) {
+        List<GameQuiz> gameQuizzes = gameQuizRepository.findAllByGameCodeAndRound(gameCode, round).orElseThrow(
+                () -> new GameQuizNotFoundException("GameQuizzes Not Found with GameCode, Round" +
+                        gameCode + ", " + round));
+        return gameQuizzes.stream().map(gameQuiz -> new GameQuizDetailResponseDto(gameQuiz,
+                quizRepository.findById(gameQuiz.getQuizId()).orElseThrow(
+                        () -> new QuizNotFoundException(gameQuiz.getQuizId()))
+        )).toList();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    @Override
+    public List<GameQuizSimpleResponseDto> findCurrentSimpleGameQuizzesByGameCode(String gameCode) {
+        Game game = gameRepository.findByCode(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+        List<GameQuiz> gameQuizzes = gameQuizRepository.findAllByGameCodeAndRound(gameCode, game.getCurRounds())
+                .orElseThrow(() -> new GameQuizNotFoundException("GameQuizzes Not Found with GameCode, Round" +
+                        gameCode + ", " + game.getCurRounds()));
+        return gameQuizzes.stream().map(GameQuizSimpleResponseDto::new).toList();
+    }
+
+    @Override
+    public List<GameQuizDetailResponseDto> findCurrentDetailGameQuizzesByGameCode(String gameCode) {
+        Game game = gameRepository.findByCode(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+        List<GameQuiz> gameQuizzes = gameQuizRepository.findAllByGameCodeAndRound(gameCode, game.getCurRounds())
+                .orElseThrow(() -> new GameQuizNotFoundException("GameQuizzes Not Found with GameCode, Round" +
+                        gameCode + ", " + game.getCurRounds()));
+        return gameQuizzes.stream().map(gameQuiz -> new GameQuizDetailResponseDto(gameQuiz,
+                quizRepository.findById(gameQuiz.getQuizId()).orElseThrow(
+                        () -> new QuizNotFoundException(gameQuiz.getQuizId()))
+        )).toList();
+    }
+
 }

@@ -1,7 +1,8 @@
 package com.ssafy.apm.gamequiz.controller;
 
 import com.ssafy.apm.common.domain.ResponseData;
-import com.ssafy.apm.gamequiz.dto.response.GameQuizGetResponseDto;
+import com.ssafy.apm.gamequiz.dto.response.GameQuizDetailResponseDto;
+import com.ssafy.apm.gamequiz.dto.response.GameQuizSimpleResponseDto;
 import com.ssafy.apm.gamequiz.service.GameQuizService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,26 +14,29 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/game-quiz")
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/game-quiz")
 public class GameQuizController {
 
     private final GameQuizService gameQuizService;
 
-    @GetMapping("/{gameCode}")
-    public ResponseEntity<ResponseData<?>> getGameQuizListEachRoundByGameCode(@PathVariable(name = "gameCode") String gameCode) {
-        List<GameQuizGetResponseDto> response = gameQuizService.getGameQuizListEachRoundByGameCode(gameCode);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success(response));
-    }
-    @GetMapping("/search/{gameCode}")
-    public ResponseEntity<ResponseData<?>> getAllGameQuizListByGameCode(@PathVariable(name = "gameCode") String gameCode) {
-        List<GameQuizGetResponseDto> response = gameQuizService.getAllGameQuizListByGameCode(gameCode);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success(response));
+    @DeleteMapping("/{gameCode}")
+    public ResponseEntity<ResponseData<?>> deleteGameQuiz(@PathVariable String gameCode) {
+        GameQuizSimpleResponseDto responseDto = gameQuizService.deleteGameQuiz(gameCode);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }
 
-    @DeleteMapping("/{gameCode}")
-    public ResponseEntity<ResponseData<?>> deleteGameQuiz(@PathVariable(name = "gameCode") String gameCode) {
-        String response = gameQuizService.deleteGameQuiz(gameCode);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success(response));
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    @GetMapping("/search-current/{gameCode}")
+    public ResponseEntity<ResponseData<?>> findCurrentDetailGameQuizzesByGameCode(@PathVariable String gameCode) {
+        List<GameQuizDetailResponseDto> responseDto = gameQuizService.findCurrentDetailGameQuizzesByGameCode(gameCode);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }
+
+    @GetMapping("/search-all/{gameCode}")
+    public ResponseEntity<ResponseData<?>> findDetailGameQuizzesByGameCode(@PathVariable String gameCode) {
+        List<GameQuizDetailResponseDto> responseDto = gameQuizService.findDetailGameQuizzesByGameCode(gameCode);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
+    }
+
 }

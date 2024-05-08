@@ -1,7 +1,7 @@
 package com.ssafy.apm.game.service;
 
 import com.ssafy.apm.game.domain.Game;
-import com.ssafy.apm.gamequiz.domain.GameQuizEntity;
+import com.ssafy.apm.gamequiz.domain.GameQuiz;
 import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.quiz.exception.QuizNotFoundException;
 import com.ssafy.apm.quiz.repository.QuizRepository;
@@ -19,11 +19,11 @@ public class BlankChoiceService {
 
     private final QuizRepository quizRepository;
 
-    public List<GameQuizEntity> createGameQuizList(Game gameEntity, Integer gameType, List<Quiz> quizList) {
-        List<GameQuizEntity> response = new ArrayList<>();
+    public List<GameQuiz> createGameQuizList(Game gameEntity, Integer gameType, List<Quiz> quizList) {
+        List<GameQuiz> response = new ArrayList<>();
         int curRound = 1;
         for (Quiz quiz : quizList) { // 각 퀴즈마다 4가지 문제가 생성되야함
-            GameQuizEntity entity = GameQuizEntity.builder() // 정답
+            GameQuiz entity = GameQuiz.builder() // 정답
                     .gameCode(gameEntity.getCode())
                     .quizId(quiz.getId())
                     .type(gameType)
@@ -35,7 +35,7 @@ public class BlankChoiceService {
                     .orElseThrow(() -> new QuizNotFoundException("No entities exists by style!"));
 
             for (Quiz wrong : randomQuizList) {
-                entity = GameQuizEntity.builder() // 오답
+                entity = GameQuiz.builder() // 오답
                         .gameCode(gameEntity.getCode())
                         .quizId(wrong.getId())
                         .type(gameType)
@@ -49,10 +49,10 @@ public class BlankChoiceService {
         return response;
     }
 
-    public List<GameQuizEntity> createGameQuiz(Game gameEntity, Quiz quiz, int curRound) {
-        List<GameQuizEntity> response = new ArrayList<>();
+    public List<GameQuiz> createGameQuiz(Game gameEntity, Quiz quiz, int curRound) {
+        List<GameQuiz> response = new ArrayList<>();
 
-        GameQuizEntity entity = GameQuizEntity.builder() // 정답
+        GameQuiz entity = GameQuiz.builder() // 정답
                 .gameCode(gameEntity.getCode())
                 .quizId(quiz.getId())
                 .type(2)
@@ -65,7 +65,7 @@ public class BlankChoiceService {
                 .orElseThrow(() -> new QuizNotFoundException("No entities exists by style!"));
 
         for (Quiz wrong : randomQuizList) {
-            entity = GameQuizEntity.builder() // 오답
+            entity = GameQuiz.builder() // 오답
                     .gameCode(gameEntity.getCode())
                     .quizId(wrong.getId())
                     .type(2)
