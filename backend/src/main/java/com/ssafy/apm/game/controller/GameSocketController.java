@@ -7,11 +7,13 @@ import com.ssafy.apm.quiz.service.QuizService;
 import com.ssafy.apm.common.util.GameRoomStatus;
 import com.ssafy.apm.common.domain.ResponseData;
 import com.ssafy.apm.socket.dto.request.GameReadyDto;
+import com.ssafy.apm.gameuser.service.GameUserService;
 import com.ssafy.apm.gamequiz.service.GameQuizService;
 import com.ssafy.apm.socket.dto.request.GameChatRequestDto;
 import com.ssafy.apm.socket.dto.request.EnterUserMessageDto;
 import com.ssafy.apm.gamemonitor.service.GameMonitorService;
 import com.ssafy.apm.gamequiz.dto.response.GameQuizGetResponseDto;
+import com.ssafy.apm.gameuser.dto.response.GameUserSimpleResponseDto;
 
 import java.util.*;
 
@@ -37,6 +39,7 @@ public class GameSocketController {
     private final QuizService quizService;
     private final GameService gameService;
     private final GameQuizService gameQuizService;
+    private final GameUserService gameUserService;
     private final GameMonitorService gameMonitorService;
     private final SimpMessagingTemplate template;
 
@@ -137,7 +140,8 @@ public class GameSocketController {
             GameAnswerCheck check = quizService.checkAnswer(chatMessage, game.playerSimilarityMap.keySet());
 
             switch (check.getType()) {
-                case MUITIPLECHOICE, BLANKCHOICE:
+                case MUITIPLECHOICE:
+                case BLANKCHOICE:
                     if (check.getResult()) {
                         setEndGame(game);
                     } else {
@@ -150,7 +154,7 @@ public class GameSocketController {
                     if (game.similarityGameEnd()) {
                         setEndGame(game);
                     } else {
-                        sendMessage(chatMessage.getUuid(),new GameResponseDto("similarity", game.playerSimilarityMap));
+                        sendMessage(chatMessage.getUuid(),new GameResponseDto("similarity", new GameBlankResponseDto(game)));
                     }
                     break;
             }
@@ -165,14 +169,6 @@ public class GameSocketController {
         sendRoundEndMessage(game);
         setRoundToEnd(game);
     }
-
-    // test dump list
-    List<PlayerDto> list = Arrays.asList(
-            new PlayerDto(0L, 10, false),
-            new PlayerDto(1L, 30, false),
-            new PlayerDto(2L, 40, false),
-            new PlayerDto(3L, 0, false)
-    );
     
     // (게임 시작) 스케쥴러에 게임을 등록하고 준비 메세지 전송
     @PostMapping("/api/v1/game/start")
@@ -212,13 +208,14 @@ public class GameSocketController {
 
     // (라운드 종료) 라운드 종료 메세지 전송
     public void sendRoundEndMessage(GameRoomStatus game) {
-        // 전체 사용자에게 라운드 종료 알림 보내기 (다음 라운드 증가)
+        List<GameUserSimpleResponseDto> list = gameUserService.findSimpleGameUsersByGameCode(game.gameCode);
         GameSystemContentDto responseDto = new GameSystemContentDto(game.round, list);
         sendMessage(game.gameCode, new GameResponseDto("game", GameSystemResponseDto.end(responseDto)));
     }
 
     // (게임 종료) 게임 종료 메세지 전송
     public void sendGameResultMessage(GameRoomStatus game) {
+        List<GameUserSimpleResponseDto> list = gameUserService.findSimpleGameUsersByGameCode(game.gameCode);
         GameSystemContentDto responseDto = new GameSystemContentDto(list);
         sendMessage(game.gameCode, new GameResponseDto("game", GameSystemResponseDto.result(responseDto)));
     }
