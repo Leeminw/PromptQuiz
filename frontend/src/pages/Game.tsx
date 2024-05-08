@@ -97,13 +97,13 @@ const GamePage = () => {
   }, [isQuiz]);
   // 채팅창 열기
   const chatFocus = () => {
-    chatInput.current.focus();
+    chatInput.current?.focus();
     setChatOpen(true);
   };
 
   // 채팅창 닫기
   const chatFocusOut = () => {
-    chatInput.current.blur();
+    chatInput.current?.blur();
     setChatOpen(false);
   };
 
@@ -275,7 +275,7 @@ const GamePage = () => {
 
   return (
     <div
-      className={`bg-white/80 w-[70rem] h-[42rem] min-w-[40rem] min-h-[40rem] max-w-[80vw] z-10 
+      className={`bg-white/60 w-[70rem] h-[42rem] min-w-[40rem] min-h-[40rem] max-w-[80vw] z-10 
       rounded-3xl drop-shadow-lg px-8 py-6 flex flex-col items-center justify-center 
       ${earthquake ? 'animate-earthquake' : ''}`}
     >
@@ -292,7 +292,6 @@ const GamePage = () => {
         </label>
         {/* 제목 */}
         <label className="flex items-center justify-center col-span-3 w-full border-custom-mint bg-white text-sm">
-          <div className="border-r border-gray-200 pl-3 pr-2.5">{roomId}</div>
           <p className="text-center w-full text-nowrap line-clamp-1">{game?.title}</p>
         </label>
         {/* 버튼 */}

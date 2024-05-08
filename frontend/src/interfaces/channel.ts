@@ -1,5 +1,5 @@
 interface Channel {
-    id: number,
+    id: string,
     code: string,
     name: string,
     curPlayers: number,

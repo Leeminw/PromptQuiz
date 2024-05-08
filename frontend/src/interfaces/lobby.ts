@@ -1,6 +1,6 @@
 interface Room {
   userId: bigint;
-  channelId: number;
+  channelCode: string;
   type: number;
   style: string; // number -> string
   title: string;
@@ -14,7 +14,7 @@ interface Room {
 }
 interface RoomProps {
   id: number;
-  channelId: number;
+  channelCode: string;
   type: number;
   style: number;
   code: string;
@@ -32,7 +32,19 @@ interface CurrentUser {
   userName: string;
   nickName: string;
   picture: string;
-  statusMessage: string;
+  statusMessage: string | null;
+  totalScore: number;
+  teamScore: number;
+  soloScore: number;
+  created_date: string;
+  updated_date: string;
+}
+interface CurrentUserProps {
+  userId: number;
+  userName: string;
+  nickName: string;
+  picture: string;
+  statusMessage: string | null;
   totalScore: number;
   teamScore: number;
   soloScore: number;

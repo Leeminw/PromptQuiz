@@ -17,6 +17,7 @@ import CurrentUserList from '../components/lobby/CurrentUserList';
 import { useWebSocketStore } from '../stores/socketStore';
 import useUserStore from '../stores/userStore';
 import { IMessage } from '@stomp/stompjs';
+import { UserChannelApi } from '../hooks/axios-user-channel';
 const Lobby = () => {
   const { channelUuid } = useParams();
   const { user } = useUserStore();
@@ -26,23 +27,35 @@ const Lobby = () => {
   const chatInput = useRef(null);
   const chattingBox = useRef(null);
   const location = useLocation();
-  const channelId = location.state?.channelId;
+  const channelCode = location.state?.channelCode;
   const [roomList, setRoomList] = useState<RoomProps[]>([]);
-
-  const handleState = (data: RoomProps[]) => {
-    setRoomList(data);
+  const [testRoomIdx, setTestRoomIdx] = useState<number>(1);
+  const [currentUserList, setCurrentUserList] = useState<CurrentUser[]>([]);
+  const handleState = (data1: RoomProps[], data2: CurrentUser[]) => {
+    setRoomList(data1);
+    setCurrentUserList(data2);
   };
 
   useEffect(() => {
     // 방정보 가져오기
-    const response = LobbyApi.getGameList(channelId)
+    const response = LobbyApi.getGameList(channelCode)
       .then((response) => {
         setRoomList(response.data);
       })
       .catch((error) => {
         console.log(error);
       });
-    console.log(channelId);
+    console.log(channelCode);
+  }, []);
+  useEffect(() => {
+    // 현재 채널 접속 인원정보 가져오기
+    const response = UserChannelApi.getChannelUserList(channelCode)
+      .then((response) => {
+        setCurrentUserList(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
   useEffect(() => {
     // 게임 로드하면 구독하기
@@ -71,7 +84,7 @@ const Lobby = () => {
     chatInput.current.value = '';
   };
   const chatFocusOut = () => {
-    chatInput.current.blur();
+    chatInput.current?.blur();
   };
   const chatFocus = () => {
     chatInput.current?.focus();
@@ -90,38 +103,72 @@ const Lobby = () => {
   };
 
   return (
-    <div className="w-[60rem] h-[40rem] min-w-[40rem] min-h-[40rem] flex flex-col bg-white/80 px-8 py-6 rounded-3xl drop-shadow-lg z-10">
+    <div className="w-[60rem] h-[40rem] min-w-[40rem] min-h-[40rem] flex flex-col bg-white/60 px-8 py-6 rounded-3xl drop-shadow-lg z-10">
       <div className="grid grid-cols-8 gap-3 h-10 items-center">
         <label className="col-span-2 flex items-center border-custom-mint bg-white text-sm h-8">
-          <p className="text-center w-full text-nowrap">{channelId}채널</p>
+          <p className="text-center w-full text-nowrap">{channelCode}채널</p>
         </label>
         <div className="col-span-6 flex items-center pl-2">
-          <Header channelId={channelId} handleState={handleState} />
+          <Header channelCode={channelCode} channelUuid={channelUuid} handleState={handleState} />
+          <button
+            className="btn"
+            onClick={() => {
+              setTestRoomIdx((prev) => {
+                return prev + 1;
+              });
+              setRoomList((prev) => {
+                return [
+                  ...prev,
+                  {
+                    id: 213123,
+                    channelCode: "123123",
+                    type: 123,
+                    style: 2,
+                    code: '1234',
+                    title: '테스트용클릭ㄴㄴㄴ' + testRoomIdx,
+                    password: '1234',
+                    status: false,
+                    isTeam: false,
+                    curRound: 1,
+                    rounds: 1,
+                    curPlayers: 1,
+                    maxPlayers: 1,
+                  },
+                ];
+              });
+            }}
+          >
+            테스트
+          </button>
         </div>
       </div>
 
-      <div className="w-full h-2/3 bg-blue-200 grid grid-cols-8 gap-3 pt-4">
+      <div className="w-full h-2/3 grid grid-cols-8 gap-3 pt-4 mb-4">
+        {/* 접속 인원 */}
         <div className="w-full h-full flex flex-col col-span-2 border-custom-mint bg-mint">
           <div className="w-full h-5 bg-mint text-white font-bold text-sm flex items-center mb-2.5">
-            <p className="w-full h-full flex items-center">접속 인원</p>
+            <p className="w-full h-full flex items-center pl-1.5">접속 인원</p>
           </div>
-          <CurrentUserList />
+          <CurrentUserList {...currentUserList} />
         </div>
-
-        {/* <Chatting /> */}
-        <div className="col-span-6 flex items-center">
+        {/* 방 리스트 */}
+        <div className="col-span-6 flex items-center px-1">
           <RoomList {...roomList} />
         </div>
-        
       </div>
-      {/* 로비 채팅 */}
-      <div className='w-full h-full'>
-          <div className="w-full">
+      <div className="w-full grid grid-cols-8 gap-3">
+        {/* 광고 */}
+        <div className="w-full h-full bg-blue-200 flex items-center justify-center col-span-2">
+          광고
+        </div>
+        <div className="w-full h-full col-span-6">
+          {/* 로비 채팅창 */}
+          <div className="w-full px-1">
             <div className="relative w-full">
               <div
-                className={`flex items-center w-full h-36 bottom-0 mb-2 transition-all origin-bottom duration-300`}
+                className={`flex items-center w-full h-36 mb-2 transition-all origin-bottom duration-300`}
               >
-                <div className="absolute w-full h-[90%] px-3 py-2 text-sm chat z-10">
+                <div className="absolute w-full h-[90%] px-3 py-0.5 text-sm chat z-10">
                   <div className="z-10 text-gray-700" ref={chattingBox}>
                     {chat.map((chatItem, index) => (
                       <div className="flex" key={index}>
@@ -133,22 +180,22 @@ const Lobby = () => {
                     ))}
                   </div>
                 </div>
-                <div className="absolute w-full h-full border-custom-white opacity-90 bg-white z-0"></div>
+                <div className="absolute w-full h-full border-custom-white opacity-70 bg-white z-0"></div>
               </div>
             </div>
           </div>
-          <div className="w-full h-10 bg-white/80 rounded-full flex relative">
+          {/* 로비 채팅 입력 */}
+          <div className="w-full h-10 bg-white/90 rounded-full flex relative">
             <input
               ref={chatInput}
-              className="w-full h-10 bg-transparent rounded-full pl-5 pr-20 text-sm placeholder-gray-400"
+              className="w-full h-10 bg-transparent rounded-full pl-5 pr-20 text-sm placeholder-gray-400 border border-gray-300"
               maxLength={30}
-              placeholder='Enter를 눌러 채팅 입력'
+              placeholder="Enter를 눌러 채팅 입력"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
-                  if (chatInput.current.value !== '') {
-                    publishChat();
-                  }
-                } else if (e.key === 'Escape') chatFocusOut();
+                  if (chatInput.current?.value !== '') publishChat();
+                  else chatFocusOut();
+                }
               }}
               onClick={chatFocus}
             ></input>
@@ -165,6 +212,7 @@ const Lobby = () => {
             </div>
           </div>
         </div>
+      </div>
     </div>
   );
 };
