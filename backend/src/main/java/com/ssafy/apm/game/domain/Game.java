@@ -20,9 +20,9 @@ public class Game {
     @Indexed
     private String title;
     @Indexed
-    private Integer mode;
-    @Indexed
     private String style;
+    @Indexed
+    private Integer mode;
     @Indexed
     private Boolean isTeam;
     @Indexed

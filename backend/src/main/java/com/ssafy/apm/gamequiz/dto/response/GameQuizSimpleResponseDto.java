@@ -1,6 +1,6 @@
 package com.ssafy.apm.gamequiz.dto.response;
 
-import com.ssafy.apm.gamequiz.domain.GameQuizEntity;
+import com.ssafy.apm.gamequiz.domain.GameQuiz;
 import lombok.*;
 
 @Data
@@ -8,7 +8,7 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class GameQuizGetResponseDto {
+public class GameQuizSimpleResponseDto {
     private String code;
     private String gameCode;
     private Long quizId;
@@ -16,7 +16,7 @@ public class GameQuizGetResponseDto {
     private Integer round;
     private Boolean isAnswer;
 
-    public GameQuizGetResponseDto(GameQuizEntity entity) {
+    public GameQuizSimpleResponseDto(GameQuiz entity) {
         this.code = entity.getCode();
         this.gameCode = entity.getGameCode();
         this.quizId = entity.getQuizId();
@@ -24,4 +24,5 @@ public class GameQuizGetResponseDto {
         this.round = entity.getRound();
         this.isAnswer = entity.getIsAnswer();
     }
+
 }

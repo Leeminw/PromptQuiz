@@ -8,7 +8,7 @@ import com.ssafy.apm.game.exception.GameAlreadyStartedException;
 import com.ssafy.apm.game.exception.GameFullException;
 import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.game.repository.GameRepository;
-import com.ssafy.apm.gamequiz.domain.GameQuizEntity;
+import com.ssafy.apm.gamequiz.domain.GameQuiz;
 import com.ssafy.apm.gamequiz.repository.GameQuizRepository;
 import com.ssafy.apm.gameuser.domain.GameUser;
 import com.ssafy.apm.gameuser.dto.response.GameUserSimpleResponseDto;
@@ -376,14 +376,14 @@ public class GameServiceImpl implements GameService {
                 .orElseThrow(() -> new GameNotFoundException(gameCode));
         List<Quiz> quizList = createQuizListByStyle(game.getStyle(), game);
 //        각 quiz마다 4가지 문제가 있어야함
-        List<GameQuizEntity> gameQuizEntityList = createGameQuizListByMode(game, game.getMode(), quizList);
+        List<GameQuiz> gameQuizList = createGameQuizListByMode(game, game.getMode(), quizList);
 
-        gameQuizRepository.saveAll(gameQuizEntityList);
+        gameQuizRepository.saveAll(gameQuizList);
         return true;
     }
 
-    private List<GameQuizEntity> createGameQuizListByMode(Game gameEntity, Integer gameType, List<Quiz> quizList) {
-        List<GameQuizEntity> mainGameQuizList = new ArrayList<>();
+    private List<GameQuiz> createGameQuizListByMode(Game gameEntity, Integer gameType, List<Quiz> quizList) {
+        List<GameQuiz> mainGameQuizList = new ArrayList<>();
         switch (gameType) {
             case 1 -> mainGameQuizList = choiceService.createGameQuizList(gameEntity, gameType, quizList);
             case 2 -> mainGameQuizList = blankChoiceService.createGameQuizList(gameEntity, gameType, quizList);
@@ -394,8 +394,8 @@ public class GameServiceImpl implements GameService {
         return mainGameQuizList;
     }
 
-    private List<GameQuizEntity> randomCreateGameQuizList(Game gameEntity, Integer gameType, List<Quiz> quizList) {
-        List<GameQuizEntity> response = new ArrayList<>();
+    private List<GameQuiz> randomCreateGameQuizList(Game gameEntity, Integer gameType, List<Quiz> quizList) {
+        List<GameQuiz> response = new ArrayList<>();
         Random random = new Random();
         int curRound = 1;
 
