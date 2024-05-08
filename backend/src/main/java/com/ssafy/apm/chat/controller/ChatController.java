@@ -19,13 +19,6 @@ public class ChatController {
 
     private final ChatService service;
 
-    @GetMapping("/write/{content}")
-    public ResponseEntity<?> writeTest(@PathVariable String content) {
-        ChannelChatRequestDto channel = new ChannelChatRequestDto("testNickName", "saew23sdw", content);
-        service.insertChannelChat(channel);
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("채팅 저장 완료", "OK"));
-    }
-
     @GetMapping("/readUsingHour/{hour}")
     public ResponseEntity<?> readTest(@PathVariable Integer hour) {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("채팅 저장 완료", service.getChatListByTimeRange(hour)));

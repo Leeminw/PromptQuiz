@@ -27,7 +27,7 @@ public class ChatServiceImpl implements ChatService {
         try {
             Chat chat = new Chat(Instant.now(), request);
             chatRepository.save(chat);
-            return GameChatResponseDto.buildFromEntity(chat);
+            return GameChatResponseDto.buildFromEntity(chat, request.getUserId());
         } catch (Exception e) {
             log.debug("InsertGameChat Error : {}", e.getMessage());
         }
@@ -39,7 +39,7 @@ public class ChatServiceImpl implements ChatService {
         try {
             Chat chat = new Chat(Instant.now(), request);
             chatRepository.save(chat);
-            return ChannelChatResponseDto.buildFromEntity(chat);
+            return ChannelChatResponseDto.buildFromEntity(chat, request.getUserId());
         } catch (Exception e) {
             log.debug("InsertChannelChat Error : {}", e.getMessage());
         }

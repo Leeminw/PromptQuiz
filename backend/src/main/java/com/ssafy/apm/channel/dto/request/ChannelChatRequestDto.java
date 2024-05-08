@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ChannelChatRequestDto {
 
+    private Long userId;
     private String uuid;
     private String nickname;
     private String content;
