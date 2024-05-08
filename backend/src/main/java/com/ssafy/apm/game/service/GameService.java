@@ -21,6 +21,6 @@ public interface GameService {
      *   더 이상 라운드가 없을때( 마지막 라운드 끝나고 난 뒤 ) return 값을 -1
      *   현재 라운드의 게임-문제 매핑 테이블 리턴
      * */
-    Integer updateGameRoundCnt(Long gameId, Boolean flag);
+    Integer updateGameRoundCnt(String gameCode, Boolean flag);
 
 }

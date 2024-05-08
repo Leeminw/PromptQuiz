@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface GameRepository extends CrudRepository<Game, Long> {
+public interface GameRepository extends CrudRepository<Game, String> {
 
     Optional<Game> findByCode(String code);
     Optional<List<Game>> findAllByChannelCode(String channelCode);

@@ -1,7 +1,5 @@
 package com.ssafy.apm.game.service;
 
-import com.ssafy.apm.channel.domain.ChannelEntity;
-import com.ssafy.apm.channel.exception.ChannelNotFoundException;
 import com.ssafy.apm.channel.repository.ChannelRepository;
 import com.ssafy.apm.game.domain.Game;
 import com.ssafy.apm.game.dto.request.GameCreateRequestDto;
@@ -95,22 +93,22 @@ public class GameServiceImpl implements GameService {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     @Transactional
-    public Integer updateGameRoundCnt(Long gameId, Boolean flag) {
-        Game game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new GameNotFoundException(gameId));
-        Integer response = 0;
+    public Integer updateGameRoundCnt(String gameCode, Boolean flag) {
+        Game game = gameRepository.findById(gameCode)
+                .orElseThrow(() -> new GameNotFoundException(gameCode));
         if (flag) {
 //            curRound 1로 초기화
-            response = game.updateCurRound();
+            /* TODO: initCurRounds() 로 추가 및 수정 필요 */
+//            response = game.updateCurRound();
         } else {
 //        마지막 라운드라면
             if (game.getCurRounds() >= game.getMaxRounds()) {
                 return -1;
             }
-            response = game.increaseCurRounds();
+            game.increaseCurRounds();
         }
         gameRepository.save(game);
-        return response;
+        return game.getCurRounds();
     }
 
 }

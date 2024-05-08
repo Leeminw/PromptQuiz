@@ -16,10 +16,8 @@ public class GameCreateRequestDto {
     private Integer style;
     private Boolean isTeam;
     private Boolean isPrivate;
-    private Boolean isStarted;
     private Integer timeLimit;
 
-    private Integer curRounds;
     private Integer maxRounds;
     private Integer curPlayers;
     private Integer maxPlayers;
@@ -33,9 +31,9 @@ public class GameCreateRequestDto {
                 .style(this.style)
                 .isTeam(this.isTeam)
                 .isPrivate(this.isPrivate)
-                .isStarted(this.isStarted)
+                .isStarted(false)
                 .timeLimit(this.timeLimit)
-                .curRounds(this.curRounds)
+                .curRounds(0)
                 .maxRounds(this.maxRounds)
                 .curPlayers(this.curPlayers)
                 .maxPlayers(this.maxPlayers)

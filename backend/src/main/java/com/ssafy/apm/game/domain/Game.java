@@ -31,7 +31,6 @@ public class Game {
     private Boolean isStarted;
     @Indexed
     private Integer timeLimit;
-    @Indexed
     private Integer curRounds;
     @Indexed
     private Integer maxRounds;
