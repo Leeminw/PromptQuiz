@@ -5,15 +5,18 @@ import { BsFillTrophyFill } from 'react-icons/bs';
 import { IoMdRefresh } from 'react-icons/io';
 import { FaForward } from 'react-icons/fa6';
 import { MdAddHome } from 'react-icons/md';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import CreateRoom from './CreateRoom';
 import { LobbyApi } from '../../hooks/axios-lobby';
+import { UserChannelApi } from '../../hooks/axios-user-channel';
+import { error } from 'console';
 interface Props {
   channelId: number;
   handleState: (data: RoomProps[]) => void;
 }
 // const Header = ({ channelId }: Props, handleState: (data: RoomProps[]) => void) => {
 const Header = ({ channelId, handleState }: Props) => {
+  const navigate = useNavigate();
   const fastMatching = () => {
     alert('빠른대전 매칭완료!');
   };
@@ -27,6 +30,18 @@ const Header = ({ channelId, handleState }: Props) => {
     handleState(data);
   };
   const ranking = () => {};
+  const exitChannel = () => {
+    const response = UserChannelApi.exitChannel()
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setTimeout(() => {
+      navigate(`/channel`);
+    }, 1000);
+  };
 
   return (
     <nav className="w-full h-[2rem] flex gap-4">
@@ -50,12 +65,13 @@ const Header = ({ channelId, handleState }: Props) => {
         <p className="text-nowrap">랭킹</p>
       </button>
       <div className="grow" />
-      <Link to={'/channel'}>
-        <button className="w-fit h-full border-custom-red bg-customRed text-white font-extrabold hover:brightness-110 flex justify-center items-center gap-2 px-2 mr-2">
-          <ImExit className="min-w-4 min-h-4 " />
-          <p className="text-nowrap">나가기</p>
-        </button>
-      </Link>
+      <button
+        className="w-fit h-full border-custom-red bg-customRed text-white font-extrabold hover:brightness-110 flex justify-center items-center gap-2 px-2 mr-2"
+        onClick={exitChannel}
+      >
+        <ImExit className="min-w-4 min-h-4 " />
+        <p className="text-nowrap">나가기</p>
+      </button>
     </nav>
   );
 };

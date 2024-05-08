@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { AiOutlineRight } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
+import { UserChannelApi } from '../../hooks/axios-user-channel';
+import { error } from 'console';
 
 interface Props {
   id: number;
@@ -12,7 +14,15 @@ interface Props {
 const ChannelBox = ({ id, code, name, curPlayers, maxPlayers }: Props) => {
   const percentage = Math.floor((curPlayers / maxPlayers) * 100);
   const navigate = useNavigate();
+
   const enterLobby = () => {
+    const response = UserChannelApi.enterChannel(id)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     setTimeout(() => {
       // navigate(`/lobby/${code}`);
       navigate(`/lobby/${code}`, { state: { channelId: id } });
