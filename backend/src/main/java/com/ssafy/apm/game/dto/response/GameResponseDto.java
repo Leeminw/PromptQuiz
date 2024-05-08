@@ -14,7 +14,7 @@ public class GameResponseDto {
     private String password;
     private String title;
     private Integer mode;
-    private Integer style;
+    private String style;
     private Boolean isTeam;
     private Boolean isPrivate;
     private Boolean isStarted;

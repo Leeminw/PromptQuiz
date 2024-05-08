@@ -238,7 +238,7 @@ public class GameSocketController {
                     0);
 
             // 방장일 경우에만 게임 보기가 생성됩니다
-            if (gameQuizService.createAnswerGameQuiz(ready.getGameId())) {
+            if (gameService.createGameQuiz(ready.getGameId())) {
 
                 // 게임 라운드 증가 (1라운드부터 시작)
                 newGame.round = gameService.updateGameRoundCnt(ready.getGameId(), true);

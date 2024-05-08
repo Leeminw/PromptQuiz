@@ -85,13 +85,13 @@ public class GameUserController {
     }
 
     @PutMapping("/score")
-    public ResponseEntity<ResponseData<?>> updateGameUserTeam(@RequestParam Integer score) {
+    public ResponseEntity<ResponseData<?>> updateGameUserScore(@RequestParam Integer score) {
         GameUserSimpleResponseDto responseDto = gameUserService.updateGameUserScore(score);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }
 
     @PutMapping("/host")
-    public ResponseEntity<ResponseData<?>> updateGameUserTeam(@RequestParam Boolean host) {
+    public ResponseEntity<ResponseData<?>> updateGameUserIsHost(@RequestParam Boolean host) {
         GameUserSimpleResponseDto responseDto = gameUserService.updateGameUserIsHost(host);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }

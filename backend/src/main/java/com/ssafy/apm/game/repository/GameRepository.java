@@ -9,14 +9,13 @@ import java.util.Optional;
 
 @Repository
 public interface GameRepository extends CrudRepository<Game, String> {
-
     Optional<Game> findByCode(String code);
     Optional<List<Game>> findAllByChannelCode(String channelCode);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Optional<List<Game>> findAllByTitleContaining(String title);
     Optional<List<Game>> findAllByModeContaining(Integer mode);
-    Optional<List<Game>> findAllByStyleContaining(Integer style);
+    Optional<List<Game>> findAllByStyleContaining(String style);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Optional<List<Game>> findAllByIsTeam(Boolean isTeam);
