@@ -1,47 +1,42 @@
 package com.ssafy.apm.game.dto.request;
 
-import com.ssafy.apm.game.domain.GameEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.ssafy.apm.game.domain.Game;
 import lombok.*;
-
-import java.util.UUID;
 
 @Data
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class GameCreateRequestDto {
-    private Long channelId;
-    private Integer type;
-    private String style;
-    private String title;
+    private String channelCode;
     private String password;
-    private Boolean status;
+    private String title;
+    private String style;
+
+    private Integer mode;
     private Boolean isTeam;
-    private Integer curRound;
-    private Integer rounds;
-    private Integer curPlayers;
+    private Boolean isPrivate;
+    private Integer timeLimit;
+
+    private Integer maxRounds;
     private Integer maxPlayers;
 
-    public GameEntity toEntity() {
-        return GameEntity.builder()
-                .channelId(this.channelId)
-                .type(this.type)
-                .style(this.style)
-//                UUID를 생성자에서 미리 만들어줘
-                .code(UUID.randomUUID().toString())
-                .title(this.title)
+    public Game toEntity() {
+        return Game.builder()
+                .channelCode(this.channelCode)
                 .password(this.password)
-                .status(this.status)
+                .title(this.title)
+                .style(this.style)
+                .mode(this.mode)
                 .isTeam(this.isTeam)
-                .curRound(this.curRound)
-                .rounds(this.rounds)
-                .curPlayers(this.curPlayers)
+                .isPrivate(this.isPrivate)
+                .timeLimit(this.timeLimit)
+                .isStarted(false)
+                .curRounds(0)
+                .maxRounds(this.maxRounds)
+                .curPlayers(1)
                 .maxPlayers(this.maxPlayers)
                 .build();
     }
+
 }

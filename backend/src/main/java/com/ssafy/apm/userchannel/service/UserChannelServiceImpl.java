@@ -31,12 +31,9 @@ public class UserChannelServiceImpl implements UserChannelService {
     @Override
     public List<UserDetailResponseDto> getUserChannelList(Long channelId) {
         List<UserChannelEntity> userChannelEntityList = userChannelRepository.findAllByChannelId(channelId);
-        // UserChannelEntity 리스트에서 userId들을 추출합니다.
         List<Long> userIds = userChannelEntityList.stream()
                 .map(UserChannelEntity::getUserId)
                 .toList();
-
-        // 추출한 userId들로 User 엔티티들의 리스트를 가져옵니다.
         List<User> userList = userRepository.findAllById(userIds);
 
         return userList.stream()
@@ -59,14 +56,31 @@ public class UserChannelServiceImpl implements UserChannelService {
 
         channelRepository.save(channelEntity);
         entity = userChannelRepository.save(entity);
-        return new UserChannelGetResponseDto(entity);
 
+        return new UserChannelGetResponseDto(entity);
+    }
+
+    @Override
+    @Transactional
+    public UserChannelGetResponseDto enterUserChannelByCode(String code) {
+        User user = userService.loadUser();
+        ChannelEntity channelEntity = channelRepository.findByCode(code)
+                .orElseThrow(() -> new ChannelNotFoundException("No entity exist by code!"));
+        UserChannelEntity entity = UserChannelEntity.builder()
+                .userId(user.getId())
+                .channelId(channelEntity.getId())
+                .build();
+        channelEntity.increaseCurPlayers();
+
+        channelRepository.save(channelEntity);
+        entity = userChannelRepository.save(entity);
+
+        return new UserChannelGetResponseDto(entity);
     }
 
     @Override
     @Transactional
     public Long deleteExitUserChannel() {
-
         User user = userService.loadUser();
         UserChannelEntity entity = userChannelRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new UserChannelNotFoundException("No entity exist by userId!"));
@@ -78,15 +92,15 @@ public class UserChannelServiceImpl implements UserChannelService {
 
         channelRepository.save(channel);
         userChannelRepository.delete(entity);
+
         return response;
     }
 
     @Override
     @Transactional
-    public Long deleteExitUserChannelByChannelCodeAndUserId(Long userId, String channelCode) {
-
-        ChannelEntity channelEntity = channelRepository.findByCode(channelCode)
-                .orElseThrow(() -> new ChannelNotFoundException("No entity exist by channelCode!"));
+    public Long deleteExitUserChannelByUserIdAndCode(Long userId, String code) {
+        ChannelEntity channelEntity = channelRepository.findByCode(code)
+                .orElseThrow(() -> new ChannelNotFoundException("No entity exist by code!"));
         channelEntity.decreaseCurPlayers();
 
         UserChannelEntity entity = userChannelRepository.findByUserIdAndChannelId(userId, channelEntity.getId())
@@ -95,6 +109,7 @@ public class UserChannelServiceImpl implements UserChannelService {
 
         channelRepository.save(channelEntity);
         userChannelRepository.delete(entity);
+
         return response;
     }
 }
