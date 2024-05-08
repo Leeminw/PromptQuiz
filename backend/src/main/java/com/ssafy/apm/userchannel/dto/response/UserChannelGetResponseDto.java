@@ -1,6 +1,6 @@
 package com.ssafy.apm.userchannel.dto.response;
 
-import com.ssafy.apm.userchannel.domain.UserChannelEntity;
+import com.ssafy.apm.userchannel.domain.UserChannel;
 import lombok.*;
 
 @Data
@@ -13,7 +13,7 @@ public class UserChannelGetResponseDto {
     private Long channelId;
     private Long userId;
 
-    public UserChannelGetResponseDto(UserChannelEntity entity){
+    public UserChannelGetResponseDto(UserChannel entity){
         this.id = entity.getId();
         this.channelId = entity.getChannelId();
         this.userId = entity.getUserId();

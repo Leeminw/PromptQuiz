@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "channel")
-public class ChannelEntity {
+public class Channel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
