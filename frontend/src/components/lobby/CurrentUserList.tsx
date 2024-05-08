@@ -1,34 +1,3 @@
-// {
-//     ""status"": ""success"",
-//     ""message"": ""The request has been processed successfully."",
-//     ""data"": [
-// {
-//     ""userId"": 2,
-//     ""userName"": ""testname1"",
-//     ""nickName"": ""닉네임1"",
-//     ""picture"": ""https://s3Urlupdated"",
-//     ""statusMessage"": ""수정된 상태 메시지"",
-//     ""totalScore"": 100,
-//     ""teamScore"": 80,
-//     ""soloScore"": 70,
-//     ""created_date"": ""2024-04-23T09:15:22.553696"",
-//     ""updated_date"": ""2024-04-23T10:50:46.711904""
-// },
-// {
-//     ""userId"": 3,
-//     ""userName"": ""testname2"",
-//     ""nickName"": ""닉네임2"",
-//     ""picture"": ""https://s3Urlupdated"",
-//     ""statusMessage"": ""푸바오 ㅠㅜㅠㅜ"",
-//     ""totalScore"": 100,
-//     ""teamScore"": 80,
-//     ""soloScore"": 70,
-//     ""created_date"": ""2024-04-23T11:15:22.553696"",
-//     ""updated_date"": ""2024-04-23T12:50:46.711904""
-// }
-//     ]
-// }"
-
 import React, { useEffect, useState } from 'react';
 
 import { ImExit } from 'react-icons/im';
@@ -40,137 +9,28 @@ import CreateRoom from './CreateRoom';
 import { LobbyApi } from '../../hooks/axios-lobby';
 import CurrentUser from './CurrentUser';
 interface Props {
-  channelId: number;
+  userId: number;
+  userName: string;
+  nickName: string;
+  picture: string;
+  statusMessage: string | null;
+  totalScore: number;
+  teamScore: number;
+  soloScore: number;
+  created_date: string;
+  updated_date: string;
 }
-const CurrentUserList = () => {
-  const dummyUserList = [
-    {
-      userId: 2,
-      userName: 'testname1',
-      nickName: '닉네임1',
-      picture: 'https://s3Urlupdated',
-      statusMessage: '수정된 상태 메시지',
-      totalScore: 100,
-      teamScore: 80,
-      soloScore: 70,
-      created_date: '2024-04-23T09:15:22.553696',
-      updated_date: '2024-04-23T10:50:46.711904',
-    },
-    {
-      userId: 3,
-      userName: 'testname2',
-      nickName: '닉네임2',
-      picture: 'https://s3Urlupdated',
-      statusMessage: '푸바오 ㅠㅜㅠㅜ',
-      totalScore: 100,
-      teamScore: 80,
-      soloScore: 70,
-      created_date: '2024-04-23T11:15:22.553696',
-      updated_date: '2024-04-23T12:50:46.711904',
-    },
-    {
-      userId: 3,
-      userName: 'testname2',
-      nickName: '닉네임2',
-      picture: 'https://s3Urlupdated',
-      statusMessage: '푸바오 ㅠㅜㅠㅜ',
-      totalScore: 100,
-      teamScore: 80,
-      soloScore: 70,
-      created_date: '2024-04-23T11:15:22.553696',
-      updated_date: '2024-04-23T12:50:46.711904',
-    },
-    {
-      userId: 3,
-      userName: 'testname2',
-      nickName: '닉네임2',
-      picture: 'https://s3Urlupdated',
-      statusMessage: '푸바오 ㅠㅜㅠㅜ',
-      totalScore: 100,
-      teamScore: 80,
-      soloScore: 70,
-      created_date: '2024-04-23T11:15:22.553696',
-      updated_date: '2024-04-23T12:50:46.711904',
-    },
-    {
-      userId: 3,
-      userName: 'testname2',
-      nickName: '닉네임2',
-      picture: 'https://s3Urlupdated',
-      statusMessage: '푸바오 ㅠㅜㅠㅜ',
-      totalScore: 100,
-      teamScore: 80,
-      soloScore: 70,
-      created_date: '2024-04-23T11:15:22.553696',
-      updated_date: '2024-04-23T12:50:46.711904',
-    },
-    {
-      userId: 3,
-      userName: 'testname2',
-      nickName: '닉네임2',
-      picture: 'https://s3Urlupdated',
-      statusMessage: '푸바오 ㅠㅜㅠㅜ',
-      totalScore: 100,
-      teamScore: 80,
-      soloScore: 70,
-      created_date: '2024-04-23T11:15:22.553696',
-      updated_date: '2024-04-23T12:50:46.711904',
-    },
-    {
-      userId: 3,
-      userName: 'testname2',
-      nickName: '닉네임2',
-      picture: 'https://s3Urlupdated',
-      statusMessage: '푸바오 ㅠㅜㅠㅜ',
-      totalScore: 100,
-      teamScore: 80,
-      soloScore: 70,
-      created_date: '2024-04-23T11:15:22.553696',
-      updated_date: '2024-04-23T12:50:46.711904',
-    },
-    {
-      userId: 3,
-      userName: 'testname2',
-      nickName: '닉네임2',
-      picture: 'https://s3Urlupdated',
-      statusMessage: '푸바오 ㅠㅜㅠㅜ',
-      totalScore: 100,
-      teamScore: 80,
-      soloScore: 70,
-      created_date: '2024-04-23T11:15:22.553696',
-      updated_date: '2024-04-23T12:50:46.711904',
-    },
-    {
-      userId: 3,
-      userName: 'testname2',
-      nickName: '닉네임2',
-      picture: 'https://s3Urlupdated',
-      statusMessage: '푸바오 ㅠㅜㅠㅜ',
-      totalScore: 100,
-      teamScore: 80,
-      soloScore: 70,
-      created_date: '2024-04-23T11:15:22.553696',
-      updated_date: '2024-04-23T12:50:46.711904',
-    },
-    {
-      userId: 3,
-      userName: 'testname2',
-      nickName: '닉네임2',
-      picture: 'https://s3Urlupdated',
-      statusMessage: '푸바오 ㅠㅜㅠㅜㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠ',
-      totalScore: 100,
-      teamScore: 80,
-      soloScore: 70,
-      created_date: '2024-04-23T11:15:22.553696',
-      updated_date: '2024-04-23T12:50:46.711904',
-    },
-  ];
+const CurrentUserList = (currentUserList: Props[]) => {
+  const currentUserArray = Object.values(currentUserList);
+  console.log(currentUserArray);
+
   const createRoom = () => {
     alert('예시 함수');
   };
   return (
     <div className="w-full h-80 flex flex-col gap-3 overflow-y-scroll userList border-custom-white bg-white py-1 pr-2 pl-1">
-      {dummyUserList.map((item, index) => (
+      {/* {dummyUserList.map((item, index) => ( */}
+      {currentUserArray.map((item, index) => (
         <CurrentUser
           userId={item.userId}
           userName={item.userName}
