@@ -45,7 +45,7 @@ public class GameSocketController {
 
     private static final int REST_TIME = 3;
     private static final String ENDPOINT = "/ws/sub/game?uuid=";
-    private static final int MUITIPLECHOICE = 1, BLANKCHOICE = 2, BLANKSUBJECTIVE = 4;
+    private static final int MULTIPLECHOICE = 1, BLANKCHOICE = 2, BLANKSUBJECTIVE = 4;
 
     // 라운드 끝나고 대기중인 리스트 (REST_TIME 초 대기)
     private static final ConcurrentHashMap<String, GameRoomStatus> gameEndMap = new ConcurrentHashMap<>();
@@ -140,7 +140,7 @@ public class GameSocketController {
             GameAnswerCheck check = quizService.checkAnswer(chatMessage, game.playerSimilarityMap.keySet());
 
             switch (check.getType()) {
-                case MUITIPLECHOICE:
+                case MULTIPLECHOICE:
                 case BLANKCHOICE:
                     if (check.getResult()) {
                         setEndGame(game);
@@ -200,7 +200,7 @@ public class GameSocketController {
         ResponseData responseData = ResponseData.success();
 
         switch (type){
-            case MUITIPLECHOICE, BLANKCHOICE:
+            case MULTIPLECHOICE, BLANKCHOICE:
                 List<GameQuizDetailResponseDto> quizList = gameQuizService.findDetailGameQuizzesByGameCode(gameCode);
                 responseData = ResponseData.success(quizList);
                 break;

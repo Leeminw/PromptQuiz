@@ -2,15 +2,18 @@ package com.ssafy.apm.game.service;
 
 import com.ssafy.apm.socket.dto.request.GameChatRequestDto;
 import com.ssafy.apm.socket.dto.response.GameAnswerCheck;
-import java.util.Set;
+
 import lombok.RequiredArgsConstructor;
+
+import java.util.Set;
+
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class GameAnswerService {
 
-    private static final int MUITIPLECHOICE = 1, BLANKCHOICE = 2, BLANKSUBJECTIVE = 4;
+    private static final int MULTIPLECHOICE = 1, BLANKCHOICE = 2, BLANKSUBJECTIVE = 4;
 
     private BlankSubjectiveService blankSubjectiveService;
     private BlankChoiceService blankChoiceService;
@@ -24,9 +27,9 @@ public class GameAnswerService {
         int type = 4;
 
         switch (type) {
-            case MUITIPLECHOICE:
+            case MULTIPLECHOICE:
                 // todo: 객관식 번호가 정답일 경우 true
-                response.setType(MUITIPLECHOICE);
+                response.setType(MULTIPLECHOICE);
                 //response.setResult();
                 break;
             case BLANKCHOICE:
