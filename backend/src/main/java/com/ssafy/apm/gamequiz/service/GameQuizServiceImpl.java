@@ -3,20 +3,23 @@ package com.ssafy.apm.gamequiz.service;
 import com.ssafy.apm.game.domain.Game;
 import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.game.repository.GameRepository;
+import com.ssafy.apm.gamequiz.repository.GameQuizRepository;
+import com.ssafy.apm.gamequiz.exception.GameQuizNotFoundException;
+
 import com.ssafy.apm.gamequiz.domain.GameQuiz;
 import com.ssafy.apm.gamequiz.dto.request.GameQuizCreateRequestDto;
 import com.ssafy.apm.gamequiz.dto.request.GameQuizUpdateRequestDto;
 import com.ssafy.apm.gamequiz.dto.response.GameQuizDetailResponseDto;
 import com.ssafy.apm.gamequiz.dto.response.GameQuizSimpleResponseDto;
-import com.ssafy.apm.gamequiz.exception.GameQuizNotFoundException;
-import com.ssafy.apm.gamequiz.repository.GameQuizRepository;
 import com.ssafy.apm.quiz.exception.QuizNotFoundException;
 import com.ssafy.apm.quiz.repository.QuizRepository;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -119,4 +122,24 @@ public class GameQuizServiceImpl implements GameQuizService {
         )).toList();
     }
 
+    @Override
+    public GameQuizDetailResponseDto findFirstCurrentDetailGameQuizByGameCode(String gameCode) {
+        Game game = gameRepository.findByCode(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+        GameQuiz gameQuiz = gameQuizRepository.findFirstByGameCodeAndRound(gameCode, game.getCurRounds())
+                .orElseThrow(() -> new GameQuizNotFoundException("GameQuiz Not Found with GameCode, Round" +
+                        gameCode + ", " + game.getCurRounds()));
+        return new GameQuizDetailResponseDto(gameQuiz, quizRepository.findById(gameQuiz.getQuizId())
+                .orElseThrow( () -> new QuizNotFoundException(gameQuiz.getQuizId())));
+    }
+
+    @Override
+    public Integer getCurrentGameQuizTypeByGameCode(String gameCode) {
+        Game game = gameRepository.findByCode(gameCode).orElseThrow(() -> new GameNotFoundException(gameCode));
+
+        GameQuiz gameQuiz = gameQuizRepository.findFirstByGameCodeAndRound(gameCode, game.getCurRounds())
+                .orElseThrow(() -> new GameQuizNotFoundException("GameQuiz Not Found with GameCode, Round" +
+                        gameCode + ", " + game.getCurRounds()));
+
+        return gameQuiz.getType();
+    }
 }

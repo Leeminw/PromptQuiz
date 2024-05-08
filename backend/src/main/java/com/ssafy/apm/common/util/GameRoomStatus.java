@@ -1,14 +1,14 @@
 package com.ssafy.apm.common.util;
 
 import com.ssafy.apm.socket.dto.response.SimilarityResponseDto;
+import com.ssafy.apm.gamequiz.dto.response.GameQuizDetailResponseDto;
 
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
 public class GameRoomStatus {
 
-    public Long gameId;
-    public String uuid;
+    public String gameCode;
     public Integer round;
     public Integer time;
     public Integer maxTime;
@@ -17,9 +17,8 @@ public class GameRoomStatus {
 
     private static final Double similarityRate = 0.9;
 
-    public GameRoomStatus(Long gameId, String uuid, Integer round, Integer maxTime, Integer time) {
-        this.gameId = gameId;
-        this.uuid = uuid;
+    public GameRoomStatus(String gameCode, Integer round, Integer maxTime, Integer time) {
+        this.gameCode = gameCode;
         this.round = round;
         this.maxTime = maxTime;
         this.time = time;
@@ -27,39 +26,34 @@ public class GameRoomStatus {
         this.answerWordMap = new HashMap<>();
     }
 
-    public void initSimilarity(HashMap<String, String> promptMap) {
+    public void initSimilarity(GameQuizDetailResponseDto quiz) {
+        playerSimilarityMap.put("kor_object", new PriorityQueue<>());
+        playerSimilarityMap.put("kor_subject", new PriorityQueue<>());
+        playerSimilarityMap.put("kor_sub_adjective", new PriorityQueue<>());
+        playerSimilarityMap.put("kor_obj_adjective", new PriorityQueue<>());
 
-        playerSimilarityMap.clear();
-
-        for (String i : promptMap.keySet()) {
-            if (promptMap.get(i) == null) {
-                playerSimilarityMap.put(i, new PriorityQueue<>());
-            }
-        }
-
-        answerWordMap.putAll(promptMap);
+        answerWordMap.put("kor_verb", quiz.getKorVerb());
+        answerWordMap.put("kor_subject", null);
+        answerWordMap.put("kor_object", null);
+        answerWordMap.put("kor_sub_adjective", null);
+        answerWordMap.put("kor_obj_adjective", null);
     }
 
     public void addSimilarityAnswerToMap(String key, String value) {
-        // 새로운 정답이 나왔을 경우 정답 Map에 저장하고 유사도 목록 삭제하기
         answerWordMap.put(key, value);
         playerSimilarityMap.remove(key);
     }
 
-    public void addSimilarityToMap(String answer, HashMap<String, Double> rateMap) {
-
+    public void updateSimilarityRanking(String answer, HashMap<String, Double> rateMap) {
         for (String i : rateMap.keySet()) {
             SimilarityResponseDto cur = new SimilarityResponseDto(answer, rateMap.get(i));
 
             if (cur.getRate() >= similarityRate) {
                 addSimilarityAnswerToMap(i, answer);
             } else {
-                PriorityQueue<SimilarityResponseDto> temp = playerSimilarityMap.get(i);
-                temp.add(cur);
-
-                if (temp.size() > 3) {
-                    temp.poll();
-                }
+                PriorityQueue<SimilarityResponseDto> ranking = playerSimilarityMap.get(i);
+                ranking.add(cur);
+                if (ranking.size() > 3) ranking.poll();
             }
         }
     }
@@ -67,4 +61,5 @@ public class GameRoomStatus {
     public boolean similarityGameEnd() {
         return playerSimilarityMap.isEmpty();
     }
+
 }
