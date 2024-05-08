@@ -8,9 +8,6 @@ import { MdAddHome } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import CreateRoom from './CreateRoom';
 import { LobbyApi } from '../../hooks/axios-lobby';
-// interface Props {
-//   channelId: number;
-// }
 interface Props {
   channelId: number;
   handleState: (data: RoomProps[]) => void;
@@ -52,7 +49,7 @@ const Header = ({ channelId, handleState }: Props) => {
         <BsFillTrophyFill className="min-w-4 min-h-4 " />
         <p className="text-nowrap">랭킹</p>
       </button>
-      <div className='grow'/>
+      <div className="grow" />
       <Link to={'/channel'}>
         <button className="w-fit h-full border-custom-red bg-customRed text-white font-extrabold hover:brightness-110 flex justify-center items-center gap-2 px-2 mr-2">
           <ImExit className="min-w-4 min-h-4 " />
