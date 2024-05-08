@@ -29,7 +29,6 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class GameUserServiceImpl implements GameUserService {
 
-    private final UserChannelRepository userChannelRepository;
     private final GameUserRepository gameUserRepository;
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
@@ -66,7 +65,6 @@ public class GameUserServiceImpl implements GameUserService {
 
     @Override
     public GameUserGetResponseDto getGameUser(String code) {
-
         GameUserEntity entity = gameUserRepository.findByCode(code)
                 .orElseThrow(() -> new GameUserNotFoundException(code));
 
@@ -77,11 +75,9 @@ public class GameUserServiceImpl implements GameUserService {
     @Override
     @Transactional
     public GameUserGetResponseDto postEnterGame(String gameCode) {
-//        로그인 한놈 유저 정보 불러오기
         User user = userService.loadUser();
         Long userId = user.getId();
 
-//        일반유저
         GameUserEntity entity = GameUserEntity.builder()
                 .gameCode(gameCode)
                 .userId(userId)
@@ -92,10 +88,8 @@ public class GameUserServiceImpl implements GameUserService {
 
         GameEntity gameEntity = gameRepository.findByCode(gameCode)
                 .orElseThrow(() -> new GameNotFoundException(gameCode));
-        if(!gameEntity.getIsStarted()) {
-            throw new RuntimeException("이미 시작한 방입니다.");
-        }
-//        방에 접속 중인 인원 하나 늘려줌
+        if(!gameEntity.getIsStarted()) throw new RuntimeException("이미 시작한 방입니다.");
+        if(gameEntity.getCurPlayers() >= gameEntity.getMaxPlayers()) throw new RuntimeException("방이 꽉 찼습니다.");
         gameEntity.increaseCurPlayers();
 
         gameRepository.save(gameEntity);
