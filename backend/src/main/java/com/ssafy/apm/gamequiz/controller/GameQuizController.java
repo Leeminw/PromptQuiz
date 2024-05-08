@@ -32,7 +32,7 @@ public class GameQuizController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success(response));
     }
 
-    @DeleteMapping("/deleteQuiz/{gameId}")
+    @DeleteMapping("/{gameCode}")
     public ResponseEntity<ResponseData<?>> deleteGameQuiz(@PathVariable(name = "gameCode") String gameCode) {
         String response = gameQuizService.deleteGameQuiz(gameCode);
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseData.success(response));

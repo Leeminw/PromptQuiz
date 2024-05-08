@@ -73,8 +73,6 @@ public class GameServiceImpl implements GameService {
     public GameGetResponseDto getGameInfo(String gameCode) {
         GameEntity gameEntity = gameRepository.findByCode(gameCode)
                 .orElseThrow(() -> new GameNotFoundException(gameCode));
-        ChannelEntity channelEntity = channelRepository.findByCode(gameEntity.getChannelCode())
-                .orElseThrow(() -> new ChannelNotFoundException(gameEntity.getChannelCode()));
 
         GameGetResponseDto dto = new GameGetResponseDto(gameEntity);
         return dto;
@@ -98,7 +96,7 @@ public class GameServiceImpl implements GameService {
                 .orElseThrow(() -> new GameNotFoundException(gameCode));
         Integer response = 0;
         if (flag) {
-            response = gameEntity.updateCurRounds();
+            response = gameEntity.initCurRounds();
         } else {
             if (gameEntity.getCurRounds() >= gameEntity.getMaxRounds()) {
                 return -1;

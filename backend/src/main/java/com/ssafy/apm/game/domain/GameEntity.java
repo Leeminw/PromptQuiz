@@ -60,7 +60,7 @@ public class GameEntity {
         this.isStarted = isStarted;
     }
 
-    public Integer updateCurRounds() {
+    public Integer initCurRounds() {
         this.curRounds = 1;
         return this.curRounds;
     }

@@ -42,14 +42,14 @@ public class GameController {
     }
 
     //    방, 채널 상세 정보 조회
-    @GetMapping("/gameInfo/{gameCode}")
-    public ResponseEntity<ResponseData<?>> getGameAndChannelInfo(@PathVariable(name = "gameCode") String gameCode) {
+    @GetMapping("{gameCode}")
+    public ResponseEntity<ResponseData<?>> getGameInfo(@PathVariable(name = "gameCode") String gameCode) {
         GameGetResponseDto response = gameService.getGameInfo(gameCode);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("방, 채널 상세 정보 조회 완료", response));
     }
 
     //    방 정보 수정 API
-    @PutMapping("/gameInfo")
+    @PutMapping("")
     public ResponseEntity<ResponseData<?>> updateGameInfo(@RequestBody GameUpdateRequestDto gameUpdateRequestDto) {
         GameGetResponseDto response = gameService.updateGameInfo(gameUpdateRequestDto);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("방 설정 수정 완료", response));
