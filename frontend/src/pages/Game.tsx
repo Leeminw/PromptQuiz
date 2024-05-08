@@ -44,7 +44,6 @@ const GamePage = () => {
     console.log('first response', response);
     const responseGame: Game = response.data;
     const userResponse = await GameApi.getUserList(roomId);
-
     setGame(responseGame);
     setGameUserList(userResponse.data);
     setMaxRound(responseGame.rounds);
@@ -120,7 +119,6 @@ const GamePage = () => {
       // 로고
       // if(data.createdDate < )
       setChat((prevItems) => [...prevItems, data]);
-      console.log("chat : ", chat);
       setMessageMap((prevMap) => {
         const updatedMap = new Map(prevMap);
         updatedMap.set(data.userId, data);
@@ -193,14 +191,20 @@ const GamePage = () => {
   };
 
   const publishChat = () => {
+    let chatfilter = chatInput.current.value;
+    chatfilter = chatfilter.replaceAll("시발","이런");
+    chatfilter = chatfilter.replaceAll("씨발","이런");
+    chatfilter = chatfilter.replaceAll("존나","매우");
+    chatfilter = chatfilter.replaceAll("병신","아이");
+    chatfilter = chatfilter.replaceAll("좆","어머");
     const destination = '/ws/pub/game/chat/send';
     const gameChat: GameChat = {
       userId: user.userId,
       nickname: user.nickName,
       uuid: game.code,
-      gameId: game.id,
+      gameCode: game.code,
       round: 0,
-      content: chatInput.current.value,
+      content: chatfilter,
     };
     publish(destination, gameChat);
     chatInput.current.value = '';
@@ -210,13 +214,12 @@ const GamePage = () => {
     // 모두 레디가 되있는지?
     // const destination = '/ws/pub/game/start';
     const gameReady: GameReady = {
-      gameId: game.id,
+      gameCode: game.code,
       uuid: game.code,
     };
     try {
       const response = await instance.post('game/start', gameReady);
       console.log(response);
-      console.log('start!!!');
       handleGamestart();
       setIsStart(true);
     } catch (error) {
@@ -288,7 +291,7 @@ const GamePage = () => {
       <div className="w-full h-10 grid grid-cols-5 gap-3 mb-2">
         {/* 채널 */}
         <label className="flex items-center border-custom-mint bg-white text-sm h-full">
-          <p className="text-center w-full text-nowrap">{game?.channelId}채널</p>
+          <p className="text-center w-full text-nowrap">{game?.channelCode}채널</p>
         </label>
         {/* 제목 */}
         <label className="flex items-center justify-center col-span-3 w-full border-custom-mint bg-white text-sm">
@@ -387,7 +390,7 @@ const GamePage = () => {
         ))}
       </div>
       {/* 광고, 채팅창, 게임 설정 */}
-      <div className="w-full h-48 flex gap-4">
+      <div className="w-full h-[12.5rem] flex gap-4">
         {/* 광고 */}
         <div className="w-1/3 bg-red-200 flex justify-center items-center">
           광고
@@ -405,7 +408,7 @@ const GamePage = () => {
           <div className="w-full">
             <div className="relative w-full">
               <div
-                className={`absolute flex items-center w-full h-36 bottom-0 mb-2 transition-all origin-bottom duration-300 ${chatOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
+                className={`absolute flex items-center w-full h-[9.5rem] bottom-0 mb-2 transition-all origin-bottom duration-300 ${chatOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
               >
                 <div className="absolute w-full h-[90%] px-3 py-2 text-sm chat z-10">
                   <div className="z-10 text-gray-700" ref={chattingBox}>
@@ -459,7 +462,7 @@ const GamePage = () => {
           <GameRoomSetting gamestart={isStart} />
 
           {/* 팀 선택, 게임 시작 버튼 */}
-          <div className="w-full h-7 my-2 flex gap-2">
+          <div className="w-full h-7 my-3 flex gap-2">
             <button
               className={`w-1/3 h-full flex items-center justify-center text-white text-sm font-bold transition 
               ${activateBtn[2] ? 'animate-clickbtn scale-105' : ''}
@@ -483,7 +486,7 @@ const GamePage = () => {
                   created_date: '',
                   updated_date: '',
                   gameUserId: BigInt(123),
-                  gameId: BigInt(123),
+                  gameCode: '123',
                   isHost: false,
                   isReady: false,
                   score: 123,

@@ -21,7 +21,7 @@ const GameRoomSetting = ({ gamestart }: GameRoomSettingProps) => {
           </div>
         </div>
       </dialog>
-      <div className="w-full h-7 border-custom-mint bg-mint pl-2 pr-1 text-white font-bold text-sm flex items-center">
+      <div className="w-full h-7 border-custom-mint bg-mint pl-2 pr-1 text-white font-bold text-sm flex items-center z-10">
         <p className="w-full">방 설정</p>
         <IoSettings
           className={`w-5 h-5 transition ${!gamestart && 'hover:scale-125 cursor-pointer'}`}
@@ -30,7 +30,7 @@ const GameRoomSetting = ({ gamestart }: GameRoomSettingProps) => {
           }}
         />
       </div>
-      <div className="w-full h-40 border-custom-white bg-white flex flex-col text-xs text-gray-400 pt-0.5">
+      <div className="w-full h-40 border-custom-white bg-white flex flex-col text-xs text-gray-400 pt-1.5">
         <div className="w-full h-5 pb-1 flex border-b border-gray-200">
           <div className="w-1/2 flex items-center justify-center border-r border-gray-200">
             개인전

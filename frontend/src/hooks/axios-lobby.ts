@@ -38,7 +38,7 @@ const LobbyApi = {
     }
   },
   // 게임방 입장
-  enterGame: async (gameId: number) => {
+  enterGame: async (gameId: string) => {
     try {
       const response = await instance.post(BASE_URL + `/game-user/enterGame/${gameId}`);
       return response.data;

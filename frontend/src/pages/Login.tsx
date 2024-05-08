@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { UserApi } from '../hooks/axios-user';
 import { useNavigate } from 'react-router-dom';
 import { FaUser } from 'react-icons/fa';
@@ -14,7 +14,7 @@ const LoginPage = ({ movePage }: { movePage: () => void }) => {
   const [moveInput, setMoveInput] = useState<boolean>(false);
   const [moveBtn, setMoveBtn] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  const inputId = useRef(null);
   const { user, setUser, clearUser } = useUserStore();
 
   const handleClick = (id: number) => {
@@ -67,6 +67,7 @@ const LoginPage = ({ movePage }: { movePage: () => void }) => {
   };
 
   useEffect(() => {
+    inputId.current?.focus();
     setTimeout(() => {
       setTimeout(() => {
         setMoveBtn(true);
@@ -85,6 +86,7 @@ const LoginPage = ({ movePage }: { movePage: () => void }) => {
           type="text"
           className="grow text-mint font-bold overflow-hidden pr-2 placeholder-mint"
           placeholder="아이디"
+          ref={inputId}
           value={userName}
           onChange={userNameHandler}
           onKeyDown={(e) => {
