@@ -64,6 +64,11 @@ public class Game {
         return this;
     }
 
+    public Game initCurRounds() {
+        this.curRounds = 1;
+        return this;
+    }
+
     public Game increaseCurRounds() {
         this.curRounds++;
         return this;

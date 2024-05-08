@@ -18,6 +18,9 @@ import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.quiz.exception.QuizNotFoundException;
 import com.ssafy.apm.quiz.repository.QuizRepository;
 import com.ssafy.apm.user.domain.User;
+import com.ssafy.apm.user.dto.UserScoreUpdateRequestDto;
+import com.ssafy.apm.user.exceptions.UserNotFoundException;
+import com.ssafy.apm.user.repository.UserRepository;
 import com.ssafy.apm.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,6 +36,7 @@ import java.util.Random;
 public class GameServiceImpl implements GameService {
 
     private final UserService userService;
+    private final UserRepository userRepository;
     private final GameRepository gameRepository;
     private final QuizRepository quizRepository;
     private final GameQuizRepository gameQuizRepository;
@@ -56,6 +60,7 @@ public class GameServiceImpl implements GameService {
         gameUserRepository.save(gameUser);
         return new GameResponseDto(game);
     }
+
     /* FIXME: 입장 조건을 GameService 에서 판단하고,
         GameService 에서 createGameUser() 를 호출하는 것이 나아보임 */
     //    게임 입장할때
@@ -83,6 +88,7 @@ public class GameServiceImpl implements GameService {
 
         return new GameUserSimpleResponseDto(entity);
     }
+
     /* FIXME: GameService 로 이동하는 것이 나아보임 */
 //    @Override
 //    @Transactional
@@ -137,9 +143,9 @@ public class GameServiceImpl implements GameService {
         Game gameEntity = gameRepository.findByCode(gameCode)
                 .orElseThrow(() -> new GameNotFoundException(gameCode));
 
-        GameResponseDto dto = new GameResponseDto(gameEntity);
-        return dto;
+        return new GameResponseDto(gameEntity);
     }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     @Transactional
@@ -151,117 +157,47 @@ public class GameServiceImpl implements GameService {
         gameRepository.save(gameEntity);
         return new GameResponseDto(gameEntity);
     }
+
     /* FIXME: GameService 로 이동하는 것이 나아보임 */
-//    @Override
-//    @Transactional
-//    public void updateUserScore(String gameCode) {
-//        Game game = gameRepository.findByCode(gameCode)
-//                .orElseThrow(() -> new GameNotFoundException(gameCode));
-//        List<GameUser> gameUserList = gameUserRepository.findAllByGameCode(gameCode)
-//                .orElseThrow(() -> new GameUserNotFoundException("No entities exists by gameCode!"));
-//        List<User> userList = new ArrayList<>();
-//
-//        int winnerListSize = gameUserList.size() / 2;
-//        int loserListSize = winnerListSize + gameUserList.size() % 2;
-//        int totalScore = 10 * game.getMaxRounds();
-////        12가 최대 게임 참여자 수
-//        int getWinnerMaxScore = Math.round(totalScore * (Math.min(game.getCurPlayers(), 12) / 12));
-//
-//        //            score를 기준으로 높은 순서대로 리스트가 정렬됨
-//        List<GameUser> GameUsers = gameUserList.stream()
-//                .map(obj -> (GameUser) obj)
-//                .sorted((user1, user2) -> user2.getScore().compareTo(user1.getScore()))
-//                .toList();
-//
-////        팀전일때
-//        if (game.getIsTeam()) {
-////            테스트 완료되면 리팩토링 해야합니다 ㅎㅎ..
-//            int redTeamTotalScore = 0, blueTeamTotalScore = 0;
-//            List<GameUser> redTeamEntity = new ArrayList<>();
-//            List<GameUser> blueTeamEntity = new ArrayList<>();
-//
-////            누가 이겼는가
-//            for (GameUser entity : GameUsers) {
-//                if (entity.getTeam() == "RED") {
-//                    redTeamTotalScore += entity.getScore();
-//                    redTeamEntity.add(entity);
-//                } else {
-//                    blueTeamTotalScore += entity.getScore();
-//                    blueTeamEntity.add(entity);
-//                }
-//            }
-////            RedTeam이 점수가 더 높다면
-//            if (redTeamTotalScore > blueTeamTotalScore) {
-//                winnerTeamScore(userList, redTeamEntity, getWinnerMaxScore);
-//                loserTeamScore(userList, blueTeamEntity, getWinnerMaxScore);
-//            }
-////            Blue팀의 점수가 더 높다면
-//            else {
-//                winnerTeamScore(userList, blueTeamEntity, getWinnerMaxScore);
-//                loserTeamScore(userList, redTeamEntity, getWinnerMaxScore);
-//            }
-//        }
-////        개인전일때
-//        else {
-////            점수 받는 놈들 로직
-//            /* 10라운드 6명 기준
-//             * getWinnerMaxScore = 10*10(10라운드) * (curPlayers/maxPlayers) = 50( 6명이서 게임할 때 1등이 받을 점수 )
-//             * 1등 : 50 * 0.8^0 = 50,  2등 : 50 * 0.8^1 = 40, 3등 : 50*0.8^2 = 32
-//             * 절반 이상부터는 점수 잃는 놈들
-//             * 4등 : -50 * 0.8^2(3-1) = -32, 5등 : -50 * 0.8^1(3-2) = -40, 6등 : -40 * 0.8^0 = -50
-//             *
-//             * */
-//            /* 10라운드 7명 기준
-//             * getWinnerMaxScore = 10*10(10라운드) * (curPlayers/maxPlayers) = 58( 7명이서 게임할 때 1등이 받을 점수, 반올림 )
-//             * 1등 : 58 * 0.8^0 = 58,  2등 : 58 * 0.8^1 = 46(반올림), 3등 : 58 * 0.8^2 = 37(반올림)
-//             * 절반 이상부터는 점수 잃는 놈들
-//             * 4등 : -58 * 0.8^3(4-1) = -29, 5등 : -58 * 0.8^2(4-2) = -37, 6등 : -58 * 0.8^1(4-3) : -46, 7등 : -58 * 0.8^0 : -58
-//             *
-//             * */
-//            for (int i = 0; i < winnerListSize; i++) {
-//                GameUser entity = GameUsers.get(i);
-//                User user = userRepository.findById(entity.getUserId())
-//                        .orElseThrow(() -> new UserNotFoundException(entity.getUserId()));
-//
-//                int earnUserScore = (int) Math.round(getWinnerMaxScore * Math.pow(0.8, i));
-//
-//                UserScoreUpdateRequestDto dto = UserScoreUpdateRequestDto.builder()
-//                        .soloScore(earnUserScore)
-//                        .totalScore(earnUserScore)
-//                        .teamScore(0)
-//                        .build();
-//
-//                user.updateScore(dto);
-//                userList.add(user);
-//            }
-////            점수 잃는 놈들 로직
-//            int j = 1;
-//            for (int i = winnerListSize; i < GameUsers.size(); i++) {
-//                GameUser entity = GameUsers.get(i);
-//                User user = userRepository.findById(entity.getUserId())
-//                        .orElseThrow(() -> new UserNotFoundException(entity.getUserId()));
-//
-//                int loseUserScore = -1 * (int) Math.round(getWinnerMaxScore * Math.pow(0.8, loserListSize - j++));
-//
-//                UserScoreUpdateRequestDto dto = UserScoreUpdateRequestDto.builder()
-//                        .soloScore(loseUserScore)
-//                        .totalScore(loseUserScore)
-//                        .teamScore(0)
-//                        .build();
-//
-//                user.updateScore(dto);
-//                userList.add(user);
-//            }
-//        }
-//        userRepository.saveAll(userList);
-//    }
+    @Override
+    @Transactional
+    public void updateUserScore(String gameCode) {
+        Game game = gameRepository.findByCode(gameCode)
+                .orElseThrow(() -> new GameNotFoundException(gameCode));
+        List<GameUser> gameUserList = gameUserRepository.findAllByGameCode(gameCode)
+                .orElseThrow(() -> new GameUserNotFoundException("No entities exists by gameCode!"));
+        List<User> scoredUsers = new ArrayList<>();
+
+        int winnerListSize = gameUserList.size() / 2;
+        int loserListSize = gameUserList.size() - winnerListSize;
+        int totalScore = 10 * game.getMaxRounds();
+//        12가 최대 게임 참여자 수
+        int getWinnerMaxScore = Math.round(totalScore * ( (float) game.getCurPlayers() / 12));
+
+        //            score를 기준으로 높은 순서대로 리스트가 정렬됨
+        List<GameUser> GameUsers = gameUserList.stream()
+                .map(obj -> (GameUser) obj)
+                .sorted((user1, user2) -> user2.getScore().compareTo(user1.getScore()))
+                .toList();
+
+//        팀전일때
+        if (game.getIsTeam()) {
+            isTeamCalculateScore(GameUsers, scoredUsers, getWinnerMaxScore);
+        }
+//        개인전일때
+        else {
+            isSoloCalculateScore(winnerListSize, loserListSize, getWinnerMaxScore, GameUsers, scoredUsers);
+        }
+        userRepository.saveAll(scoredUsers);
+    }
+
     public Integer updateGameRoundCnt(String gameCode, Boolean flag) {
         Game game = gameRepository.findById(gameCode)
                 .orElseThrow(() -> new GameNotFoundException(gameCode));
         if (flag) {
 //            curRound 1로 초기화
             /* TODO: initCurRounds() 로 추가 및 수정 필요 */
-//            response = game.updateCurRound();
+            game = game.initCurRounds();
         } else {
 //        마지막 라운드라면
             if (game.getCurRounds() >= game.getMaxRounds()) {
@@ -272,16 +208,18 @@ public class GameServiceImpl implements GameService {
         gameRepository.save(game);
         return game.getCurRounds();
     }
+
     @Override
     @Transactional
-    public Game updateGameIsStarted(String gameCode, Boolean isStarted) {
+    public GameResponseDto updateGameIsStarted(String gameCode, Boolean isStarted) {
         Game gameEntity = gameRepository.findByCode(gameCode)
                 .orElseThrow(() -> new GameNotFoundException(gameCode));
 
         gameEntity = gameEntity.updateIsStarted(isStarted);
         gameRepository.save(gameEntity);
-        return gameEntity;
+        return new GameResponseDto(gameEntity);
     }
+
     @Override
     @Transactional
     public GameResponseDto deleteGame(String code) {
@@ -295,10 +233,6 @@ public class GameServiceImpl implements GameService {
         return new GameResponseDto(game);
     }
 
-    /* FIXME 1: 퇴장 조건을 GameService 에서 판단하고,
-        GameService 에서 deleteGameUser() 를 호출하는 것이 나아보임 */
-    /* FIXME 2: 혹은 단순 deleteGameUser API 호출을 통해 처리하고,
-        WebSocket 통신이 끊어지는 경우에도, deleteGameUser()를 호출하는 것이 나아보임*/
     // 게임 나갈때
     @Override
     @Transactional
@@ -382,6 +316,11 @@ public class GameServiceImpl implements GameService {
         return true;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     private List<GameQuiz> createGameQuizListByMode(Game gameEntity, Integer gameType, List<Quiz> quizList) {
         List<GameQuiz> mainGameQuizList = new ArrayList<>();
         switch (gameType) {
@@ -443,46 +382,132 @@ public class GameServiceImpl implements GameService {
         }
         return quizList;
     }
-    /* FIXME: GameService 로 이동하는 것이 나아보임 */
-    // 이긴 팀 점수 계산
-//    public void winnerTeamScore(List<User> userList, List<GameUser> winnerTeamEntity, int getWinnerMaxScore) {
-//        for (int i = 0; i < winnerTeamEntity.size(); i++) {
-//            GameUser entity = winnerTeamEntity.get(i);
-//            User user = userRepository.findById(entity.getUserId())
-//                    .orElseThrow(() -> new UserNotFoundException(entity.getUserId()));
-//
-//            int earnUserScore = (int) Math.round(getWinnerMaxScore * Math.pow(0.8, i));
-//
-//            UserScoreUpdateRequestDto dto = UserScoreUpdateRequestDto.builder()
-//                    .soloScore(0)
-//                    .totalScore(earnUserScore)
-//                    .teamScore(earnUserScore)
-//                    .build();
-//
-//            user.updateScore(dto);
-//            userList.add(user);
-//        }
-//    }
 
-    /* FIXME: GameService 로 이동하는 것이 나아보임 */
-//    public void loserTeamScore(List<User> userList, List<GameUser> loserTeamEntity, int getWinnerMaxScore) {
-//        //            점수 잃는 놈들 로직
-//        int j = 1;
-//        for (int i = 0; i < loserTeamEntity.size(); i++) {
-//            GameUser entity = loserTeamEntity.get(i);
-//            User user = userRepository.findById(entity.getUserId())
-//                    .orElseThrow(() -> new UserNotFoundException(entity.getUserId()));
-//
-//            int loseUserScore = -1 * (int) Math.round(getWinnerMaxScore * Math.pow(0.8, loserTeamEntity.size() - j++));
-//
-//            UserScoreUpdateRequestDto dto = UserScoreUpdateRequestDto.builder()
-//                    .soloScore(loseUserScore)
-//                    .totalScore(loseUserScore)
-//                    .teamScore(0)
-//                    .build();
-//
-//            user.updateScore(dto);
-//            userList.add(user);
-//        }
-//    }
+    private void isTeamCalculateScore(List<GameUser> GameUsers, List<User> userList, int getWinnerMaxScore) {
+        int redTeamTotalScore = 0, blueTeamTotalScore = 0;
+        List<GameUser> redTeamEntity = new ArrayList<>();
+        List<GameUser> blueTeamEntity = new ArrayList<>();
+
+        for (GameUser entity : GameUsers) {
+            if (entity.getTeam().equals("RED")) {
+                redTeamTotalScore += entity.getScore();
+                redTeamEntity.add(entity);
+            } else if (entity.getTeam().equals("BLUE")) {
+                blueTeamTotalScore += entity.getScore();
+                blueTeamEntity.add(entity);
+            }
+        }
+        if (redTeamTotalScore == blueTeamTotalScore) {
+            for (int i = 0; i < redTeamEntity.size(); i++) {
+                if(redTeamEntity.get(i).getScore() > blueTeamEntity.get(i).getScore()) {
+                    winnerTeamScore(userList, redTeamEntity, getWinnerMaxScore);
+                    loserTeamScore(userList, blueTeamEntity, getWinnerMaxScore);
+                    break;
+                } else if(redTeamEntity.get(i).getScore() < blueTeamEntity.get(i).getScore()) {
+                    winnerTeamScore(userList, blueTeamEntity, getWinnerMaxScore);
+                    loserTeamScore(userList, redTeamEntity, getWinnerMaxScore);
+                    break;
+                }
+            }
+        }
+        else if (redTeamTotalScore > blueTeamTotalScore) {
+            winnerTeamScore(userList, redTeamEntity, getWinnerMaxScore);
+            loserTeamScore(userList, blueTeamEntity, getWinnerMaxScore);
+        }
+        else {
+            winnerTeamScore(userList, blueTeamEntity, getWinnerMaxScore);
+            loserTeamScore(userList, redTeamEntity, getWinnerMaxScore);
+        }
+    }
+    private void isSoloCalculateScore(int winnerListSize, int loserListSize, int getWinnerMaxScore, List<GameUser> GameUsers, List<User> userList){
+        /* 10라운드 6명 기준
+         * getWinnerMaxScore = 10*10(10라운드) * (curPlayers/maxPlayers) = 50( 6명이서 게임할 때 1등이 받을 점수 )
+         * 1등 : 50 * 0.8^0 = 50,  2등 : 50 * 0.8^1 = 40, 3등 : 50*0.8^2 = 32
+         * 절반 이상부터는 점수 잃는 놈들
+         * 4등 : -50 * 0.8^2(3-1) = -32, 5등 : -50 * 0.8^1(3-2) = -40, 6등 : -40 * 0.8^0 = -50
+         *
+         * */
+        /* 10라운드 7명 기준
+         * getWinnerMaxScore = 10*10(10라운드) * (curPlayers/maxPlayers) = 58( 7명이서 게임할 때 1등이 받을 점수, 반올림 )
+         * 1등 : 58 * 0.8^0 = 58,  2등 : 58 * 0.8^1 = 46(반올림), 3등 : 58 * 0.8^2 = 37(반올림)
+         * 절반 이상부터는 점수 잃는 놈들
+         * 4등 : -58 * 0.8^3(4-1) = -29, 5등 : -58 * 0.8^2(4-2) = -37, 6등 : -58 * 0.8^1(4-3) : -46, 7등 : -58 * 0.8^0 : -58
+         *
+         * */
+        for (int i = 0; i < winnerListSize; i++) {
+            GameUser entity = GameUsers.get(i);
+            User user = userRepository.findById(entity.getUserId())
+                    .orElseThrow(() -> new UserNotFoundException(entity.getUserId()));
+
+            int earnUserScore = (int) Math.round(getWinnerMaxScore * Math.pow(0.8, i));
+
+            UserScoreUpdateRequestDto dto = UserScoreUpdateRequestDto.builder()
+                    .soloScore(earnUserScore)
+                    .totalScore(earnUserScore)
+                    .teamScore(0)
+                    .build();
+
+            user.updateScore(dto);
+            userList.add(user);
+        }
+//            점수 잃는 놈들 로직
+        int j = 1;
+        for (int i = winnerListSize; i < GameUsers.size(); i++) {
+            GameUser entity = GameUsers.get(i);
+            User user = userRepository.findById(entity.getUserId())
+                    .orElseThrow(() -> new UserNotFoundException(entity.getUserId()));
+
+            int loseUserScore = -1 * (int) Math.round(getWinnerMaxScore * Math.pow(0.8, loserListSize - j++));
+
+            UserScoreUpdateRequestDto dto = UserScoreUpdateRequestDto.builder()
+                    .soloScore(loseUserScore)
+                    .totalScore(loseUserScore)
+                    .teamScore(0)
+                    .build();
+
+            user.updateScore(dto);
+            userList.add(user);
+        }
+    }
+
+    // 이긴 팀 점수 계산
+    private void winnerTeamScore(List<User> userList, List<GameUser> winnerTeamEntity, int getWinnerMaxScore) {
+        for (int i = 0; i < winnerTeamEntity.size(); i++) {
+            GameUser entity = winnerTeamEntity.get(i);
+            User user = userRepository.findById(entity.getUserId())
+                    .orElseThrow(() -> new UserNotFoundException(entity.getUserId()));
+
+            int earnUserScore = (int) Math.round(getWinnerMaxScore * Math.pow(0.8, i));
+
+            UserScoreUpdateRequestDto dto = UserScoreUpdateRequestDto.builder()
+                    .soloScore(0)
+                    .totalScore(earnUserScore)
+                    .teamScore(earnUserScore)
+                    .build();
+
+            user.updateScore(dto);
+            userList.add(user);
+        }
+    }
+
+    private void loserTeamScore(List<User> userList, List<GameUser> loserTeamEntity, int getWinnerMaxScore) {
+        //            점수 잃는 놈들 로직
+        int j = 1;
+        for (int i = 0; i < loserTeamEntity.size(); i++) {
+            GameUser entity = loserTeamEntity.get(i);
+            User user = userRepository.findById(entity.getUserId())
+                    .orElseThrow(() -> new UserNotFoundException(entity.getUserId()));
+
+            int loseUserScore = -1 * (int) Math.round(getWinnerMaxScore * Math.pow(0.8, loserTeamEntity.size() - j++));
+
+            UserScoreUpdateRequestDto dto = UserScoreUpdateRequestDto.builder()
+                    .soloScore(loseUserScore)
+                    .totalScore(loseUserScore)
+                    .teamScore(0)
+                    .build();
+
+            user.updateScore(dto);
+            userList.add(user);
+        }
+    }
 }

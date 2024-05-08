@@ -17,7 +17,8 @@ public interface GameService {
     GameResponseDto findGameByGameCode(String gameCode);
     GameResponseDto updateGame(GameUpdateRequestDto gameUpdateRequestDto);
     Integer updateGameRoundCnt(String gameCode, Boolean flag);
-    Game updateGameIsStarted(String gameCode, Boolean isStarted);
+    void updateUserScore(String gameCode);
+    GameResponseDto updateGameIsStarted(String gameCode, Boolean isStarted);
     GameResponseDto deleteGame(String code);
     String exitGame(String gameCode);
     String exitGameByUserId(Long userId, String gameCode);
