@@ -6,7 +6,6 @@ import com.ssafy.apm.game.repository.GameRepository;
 import com.ssafy.apm.gamequiz.domain.GameQuiz;
 import com.ssafy.apm.gamequiz.exception.GameQuizNotFoundException;
 import com.ssafy.apm.gamequiz.repository.GameQuizRepository;
-import com.ssafy.apm.gamequiz.service.GameQuizService;
 import com.ssafy.apm.gameuser.service.GameUserService;
 import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.quiz.exception.QuizNotFoundException;
@@ -29,18 +28,17 @@ public class ChoiceService {
     private final QuizRepository quizRepository;
     private final GameQuizRepository gameQuizRepository;
 
-    private final GameQuizService gameQuizService;
     private final GameUserService gameUserService;
 
     private final Random random = new Random();
 
     /* 4개 생성하는 코드 */
-    public List<GameQuiz> createGameQuiz(Game gameEntity, Quiz quiz, Integer curRound) {
+    public List<GameQuiz> createGameQuiz(Game game, Quiz quiz, Integer curRound) {
         List<GameQuiz> response = new ArrayList<>();
 
         int answerNumber = random.nextInt(4) + 1;
         GameQuiz entity = GameQuiz.builder() // 정답
-                .gameCode(gameEntity.getCode())
+                .gameCode(game.getCode())
                 .quizId(quiz.getId())
                 .type(1)
                 .round(curRound)
@@ -55,7 +53,7 @@ public class ChoiceService {
         for (Quiz wrong : quizListByGroupCode) {
             if (number == answerNumber) number++;
             entity = GameQuiz.builder() // 오답
-                    .gameCode(gameEntity.getCode())
+                    .gameCode(game.getCode())
                     .quizId(wrong.getId())
                     .type(1)
                     .round(curRound)
@@ -68,44 +66,42 @@ public class ChoiceService {
     }
 
     /* 40개 생성하는 코드 */
-    public List<GameQuiz> createGameQuizList(Game gameEntity, Integer gameType, List<Quiz> quizList) {
+    public List<GameQuiz> createGameQuizList(Game game, Integer type, List<Quiz> quizzes) {
         List<GameQuiz> response = new ArrayList<>();
-        int curRound = 1;
-        for (Quiz quiz : quizList) { // 각 퀴즈마다 4가지 문제가 생성되야함
+        for (int curRound = 1; curRound <= quizzes.size(); curRound++) {
+            Quiz quiz = quizzes.get(curRound - 1);
             int answerNumber = random.nextInt(4) + 1;
-            GameQuiz entity = GameQuiz.builder() // 정답
-                    .gameCode(gameEntity.getCode())
+            response.add(GameQuiz.builder()
+                    .gameCode(game.getCode())
                     .quizId(quiz.getId())
-                    .type(gameType)
+                    .type(type)
                     .round(curRound)
                     .isAnswer(true)
                     .number(answerNumber)
-                    .build();
-            response.add(entity);
-            List<Quiz> quizListByGroupCode = quizRepository.extractRandomQuizzesByStyleAndGroupCode(quiz.getStyle(), quiz.getGroupCode(), 3)
-                    .orElseThrow(() -> new QuizNotFoundException("No entities exists by groupCode!"));// 오답 quiz 리스트 찾아
+                    .build());
 
             int number = 1;
-            for (Quiz wrong : quizListByGroupCode) {
+            List<Quiz> wrongQuizzes = quizRepository.extractRandomQuizzesByStyleAndGroupCode(quiz.getStyle(), quiz.getGroupCode(), 3)
+                    .orElseThrow(() -> new QuizNotFoundException("Quiz Not Found with GroupCode: " + quiz.getGroupCode()));
+            for (Quiz wrong : wrongQuizzes) {
                 if (number == answerNumber) number++;
-                entity = GameQuiz.builder() // 오답
-                        .gameCode(gameEntity.getCode())
+                response.add(GameQuiz.builder()
+                        .gameCode(game.getCode())
                         .quizId(wrong.getId())
-                        .type(gameType)
+                        .type(type)
                         .round(curRound)
                         .isAnswer(false)
                         .number(number++)
-                        .build();
-                response.add(entity);
+                        .build());
             }
-            curRound++;
         }
+
         return response;
     }
 
-    /* TODO: Boolean 타입 리턴, 매개변수 GameChatRequestDto 타입
-    *   정답이면 점수 추가까지 여기서 처리
-    *   오답이면 점수 감점까지 여기서 처리 */
+    /** Boolean 타입 리턴, 매개변수 GameChatRequestDto 타입
+     *   정답이면 점수 추가까지 여기서 처리
+     *   오답이면 점수 감점까지 여기서 처리 */
     public Boolean checkIsAnswer(GameChatRequestDto requestDto) {
         String gameCode = requestDto.getGameCode();
         Game game = gameRepository.findByCode(gameCode)
