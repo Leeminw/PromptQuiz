@@ -20,7 +20,9 @@ import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+
 import java.util.concurrent.ConcurrentHashMap;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -55,7 +57,7 @@ public class GameSocketController {
     private static final ConcurrentHashMap<String, GameRoomStatus> gameOngoingMap = new ConcurrentHashMap<>();
 
     @Scheduled(fixedRate = 360000)
-    private void saveCurrentGameList(){
+    private void saveCurrentGameList() {
         gameMonitorService.saveRoomList(gameEndMap, gameReadyMap, gameOngoingMap);
     }
 
@@ -66,14 +68,14 @@ public class GameSocketController {
             if (!gameOngoingMap.containsKey(game.gameCode) || game.round < 0) continue;
 
             if (game.time <= 0) {
-                if(game.time == 0){
+                if (game.time == 0) {
                     sendRoundEndMessage(game);
                     setRoundToEnd(game);
                 }
                 gameEndMap.put(game.gameCode, game);
                 gameOngoingMap.remove(game.gameCode);
                 game.time = REST_TIME;
-            }else {
+            } else {
                 sendTimerMessage(game, "ongoing");
                 game.time--;
             }
@@ -122,13 +124,13 @@ public class GameSocketController {
     // 새로운 사용자 입장 메세지
     @MessageMapping("/game/enter")
     public void enterGameUser(@Payload EnterUserMessageDto user) {
-        sendMessage(user.getUuid(),new GameResponseDto("enter", user));
+        sendMessage(user.getUuid(), new GameResponseDto("enter", user));
     }
 
     // 퇴장 메세지
     @MessageMapping("/game/leave")
     public void leaveGameUser(@Payload EnterUserMessageDto user) {
-        sendMessage(user.getUuid(),new GameResponseDto("leave", user));
+        sendMessage(user.getUuid(), new GameResponseDto("leave", user));
     }
 
     // (플레이어 입력) 플레이어는 채팅 or 정답을 입력한다
@@ -145,7 +147,7 @@ public class GameSocketController {
                     if (check.getResult()) {
                         setEndGame(game);
                     } else {
-                        sendMessage(chatMessage.getUuid(),new GameResponseDto("wrongSignal", chatMessage.getUserId()));
+                        sendMessage(chatMessage.getUuid(), new GameResponseDto("wrongSignal", chatMessage.getUserId()));
                     }
                     break;
                 case BLANKSUBJECTIVE:
@@ -154,27 +156,27 @@ public class GameSocketController {
                     if (game.similarityGameEnd()) {
                         setEndGame(game);
                     } else {
-                        sendMessage(chatMessage.getUuid(),new GameResponseDto("similarity", new GameBlankResponseDto(game)));
+                        sendMessage(chatMessage.getUuid(), new GameResponseDto("similarity", new GameBlankResponseDto(game)));
                     }
                     break;
             }
         }
 
         GameChatResponseDto chat = chatService.insertGameChat(chatMessage);
-        sendMessage(chat.getUuid(),new GameResponseDto("chat", chat));
+        sendMessage(chat.getUuid(), new GameResponseDto("chat", chat));
     }
 
-    public void setEndGame(GameRoomStatus game){
+    public void setEndGame(GameRoomStatus game) {
         game.time = -game.maxTime;
         sendRoundEndMessage(game);
         setRoundToEnd(game);
     }
-    
+
     // (게임 시작) 스케쥴러에 게임을 등록하고 준비 메세지 전송
     @PostMapping("/api/v1/game/start")
     public ResponseEntity<?> setGameStart(@RequestBody GameReadyDto ready) {
         if (!gameReadyMap.containsKey(ready.getGameCode())) {
-            GameRoomStatus newGame = new GameRoomStatus(ready.getGameCode(), 0, 10,0);
+            GameRoomStatus newGame = new GameRoomStatus(ready.getGameCode(), 0, 10, 0);
 
             // 방장일 경우에만 게임 보기가 생성됩니다
             if (gameService.createGameQuiz(ready.getGameCode())) {
@@ -186,24 +188,24 @@ public class GameSocketController {
                 gameReadyMap.put(ready.getGameCode(), newGame);
 
                 GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(newGame.gameCode);
-                if(quiz.getType() == BLANKSUBJECTIVE){
+                if (quiz.getType() == BLANKSUBJECTIVE) {
                     newGame.initSimilarity(quiz);
                 }
             }
         }
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("start game"));
     }
-    
+
     // (라운드 대기) 라운드 대기 메세지 전송
     public void sendRoundReadyMessage(GameRoomStatus game) {
         GameSystemContentDto responseDto = new GameSystemContentDto(game.round);
-        sendMessage(game.gameCode,new GameResponseDto("game", GameSystemResponseDto.ready(responseDto)));
+        sendMessage(game.gameCode, new GameResponseDto("game", GameSystemResponseDto.ready(responseDto)));
     }
 
     // (라운드 시작) 라운드 시작 메세지 전송
     public void sendRoundStartMessage(GameRoomStatus game) {
         GameSystemContentDto responseDto = new GameSystemContentDto(game.round);
-        sendMessage(game.gameCode,new GameResponseDto("game", GameSystemResponseDto.start(responseDto)));
+        sendMessage(game.gameCode, new GameResponseDto("game", GameSystemResponseDto.start(responseDto)));
     }
 
     // (라운드 종료) 라운드 종료 메세지 전송
@@ -224,9 +226,9 @@ public class GameSocketController {
     public void sendTimerMessage(GameRoomStatus game, String state) {
         sendMessage(game.gameCode, new GameResponseDto("timer", new GameTimerResponseDto(game.time, game.round, state)));
     }
-    
+
     // 메세지 기본 템플릿
-    public void sendMessage(String uuid, Object data){
+    public void sendMessage(String uuid, Object data) {
         template.convertAndSend(ENDPOINT + uuid, data);
     }
 
@@ -241,7 +243,7 @@ public class GameSocketController {
         }
 
         GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(game.gameCode);
-        if(quiz.getType() == BLANKSUBJECTIVE){
+        if (quiz.getType() == BLANKSUBJECTIVE) {
             game.initSimilarity(quiz);
         }
     }

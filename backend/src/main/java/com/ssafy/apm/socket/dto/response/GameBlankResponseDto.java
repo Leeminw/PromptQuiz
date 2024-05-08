@@ -14,7 +14,7 @@ public class GameBlankResponseDto {
     private HashMap<String, PriorityQueue<SimilarityResponseDto>> playerSimilarity;
     private HashMap<String, String> answerWord;
 
-    public GameBlankResponseDto(GameRoomStatus game){
+    public GameBlankResponseDto(GameRoomStatus game) {
         this.playerSimilarity = game.playerSimilarityMap;
         this.answerWord = game.answerWordMap;
     }
