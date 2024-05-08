@@ -16,13 +16,11 @@ import com.ssafy.apm.gameuser.dto.response.GameUserSimpleResponseDto;
 import com.ssafy.apm.gamequiz.dto.response.GameQuizDetailResponseDto;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -194,6 +192,25 @@ public class GameSocketController {
             }
         }
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("start game"));
+    }
+
+    @GetMapping("/api/v1/game/quiz/{gameCode}")
+    public ResponseEntity<?> getRoundQuiz(@PathVariable String gameCode){
+        Integer type = gameQuizService.getCurrentGameQuizTypeByGameCode(gameCode);
+        ResponseData responseData = ResponseData.success();
+
+        switch (type){
+            case MUITIPLECHOICE, BLANKCHOICE:
+                List<GameQuizDetailResponseDto> quizList = gameQuizService.findDetailGameQuizzesByGameCode(gameCode);
+                responseData = ResponseData.success(quizList);
+                break;
+            case BLANKSUBJECTIVE:
+                GameRoomStatus game = gameOngoingMap.get(gameCode);
+                GameBlankResponseDto responseDto = new GameBlankResponseDto(game);
+                responseData = ResponseData.success(responseDto);
+                break;
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
 
     // (라운드 대기) 라운드 대기 메세지 전송

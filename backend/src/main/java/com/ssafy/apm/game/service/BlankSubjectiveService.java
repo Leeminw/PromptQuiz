@@ -71,8 +71,7 @@ public class BlankSubjectiveService {
                 /* todo: 유저 점수 올리기 (맞춤 처리를 어떻게 할 것인가..
                     transaction처리가 되야 한다. 그럼 DB로 맞춘사람 관리를 해야 되는데..
                 */
-                // gameQuizService.updateGameQuiz();
-                // gameUserService.updateGameUserScore(answer.getUserId(), 5);
+                gameUserService.updateGameUserScore(answer.getUserId(), 5);
             }
             resultMap.put(prompt, rate);
         }
