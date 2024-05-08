@@ -17,6 +17,7 @@ import CurrentUserList from '../components/lobby/CurrentUserList';
 import { useWebSocketStore } from '../stores/socketStore';
 import useUserStore from '../stores/userStore';
 import { IMessage } from '@stomp/stompjs';
+import { UserChannelApi } from '../hooks/axios-user-channel';
 const Lobby = () => {
   const { channelUuid } = useParams();
   const { user } = useUserStore();
@@ -28,7 +29,7 @@ const Lobby = () => {
   const location = useLocation();
   const channelId = location.state?.channelId;
   const [roomList, setRoomList] = useState<RoomProps[]>([]);
-
+  const [currentUserList, setCurrentUserList] = useState<CurrentUser[]>([]);
   const handleState = (data: RoomProps[]) => {
     setRoomList(data);
   };
@@ -43,6 +44,16 @@ const Lobby = () => {
         console.log(error);
       });
     console.log(channelId);
+  }, []);
+  useEffect(() => {
+    // 현재 채널 접속 인원정보 가져오기
+    const response = UserChannelApi.getChannelUserList(channelId)
+      .then((response) => {
+        setCurrentUserList(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
   useEffect(() => {
     // 게임 로드하면 구독하기
@@ -105,66 +116,65 @@ const Lobby = () => {
           <div className="w-full h-5 bg-mint text-white font-bold text-sm flex items-center mb-2.5">
             <p className="w-full h-full flex items-center">접속 인원</p>
           </div>
-          <CurrentUserList />
+          <CurrentUserList {...currentUserList} />
         </div>
 
         {/* <Chatting /> */}
         <div className="col-span-6 flex items-center">
           <RoomList {...roomList} />
         </div>
-        
       </div>
       {/* 로비 채팅 */}
-      <div className='w-full h-full'>
-          <div className="w-full">
-            <div className="relative w-full">
-              <div
-                className={`flex items-center w-full h-36 bottom-0 mb-2 transition-all origin-bottom duration-300`}
-              >
-                <div className="absolute w-full h-[90%] px-3 py-2 text-sm chat z-10">
-                  <div className="z-10 text-gray-700" ref={chattingBox}>
-                    {chat.map((chatItem, index) => (
-                      <div className="flex" key={index}>
-                        <p className="font-extrabold pr-1 text-nowrap text-black">
-                          {chatItem.nickname}
-                        </p>
-                        <p>{chatItem.content}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="absolute w-full h-full border-custom-white opacity-90 bg-white z-0"></div>
-              </div>
-            </div>
-          </div>
-          <div className="w-full h-10 bg-white/80 rounded-full flex relative">
-            <input
-              ref={chatInput}
-              className="w-full h-10 bg-transparent rounded-full pl-5 pr-20 text-sm placeholder-gray-400"
-              maxLength={30}
-              placeholder='Enter를 눌러 채팅 입력'
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  if (chatInput.current.value !== '') {
-                    publishChat();
-                  }
-                } else if (e.key === 'Escape') chatFocusOut();
-              }}
-              onClick={chatFocus}
-            ></input>
+      <div className="w-full h-full">
+        <div className="w-full">
+          <div className="relative w-full">
             <div
-              className="w-16 bg-mint cursor-pointer absolute h-full right-0 rounded-r-full flex justify-center items-center hover:brightness-125 transition"
-              ref={chatBtn}
-              onClick={() => {
-                if (chatInput.current.value !== '') {
-                  publishChat();
-                }
-              }}
+              className={`flex items-center w-full h-36 bottom-0 mb-2 transition-all origin-bottom duration-300`}
             >
-              <IoSend className="text-white w-6 h-6" />
+              <div className="absolute w-full h-[90%] px-3 py-2 text-sm chat z-10">
+                <div className="z-10 text-gray-700" ref={chattingBox}>
+                  {chat.map((chatItem, index) => (
+                    <div className="flex" key={index}>
+                      <p className="font-extrabold pr-1 text-nowrap text-black">
+                        {chatItem.nickname}
+                      </p>
+                      <p>{chatItem.content}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="absolute w-full h-full border-custom-white opacity-90 bg-white z-0"></div>
             </div>
           </div>
         </div>
+        <div className="w-full h-10 bg-white/80 rounded-full flex relative">
+          <input
+            ref={chatInput}
+            className="w-full h-10 bg-transparent rounded-full pl-5 pr-20 text-sm placeholder-gray-400"
+            maxLength={30}
+            placeholder="Enter를 눌러 채팅 입력"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                if (chatInput.current.value !== '') {
+                  publishChat();
+                }
+              } else if (e.key === 'Escape') chatFocusOut();
+            }}
+            onClick={chatFocus}
+          ></input>
+          <div
+            className="w-16 bg-mint cursor-pointer absolute h-full right-0 rounded-r-full flex justify-center items-center hover:brightness-125 transition"
+            ref={chatBtn}
+            onClick={() => {
+              if (chatInput.current.value !== '') {
+                publishChat();
+              }
+            }}
+          >
+            <IoSend className="text-white w-6 h-6" />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -32,7 +32,7 @@ interface CurrentUser {
   userName: string;
   nickName: string;
   picture: string;
-  statusMessage: string;
+  statusMessage: string | null;
   totalScore: number;
   teamScore: number;
   soloScore: number;
