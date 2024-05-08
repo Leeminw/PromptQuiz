@@ -1,6 +1,6 @@
 package com.ssafy.apm.channel.dto.response;
 
-import com.ssafy.apm.channel.domain.ChannelEntity;
+import com.ssafy.apm.channel.domain.Channel;
 
 import lombok.*;
 
@@ -17,7 +17,7 @@ public class ChannelGetResponseDto {
     private Integer curPlayers;
     private Integer maxPlayers;
 
-    public ChannelGetResponseDto(ChannelEntity entity) {
+    public ChannelGetResponseDto(Channel entity) {
         this.id = entity.getId();
         this.code = entity.getCode();
         this.name = entity.getName();
