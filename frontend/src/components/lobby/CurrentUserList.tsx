@@ -157,7 +157,7 @@ const CurrentUserList = () => {
       userName: 'testname2',
       nickName: '닉네임2',
       picture: 'https://s3Urlupdated',
-      statusMessage: '푸바오 ㅠㅜㅠㅜ',
+      statusMessage: '푸바오 ㅠㅜㅠㅜㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠ',
       totalScore: 100,
       teamScore: 80,
       soloScore: 70,
@@ -169,7 +169,7 @@ const CurrentUserList = () => {
     alert('예시 함수');
   };
   return (
-    <div className="w-full h-full flex flex-col gap-3 overflow-y-scroll userList border-custom-white bg-white pt-1 pr-2 pl-1">
+    <div className="w-full h-80 flex flex-col gap-3 overflow-y-scroll userList border-custom-white bg-white py-1 pr-2 pl-1">
       {dummyUserList.map((item, index) => (
         <CurrentUser
           userId={item.userId}
