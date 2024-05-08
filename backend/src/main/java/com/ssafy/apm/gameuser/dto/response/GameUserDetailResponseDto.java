@@ -1,6 +1,6 @@
 package com.ssafy.apm.gameuser.dto.response;
 
-import com.ssafy.apm.gameuser.domain.GameUserEntity;
+import com.ssafy.apm.gameuser.domain.GameUser;
 import com.ssafy.apm.user.domain.User;
 import lombok.*;
 
@@ -22,34 +22,29 @@ public class GameUserDetailResponseDto {
     private Integer soloScore;
     private LocalDateTime created_date;
     private LocalDateTime updated_date;
-    private String gameUserId;
-    private String gameId;
+    private String gameUserCode;
+    private String gameCode;
     private Boolean isHost;
-    private Boolean isReady;
     private Integer score;
     private String team;
-    private Integer ranking;
 
-    public GameUserDetailResponseDto(GameUserEntity entity) {
-        this.userId = entity.getUserId();
-        this.gameUserId = entity.getId().toString();
-        this.gameId = entity.getGameId().toString();
-        this.isHost = entity.getIsHost();
-        this.isReady = entity.getIsReady();
-        this.score = entity.getScore();
-        this.team = entity.getTeam();
-        this.ranking = entity.getRanking();
+    public GameUserDetailResponseDto(User user, GameUser gameUser) {
+        this.userId = gameUser.getUserId();
+        this.gameUserCode = gameUser.getCode();
+        this.gameCode = gameUser.getGameCode();
+        this.isHost = gameUser.getIsHost();
+        this.score = gameUser.getScore();
+        this.team = gameUser.getTeam();
+
+        this.userName = user.getUserName();
+        this.nickName = user.getNickName();
+        this.picture = user.getPicture();
+        this.statusMessage = user.getStatusMessage();
+        this.totalScore = user.getTotalScore();
+        this.teamScore = user.getTeamScore();
+        this.soloScore = user.getSoloScore();
+        this.created_date = user.getCreated_date();
+        this.updated_date = user.getUpdated_date();
     }
 
-    public void setUser(User entity) {
-        this.userName = entity.getUserName();
-        this.nickName = entity.getNickName();
-        this.picture = entity.getPicture();
-        this.statusMessage = entity.getStatusMessage();
-        this.totalScore = entity.getTotalScore();
-        this.teamScore = entity.getTeamScore();
-        this.soloScore = entity.getSoloScore();
-        this.created_date = entity.getCreated_date();
-        this.updated_date = entity.getUpdated_date();
-    }
 }

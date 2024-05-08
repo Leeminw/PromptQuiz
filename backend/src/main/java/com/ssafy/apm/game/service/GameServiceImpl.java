@@ -1,17 +1,14 @@
 package com.ssafy.apm.game.service;
 
-import com.ssafy.apm.channel.domain.ChannelEntity;
-import com.ssafy.apm.channel.exception.ChannelNotFoundException;
 import com.ssafy.apm.channel.repository.ChannelRepository;
-import com.ssafy.apm.game.domain.GameEntity;
+import com.ssafy.apm.game.domain.Game;
 import com.ssafy.apm.game.dto.request.GameCreateRequestDto;
 import com.ssafy.apm.game.dto.request.GameUpdateRequestDto;
-import com.ssafy.apm.game.dto.response.GameAndChannelGetResponseDto;
-import com.ssafy.apm.game.dto.response.GameGetResponseDto;
+import com.ssafy.apm.game.dto.response.GameResponseDto;
 import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.game.repository.GameRepository;
 import com.ssafy.apm.gamequiz.repository.GameQuizRepository;
-import com.ssafy.apm.gameuser.domain.GameUserEntity;
+import com.ssafy.apm.gameuser.domain.GameUser;
 import com.ssafy.apm.gameuser.exception.GameUserNotFoundException;
 import com.ssafy.apm.gameuser.repository.GameUserRepository;
 import com.ssafy.apm.user.domain.User;
@@ -21,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -36,96 +32,83 @@ public class GameServiceImpl implements GameService {
 
     @Override
     @Transactional
-    public GameGetResponseDto createGame(GameCreateRequestDto gameCreateRequestDto) {
-        User userEntity = userService.loadUser();
-        GameEntity gameEntity = gameCreateRequestDto.toEntity();
-        gameEntity = gameRepository.save(gameEntity);
+    public GameResponseDto createGame(GameCreateRequestDto requestDto) {
         /*
          * 방 만든 사람의 GameUser Entity도 생성해서 저장
          * */
-        GameUserEntity gameUserEntity = GameUserEntity.builder()
-                .gameId(gameEntity.getId())
-                .userId(userEntity.getId())
+        User user = userService.loadUser();
+        Game game = gameRepository.save(requestDto.toEntity());
+        GameUser gameUser = GameUser.builder()
+                .gameCode(game.getCode())
+                .userId(user.getId())
                 .isHost(true)
-                .isReady(true)
                 .score(0)
                 .team("NOTHING")
-                .ranking(0)
                 .build();
-        gameUserRepository.save(gameUserEntity);
+        gameUserRepository.save(gameUser);
 
-        return new GameGetResponseDto(gameEntity);
+        return new GameResponseDto(game);
     }
 
     @Override
-    public List<GameGetResponseDto> getGameList(Long channelId) {
-        List<GameEntity> entityList = gameRepository.findAllByChannelId(channelId)
+    @Transactional
+    public GameResponseDto updateGame(GameUpdateRequestDto requestDto) {
+        Game game = gameRepository.findByCode(requestDto.getCode()).orElseThrow(
+                () -> new GameNotFoundException("Game Not Found with gameCode: " + requestDto.getCode()));
+        return new GameResponseDto(gameRepository.save(game.update(requestDto)));
+    }
+
+    @Override
+    @Transactional
+    public GameResponseDto deleteGame(String code) {
+        Game game = gameRepository.findByCode(code).orElseThrow(
+                () -> new GameNotFoundException(code));
+        List<GameUser> gameUsers = gameUserRepository.findAllByGameCode(code).orElseThrow(
+                () -> new GameUserNotFoundException("No entities exists by gameCode: " + code));
+
+        gameUserRepository.deleteAll(gameUsers);
+        gameRepository.delete(game);
+        return new GameResponseDto(game);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    @Override
+    public List<GameResponseDto> findGamesByChannelCode(String channelCode) {
+        List<Game> entityList = gameRepository.findAllByChannelCode(channelCode)
                 .orElseThrow(() -> new GameNotFoundException("No entities exists by channelId"));// 예외가 아니라 빈 리스트라도 던져야하나
 
         return entityList.stream()
-                .map(GameGetResponseDto::new)
+                .map(GameResponseDto::new)
                 .toList();
 
     }
 
     @Override
-    public GameAndChannelGetResponseDto getGameInfo(Long gameId) {
-        GameEntity gameEntity = gameRepository.findById(gameId)
-                .orElseThrow(() -> new GameNotFoundException(gameId));
-
-        ChannelEntity channelEntity = channelRepository.findById(gameEntity.getChannelId())
-                .orElseThrow(() -> new ChannelNotFoundException(gameEntity.getChannelId()));
-
-        GameAndChannelGetResponseDto dto = new GameAndChannelGetResponseDto(gameEntity);
-        dto.updateChannelInfo(channelEntity);
-
-
-        return dto;
+    public GameResponseDto findGameByGameCode(String gameCode) {
+        Game game = gameRepository.findByCode(gameCode)
+                .orElseThrow(() -> new GameNotFoundException(gameCode));
+        return new GameResponseDto(game);
     }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     @Transactional
-    public GameGetResponseDto updateGameInfo(GameUpdateRequestDto gameUpdateRequestDto) {
-        GameEntity gameEntity = gameRepository.findById(gameUpdateRequestDto.getId())
-                .orElseThrow(() -> new GameNotFoundException(gameUpdateRequestDto.getId()));
-
-        gameEntity.update(gameUpdateRequestDto);
-        gameRepository.save(gameEntity);
-
-        return new GameGetResponseDto(gameEntity);
-    }
-
-    @Override
-    @Transactional
-    public Integer updateGameRoundCnt(Long gameId, Boolean flag) {
-        GameEntity gameEntity = gameRepository.findById(gameId)
-                .orElseThrow(() -> new GameNotFoundException(gameId));
-        Integer response = 0;
+    public Integer updateGameRoundCnt(String gameCode, Boolean flag) {
+        Game game = gameRepository.findById(gameCode)
+                .orElseThrow(() -> new GameNotFoundException(gameCode));
         if (flag) {
 //            curRound 1로 초기화
-            response = gameEntity.updateCurRound();
+            /* TODO: initCurRounds() 로 추가 및 수정 필요 */
+//            response = game.updateCurRound();
         } else {
 //        마지막 라운드라면
-            if (gameEntity.getCurRound() >= gameEntity.getRounds()) {
+            if (game.getCurRounds() >= game.getMaxRounds()) {
                 return -1;
             }
-            response = gameEntity.increaseRound();
+            game.increaseCurRounds();
         }
-        gameRepository.save(gameEntity);
-        return response;
+        gameRepository.save(game);
+        return game.getCurRounds();
     }
 
-    @Override
-    @Transactional
-    public Long deleteGame(Long gameId) {
-        GameEntity gameEntity = gameRepository.findById(gameId)
-                .orElseThrow(() -> new GameNotFoundException(gameId));
-        List<GameUserEntity> list = gameUserRepository.findAllByGameId(gameId)
-                .orElseThrow(() -> new GameUserNotFoundException("No entities exists by gameId"));
-
-        gameUserRepository.deleteAll(list);
-        gameRepository.delete(gameEntity);
-
-        return gameId;
-    }
 }

@@ -8,17 +8,20 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GameUpdateRequestDto {
-    private Long id;
-    private Long channelId;
-    private Integer type;
-    private String style;
     private String code;
-    private String title;
+    private String channelCode;
     private String password;
-    private Boolean status;
+    private String title;
+
+    private Integer mode;
+    private Integer style;
     private Boolean isTeam;
-    private Integer curRound;
-    private Integer rounds;
+    private Boolean isPrivate;
+    private Boolean isStarted;
+    private Integer timeLimit;
+
+    private Integer curRounds;
+    private Integer maxRounds;
     private Integer curPlayers;
     private Integer maxPlayers;
 }

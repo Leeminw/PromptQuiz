@@ -1,6 +1,6 @@
 package com.ssafy.apm.multiplechoice.service;
 
-import com.ssafy.apm.game.domain.GameEntity;
+import com.ssafy.apm.game.domain.Game;
 import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.game.repository.GameRepository;
 import com.ssafy.apm.gamequiz.domain.GameQuizEntity;
@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -38,10 +37,10 @@ public class MultipleChoiceServiceImpl implements MultipleChoiceService {
 
         List<Quiz> response = new ArrayList<>();
 
-        GameEntity game = gameRepository.findById(gameId)
+        Game game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new GameNotFoundException(gameId));
 
-        GameQuizEntity gameQuiz = gameQuizRepository.findByGameIdAndRound(gameId, game.getCurRound())
+        GameQuizEntity gameQuiz = gameQuizRepository.findByGameIdAndRound(gameId, game.getCurRounds())
                 .orElseThrow(() -> new GameQuizNotFoundException("No entity exist by gameId, round!"));
 
 //        여기서 gameQuiz의 타입을 확인해서 타
