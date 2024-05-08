@@ -1,29 +1,28 @@
 package com.ssafy.apm.gameuser.dto.response;
 
-import com.ssafy.apm.gameuser.domain.GameUserEntity;
+import com.ssafy.apm.gameuser.domain.GameUser;
 import lombok.*;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.redis.core.index.Indexed;
 
 @Data
 @Builder
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class GameUserGetResponseDto {
+public class GameUserSimpleResponseDto {
     private String code;
     private String gameCode;
     private Long userId;
-    private Boolean isHost;
-    private Integer score;
     private String team;
+    private Integer score;
+    private Boolean isHost;
 
-    public GameUserGetResponseDto(GameUserEntity entity) {
+    public GameUserSimpleResponseDto(GameUser entity) {
         this.code = entity.getCode();
         this.gameCode = entity.getGameCode();
         this.userId = entity.getUserId();
-        this.isHost = entity.getIsHost();
-        this.score = entity.getScore();
         this.team = entity.getTeam();
+        this.score = entity.getScore();
+        this.isHost = entity.getIsHost();
     }
+
 }

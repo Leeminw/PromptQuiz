@@ -333,7 +333,8 @@ public class GameSocketController {
     // (게임 종료) 전체 게임 종료 이후 사용자 접수 업데이트
     public void setGameResult(GameRoomStatus game) {
         // 게임 점수 적용
-        gameUserService.updateUserScore(game.gameId);
+        /* FIXME: GameService 에서 결과 처리 시 스코어 업데이트도 함께하도록 수정 예정 */
+        // gameUserService.updateUserScore(game.gameId);
 
         // 일단 게임 스케쥴러 종료
         gameOngoingMap.remove(game.gameId);

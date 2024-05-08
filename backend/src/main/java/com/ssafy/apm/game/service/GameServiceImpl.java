@@ -1,15 +1,14 @@
 package com.ssafy.apm.game.service;
 
-import com.ssafy.apm.channel.repository.ChannelRepository;
-import com.ssafy.apm.game.domain.GameEntity;
+import com.ssafy.apm.game.domain.Game;
 import com.ssafy.apm.game.dto.request.GameCreateRequestDto;
 import com.ssafy.apm.game.dto.request.GameUpdateRequestDto;
-import com.ssafy.apm.game.dto.response.GameGetResponseDto;
+import com.ssafy.apm.game.dto.response.GameResponseDto;
 import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.game.repository.GameRepository;
 import com.ssafy.apm.gamequiz.domain.GameQuizEntity;
 import com.ssafy.apm.gamequiz.repository.GameQuizRepository;
-import com.ssafy.apm.gameuser.domain.GameUserEntity;
+import com.ssafy.apm.gameuser.domain.GameUser;
 import com.ssafy.apm.gameuser.exception.GameUserNotFoundException;
 import com.ssafy.apm.gameuser.repository.GameUserRepository;
 import com.ssafy.apm.quiz.domain.Quiz;
@@ -41,162 +40,156 @@ public class GameServiceImpl implements GameService {
 
     @Override
     @Transactional
-    public GameGetResponseDto createGame(GameCreateRequestDto gameCreateRequestDto) {
-        User userEntity = userService.loadUser();
-        GameEntity gameEntity = gameCreateRequestDto.toEntity();
-        gameEntity = gameRepository.save(gameEntity);
-        GameUserEntity gameUserEntity = GameUserEntity.builder()
-                .gameCode(gameEntity.getCode())
-                .userId(userEntity.getId())
+    public GameResponseDto createGame(GameCreateRequestDto requestDto) {
+        User user = userService.loadUser();
+        Game game = gameRepository.save(requestDto.toEntity());
+        GameUser gameUser = GameUser.builder()
+                .gameCode(game.getCode())
+                .userId(user.getId())
                 .isHost(true)
                 .score(0)
                 .team("NOTHING")
                 .build();
-        gameUserRepository.save(gameUserEntity);
-        return new GameGetResponseDto(gameEntity);
+        gameUserRepository.save(gameUser);
+        return new GameResponseDto(game);
     }
 
     @Override
-    public List<GameGetResponseDto> getGameList(String channelCode) {
-        List<GameEntity> entityList = gameRepository.findAllByChannelCode(channelCode)
+    public List<GameResponseDto> findGamesByChannelCode(String channelCode) {
+        List<Game> entityList = gameRepository.findAllByChannelCode(channelCode)
                 .orElseThrow(() -> new GameNotFoundException("No entities exists by channelId"));
 
-        return entityList.stream()
-                .map(GameGetResponseDto::new)
-                .toList();
+        return entityList.stream().map(GameResponseDto::new).toList();
     }
 
     @Override
-    public GameGetResponseDto getGameInfo(String gameCode) {
-        GameEntity gameEntity = gameRepository.findByCode(gameCode)
+    public GameResponseDto findGameByGameCode(String gameCode) {
+        Game gameEntity = gameRepository.findByCode(gameCode)
                 .orElseThrow(() -> new GameNotFoundException(gameCode));
 
-        GameGetResponseDto dto = new GameGetResponseDto(gameEntity);
+        GameResponseDto dto = new GameResponseDto(gameEntity);
         return dto;
     }
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     @Transactional
-    public GameGetResponseDto updateGameInfo(GameUpdateRequestDto gameUpdateRequestDto) {
-        GameEntity gameEntity = gameRepository.findByCode(gameUpdateRequestDto.getCode())
+    public GameResponseDto updateGame(GameUpdateRequestDto gameUpdateRequestDto) {
+        Game gameEntity = gameRepository.findByCode(gameUpdateRequestDto.getCode())
                 .orElseThrow(() -> new GameNotFoundException(gameUpdateRequestDto.getCode()));
 
         gameEntity.update(gameUpdateRequestDto);
         gameRepository.save(gameEntity);
-        return new GameGetResponseDto(gameEntity);
+        return new GameResponseDto(gameEntity);
     }
-
-    @Override
-    @Transactional
     public Integer updateGameRoundCnt(String gameCode, Boolean flag) {
-        GameEntity gameEntity = gameRepository.findByCode(gameCode)
+        Game game = gameRepository.findById(gameCode)
                 .orElseThrow(() -> new GameNotFoundException(gameCode));
-        Integer response = 0;
         if (flag) {
-            response = gameEntity.initCurRounds();
+//            curRound 1로 초기화
+            /* TODO: initCurRounds() 로 추가 및 수정 필요 */
+//            response = game.updateCurRound();
         } else {
-            if (gameEntity.getCurRounds() >= gameEntity.getMaxRounds()) {
+//        마지막 라운드라면
+            if (game.getCurRounds() >= game.getMaxRounds()) {
                 return -1;
             }
-            response = gameEntity.increaseRounds();
+            game.increaseCurRounds();
         }
-        gameRepository.save(gameEntity);
-        return response;
+        gameRepository.save(game);
+        return game.getCurRounds();
     }
-
     @Override
     @Transactional
-    public Boolean updateGameIsStarted(String gameCode, Boolean isStarted) {
-        GameEntity gameEntity = gameRepository.findByCode(gameCode)
+    public Game updateGameIsStarted(String gameCode, Boolean isStarted) {
+        Game gameEntity = gameRepository.findByCode(gameCode)
                 .orElseThrow(() -> new GameNotFoundException(gameCode));
 
-        Boolean response = gameEntity.updateIsStarted(isStarted);
+        gameEntity = gameEntity.updateIsStarted(isStarted);
         gameRepository.save(gameEntity);
-        return response;
+        return gameEntity;
     }
-
     @Override
     @Transactional
-    public String deleteGame(String gameCode) {
-        GameEntity gameEntity = gameRepository.findByCode(gameCode)
-                .orElseThrow(() -> new GameNotFoundException(gameCode));
-        List<GameUserEntity> list = gameUserRepository.findAllByGameCode(gameCode)
-                .orElseThrow(() -> new GameUserNotFoundException("No entities exists by gameCode"));
+    public GameResponseDto deleteGame(String code) {
+        Game game = gameRepository.findByCode(code).orElseThrow(
+                () -> new GameNotFoundException(code));
+        List<GameUser> gameUsers = gameUserRepository.findAllByGameCode(code).orElseThrow(
+                () -> new GameUserNotFoundException("No entities exists by gameCode: " + code));
 
-        gameUserRepository.deleteAll(list);
-        gameRepository.delete(gameEntity);
-        return gameCode;
+        gameUserRepository.deleteAll(gameUsers);
+        gameRepository.delete(game);
+        return new GameResponseDto(game);
     }
 
     @Override
     @Transactional
     public Boolean createGameQuiz(String gameCode) {
         User user = userService.loadUser();
-        GameUserEntity gameUser = gameUserRepository.findByUserId(user.getId())
+        GameUser gameUser = gameUserRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new GameUserNotFoundException("No entities exists by userId"));
         if (!gameUser.getIsHost()) return false;
 
-        GameEntity gameEntity = gameRepository.findByCode(gameCode)
+        Game game = gameRepository.findByCode(gameCode)
                 .orElseThrow(() -> new GameNotFoundException(gameCode));
-        List<Quiz> quizList = createQuizListByStyle(gameEntity.getStyle(), gameEntity);
+        List<Quiz> quizList = createQuizListByStyle(game.getStyle(), game);
 //        각 quiz마다 4가지 문제가 있어야함
-        List<GameQuizEntity> gameQuizEntityList = createGameQuizListByMode(gameEntity, gameEntity.getMode(), quizList);
+        List<GameQuizEntity> gameQuizEntityList = createGameQuizListByMode(game, game.getMode(), quizList);
 
         gameQuizRepository.saveAll(gameQuizEntityList);
         return true;
     }
 
-    private List<GameQuizEntity> createGameQuizListByMode(GameEntity gameEntity, Integer gameType, List<Quiz> quizList) {
+    private List<GameQuizEntity> createGameQuizListByMode(Game gameEntity, Integer gameType, List<Quiz> quizList) {
         List<GameQuizEntity> mainGameQuizList = new ArrayList<>();
         switch (gameType) {
             case 1 -> mainGameQuizList = choiceService.createGameQuizList(gameEntity, gameType, quizList);
             case 2 -> mainGameQuizList = blankChoiceService.createGameQuizList(gameEntity, gameType, quizList);
             case 4 -> mainGameQuizList = blankSubjectiveService.createGameQuizList(gameEntity, gameType, quizList);
-            case 3,5,6,7 -> mainGameQuizList = randomCreateGameQuizList(gameEntity, gameType, quizList);
+            case 3, 5, 6, 7 -> mainGameQuizList = randomCreateGameQuizList(gameEntity, gameType, quizList);
         }
 
         return mainGameQuizList;
     }
 
-    private List<GameQuizEntity> randomCreateGameQuizList(GameEntity gameEntity, Integer gameType, List<Quiz> quizList) {
+    private List<GameQuizEntity> randomCreateGameQuizList(Game gameEntity, Integer gameType, List<Quiz> quizList) {
         List<GameQuizEntity> response = new ArrayList<>();
         Random random = new Random();
         int curRound = 1;
 
-        if(gameType == 3) {
+        if (gameType == 3) {
             for (Quiz quiz : quizList) {
                 int randomMode = random.nextInt(3) + 1;
-                if(randomMode == 1) response.addAll(choiceService.createGameQuiz(gameEntity, quiz, curRound));
-                if(randomMode == 2) response.addAll(blankChoiceService.createGameQuiz(gameEntity, quiz, curRound));
+                if (randomMode == 1) response.addAll(choiceService.createGameQuiz(gameEntity, quiz, curRound));
+                if (randomMode == 2) response.addAll(blankChoiceService.createGameQuiz(gameEntity, quiz, curRound));
                 curRound++;
             }
-        } else if(gameType == 5) {
+        } else if (gameType == 5) {
             for (Quiz quiz : quizList) {
                 int randomMode = random.nextInt(3) + 1;
-                if(randomMode == 1) response.addAll(choiceService.createGameQuiz(gameEntity, quiz, curRound));
-                if(randomMode == 2) response.add(blankSubjectiveService.createGameQuiz(gameEntity, quiz, curRound));
+                if (randomMode == 1) response.addAll(choiceService.createGameQuiz(gameEntity, quiz, curRound));
+                if (randomMode == 2) response.add(blankSubjectiveService.createGameQuiz(gameEntity, quiz, curRound));
                 curRound++;
             }
-        } else if(gameType == 6) {
-            for(Quiz quiz : quizList) {
+        } else if (gameType == 6) {
+            for (Quiz quiz : quizList) {
                 int randomMode = random.nextInt(3) + 1;
-                if(randomMode == 1) response.addAll(blankChoiceService.createGameQuiz(gameEntity, quiz, curRound));
-                if(randomMode == 2) response.add(blankSubjectiveService.createGameQuiz(gameEntity, quiz, curRound));
+                if (randomMode == 1) response.addAll(blankChoiceService.createGameQuiz(gameEntity, quiz, curRound));
+                if (randomMode == 2) response.add(blankSubjectiveService.createGameQuiz(gameEntity, quiz, curRound));
                 curRound++;
             }
-        } else if(gameType == 7) {
-            for(Quiz quiz : quizList) {
+        } else if (gameType == 7) {
+            for (Quiz quiz : quizList) {
                 int randomMode = random.nextInt(4) + 1;
-                if(randomMode == 1) response.addAll(choiceService.createGameQuiz(gameEntity, quiz, curRound));
-                if(randomMode == 2) response.addAll(blankChoiceService.createGameQuiz(gameEntity, quiz, curRound));
-                if(randomMode == 3) response.add(blankSubjectiveService.createGameQuiz(gameEntity, quiz, curRound));
+                if (randomMode == 1) response.addAll(choiceService.createGameQuiz(gameEntity, quiz, curRound));
+                if (randomMode == 2) response.addAll(blankChoiceService.createGameQuiz(gameEntity, quiz, curRound));
+                if (randomMode == 3) response.add(blankSubjectiveService.createGameQuiz(gameEntity, quiz, curRound));
                 curRound++;
             }
         }
         return response;
     }
 
-    private List<Quiz> createQuizListByStyle(String gameStyle, GameEntity gameEntity) {
+    private List<Quiz> createQuizListByStyle(String gameStyle, Game gameEntity) {
         List<Quiz> quizList;
         if (gameStyle.equals("random")) {
             quizList = quizRepository.extractRandomQuizzes(gameEntity.getMaxRounds())

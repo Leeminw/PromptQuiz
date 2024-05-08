@@ -1,16 +1,14 @@
 package com.ssafy.apm.game.service;
 
-import com.ssafy.apm.game.domain.GameEntity;
+import com.ssafy.apm.game.domain.Game;
 import com.ssafy.apm.gamequiz.domain.GameQuizEntity;
 import com.ssafy.apm.quiz.domain.Quiz;
-import com.ssafy.apm.quiz.exception.QuizNotFoundException;
 import com.ssafy.apm.quiz.repository.QuizRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -20,7 +18,7 @@ public class BlankSubjectiveService {
 
     private final QuizRepository quizRepository;
 
-    public List<GameQuizEntity> createGameQuizList(GameEntity gameEntity, Integer gameType, List<Quiz> quizList) {
+    public List<GameQuizEntity> createGameQuizList(Game gameEntity, Integer gameType, List<Quiz> quizList) {
         List<GameQuizEntity> response = new ArrayList<>();
         int curRound = 1;
 
@@ -38,14 +36,7 @@ public class BlankSubjectiveService {
         return response;
     }
 
-    public GameQuizEntity createGameQuiz(GameEntity gameEntity, Quiz quiz, int curRound) {
-//        GameQuizEntity response = GameQuizEntity.builder()
-//                .gameCode(gameEntity.getCode())
-//                .quizId(quiz.getId())
-//                .type(4)
-//                .round(curRound)
-//                .isAnswer(true)
-//                .build();
+    public GameQuizEntity createGameQuiz(Game gameEntity, Quiz quiz, int curRound) {
         return GameQuizEntity.builder()
                 .gameCode(gameEntity.getCode())
                 .quizId(quiz.getId())

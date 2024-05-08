@@ -1,6 +1,6 @@
 package com.ssafy.apm.gameuser.repository;
 
-import com.ssafy.apm.gameuser.domain.GameUserEntity;
+import com.ssafy.apm.gameuser.domain.GameUser;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,14 +8,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface GameUserRepository extends CrudRepository<GameUserEntity, String> {
+public interface GameUserRepository extends CrudRepository<GameUser, String> {
 
-    Optional<List<GameUserEntity>> findAllByGameCode(String gameCode);
+    Optional<GameUser> findByGameCodeAndUserId(String gameCode, Long UserId);
 
-    Optional<GameUserEntity> findByGameCodeAndUserId(String gameCode, Long UserId);
+    Optional<GameUser> findByUserId(Long userId);
 
-    Optional<GameUserEntity> findByUserId(Long userId);
+    Optional<List<GameUser>> findAllByGameCode(String gameCode);
 
-    Optional<GameUserEntity> findByCode(String code);
+    Optional<GameUser> findByCode(String code);
 
 }

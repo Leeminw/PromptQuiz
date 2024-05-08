@@ -1,6 +1,6 @@
 package com.ssafy.apm.game.service;
 
-import com.ssafy.apm.game.domain.GameEntity;
+import com.ssafy.apm.game.domain.Game;
 import com.ssafy.apm.gamequiz.domain.GameQuizEntity;
 import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.quiz.exception.QuizNotFoundException;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -20,7 +19,7 @@ public class BlankChoiceService {
 
     private final QuizRepository quizRepository;
 
-    public List<GameQuizEntity> createGameQuizList(GameEntity gameEntity, Integer gameType, List<Quiz> quizList) {
+    public List<GameQuizEntity> createGameQuizList(Game gameEntity, Integer gameType, List<Quiz> quizList) {
         List<GameQuizEntity> response = new ArrayList<>();
         int curRound = 1;
         for (Quiz quiz : quizList) { // 각 퀴즈마다 4가지 문제가 생성되야함
@@ -50,7 +49,7 @@ public class BlankChoiceService {
         return response;
     }
 
-    public List<GameQuizEntity> createGameQuiz(GameEntity gameEntity, Quiz quiz, int curRound) {
+    public List<GameQuizEntity> createGameQuiz(Game gameEntity, Quiz quiz, int curRound) {
         List<GameQuizEntity> response = new ArrayList<>();
 
         GameQuizEntity entity = GameQuizEntity.builder() // 정답

@@ -1,6 +1,6 @@
 package com.ssafy.apm.game.service;
 
-import com.ssafy.apm.game.domain.GameEntity;
+import com.ssafy.apm.game.domain.Game;
 import com.ssafy.apm.gamequiz.domain.GameQuizEntity;
 import com.ssafy.apm.multiplechoice.domain.MultipleChoiceEntity;
 import com.ssafy.apm.quiz.domain.Quiz;
@@ -20,7 +20,7 @@ public class ChoiceService {
 
     private final QuizRepository quizRepository;
 
-    public List<GameQuizEntity> createGameQuiz(GameEntity gameEntity, Quiz quiz, Integer curRound) {
+    public List<GameQuizEntity> createGameQuiz(Game gameEntity, Quiz quiz, Integer curRound) {
         List<GameQuizEntity> response = new ArrayList<>();
 
         GameQuizEntity entity = GameQuizEntity.builder() // 정답
@@ -47,7 +47,7 @@ public class ChoiceService {
         return response;
     }
 
-    public List<GameQuizEntity> createGameQuizList(GameEntity gameEntity, Integer gameType, List<Quiz> quizList) {
+    public List<GameQuizEntity> createGameQuizList(Game gameEntity, Integer gameType, List<Quiz> quizList) {
         List<GameQuizEntity> response = new ArrayList<>();
         int curRound = 1;
         for (Quiz quiz : quizList) { // 각 퀴즈마다 4가지 문제가 생성되야함

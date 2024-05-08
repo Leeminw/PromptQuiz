@@ -1,13 +1,13 @@
 package com.ssafy.apm.gamequiz.service;
 
-import com.ssafy.apm.game.domain.GameEntity;
+import com.ssafy.apm.game.domain.Game;
 import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.game.repository.GameRepository;
 import com.ssafy.apm.gamequiz.domain.GameQuizEntity;
 import com.ssafy.apm.gamequiz.dto.response.GameQuizGetResponseDto;
 import com.ssafy.apm.gamequiz.exception.GameQuizNotFoundException;
 import com.ssafy.apm.gamequiz.repository.GameQuizRepository;
-import com.ssafy.apm.gameuser.domain.GameUserEntity;
+import com.ssafy.apm.gameuser.domain.GameUser;
 import com.ssafy.apm.gameuser.exception.GameUserNotFoundException;
 import com.ssafy.apm.gameuser.repository.GameUserRepository;
 import com.ssafy.apm.multiplechoice.domain.MultipleChoiceEntity;
@@ -36,9 +36,9 @@ public class GameQuizServiceImpl implements GameQuizService {
 
     @Override
     public List<GameQuizGetResponseDto> getGameQuizListEachRoundByGameCode(String gameCode) {
-        GameEntity gameEntity = gameRepository.findByCode(gameCode)
+        Game game = gameRepository.findByCode(gameCode)
                 .orElseThrow(() -> new GameNotFoundException(gameCode));
-        List<GameQuizEntity> gameQuizList = gameQuizRepository.findAllByGameCodeAndRound(gameCode, gameEntity.getCurRounds())
+        List<GameQuizEntity> gameQuizList = gameQuizRepository.findAllByGameCodeAndRound(gameCode, game.getCurRounds())
                 .orElseThrow(() -> new GameQuizNotFoundException("No entities exists by gameCode, round"));
 
         return gameQuizList.stream().map(GameQuizGetResponseDto::new).toList();

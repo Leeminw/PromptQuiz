@@ -1,18 +1,10 @@
 package com.ssafy.apm.game.dto.request;
 
-import com.ssafy.apm.game.domain.GameEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import com.ssafy.apm.game.domain.Game;
 import lombok.*;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.redis.core.index.Indexed;
-
-import java.util.UUID;
 
 @Data
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class GameCreateRequestDto {
@@ -23,27 +15,26 @@ public class GameCreateRequestDto {
     private String password;
     private Boolean isTeam;
     private Boolean isPrivate;
-    private Integer timeLimited;
-    private Integer maxPlayers;
+    private Integer timeLimit;
     private Integer maxRounds;
+    private Integer maxPlayers;
 
-    public GameEntity toEntity() {
-        return GameEntity.builder()
-//                UUID를 생성자에서 미리 만들어줘
-                .code(UUID.randomUUID().toString())
+    public Game toEntity() {
+        return Game.builder()
                 .channelCode(this.channelCode)
-                .style(this.style)
                 .title(this.title)
+                .style(this.style)
                 .mode(this.mode)
                 .password(this.password)
                 .isTeam(this.isTeam)
                 .isPrivate(this.isPrivate)
                 .isStarted(false)
-                .timeLimited(this.timeLimited)
+                .timeLimit(this.timeLimit)
                 .curPlayers(1)
                 .maxPlayers(this.maxPlayers)
                 .curRounds(0)
                 .maxRounds(this.maxRounds)
                 .build();
     }
+
 }

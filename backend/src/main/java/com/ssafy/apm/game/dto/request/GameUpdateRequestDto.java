@@ -10,14 +10,14 @@ import lombok.*;
 public class GameUpdateRequestDto {
     private String code;
     private String channelCode;
-    private String title;
-    private String style;
-    private Integer mode;
     private String password;
+    private String title;
+    private Integer mode;
+    private String style;
     private Boolean isTeam;
     private Boolean isPrivate;
     private Boolean isStarted;
-    private Integer timeLimited;
+    private Integer timeLimit;
     private Integer curPlayers;
     private Integer maxPlayers;
     private Integer curRounds;
