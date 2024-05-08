@@ -39,3 +39,15 @@ interface CurrentUser {
   created_date: string;
   updated_date: string;
 }
+interface CurrentUserProps {
+  userId: number;
+  userName: string;
+  nickName: string;
+  picture: string;
+  statusMessage: string | null;
+  totalScore: number;
+  teamScore: number;
+  soloScore: number;
+  created_date: string;
+  updated_date: string;
+}

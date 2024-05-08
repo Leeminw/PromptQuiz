@@ -37,8 +37,6 @@ const ChannelBox = ({ id, code, name, curPlayers, maxPlayers }: Props) => {
         height: '50px',
         width: '300px',
         color: '#359DB0',
-        // display: 'flex',
-        // alignItems: 'center',
         lineHeight: '25px',
         fontSize: '10px', // 10px로
         margin: '2px',

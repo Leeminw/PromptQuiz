@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import RankingList from '../components/ranking/RankingList';
 import { RankApi } from '../hooks/axios-rank';
+
+interface Props {
+  channelUuid: string;
+}
 const Ranking = () => {
   const [rankingArray, setRankingArray] = useState<Ranking[]>([]);
   const [teamRankingArray, setTeamRankingArray] = useState<Ranking[]>([]);
@@ -28,12 +32,12 @@ const Ranking = () => {
         <RankingList rankingTitle={'개인전 랭킹'} users={soloRankingArray} />
         <RankingList rankingTitle={'팀 랭킹'} users={teamRankingArray} />
       </div>
-      <Link to="/channel">
+      <Link to={`/channel/`}>
         <button
           className="bg-customGreen text-white hover:brightness-125 hover:scale-105 transition 
             text-sm w-1/4 min-w-[3rem]"
         >
-          홈으로
+          로비화면으로
         </button>
       </Link>
     </div>

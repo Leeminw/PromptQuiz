@@ -30,8 +30,9 @@ const Lobby = () => {
   const channelId = location.state?.channelId;
   const [roomList, setRoomList] = useState<RoomProps[]>([]);
   const [currentUserList, setCurrentUserList] = useState<CurrentUser[]>([]);
-  const handleState = (data: RoomProps[]) => {
-    setRoomList(data);
+  const handleState = (data1: RoomProps[], data2: CurrentUser[]) => {
+    setRoomList(data1);
+    setCurrentUserList(data2);
   };
 
   useEffect(() => {
@@ -107,7 +108,7 @@ const Lobby = () => {
           <p className="text-center w-full text-nowrap">{channelId}채널</p>
         </label>
         <div className="col-span-6 flex items-center pl-2">
-          <Header channelId={channelId} handleState={handleState} />
+          <Header channelId={channelId} channelUuid={channelUuid} handleState={handleState} />
         </div>
       </div>
 
