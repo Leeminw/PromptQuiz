@@ -9,31 +9,33 @@ import lombok.*;
 @AllArgsConstructor
 public class GameCreateRequestDto {
     private String channelCode;
+    private String password;
     private String title;
     private String style;
+
     private Integer mode;
-    private String password;
     private Boolean isTeam;
     private Boolean isPrivate;
     private Integer timeLimit;
+
     private Integer maxRounds;
     private Integer maxPlayers;
 
     public Game toEntity() {
         return Game.builder()
                 .channelCode(this.channelCode)
+                .password(this.password)
                 .title(this.title)
                 .style(this.style)
                 .mode(this.mode)
-                .password(this.password)
                 .isTeam(this.isTeam)
                 .isPrivate(this.isPrivate)
-                .isStarted(false)
                 .timeLimit(this.timeLimit)
-                .curPlayers(1)
-                .maxPlayers(this.maxPlayers)
+                .isStarted(false)
                 .curRounds(0)
                 .maxRounds(this.maxRounds)
+                .curPlayers(1)
+                .maxPlayers(this.maxPlayers)
                 .build();
     }
 

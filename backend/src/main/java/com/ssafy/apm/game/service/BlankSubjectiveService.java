@@ -1,7 +1,7 @@
 package com.ssafy.apm.game.service;
 
 import com.ssafy.apm.game.domain.Game;
-import com.ssafy.apm.gamequiz.domain.GameQuizEntity;
+import com.ssafy.apm.gamequiz.domain.GameQuiz;
 import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.quiz.repository.QuizRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +18,12 @@ public class BlankSubjectiveService {
 
     private final QuizRepository quizRepository;
 
-    public List<GameQuizEntity> createGameQuizList(Game gameEntity, Integer gameType, List<Quiz> quizList) {
-        List<GameQuizEntity> response = new ArrayList<>();
+    public List<GameQuiz> createGameQuizList(Game gameEntity, Integer gameType, List<Quiz> quizList) {
+        List<GameQuiz> response = new ArrayList<>();
         int curRound = 1;
 
         for (Quiz quiz : quizList) { // 빈칸 주관식은 답 하나만 넣어
-            GameQuizEntity entity = GameQuizEntity.builder()
+            GameQuiz entity = GameQuiz.builder()
                     .gameCode(gameEntity.getCode())
                     .quizId(quiz.getId())
                     .type(gameType)
@@ -36,8 +36,8 @@ public class BlankSubjectiveService {
         return response;
     }
 
-    public GameQuizEntity createGameQuiz(Game gameEntity, Quiz quiz, int curRound) {
-        return GameQuizEntity.builder()
+    public GameQuiz createGameQuiz(Game gameEntity, Quiz quiz, int curRound) {
+        return GameQuiz.builder()
                 .gameCode(gameEntity.getCode())
                 .quizId(quiz.getId())
                 .type(4)
