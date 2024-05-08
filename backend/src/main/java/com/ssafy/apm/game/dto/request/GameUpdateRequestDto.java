@@ -12,8 +12,8 @@ public class GameUpdateRequestDto {
     private String channelCode;
     private String password;
     private String title;
-    private Integer mode;
     private String style;
+    private Integer mode;
     private Boolean isTeam;
     private Boolean isPrivate;
     private Boolean isStarted;
