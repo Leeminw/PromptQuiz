@@ -1,5 +1,6 @@
 package com.ssafy.apm.common.util;
 
+import com.ssafy.apm.gamequiz.dto.response.GameQuizGetResponseDto;
 import com.ssafy.apm.socket.dto.response.SimilarityResponseDto;
 
 import java.util.HashMap;
@@ -18,7 +19,6 @@ public class GameRoomStatus {
 
     public GameRoomStatus(String gameCode, String uuid, Integer round, Integer maxTime, Integer time) {
         this.gameCode = gameCode;
-        this.uuid = uuid;
         this.round = round;
         this.maxTime = maxTime;
         this.time = time;
@@ -26,13 +26,17 @@ public class GameRoomStatus {
         this.answerWordMap = new HashMap<>();
     }
 
-    public void initSimilarity(HashMap<String, String> promptMap) {
+    public void initSimilarity(GameQuizGetResponseDto quiz) {
         playerSimilarityMap.put("kor_object", new PriorityQueue<>());
         playerSimilarityMap.put("kor_subject", new PriorityQueue<>());
         playerSimilarityMap.put("kor_sub_adjective", new PriorityQueue<>());
         playerSimilarityMap.put("kor_obj_adjective", new PriorityQueue<>());
 
-        answerWordMap.putAll(promptMap);
+        answerWordMap.put("kor_verb", quiz.getKorVerb());
+        answerWordMap.put("kor_subject", null);
+        answerWordMap.put("kor_object", null);
+        answerWordMap.put("kor_sub_adjective", null);
+        answerWordMap.put("kor_obj_adjective", null);
     }
 
     public void addSimilarityAnswerToMap(String key, String value) {
@@ -40,20 +44,16 @@ public class GameRoomStatus {
         playerSimilarityMap.remove(key);
     }
 
-    public void addSimilarityToMap(String answer, HashMap<String, Double> rateMap) {
-
+    public void updateSimilarityRanking(String answer, HashMap<String, Double> rateMap) {
         for (String i : rateMap.keySet()) {
             SimilarityResponseDto cur = new SimilarityResponseDto(answer, rateMap.get(i));
 
             if (cur.getRate() >= similarityRate) {
                 addSimilarityAnswerToMap(i, answer);
             } else {
-                PriorityQueue<SimilarityResponseDto> temp = playerSimilarityMap.get(i);
-                temp.add(cur);
-
-                if (temp.size() > 3) {
-                    temp.poll();
-                }
+                PriorityQueue<SimilarityResponseDto> ranking = playerSimilarityMap.get(i);
+                ranking.add(cur);
+                if (ranking.size() > 3) ranking.poll();
             }
         }
     }

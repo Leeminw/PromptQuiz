@@ -27,7 +27,6 @@ public class GameUserDetailResponseDto {
     private Boolean isHost;
     private Integer score;
     private String team;
-
     public GameUserDetailResponseDto(User user, GameUser gameUser) {
         this.userId = gameUser.getUserId();
         this.gameUserCode = gameUser.getCode();

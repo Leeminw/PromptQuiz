@@ -8,7 +8,6 @@ import com.ssafy.apm.gameuser.dto.response.GameUserSimpleResponseDto;
 import java.util.List;
 
 public interface GameUserService {
-
     GameUserSimpleResponseDto createGameUser(GameUserCreateRequestDto requestDto);
     GameUserSimpleResponseDto updateGameUser(GameUserUpdateRequestDto requestDto);
 
@@ -62,5 +61,4 @@ public interface GameUserService {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /* FIXME: 중복기능으로 판단됨, userId 보단 해시 ID인 code로 처리하는 것이 나아보임. */
     // Long deleteExitGameByUserId(Long userId, String gameCode);
-
 }

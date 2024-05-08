@@ -31,13 +31,11 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class GameUserServiceImpl implements GameUserService {
 
-    private final UserChannelRepository userChannelRepository;
     private final GameUserRepository gameUserRepository;
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
     private final UserService userService;
 
-    @Override
     @Transactional
     public GameUserSimpleResponseDto createGameUser(GameUserCreateRequestDto requestDto) {
         GameUser gameUser = gameUserRepository.save(requestDto.toEntity());

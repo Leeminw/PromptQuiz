@@ -139,20 +139,16 @@ public class GameSocketController {
             switch (check.getType()) {
                 case MUITIPLECHOICE, BLANKCHOICE:
                     if (check.getResult()) {
-                        game.time = -game.maxTime;
-                        sendRoundEndMessage(game);
-                        setRoundToEnd(game);
+                        setEndGame(game);
                     } else {
                         sendMessage(chatMessage.getUuid(),new GameResponseDto("wrongSignal", chatMessage.getUserId()));
                     }
                     break;
                 case BLANKSUBJECTIVE:
-                    game.addSimilarityToMap(chatMessage.getContent(), check.getSimilarity());
+                    game.updateSimilarityRanking(chatMessage.getContent(), check.getSimilarity());
 
                     if (game.similarityGameEnd()) {
-                        game.time = -game.maxTime;
-                        sendRoundEndMessage(game);
-                        setRoundToEnd(game);
+                        setEndGame(game);
                     } else {
                         sendMessage(chatMessage.getUuid(),new GameResponseDto("similarity", game.playerSimilarityMap));
                     }
@@ -162,6 +158,12 @@ public class GameSocketController {
 
         GameChatResponseDto chat = chatService.insertGameChat(chatMessage);
         sendMessage(chat.getUuid(),new GameResponseDto("chat", chat));
+    }
+
+    public void setEndGame(GameRoomStatus game){
+        game.time = -game.maxTime;
+        sendRoundEndMessage(game);
+        setRoundToEnd(game);
     }
 
     // test dump list
@@ -179,14 +181,17 @@ public class GameSocketController {
             GameRoomStatus newGame = new GameRoomStatus(ready.getGameCode(), ready.getUuid(), 0, 10,0);
 
             // 방장일 경우에만 게임 보기가 생성됩니다
-            if (gameQuizService.createAnswerGameQuiz(ready.getGameCode())) {
+            if (gameService.createGameQuiz(ready.getGameCode())) {
                 newGame.round = gameService.updateGameRoundCnt(ready.getGameCode(), true);
+
+                gameService.updateGameIsStarted(ready.getGameCode(), true);
                 sendRoundReadyMessage(newGame);
+
                 gameReadyMap.put(ready.getGameCode(), newGame);
 
-                GameQuizGetResponseDto quiz = gameQuizService.getGameQuizDetail(newGame.gameCode);
+                GameQuizGetResponseDto quiz = gameQuizService.getCurRoundGameQuizByGameCode(newGame.gameCode);
                 if(quiz.getType() == BLANKSUBJECTIVE){
-                    newGame.initSimilarity();
+                    newGame.initSimilarity(quiz);
                 }
             }
         }
@@ -238,9 +243,9 @@ public class GameSocketController {
             return;
         }
 
-        GameQuizGetResponseDto quiz = gameQuizService.getGameQuizDetail(game.gameCode);
+        GameQuizGetResponseDto quiz = gameQuizService.getCurRoundGameQuizByGameCode(game.gameCode);
         if(quiz.getType() == BLANKSUBJECTIVE){
-            game.initSimilarity();
+            game.initSimilarity(quiz);
         }
     }
 

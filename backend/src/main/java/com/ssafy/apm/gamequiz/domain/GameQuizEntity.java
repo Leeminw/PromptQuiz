@@ -13,14 +13,16 @@ import org.springframework.data.redis.core.index.Indexed;
 @RedisHash(value = "game-quiz", timeToLive = 3600)
 public class GameQuizEntity {
     @Id
-    private Long id;
+    private String code;
     @Indexed
-    private Long gameId;
+    private String gameCode;
     @Indexed
     private Long quizId;
     //    객관식, 빈칸객관식, 빈칸주관식
     private Integer type;
     @Indexed
     private Integer round;
+    @Indexed
+    private Boolean isAnswer;
 
 }

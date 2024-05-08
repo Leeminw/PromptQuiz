@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface GameQuizRepository extends CrudRepository<GameQuizEntity, Long> {
-    Optional<List<GameQuizEntity>> findAllByGameId(Long gameId);
+public interface GameQuizRepository extends CrudRepository<GameQuizEntity, String> {
+    Optional<List<GameQuizEntity>> findAllByGameCode(String gameCode);
 
-    Optional<GameQuizEntity> findByGameIdAndRound(Long gameId, Integer round);
+    Optional<List<GameQuizEntity>> findAllByGameCodeAndRound(String gameCode, Integer round);
+
+    Optional<GameQuizEntity> findByGameCodeAndRound(String gameCode, Integer round);
 }

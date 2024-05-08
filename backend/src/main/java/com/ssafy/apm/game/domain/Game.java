@@ -22,7 +22,7 @@ public class Game {
     @Indexed
     private Integer mode;
     @Indexed
-    private Integer style;
+    private String style;
     @Indexed
     private Boolean isTeam;
     @Indexed
