@@ -1,6 +1,5 @@
 interface Game {
-    id: bigint,
-    channelId: number,
+    channelCode: number,
     type: number,
     style: number,
     code: string,
@@ -25,7 +24,7 @@ interface GameUser {
     created_date: string,
     updated_date: string,
     gameUserId: bigint,
-    gameId: bigint,
+    gameCode: string,
     isHost: boolean,
     isReady: boolean,
     score: number,
@@ -41,7 +40,7 @@ interface GameChat{
     userId: bigint,
     nickname: string,
     uuid: string,
-    gameId: bigint,
+    gameCode: string,
     round: number,
     content: string,
 }
@@ -67,7 +66,7 @@ interface GameChatRecieve {
     userId: bigint|null,
     nickname: string|null,
     uuid: string|null,
-    gameId: bigint|null,
+    gameCode: string|null,
     round: number|null,
     content: string|null,
     createdDate: string|null,
@@ -79,7 +78,7 @@ interface GameTimer {
     state : string,
 }
 interface GameReady{
-    gameId: bigint,
+    gameCode: string,
     uuid : string
 }
 interface GameStatus {

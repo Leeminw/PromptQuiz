@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { MdAddHome } from 'react-icons/md';
 import { LobbyApi } from '../../hooks/axios-lobby';
 
 import instance from '../../hooks/axios-instance';
@@ -7,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import useUserStore from '../../stores/userStore';
 import { RankApi } from '../../hooks/axios-rank';
 import RankingList from '../ranking/RankingList';
+import { BsFillTrophyFill } from 'react-icons/bs';
 
 const Rank = () => {
   const [privacyStatus, setPrivacyStatus] = useState(0);
@@ -83,8 +83,8 @@ const Rank = () => {
         className="w-full h-full bg-customYellow border-custom-yellow text-white flex justify-center items-center gap-2 px-1 hover:brightness-110"
         onClick={() => (document.getElementById('ranking_modal') as HTMLDialogElement).showModal()}
       >
-        <MdAddHome className="min-w-5 min-h-5 " />
-        <p className="text-nowrap">랭킹</p>
+        <BsFillTrophyFill className="min-w-4 min-h-4 " />
+        <p className="text-nowrap font-extrabold">랭킹</p>
       </button>
       <dialog id="ranking_modal" className="modal">
         <div className="modal-box">
