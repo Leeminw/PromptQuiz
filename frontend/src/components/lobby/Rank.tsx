@@ -95,14 +95,23 @@ const Rank = () => {
             <RankingList rankingTitle={'개인전 랭킹'} users={soloRankingArray} />
             <RankingList rankingTitle={'팀 랭킹'} users={teamRankingArray} />
           </div>
-          <Link to={`/channel/`}>
-            <button
-              className="bg-customGreen text-white hover:brightness-125 hover:scale-105 transition 
+          <div className="modal-action">
+            <form method="dialog">
+              <button
+                className="bg-customGreen text-white hover:brightness-125 hover:scale-105 transition 
             text-sm w-1/4 min-w-[3rem]"
-            >
-              로비화면으로
-            </button>
-          </Link>
+              >
+                로비화면으로
+              </button>
+            </form>
+          </div>
+          {/* // */}
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+          </div>
+          {/* // */}
         </div>
       </dialog>
     </div>

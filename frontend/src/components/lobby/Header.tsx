@@ -70,13 +70,7 @@ const Header = ({ channelId, channelUuid, handleState }: Props) => {
         <IoMdRefresh className="min-w-5 min-h-5 " />
         <p className="text-nowrap">새로고침</p>
       </button>
-      <button
-        className="w-fit h-full border-custom-yellow bg-customYellow text-white font-extrabold hover:brightness-110 flex justify-center items-center gap-2 px-2"
-        onClick={enterRankingPage}
-      >
-        <BsFillTrophyFill className="min-w-4 min-h-4 " />
-        <p className="text-nowrap">랭킹</p>
-      </button>
+
       <Rank />
 
       <div className="grow" />
