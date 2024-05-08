@@ -1,6 +1,7 @@
 package com.ssafy.apm.game.service;
 
 import com.ssafy.apm.game.domain.Game;
+import com.ssafy.apm.gameuser.service.GameUserService;
 import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.gamequiz.domain.GameQuiz;
 import com.ssafy.apm.gamequiz.service.GameQuizService;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class BlankSubjectiveService {
 
+    private final GameUserService gameUserService;
     private final GameQuizService gameQuizService;
 
     public List<GameQuiz> createGameQuizList(Game gameEntity, Integer gameType, List<Quiz> quizList) {
@@ -53,6 +55,7 @@ public class BlankSubjectiveService {
                 .build();
     }
 
+    @Transactional
     public HashMap<String, Double> evaluateAnswers(GameChatRequestDto answer, Set<String> checkPrompt){
         GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(answer.getGameCode());
         HashMap<String, Double> resultMap = new HashMap<>();
@@ -64,13 +67,20 @@ public class BlankSubjectiveService {
                 case "kor_object" -> rate = calculateSimilarity(quiz.getKorObject(), answer.getContent());
                 case "kor_obj_adjective" -> rate = calculateSimilarity(quiz.getKorObjAdjective(), answer.getContent());
             }
+            if(rate >= 0.9){
+                /* todo: 유저 점수 올리기 (맞춤 처리를 어떻게 할 것인가..
+                    transaction처리가 되야 한다. 그럼 DB로 맞춘사람 관리를 해야 되는데..
+                */
+                // gameQuizService.updateGameQuiz();
+                // gameUserService.updateGameUserScore(answer.getUserId(), 5);
+            }
             resultMap.put(prompt, rate);
         }
 
         return resultMap;
     }
 
-    public Double calculateSimilarity(String input, String answer){
+    private Double calculateSimilarity(String input, String answer){
         input = input.replace(" ", "");
         answer = answer.replace(" ", "");
 

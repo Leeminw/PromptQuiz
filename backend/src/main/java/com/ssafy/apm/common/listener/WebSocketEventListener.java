@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.web.socket.messaging.AbstractSubProtocolEvent;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
@@ -53,17 +54,7 @@ public class WebSocketEventListener {
         socketService.deleteSession(sessionId);
     }
 
-    public String parsingSessionIdFromEvent(SessionConnectedEvent event){
-        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
-        return accessor.getSessionId();
-    }
-
-    public String parsingSessionIdFromEvent(SessionSubscribeEvent event){
-        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
-        return accessor.getSessionId();
-    }
-
-    public String parsingSessionIdFromEvent(SessionDisconnectEvent event){
+    public String parsingSessionIdFromEvent(AbstractSubProtocolEvent event){
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         return accessor.getSessionId();
     }
