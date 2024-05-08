@@ -5,7 +5,6 @@ import MainPage from '../pages/Main';
 import GamePage from '../pages/Game';
 import TestPage from '../pages/Test';
 import Lobby from '../pages/Lobby';
-import Ranking from '../pages/Ranking';
 
 const RouterInfo = [
   {
@@ -32,11 +31,6 @@ const RouterInfo = [
         path: '/lobby/:channelUuid',
         element: <Lobby />,
         label: 'lobby',
-      },
-      {
-        path: '/ranking',
-        element: <Ranking />,
-        label: 'ranking',
       },
     ],
   },

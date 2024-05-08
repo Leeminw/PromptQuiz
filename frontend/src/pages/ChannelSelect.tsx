@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import ChannelBox from '../components/channel/ChannelBox';
 import { ChannelApi } from '../hooks/axois-channel';
-// import ChannelBox from '../components/channel/ChannelBox';
 
 const ChannelSelectPage = () => {
   const [channelArray, setChannelList] = useState<Channel[]>([]);
   useEffect(() => {
-    // 채널리트스 가져오기
+    // 채널리스트 가져오기
     const response = ChannelApi.getChannelList()
       .then((response) => {
         setChannelList(response.data);
@@ -39,26 +38,28 @@ const ChannelSelectPage = () => {
   };
   return (
     <div
-        className="container"
-        style={{
+      className="container"
+      style={
+        {
           //   display: 'flex',
           //   justifyContent: 'center',
-        }}
-      >
-        <div style={headerStyle}>채널목록</div>
-        <div style={channelList}>
-          {/* <ChannelBox id={1} code="code1" name="채널1" curPlayers={10} maxPlayers={100} /> */}
-          {channelArray.map((item, idx) => (
-            <ChannelBox
-              id={item.id}
-              code={item.code}
-              name={item.name}
-              curPlayers={item.curPlayers}
-              maxPlayers={item.maxPlayers}
-            />
-          ))}
-        </div>
+        }
+      }
+    >
+      <div style={headerStyle}>채널목록</div>
+      <div style={channelList}>
+        {/* <ChannelBox id={1} code="code1" name="채널1" curPlayers={10} maxPlayers={100} /> */}
+        {channelArray.map((item, idx) => (
+          <ChannelBox
+            id={item.id}
+            code={item.code}
+            name={item.name}
+            curPlayers={item.curPlayers}
+            maxPlayers={item.maxPlayers}
+          />
+        ))}
       </div>
+    </div>
   );
 };
 

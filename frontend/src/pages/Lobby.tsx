@@ -17,6 +17,7 @@ import CurrentUserList from '../components/lobby/CurrentUserList';
 import { useWebSocketStore } from '../stores/socketStore';
 import useUserStore from '../stores/userStore';
 import { IMessage } from '@stomp/stompjs';
+import { UserChannelApi } from '../hooks/axios-user-channel';
 const Lobby = () => {
   const { channelUuid } = useParams();
   const { user } = useUserStore();
@@ -29,8 +30,10 @@ const Lobby = () => {
   const channelId = location.state?.channelId;
   const [roomList, setRoomList] = useState<RoomProps[]>([]);
   const [testRoomIdx, setTestRoomIdx] = useState<number>(1);
-  const handleState = (data: RoomProps[]) => {
-    setRoomList(data);
+  const [currentUserList, setCurrentUserList] = useState<CurrentUser[]>([]);
+  const handleState = (data1: RoomProps[], data2: CurrentUser[]) => {
+    setRoomList(data1);
+    setCurrentUserList(data2);
   };
 
   useEffect(() => {
@@ -43,6 +46,16 @@ const Lobby = () => {
         console.log(error);
       });
     console.log(channelId);
+  }, []);
+  useEffect(() => {
+    // 현재 채널 접속 인원정보 가져오기
+    const response = UserChannelApi.getChannelUserList(channelId)
+      .then((response) => {
+        setCurrentUserList(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
   useEffect(() => {
     // 게임 로드하면 구독하기
@@ -96,7 +109,7 @@ const Lobby = () => {
           <p className="text-center w-full text-nowrap">{channelId}채널</p>
         </label>
         <div className="col-span-6 flex items-center pl-2">
-          <Header channelId={channelId} handleState={handleState} />
+          <Header channelId={channelId} channelUuid={channelUuid} handleState={handleState} />
           <button
             className="btn"
             onClick={() => {
@@ -136,7 +149,7 @@ const Lobby = () => {
           <div className="w-full h-5 bg-mint text-white font-bold text-sm flex items-center mb-2.5">
             <p className="w-full h-full flex items-center">접속 인원</p>
           </div>
-          <CurrentUserList />
+          <CurrentUserList {...currentUserList} />
         </div>
         {/* 방 리스트 */}
         <div className="col-span-6 flex items-center px-1">
@@ -187,15 +200,21 @@ const Lobby = () => {
               onClick={chatFocus}
             ></input>
             <div
-              className="w-16 bg-mint cursor-pointer absolute h-full right-0 rounded-r-full flex justify-center items-center hover:brightness-125 transition"
-              ref={chatBtn}
-              onClick={() => {
-                if (chatInput.current.value !== '') {
-                  publishChat();
-                }
-              }}
+              className={`flex items-center w-full h-36 bottom-0 mb-2 transition-all origin-bottom duration-300`}
             >
-              <IoSend className="text-white w-6 h-6" />
+              <div className="absolute w-full h-[90%] px-3 py-2 text-sm chat z-10">
+                <div className="z-10 text-gray-700" ref={chattingBox}>
+                  {chat.map((chatItem, index) => (
+                    <div className="flex" key={index}>
+                      <p className="font-extrabold pr-1 text-nowrap text-black">
+                        {chatItem.nickname}
+                      </p>
+                      <p>{chatItem.content}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="absolute w-full h-full border-custom-white opacity-90 bg-white z-0"></div>
             </div>
           </div>
         </div>
