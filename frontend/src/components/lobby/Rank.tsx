@@ -29,7 +29,7 @@ const Rank = () => {
     // 랭킹 리스트 가져오기
     const response = RankApi.getRankingList()
       .then((response) => {
-        console.log('모달창 데이터 정ㅂ보');
+        console.log('모달창 데이터 정보');
 
         console.log(response.data);
 

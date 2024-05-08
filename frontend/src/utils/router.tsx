@@ -33,11 +33,6 @@ const RouterInfo = [
         element: <Lobby />,
         label: 'lobby',
       },
-      {
-        path: '/ranking',
-        element: <Ranking />,
-        label: 'ranking',
-      },
     ],
   },
   {
