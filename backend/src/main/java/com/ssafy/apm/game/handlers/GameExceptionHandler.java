@@ -3,6 +3,8 @@ package com.ssafy.apm.game.handlers;
 import com.ssafy.apm.channel.exception.ChannelNotFoundException;
 import com.ssafy.apm.channel.exception.ChannelValidationException;
 import com.ssafy.apm.common.domain.ResponseData;
+import com.ssafy.apm.game.exception.GameAlreadyStartedException;
+import com.ssafy.apm.game.exception.GameFullException;
 import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.game.exception.GameValidationException;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,18 @@ public class GameExceptionHandler {
     @ExceptionHandler(GameValidationException.class)
     public ResponseEntity<?> handleCustomValidationException(GameValidationException e) {
         log.error("GameValidationException: " + e.getMessage());
+        return new ResponseEntity<>(ResponseData.failure(e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(GameAlreadyStartedException.class)
+    public ResponseEntity<?> handleCustomValidationException(GameAlreadyStartedException e) {
+        log.error("GameAlreadyStartedException: " + e.getMessage());
+        return new ResponseEntity<>(ResponseData.failure(e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(GameFullException.class)
+    public ResponseEntity<?> handleCustomValidationException(GameFullException e) {
+        log.error("GameFullException: " + e.getMessage());
         return new ResponseEntity<>(ResponseData.failure(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 

@@ -16,13 +16,15 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class GameChatResponseDto {
 
+    private Long userId;
     private String uuid;
     private String nickname;
     private String content;
     private String createdDate;
 
-    public static GameChatResponseDto buildFromEntity(Chat chat) {
+    public static GameChatResponseDto buildFromEntity(Chat chat, Long userId) {
         return GameChatResponseDto.builder()
+                .userId(userId)
                 .uuid(chat.getUuid())
                 .nickname(chat.getNickname())
                 .content(chat.getContent())
@@ -32,6 +34,7 @@ public class GameChatResponseDto {
 
     public static GameChatResponseDto buildFromRequest(GameChatRequestDto chat) {
         return GameChatResponseDto.builder()
+                .userId(chat.getUserId())
                 .uuid(chat.getUuid())
                 .nickname(chat.getNickname())
                 .content(chat.getContent())

@@ -120,14 +120,6 @@ public class GameUserController {
 //        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
 //    }
 
-    /* FIXME: 입장 요청을 GameController 에서 처리하고,
-    *   입장 조건을 GameService 에서 판단하고, GameService 에서 createGameUser() 를 호출하는 것이 나아보임. */
-//    // 게임 입장할 때 GameUserEntity 생성
-//    @PostMapping("/enterGame/{gameId}")
-//    public ResponseEntity<ResponseData<?>> postEnterGame(@PathVariable(name = "gameId") Long gameId) {
-//        GameUserSimpleResponseDto response = gameUserService.postEnterGame(gameId);
-//        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
-//    }
 
     /* FIXME: GameController 로 이동하는 것이 나아보임 */
 //    @PostMapping("/fastEnter")
@@ -136,16 +128,5 @@ public class GameUserController {
 //        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
 //    }
 
-    /* FIXME: GameController 로 이동하는 것이 나아보임 */
-    /* FIXME 1: 퇴장 조건을 GameService 에서 판단하고,
-    *   GameService 에서 deleteGameUser() 를 호출하는 것이 나아보임 */
-    /* FIXME 2: 혹은 단순 deleteGameUser API 호출을 통해 처리하고,
-    *   WebSocket 통신이 끊어지는 경우에도, deleteGameUser()를 호출하는 것이 나아보임*/
-//    // 게임 퇴장할 때 GameUserEntity 삭제
-//    @DeleteMapping("/exitGame/{gameId}")
-//    public ResponseEntity<ResponseData<?>> deleteExitGame(@PathVariable(name = "gameId") Long gameId) {
-////        삭제된 gameUserId 리턴
-//        Long response = gameUserService.deleteExitGame(gameId);
-//        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
-//    }
+
 }
