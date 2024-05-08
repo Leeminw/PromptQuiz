@@ -70,18 +70,20 @@ const Room = ({
   };
   return (
     <div
-      className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 border-mint rounded-3xl "
+      className="w-full h-20 relative gap-1 border-2 bg-white border-mint rounded-3xl px-5 py-2 cursor-pointer hover:scale-105 transition"
       onClick={enterRoom}
     >
-      <div>
-        {title}
-        {password ? <IoIosLock /> : ''}
+      <div className="flex items-start">
+        <p className="w-full h-10 font-extrabold line-clamp-2 leading-5 pt-1">
+          {title}
+        </p>
+        {password ? <IoIosLock className="text-gray-500 min-w-6 min-h-6" /> : ''}
       </div>
-      <div className="flex-col items-center">
-        <span>
-          {findRoomType(type)} | {isTeam ? '팀전' : '개인전'}
+      <div className="flex items-end font-bold text-mint">
+        <span className="w-full text-nowrap text-xs flex gap-1.5">
+          <p>{findRoomType(type)}</p> <p>|</p> <p>{isTeam ? '팀전' : '개인전'}</p>
         </span>
-        <span>
+        <span className="text-nowrap text-sm font-extrabold">
           {curPlayers} / {maxPlayers}
         </span>
       </div>

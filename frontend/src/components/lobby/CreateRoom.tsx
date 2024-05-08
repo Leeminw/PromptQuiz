@@ -110,142 +110,162 @@ const CreateRoom = ({ channelId }: Props) => {
   };
   return (
     // className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 "
-    <div className='w-fit h-full'>
+    <div className="w-fit h-full">
       <button
         className="w-full h-full btn-mint flex justify-center items-center gap-2 px-1 hover:brightness-110"
         onClick={() => (document.getElementById('my_modal_1') as HTMLDialogElement).showModal()}
       >
-        <MdAddHome className='min-w-5 min-h-5 ' /><p className='text-nowrap'>방 만들기</p>
+        <MdAddHome className="min-w-5 min-h-5 " />
+        <p className="text-nowrap">방 만들기</p>
       </button>
       <dialog id="my_modal_1" className="modal">
         <div className="modal-box">
-          <h3 className="font-bold text-lg">방 만들기</h3>
+          <h3 className="font-bold text-2xl ">방 만들기</h3>
           {/* <p className="py-4">내용</p> */}
 
-          <div>
-            <div>방 이름</div>
-
-            <input
-              type="text"
-              className="border"
-              placeholder="roomName"
-              value={title}
-              onChange={titleHandler}
-            />
-            <div>공개여부</div>
-            <input
-              type="radio"
-              value={0}
-              id="open"
-              onChange={privacyHandler}
-              checked={privacyStatus == 0}
-            />
-            <label htmlFor="open">공개</label>
-            <input
-              type="radio"
-              value={1}
-              id="close"
-              onChange={privacyHandler}
-              checked={privacyStatus == 1}
-            />
-            <label htmlFor="close">비공개</label>
-            {privacyStatus == 1 ? (
+          <div className="pt-4 flex flex-col gap-3">
+            <div>
+              <div className="label pb-1">
+                <span className="font-bold">방 이름</span>
+              </div>
               <input
-                type="password"
-                placeholder="비밀번호폼"
-                onChange={passwordHandler}
-                value={password}
+                type="text"
+                className="input input-bordered input-sm w-full"
+                placeholder='최대 20자'
+                value={title}
+                onChange={titleHandler}
               />
-            ) : (
-              ''
-            )}
-            <div>게임 종류</div>
-            <input
-              type="radio"
-              value={0}
-              id="individual"
-              onChange={isTeamHandler}
-              checked={!isTeam}
-            />
-            <label htmlFor="individual">개인전</label>
-            <input type="radio" value={1} id="team" onChange={isTeamHandler} checked={isTeam} />
-            <label htmlFor="team">팀전</label>
+            </div>
+            <div>
+              <div>공개여부</div>
+              <input
+                type="radio"
+                value={0}
+                id="open"
+                onChange={privacyHandler}
+                checked={privacyStatus == 0}
+              />
+              <label htmlFor="open">공개</label>
+              <input
+                type="radio"
+                value={1}
+                id="close"
+                onChange={privacyHandler}
+                checked={privacyStatus == 1}
+              />
+              <label htmlFor="close">비공개</label>
+              {privacyStatus == 1 && (
+                <input
+                  type="password"
+                  placeholder="비밀번호폼"
+                  onChange={passwordHandler}
+                  value={password}
+                />
+              )}
+            </div>
+            <div>
+              <div>게임 종류</div>
+              <input
+                type="radio"
+                value={0}
+                id="individual"
+                onChange={isTeamHandler}
+                checked={!isTeam}
+              />
+              <label htmlFor="individual">개인전</label>
+              <input type="radio" value={1} id="team" onChange={isTeamHandler} checked={isTeam} />
+              <label htmlFor="team">팀전</label>
 
-            <hr />
-            <input type="radio" value={0} id="choice" onChange={typeHandler} checked={type === 0} />
-            <label htmlFor="choice">객관식</label>
-            <input
-              type="radio"
-              value={1}
-              id="subjective"
-              onChange={typeHandler}
-              checked={type === 1}
-            />
-            <label htmlFor="subjective">주관식</label>
-            <input
-              type="radio"
-              value={2}
-              id="sequence"
-              onChange={typeHandler}
-              checked={type === 2}
-            />
-            <label htmlFor="sequence">순서</label>
-            <div>그림체</div>
-            <input
-              type="radio"
-              value={0}
-              id="real"
-              onChange={styleHandler}
-              checked={styleIndex === 0}
-            />
-            <label htmlFor="real">실사체</label>
-            <input
-              type="radio"
-              value={1}
-              id="comic"
-              onChange={styleHandler}
-              checked={styleIndex === 1}
-            />
-            <label htmlFor="comic">만화체</label>
-            <input
-              type="radio"
-              value={2}
-              id="disney"
-              onChange={styleHandler}
-              checked={styleIndex === 2}
-            />
-            <label htmlFor="disney">디즈니체</label>
-            <input
-              type="radio"
-              value={3}
-              id="random"
-              onChange={styleHandler}
-              checked={styleIndex === 3}
-            />
-            <label htmlFor="random">랜덤</label>
-            <div>인원수</div>
-            <input
-              type="number"
-              min={1}
-              max={12}
-              placeholder="인원수입력하세요"
-              onChange={maxPlayersHandler}
-            />
-            <div>라운드수</div>
-            <input
-              type="number"
-              min={1}
-              max={100}
-              placeholder="라운드수입력하세요"
-              onChange={maxRoundHandler}
-            />
-            <button onClick={createRoom}>생성</button>
-            <button>취소</button>
+              <hr />
+              <input
+                type="radio"
+                value={0}
+                id="choice"
+                onChange={typeHandler}
+                checked={type === 0}
+              />
+              <label htmlFor="choice">객관식</label>
+              <input
+                type="radio"
+                value={1}
+                id="subjective"
+                onChange={typeHandler}
+                checked={type === 1}
+              />
+              <label htmlFor="subjective">주관식</label>
+              <input
+                type="radio"
+                value={2}
+                id="sequence"
+                onChange={typeHandler}
+                checked={type === 2}
+              />
+              <label htmlFor="sequence">순서</label>
+            </div>
+            <div>
+              <div>그림체</div>
+              <input
+                type="radio"
+                value={0}
+                id="real"
+                onChange={styleHandler}
+                checked={styleIndex === 0}
+              />
+              <label htmlFor="real">실사체</label>
+              <input
+                type="radio"
+                value={1}
+                id="comic"
+                onChange={styleHandler}
+                checked={styleIndex === 1}
+              />
+              <label htmlFor="comic">만화체</label>
+              <input
+                type="radio"
+                value={2}
+                id="disney"
+                onChange={styleHandler}
+                checked={styleIndex === 2}
+              />
+              <label htmlFor="disney">디즈니체</label>
+              <input
+                type="radio"
+                value={3}
+                id="random"
+                onChange={styleHandler}
+                checked={styleIndex === 3}
+              />
+              <label htmlFor="random">랜덤</label>
+            </div>
+            <div>
+              <div>인원수</div>
+              <input
+                type="number"
+                min={1}
+                max={12}
+                placeholder="인원수입력하세요"
+                onChange={maxPlayersHandler}
+              />
+            </div>
+            <div>
+              <div>라운드수</div>
+              <input
+                type="number"
+                min={1}
+                max={100}
+                placeholder="라운드수입력하세요"
+                onChange={maxRoundHandler}
+              />
+            </div>
+            <div>
+              <button onClick={createRoom}>생성</button>
+              <button>취소</button>
+            </div>
           </div>
 
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+              <button className="btn btn-sm btn-circle btn-ghost absolute right-4 top-5 text-lg">✕</button>
             </form>
           </div>
         </div>
