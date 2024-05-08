@@ -5,7 +5,7 @@ import { UserChannelApi } from '../../hooks/axios-user-channel';
 import { error } from 'console';
 
 interface Props {
-  id: number;
+  id: string;
   code: string;
   name: string;
   curPlayers: number;
@@ -25,7 +25,7 @@ const ChannelBox = ({ id, code, name, curPlayers, maxPlayers }: Props) => {
       });
     setTimeout(() => {
       // navigate(`/lobby/${code}`);
-      navigate(`/lobby/${code}`, { state: { channelId: id } });
+      navigate(`/lobby/${code}`, { state: { channelCode: id } });
     }, 1000);
   };
   return (

@@ -17,7 +17,6 @@ const RoomList = (roomList: RoomProps[]) => {
   const updateRoomList = () => {};
   // 이전 페이지로 이동(왼쪽 버튼)
   const getPrevPage = () => {
-    alert('이전페이지로!!');
     if (curPageNum === 1) return;
     // 이제 앞에 6개 리스트 내용을 보여준다.
     setCurPageNum(curPageNum - 1);
@@ -25,8 +24,6 @@ const RoomList = (roomList: RoomProps[]) => {
   };
   // 다음 페이지로 이동(오른쪽 버튼)
   const getNextPage = () => {
-    alert('다음페이지로!!');
-
     if (curPageNum === totalPageNum) return;
     setCurPageNum(curPageNum + 1);
     if (curPageNum < totalPageNum)
@@ -54,38 +51,63 @@ const RoomList = (roomList: RoomProps[]) => {
     return <div>게임방이 없습니다.</div>;
   }
   return (
-    <div className="w-full h-full bg-white-300 gap-1 border-2 border-mint rounded-3xl ">
-      <div className="flex ">
-          {roomArray.map((item, index) => (
-            // <p key={index}>{item.channelId}</p>
-            <Room
-              id={item.id}
-              channelId={item.channelId}
-              type={item.type}
-              style={item.style}
-              code={item.code}
-              title={item.title}
-              password={item.password}
-              status={item.status}
-              isTeam={item.isTeam}
-              curRound={item.curRound}
-              rounds={item.rounds}
-              curPlayers={item.curPlayers}
-              maxPlayers={item.maxPlayers}
-            />
+    <div className="w-full h-full gap-1 relative">
+      <div className="grid grid-cols-2 grid-rows-3 gap-y-2 gap-x-3 pt-4 px-4">
+        {roomArray.map(
+          (item, index) =>
+            index >= (curPageNum - 1) * 6 &&
+            index < curPageNum * 6 && (
+              <Room
+                key={index}
+                id={item.id}
+                channelCode={item.channelCode}
+                type={item.type}
+                style={item.style}
+                code={item.code}
+                title={item.title}
+                password={item.password}
+                status={item.status}
+                isTeam={item.isTeam}
+                curRound={item.curRound}
+                rounds={item.rounds}
+                curPlayers={item.curPlayers}
+                maxPlayers={item.maxPlayers}
+              />
+            )
+        )}
+        {curPageNum * 6 > roomArray.length &&
+          Array.from({ length: curPageNum * 6 - roomArray.length }).map((_, index) => (
+            <div
+              className="w-full h-20 relative gap-1 border bg-gray-100 border-gray-400 rounded-3xl px-5 py-2 cursor-default"
+              key={index}
+            ></div>
           ))}
-        </div>
-        <div>
+      </div>
+      <div className="w-full h-full bg-white absolute top-0 -z-10 border-custom-white opacity-80"></div>
+      <div className="w-full h-14 flex justify-center items-center gap-4 pt-4">
+        {curPageNum == 1 ? (
+          <button className="cursor-default">
+            <FaPlay className="rotate-180 text-gray-400 w-7 h-7" />
+          </button>
+        ) : (
           <button onClick={getPrevPage}>
-            <FaPlay className="rotate-180" />
+            <FaPlay className="rotate-180 text-mint w-7 h-7 hover:text-lightmint transition" />
           </button>
-          <span style={{ color: 'red', fontSize: '30px' }}>
-            {curPageNum}/{totalPageNum}
-          </span>
+        )}
+
+        <span className="font-extrabold text-lg cursor-default">
+          {curPageNum} / {totalPageNum}
+        </span>
+        {curPageNum == totalPageNum ? (
+          <button className="cursor-default">
+            <FaPlay className="text-gray-400 w-7 h-7" />
+          </button>
+        ) : (
           <button onClick={getNextPage}>
-            <FaPlay />
+            <FaPlay className="text-mint w-7 h-7 hover:text-lightmint transition" />
           </button>
-        </div>
+        )}
+      </div>
     </div>
   );
 };
