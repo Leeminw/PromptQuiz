@@ -31,6 +31,7 @@ const CurrentUserList = (currentUserList: Props[]) => {
     <div className="w-full h-[18.5rem] flex flex-col gap-3 overflow-y-scroll userList border-custom-white bg-white py-1 pr-2 pl-1">
       {currentUserArray.map((item, index) => (
         <CurrentUser
+          key={index}
           userId={item.userId}
           userName={item.userName}
           nickName={item.nickName}

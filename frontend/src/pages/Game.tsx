@@ -292,7 +292,6 @@ const GamePage = () => {
         </label>
         {/* 제목 */}
         <label className="flex items-center justify-center col-span-3 w-full border-custom-mint bg-white text-sm">
-          <div className="border-r border-gray-200 pl-3 pr-2.5">{roomId}</div>
           <p className="text-center w-full text-nowrap line-clamp-1">{game?.title}</p>
         </label>
         {/* 버튼 */}

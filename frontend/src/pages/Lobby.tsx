@@ -27,7 +27,7 @@ const Lobby = () => {
   const chatInput = useRef(null);
   const chattingBox = useRef(null);
   const location = useLocation();
-  const channelId = location.state?.channelId;
+  const channelCode = location.state?.channelCode;
   const [roomList, setRoomList] = useState<RoomProps[]>([]);
   const [testRoomIdx, setTestRoomIdx] = useState<number>(1);
   const [currentUserList, setCurrentUserList] = useState<CurrentUser[]>([]);
@@ -38,18 +38,18 @@ const Lobby = () => {
 
   useEffect(() => {
     // 방정보 가져오기
-    const response = LobbyApi.getGameList(channelId)
+    const response = LobbyApi.getGameList(channelCode)
       .then((response) => {
         setRoomList(response.data);
       })
       .catch((error) => {
         console.log(error);
       });
-    console.log(channelId);
+    console.log(channelCode);
   }, []);
   useEffect(() => {
     // 현재 채널 접속 인원정보 가져오기
-    const response = UserChannelApi.getChannelUserList(channelId)
+    const response = UserChannelApi.getChannelUserList(channelCode)
       .then((response) => {
         setCurrentUserList(response.data);
       })
@@ -106,10 +106,10 @@ const Lobby = () => {
     <div className="w-[60rem] h-[40rem] min-w-[40rem] min-h-[40rem] flex flex-col bg-white/60 px-8 py-6 rounded-3xl drop-shadow-lg z-10">
       <div className="grid grid-cols-8 gap-3 h-10 items-center">
         <label className="col-span-2 flex items-center border-custom-mint bg-white text-sm h-8">
-          <p className="text-center w-full text-nowrap">{channelId}채널</p>
+          <p className="text-center w-full text-nowrap">{channelCode}채널</p>
         </label>
         <div className="col-span-6 flex items-center pl-2">
-          <Header channelId={channelId} channelUuid={channelUuid} handleState={handleState} />
+          <Header channelCode={channelCode} channelUuid={channelUuid} handleState={handleState} />
           <button
             className="btn"
             onClick={() => {
@@ -121,7 +121,7 @@ const Lobby = () => {
                   ...prev,
                   {
                     id: 213123,
-                    channelId: 123123,
+                    channelCode: "123123",
                     type: 123,
                     style: 2,
                     code: '1234',
@@ -147,7 +147,7 @@ const Lobby = () => {
         {/* 접속 인원 */}
         <div className="w-full h-full flex flex-col col-span-2 border-custom-mint bg-mint">
           <div className="w-full h-5 bg-mint text-white font-bold text-sm flex items-center mb-2.5">
-            <p className="w-full h-full flex items-center">접속 인원</p>
+            <p className="w-full h-full flex items-center pl-1.5">접속 인원</p>
           </div>
           <CurrentUserList {...currentUserList} />
         </div>
@@ -200,21 +200,15 @@ const Lobby = () => {
               onClick={chatFocus}
             ></input>
             <div
-              className={`flex items-center w-full h-36 bottom-0 mb-2 transition-all origin-bottom duration-300`}
+              className="w-16 bg-mint cursor-pointer absolute h-full right-0 rounded-r-full flex justify-center items-center hover:brightness-125 transition"
+              ref={chatBtn}
+              onClick={() => {
+                if (chatInput.current.value !== '') {
+                  publishChat();
+                }
+              }}
             >
-              <div className="absolute w-full h-[90%] px-3 py-2 text-sm chat z-10">
-                <div className="z-10 text-gray-700" ref={chattingBox}>
-                  {chat.map((chatItem, index) => (
-                    <div className="flex" key={index}>
-                      <p className="font-extrabold pr-1 text-nowrap text-black">
-                        {chatItem.nickname}
-                      </p>
-                      <p>{chatItem.content}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="absolute w-full h-full border-custom-white opacity-90 bg-white z-0"></div>
+              <IoSend className="text-white w-6 h-6" />
             </div>
           </div>
         </div>

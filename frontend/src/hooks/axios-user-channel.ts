@@ -5,9 +5,9 @@ const BASE_URL = process.env.REACT_APP_SERVER;
 
 const UserChannelApi = {
   // 채널 입장
-  enterChannel: async (channelId: number) => {
+  enterChannel: async (channelCode: string) => {
     try {
-      const response = await instance.post(BASE_URL + `/user-channel/${channelId}`);
+      const response = await instance.post(BASE_URL + `/user-channel/${channelCode}`);
       return response.data;
     } catch (error) {
       console.error(error);
@@ -25,9 +25,9 @@ const UserChannelApi = {
     }
   },
   // 채널 유저 리스트 반환
-  getChannelUserList: async (channelId: number) => {
+  getChannelUserList: async (channelCode: string) => {
     try {
-      const response = await instance.get(BASE_URL + `/user-channel/userChannelList/${channelId}`);
+      const response = await instance.get(BASE_URL + `/user-channel/userChannelList/${channelCode}`);
       return response.data;
     } catch (error) {
       console.error(error);

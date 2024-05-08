@@ -6,10 +6,10 @@ import instance from '../../hooks/axios-instance';
 import { useNavigate } from 'react-router-dom';
 import useUserStore from '../../stores/userStore';
 interface Props {
-  channelId: number;
+  channelCode: string;
 }
 
-const CreateRoom = ({ channelId }: Props) => {
+const CreateRoom = ({ channelCode }: Props) => {
   const [privacyStatus, setPrivacyStatus] = useState(0);
   const [isTeam, setIsTeam] = useState(false);
   const [type, setType] = useState(0);
@@ -73,7 +73,7 @@ const CreateRoom = ({ channelId }: Props) => {
 
     const Room: Room = {
       userId: user.userId,
-      channelId,
+      channelCode,
       type,
       style,
       title,
@@ -87,7 +87,7 @@ const CreateRoom = ({ channelId }: Props) => {
     };
     console.log('방 생성 정보 받음');
     console.log('사용자id:' + user.userId);
-    console.log('채널id:' + channelId);
+    console.log('채널id:' + channelCode);
     console.log('방유형:' + type);
     console.log('그림체:' + style);
     console.log('방제목:' + title);
@@ -103,9 +103,9 @@ const CreateRoom = ({ channelId }: Props) => {
     console.log(Room);
 
     const { data } = await LobbyApi.createRoom(Room);
-
+    console.log(data);
     setTimeout(() => {
-      navigate(`/game/${data.id}`);
+      navigate(`/game/${data.code}`);
     }, 1000);
   };
   return (
@@ -124,20 +124,18 @@ const CreateRoom = ({ channelId }: Props) => {
           {/* <p className="py-4">내용</p> */}
 
           <div className="pt-4 flex flex-col gap-3">
-            <div>
-              <div className="label pb-1">
-                <span className="font-bold">방 이름</span>
-              </div>
+            <div className="flex items-center gap-3">
+              <span className="font-bold text-nowrap">방 이름</span>
               <input
                 type="text"
                 className="input input-bordered input-sm w-full"
-                placeholder='최대 20자'
+                placeholder="최대 20자"
                 value={title}
                 onChange={titleHandler}
               />
             </div>
-            <div>
-              <div>공개여부</div>
+            <div className="flex items-center gap-3">
+              <span className="font-bold">공개여부</span>
               <input
                 type="radio"
                 value={0}
@@ -265,7 +263,9 @@ const CreateRoom = ({ channelId }: Props) => {
 
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn btn-sm btn-circle btn-ghost absolute right-4 top-5 text-lg">✕</button>
+              <button className="btn btn-sm btn-circle btn-ghost absolute right-4 top-5 text-lg">
+                ✕
+              </button>
             </form>
           </div>
         </div>

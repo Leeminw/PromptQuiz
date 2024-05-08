@@ -16,7 +16,7 @@ interface UserInfo {
   created_date: string;
 }
 
-const RankingBox = ({ key, userInfo }: Props) => {
+const RankingBox = ({ userInfo }: Props) => {
   return (
     <div className="w-2/3 h-[300px] bg-white-300 gap-1 border-2 border-mint rounded-3xl ">
       <div>사용자아이디 : {userInfo.userId}</div>

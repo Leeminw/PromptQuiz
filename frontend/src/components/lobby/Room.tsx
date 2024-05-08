@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 interface Props {
   id: number;
-  channelId: number;
+  channelCode: string;
   type: number;
   style: number;
   code: string;
@@ -19,7 +19,7 @@ interface Props {
 }
 const Room = ({
   id,
-  channelId,
+  channelCode,
   type,
   style,
   code,
@@ -64,19 +64,17 @@ const Room = ({
       return;
     } else {
       setTimeout(() => {
-        navigate(`/game/${id}`);
+        navigate(`/game/${code}`);
       }, 1000);
     }
   };
   return (
     <div
-      className="w-full h-20 relative gap-1 border-2 bg-white border-mint rounded-3xl px-5 py-2 cursor-pointer hover:scale-105 transition"
+      className="w-full h-20 relative gap-1 border-2 bg-white border-mint rounded-3xl px-5 py-2 cursor-pointer hover:scale-105 transition ring-mint hover:ring-2"
       onClick={enterRoom}
     >
       <div className="flex items-start">
-        <p className="w-full h-10 font-extrabold line-clamp-2 leading-5 pt-1">
-          {title}
-        </p>
+        <p className="w-full h-10 font-extrabold line-clamp-2 leading-5 pt-1">{title}</p>
         {password ? <IoIosLock className="text-gray-500 min-w-6 min-h-6" /> : ''}
       </div>
       <div className="flex items-end font-bold text-mint">

@@ -5,9 +5,9 @@ const BASE_URL = process.env.REACT_APP_SERVER;
 
 const LobbyApi = {
   // 게임방 목록 조회
-  getGameList: async (channelId: number) => {
+  getGameList: async (channelCode: string) => {
     try {
-      const response = await instance.get(BASE_URL + `/game/gameList/${channelId}`);
+      const response = await instance.get(BASE_URL + `/game/gameList/${channelCode}`);
       return response.data;
     } catch (error) {
       console.error(error);
@@ -15,10 +15,10 @@ const LobbyApi = {
     }
   },
   // 현재 채널 접속 인원 조회
-  getUserList: async (channelId: number) => {
+  getUserList: async (channelCode: string) => {
     try {
       const response = await instance.get(
-        BASE_URL + `/user-channel/getUserChannelList/${channelId}`
+        BASE_URL + `/user-channel/getUserChannelList/${channelCode}`
       );
       return response.data;
     } catch (error) {

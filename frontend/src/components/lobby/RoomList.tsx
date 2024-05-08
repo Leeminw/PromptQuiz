@@ -52,7 +52,7 @@ const RoomList = (roomList: RoomProps[]) => {
   }
   return (
     <div className="w-full h-full gap-1 relative">
-      <div className="grid grid-cols-2 grid-rows-3 gap-2 pt-4 px-4">
+      <div className="grid grid-cols-2 grid-rows-3 gap-y-2 gap-x-3 pt-4 px-4">
         {roomArray.map(
           (item, index) =>
             index >= (curPageNum - 1) * 6 &&
@@ -60,7 +60,7 @@ const RoomList = (roomList: RoomProps[]) => {
               <Room
                 key={index}
                 id={item.id}
-                channelId={item.channelId}
+                channelCode={item.channelCode}
                 type={item.type}
                 style={item.style}
                 code={item.code}
@@ -75,11 +75,18 @@ const RoomList = (roomList: RoomProps[]) => {
               />
             )
         )}
+        {curPageNum * 6 > roomArray.length &&
+          Array.from({ length: curPageNum * 6 - roomArray.length }).map((_, index) => (
+            <div
+              className="w-full h-20 relative gap-1 border bg-gray-100 border-gray-400 rounded-3xl px-5 py-2 cursor-default"
+              key={index}
+            ></div>
+          ))}
       </div>
       <div className="w-full h-full bg-white absolute top-0 -z-10 border-custom-white opacity-80"></div>
       <div className="w-full h-14 flex justify-center items-center gap-4 pt-4">
         {curPageNum == 1 ? (
-          <button className='cursor-default'>
+          <button className="cursor-default">
             <FaPlay className="rotate-180 text-gray-400 w-7 h-7" />
           </button>
         ) : (
@@ -92,7 +99,7 @@ const RoomList = (roomList: RoomProps[]) => {
           {curPageNum} / {totalPageNum}
         </span>
         {curPageNum == totalPageNum ? (
-          <button className='cursor-default'>
+          <button className="cursor-default">
             <FaPlay className="text-gray-400 w-7 h-7" />
           </button>
         ) : (
