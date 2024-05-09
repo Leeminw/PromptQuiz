@@ -47,11 +47,6 @@ const Header = ({ channelCode, channelUuid, handleState }: Props) => {
     }, 1000);
   };
 
-  const enterRankingPage = () => {
-    setTimeout(() => {
-      navigate(`/ranking`, { state: { channelUuid: channelUuid } });
-    }, 1000);
-  };
   return (
     <nav className="w-full h-[2rem] flex gap-4">
       <CreateRoom channelCode={channelCode} />
