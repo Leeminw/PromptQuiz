@@ -24,12 +24,15 @@ const Header = ({ channelUuid, handleState }: HeaderProps) => {
   };
   const refresh = async () => {
     alert('새로고침 버튼 누름');
-    const { roomData } = await LobbyApi.getGameList(channelUuid);
-    const { currentUserData } = await UserChannelApi.channelUserList(channelUuid);
-    console.log('이거는 패치할 데이터 정보임');
-    console.log(roomData);
-    console.log(currentUserData);
-    handleState(roomData, currentUserData);
+
+    // const { roomData } = await LobbyApi.getGameList(channelUuid);
+    // const { currentUserData } = await UserChannelApi.channelUserList(channelUuid);
+    // console.log('이거는 패치할 데이터 정보임');
+    // console.log(roomData);
+    // console.log(currentUserData);
+    // handleState(roomData, currentUserData);
+    // 상태관리 문제를 대체한 임시방편
+    window.location.reload();
   };
   const exitChannel = () => {
     const response = UserChannelApi.exitChannel(user.userId, channelUuid)
