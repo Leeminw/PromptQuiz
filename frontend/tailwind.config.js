@@ -8,6 +8,7 @@ module.exports = {
         mint: '#359DB0',
         lightmint: '#8ecfdb',
         extralightmint: '#d5e7eb',
+        darkmint: '#166d7d',
         customRed: '#e37070',
         customGreen: '#6bc164',
         customBlue: '#4d9be3',

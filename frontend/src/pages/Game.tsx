@@ -410,7 +410,7 @@ const GamePage = () => {
               <div
                 className={`absolute flex items-center w-full h-[9.5rem] bottom-0 mb-2 transition-all origin-bottom duration-300 ${chatOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
               >
-                <div className="absolute w-full h-[90%] px-3 py-2 text-sm chat z-10">
+                <div className="absolute w-full h-[90%] px-3 py-2 text-sm chat custom-scroll z-10">
                   <div className="z-10 text-gray-700" ref={chattingBox}>
                     {chat.map((chatItem, index) => (
                       <div className="flex" key={index}>

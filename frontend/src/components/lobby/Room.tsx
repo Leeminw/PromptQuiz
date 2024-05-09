@@ -61,18 +61,18 @@ const Room = ({ roomInfo }: Props) => {
 
   return (
     <div
-      className="w-full h-20 relative gap-1 border-2 bg-white border-mint rounded-3xl px-5 py-2 cursor-pointer hover:scale-105 transition ring-mint hover:ring-2"
-      onClick={chooseRoom}
+      className="w-full h-20 relative gap-1 border-2 bg-white/50 border-mint rounded-3xl px-5 py-2 cursor-pointer hover:scale-105 hover:bg-white/80 transition ring-mint hover:ring-2"
+      onClick={enterRoom}
     >
       <div className="flex items-start">
-        <p className="w-full h-10 font-extrabold line-clamp-2 leading-5 pt-1">{roomInfo.title}</p>
+        <p className="w-full h-10 font-extrabold line-clamp-2 leading-5 pt-1 text-mint">{roomInfo.title}</p>
         {roomInfo.password ? <IoIosLock className="text-gray-500 min-w-6 min-h-6" /> : ''}
       </div>
-      <div className="flex items-end font-bold text-mint">
+      <div className="flex items-end font-bold text-lightmint">
         <span className="w-full text-nowrap text-xs flex gap-1.5">
           <p>{findRoomType(roomInfo.mode)}</p> <p>|</p> <p>{roomInfo.isTeam ? '팀전' : '개인전'}</p>
         </span>
-        <span className="text-nowrap text-sm font-extrabold">
+        <span className="text-nowrap text-sm font-extrabold text-mint">
           {roomInfo.curPlayers} / {roomInfo.maxPlayers}
         </span>
       </div>
