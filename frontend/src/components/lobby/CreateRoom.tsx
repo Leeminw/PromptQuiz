@@ -12,9 +12,9 @@ interface Props {
 const CreateRoom = ({ channelCode }: Props) => {
   const [privacyStatus, setPrivacyStatus] = useState(0);
   const [isTeam, setIsTeam] = useState(false);
-  const [type, setType] = useState(0);
+  const [mode, setMode] = useState(0);
   const [maxPlayers, setMaxPlayers] = useState(1);
-  const [rounds, setRounds] = useState(1);
+  const [maxRounds, setMaxRounds] = useState(1);
   /**로그인 상태 정보를 가져오기 전에 임시로 userId 값을 부여 */
   // const [userId, setUserId] = useState(3);
   const { user } = useUserStore();
@@ -36,16 +36,16 @@ const CreateRoom = ({ channelCode }: Props) => {
     console.log(isTeam);
   };
   const typeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setType(Number(event.target.value));
-    console.log(type);
+    setMode(Number(event.target.value));
+    console.log(mode);
   };
   const maxPlayersHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMaxPlayers(Number(event.target.value));
     console.log(maxPlayers);
   };
   const maxRoundHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRounds(Number(event.target.value));
-    console.log(rounds);
+    setMaxRounds(Number(event.target.value));
+    console.log(maxRounds);
   };
   const styleHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStyleIndex(Number(event.target.value));
@@ -71,42 +71,45 @@ const CreateRoom = ({ channelCode }: Props) => {
       return;
     }
 
-    const Room: Room = {
-      userId: user.userId,
-      channelCode,
-      type,
-      style,
-      title,
-      password,
-      status,
-      isTeam,
-      curRound, // 게임 시작전 현재 라운드는 0라운드로 간주
-      rounds,
-      curPlayers, // 초기 플레이어는 방장 1명
-      maxPlayers,
-    };
-    console.log('방 생성 정보 받음');
-    console.log('사용자id:' + user.userId);
-    console.log('채널id:' + channelCode);
-    console.log('방유형:' + type);
-    console.log('그림체:' + style);
-    console.log('방제목:' + title);
-    console.log('비밀번호:' + password);
-    console.log('방상태:' + status);
-    console.log('팀전여부:' + isTeam);
-    console.log('현재라운드:' + curRound);
-    console.log('최대라운드:' + rounds);
-    console.log('현재플레이어:' + curPlayers);
-    console.log('최대플레이어:' + maxPlayers);
+ 
+    // console.log('방 생성 정보 받음');
+    // console.log('사용자id:' + user.userId);
+    // console.log('채널id:' + channelCode);
+    // console.log('방유형:' + type);
+    // console.log('그림체:' + style);
+    // console.log('방제목:' + title);
+    // console.log('비밀번호:' + password);
+    // console.log('방상태:' + status);
+    // console.log('팀전여부:' + isTeam);
+    // console.log('현재라운드:' + curRound);
+    // console.log('최대라운드:' + rounds);
+    // console.log('현재플레이어:' + curPlayers);
+    // console.log('최대플레이어:' + maxPlayers);
 
     console.log('---------');
-    console.log(Room);
 
-    const { data } = await LobbyApi.createRoom(Room);
-    console.log(data);
-    setTimeout(() => {
-      navigate(`/game/${data.code}`);
-    }, 1000);
+    try{
+      const room: CreateRoom = {
+        channelCode,
+        isPrivate: privacyStatus === 1,
+        isTeam,
+        maxPlayers,
+        maxRounds,
+        mode,
+        password,
+        style,
+        timeLimit: 60,
+        title,
+      };
+      const { data } = await LobbyApi.createRoom(room);
+      console.log(data);
+      setTimeout(() => {
+        navigate(`/game/${data.code}`);
+      }, 1000);
+    }
+    catch(error) {
+      console.error(error)
+    }
   };
   return (
     // className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 "
@@ -119,12 +122,12 @@ const CreateRoom = ({ channelCode }: Props) => {
         <p className="text-nowrap lg:flex max-lg:hidden">방 만들기</p>
       </button>
       <dialog id="my_modal_1" className="modal">
-        <div className="modal-box border-2 border-lightmint flex flex-col gap-3 pb-14 bg-white/90 backdrop-blur-lg">
+        <div className="modal-box border-2 border-lightmint flex flex-col gap-3 pb-14 bg-white/90 backdrop-blur-lg min-w-96">
           <h3 className="font-bold text-2xl">방 만들기</h3>
-          <hr className="mb-1" />
-          <div className="flex flex-col gap-3 overflow-y-scroll custom-scroll">
+          <hr className="mb-1 border-extralightmint" />
+          <div className="flex flex-col gap-3 overflow-x-hidden overflow-y-scroll custom-scroll">
             <div className="flex items-center gap-3 mt-1">
-              <span className="font-bold text-nowrap pr-6 text-darkmint">방 이름</span>
+              <span className="font-extrabold text-nowrap pr-6">방 이름</span>
               <input
                 type="text"
                 className="input input-bordered input-sm w-full rounded-full border-2 border-lightmint mr-1 pl-4 bg-white/60"
@@ -136,7 +139,7 @@ const CreateRoom = ({ channelCode }: Props) => {
             </div>
             <div className="flex items-center gap-3">
               <div className="flex gap-2 pr-2 items-center">
-                <span className="font-bold text-nowrap pr-5 text-darkmint">공개여부</span>
+                <span className="font-extrabold text-nowrap pr-5">공개여부</span>
                 <input
                   type="radio"
                   value={0}
@@ -173,7 +176,7 @@ const CreateRoom = ({ channelCode }: Props) => {
                 value={password}
               />
             </div>
-            <span className="font-bold text-nowrap text-darkmint">게임 종류</span>
+            <span className="font-extrabold text-nowrap">게임 종류</span>
             <div className="flex gap-3 flex-col">
               <div className="flex gap-3">
                 <div className="flex gap-2 pr-2 items-center">
@@ -210,7 +213,7 @@ const CreateRoom = ({ channelCode }: Props) => {
                     value={0}
                     id="choice"
                     onChange={typeHandler}
-                    checked={type === 0}
+                    checked={mode === 0}
                     className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                   />
                   <label htmlFor="choice" className="text-nowrap text-sm font-bold">
@@ -223,7 +226,7 @@ const CreateRoom = ({ channelCode }: Props) => {
                     value={1}
                     id="subjective"
                     onChange={typeHandler}
-                    checked={type === 1}
+                    checked={mode === 1}
                     className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                   />
                   <label htmlFor="subjective" className="text-nowrap text-sm font-bold">
@@ -237,7 +240,7 @@ const CreateRoom = ({ channelCode }: Props) => {
                     value={2}
                     id="sequence"
                     onChange={typeHandler}
-                    checked={type === 2}
+                    checked={mode === 2}
                     className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                   />
                   <label htmlFor="sequence" className="text-nowrap text-sm font-bold">
@@ -246,7 +249,7 @@ const CreateRoom = ({ channelCode }: Props) => {
                 </div>
               </div>
             </div>
-            <span className="font-bold text-nowrap mt-2">그림체</span>
+            <span className="font-extrabold text-nowrap mt-2">그림체</span>
             <div className="flex gap-3">
               <div className="flex gap-2 pr-2 items-center">
                 <input
@@ -303,7 +306,7 @@ const CreateRoom = ({ channelCode }: Props) => {
                 </label>
               </div>
             </div>
-            <span className="font-bold text-nowrap mt-2">인원 수</span>
+            <span className="font-extrabold text-nowrap mt-2">인원 수</span>
             <div className="w-full">
               <input
                 type="range"
@@ -327,7 +330,7 @@ const CreateRoom = ({ channelCode }: Props) => {
                 <span>12</span>
               </div>
             </div>
-            <span className="font-bold text-nowrap mt-2">라운드 수</span>
+            <span className="font-extrabold text-nowrap mt-2">라운드 수</span>
             <div className="w-full">
               <input
                 type="range"

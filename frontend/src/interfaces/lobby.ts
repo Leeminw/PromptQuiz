@@ -1,31 +1,46 @@
 interface Room {
-  userId: bigint;
-  channelCode: string;
-  type: number;
-  style: string; // number -> string
-  title: string;
-  password: null | string;
-  status: boolean;
-  isTeam: boolean;
-  curRound: number;
-  rounds: number;
-  curPlayers: number;
-  maxPlayers: number;
+  code: string|null,
+  channelCode: string|null,
+  password: string|null,
+  title: string|null,
+  mode: number|null,
+  style: string|null,
+  isTeam: boolean|null,
+  isPrivate: boolean|null,
+  isStarted: boolean|null,
+  timeLimit: number|null,
+  curRounds: number|null,
+  maxRounds: number|null,
+  curPlayers: number|null,
+  maxPlayers: number|null
+}
+interface CreateRoom {
+  channelCode: string|null,
+  title: string|null,
+  style: string|null,
+  mode: number|null,
+  password: string|null,
+  isTeam: boolean|null,
+  isPrivate: boolean|null,
+  timeLimit: number|null,
+  maxRounds: number|null,
+  maxPlayers: number|null
 }
 interface RoomProps {
-  id: number;
-  channelCode: string;
-  type: number;
-  style: number;
-  code: string;
-  title: string;
-  password: string;
-  status: boolean;
-  isTeam: boolean;
-  curRound: number;
-  rounds: number;
-  curPlayers: number;
-  maxPlayers: number;
+  code: string|null;
+  channelCode: string|null;
+  password: string|null;
+  title: string|null;
+  mode: number|null;
+  style: string|null;
+  isTeam: boolean|null;
+  isPrivate:boolean|null;
+  isStarted: boolean|null;
+  timeLimit: number|null;
+  curRounds: number|null;
+  maxRounds: number|null;
+  curPlayers: number|null;
+  maxPlayers: number|null;
 }
 interface CurrentUser {
   userId: number;

@@ -29,6 +29,7 @@ public interface GameUserService {
     GameUserSimpleResponseDto updateGameUserTeam(String team);
     GameUserSimpleResponseDto updateGameUserScore(Integer score);
     GameUserSimpleResponseDto updateGameUserIsHost(Boolean isHost);
+    GameUserSimpleResponseDto updateGameUserScore(Long userId, Integer score);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,4 +62,5 @@ public interface GameUserService {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /* FIXME: 중복기능으로 판단됨, userId 보단 해시 ID인 code로 처리하는 것이 나아보임. */
     // Long deleteExitGameByUserId(Long userId, String gameCode);
+
 }

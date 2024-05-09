@@ -18,9 +18,11 @@ const ChannelBox = ({ id, code, name, curPlayers, maxPlayers }: Props) => {
   const enterLobby = () => {
     const response = UserChannelApi.enterChannel(id)
       .then((response) => {
+        console.log('채널 정상작동');
         console.log(response);
       })
       .catch((error) => {
+        console.log('채널 잘못작동');
         console.log(error);
       });
     setTimeout(() => {

@@ -27,38 +27,14 @@ const Lobby = () => {
   const chatInput = useRef(null);
   const chattingBox = useRef(null);
   const location = useLocation();
-  const channelCode = location.state?.channelCode;
+  // const channelCode = location.state?.channelCode;
   const [roomList, setRoomList] = useState<RoomProps[]>([]);
   const [testRoomIdx, setTestRoomIdx] = useState<number>(1);
   const [currentUserList, setCurrentUserList] = useState<CurrentUser[]>([]);
-  const handleState = (data1: RoomProps[], data2: CurrentUser[]) => {
-    setRoomList(data1);
-    setCurrentUserList(data2);
-  };
+  const [channelInfo, setChannelInfo] = useState<Channel | null>();
 
   useEffect(() => {
-    // 방정보 가져오기
-    const response = LobbyApi.getGameList(channelCode)
-      .then((response) => {
-        setRoomList(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    console.log(channelCode);
-  }, []);
-  useEffect(() => {
-    // 현재 채널 접속 인원정보 가져오기
-    const response = UserChannelApi.getChannelUserList(channelCode)
-      .then((response) => {
-        setCurrentUserList(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
-  useEffect(() => {
-    // 게임 로드하면 구독하기
+    // 채널 구독하기
     connectWebSocket(`/ws/sub/channel?uuid=${channelUuid}`, recieveChat, enterGame);
     document.addEventListener('click', handleOutsideClick);
     document.addEventListener('keydown', handleChatKey);
@@ -66,6 +42,47 @@ const Lobby = () => {
       document.removeEventListener('click', handleOutsideClick);
     };
   }, []);
+
+  useEffect(() => {
+    // 입장처리?
+    getChannelInfo();
+  }, []);
+
+  const handleState = (data1: RoomProps[], data2: CurrentUser[]) => {
+    setRoomList(data1);
+    setCurrentUserList(data2);
+  };
+
+  const getChannelInfo = async () => {
+    try {
+      const response = await LobbyApi.getChannelInfo(channelUuid);
+      setChannelInfo(response.data);
+      getGameList(response.data);
+      getChannelUserList(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getGameList = async (channelInfo: Channel) => {
+    try {
+      const response = await LobbyApi.getGameList(channelInfo.code);
+      console.log('gameList', response);
+      setRoomList(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getChannelUserList = async (channelInfo: Channel) => {
+    try {
+      const response = await UserChannelApi.channelUserList(channelInfo.id);
+      setCurrentUserList(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const recieveChat = (message: IMessage) => {
     if (message.body) {
       const body: RecieveChannelChat = JSON.parse(message.body);
@@ -106,10 +123,10 @@ const Lobby = () => {
     <div className="w-[70rem] h-[40rem] min-w-[40rem] min-h-[40rem] flex flex-col px-8 py-6 z-10">
       <div className="grid grid-cols-8 gap-3 min-h-14 items-center drop-shadow-lg pl-4">
         <label className="col-span-2 flex items-center border-custom-mint text-lg font-extrabold h-12 bg-white/80">
-          <p className="text-center w-full text-nowrap text-mint">{channelCode}채널</p>
+          <p className="text-center w-full text-nowrap text-mint">{channelInfo?.name}</p>
         </label>
         <div className="col-span-6 flex items-center">
-          <Header channelCode={channelCode} channelUuid={channelUuid} handleState={handleState} />
+          <Header  channelUuid={channelUuid} handleState={handleState} />
         </div>
       </div>
 
@@ -119,11 +136,11 @@ const Lobby = () => {
           <div className="w-full h-7 border-custom-mint bg-mint text-white font-bold text-sm flex items-center mb-1">
             <p className="w-full h-full flex items-center pl-1.5">접속 인원</p>
           </div>
-          <CurrentUserList {...currentUserList} />
+          <CurrentUserList currentUserList={currentUserList} />
         </div>
         {/* 방 리스트 */}
         <div className="col-span-6 flex items-center pl-1 relative">
-          <RoomList {...roomList} />
+          <RoomList roomList={roomList} />
         </div>
       </div>
       <div className="w-full grid grid-cols-8 gap-3 pl-4">

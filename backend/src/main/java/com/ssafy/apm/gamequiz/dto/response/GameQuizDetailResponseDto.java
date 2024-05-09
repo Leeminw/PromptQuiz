@@ -15,6 +15,7 @@ public class GameQuizDetailResponseDto {
     private Long quizId;
     private Integer type;
     private Integer round;
+    private Integer number;
     private Boolean isAnswer;
 
     private String url;
@@ -41,6 +42,7 @@ public class GameQuizDetailResponseDto {
         this.quizId = gameQuiz.getQuizId();
         this.type = gameQuiz.getType();
         this.round = gameQuiz.getRound();
+        this.number = gameQuiz.getNumber();
         this.isAnswer = gameQuiz.getIsAnswer();
 
         this.url = quiz.getUrl();

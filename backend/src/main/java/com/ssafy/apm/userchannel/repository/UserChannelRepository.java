@@ -12,4 +12,7 @@ public interface UserChannelRepository extends JpaRepository<UserChannel, Long> 
     List<UserChannel> findAllByChannelId(Long channelId);
     Optional<UserChannel> findByUserId(Long userId);
     Optional<UserChannel> findByUserIdAndChannelId(Long userId, Long channelId);
+    Optional<List<UserChannel>> findAllByUserId(Long userId);
+
+    Boolean existsByUserId(Long userId);
 }

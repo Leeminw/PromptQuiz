@@ -7,8 +7,9 @@ interface Game {
     password: string|null,
     status: boolean,
     isTeam: boolean,
-    curRound: number,
-    rounds: number,
+    timeLimit: number,
+    curRounds: number,
+    maxRounds: number,
     curPlayers: number,
     maxPlayers: number
 }

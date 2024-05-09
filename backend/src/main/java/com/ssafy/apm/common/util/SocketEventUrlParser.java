@@ -10,7 +10,7 @@ public class SocketEventUrlParser {
     private final Matcher matcher;
 
     public SocketEventUrlParser(String url) {
-        Pattern pattern = Pattern.compile("/ws/sub/(\\w+)\\?uuid=(-?\\d+)");
+        Pattern pattern = Pattern.compile("/ws/sub/(\\w+)\\?uuid=([\\w-]+)");
         this.matcher = pattern.matcher(Objects.requireNonNull(url));
     }
 
