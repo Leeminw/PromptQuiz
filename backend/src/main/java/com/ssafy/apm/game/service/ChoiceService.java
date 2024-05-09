@@ -37,30 +37,28 @@ public class ChoiceService {
         List<GameQuiz> response = new ArrayList<>();
 
         int answerNumber = random.nextInt(4) + 1;
-        GameQuiz entity = GameQuiz.builder() // 정답
+        response.add(GameQuiz.builder()
                 .gameCode(game.getCode())
                 .quizId(quiz.getId())
                 .type(1)
                 .round(curRound)
                 .isAnswer(true)
                 .number(answerNumber)
-                .build();
-        response.add(entity);
-        List<Quiz> quizListByGroupCode = quizRepository.extractRandomQuizzesByStyleAndGroupCode(quiz.getStyle(), quiz.getGroupCode(), 3)
-                .orElseThrow(() -> new QuizNotFoundException("No entities exists by groupCode!"));// 오답 quiz 리스트 찾아
+                .build());
 
         int number = 1;
-        for (Quiz wrong : quizListByGroupCode) {
+        List<Quiz> wrongQuizzes = quizRepository.extractRandomQuizzesByStyleAndGroupCode(quiz.getStyle(), quiz.getGroupCode(), 3)
+                .orElseThrow(() -> new QuizNotFoundException("Quiz Not Found with GroupCode: " + quiz.getGroupCode()));
+        for (Quiz wrong : wrongQuizzes) {
             if (number == answerNumber) number++;
-            entity = GameQuiz.builder() // 오답
+            response.add(GameQuiz.builder()
                     .gameCode(game.getCode())
                     .quizId(wrong.getId())
                     .type(1)
                     .round(curRound)
                     .isAnswer(false)
                     .number(number++)
-                    .build();
-            response.add(entity);
+                    .build());
         }
         return response;
     }
@@ -74,7 +72,7 @@ public class ChoiceService {
             response.add(GameQuiz.builder()
                     .gameCode(game.getCode())
                     .quizId(quiz.getId())
-                    .type(type)
+                    .type(1)
                     .round(curRound)
                     .isAnswer(true)
                     .number(answerNumber)
@@ -88,7 +86,7 @@ public class ChoiceService {
                 response.add(GameQuiz.builder()
                         .gameCode(game.getCode())
                         .quizId(wrong.getId())
-                        .type(type)
+                        .type(1)
                         .round(curRound)
                         .isAnswer(false)
                         .number(number++)
@@ -102,7 +100,7 @@ public class ChoiceService {
     /** Boolean 타입 리턴, 매개변수 GameChatRequestDto 타입
      *   정답이면 점수 추가까지 여기서 처리
      *   오답이면 점수 감점까지 여기서 처리 */
-    public Boolean checkIsAnswer(GameChatRequestDto requestDto) {
+    public Boolean checkAnswer(GameChatRequestDto requestDto) {
         String gameCode = requestDto.getGameCode();
         Game game = gameRepository.findByCode(gameCode)
                 .orElseThrow(() -> new GameNotFoundException("Game Not Found with code: " + gameCode));
