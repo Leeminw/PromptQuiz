@@ -174,21 +174,30 @@ public class GameSocketController {
     @PostMapping("/api/v1/game/start")
     public ResponseEntity<?> setGameStart(@RequestBody GameReadyDto ready) {
         if (!gameReadyMap.containsKey(ready.getGameCode())) {
-            GameRoomStatus newGame = new GameRoomStatus(ready.getGameCode(), 0, 10, 0);
+            GameRoomStatus newGame = null;
+            try {
+                newGame = new GameRoomStatus(ready.getGameCode(), 0, 10, 0);
 
-            // 방장일 경우에만 게임 보기가 생성됩니다
-            if (gameService.createGameQuiz(ready.getGameCode())) {
-                newGame.round = gameService.updateGameRoundCnt(ready.getGameCode(), true);
+                // 방장일 경우에만 게임 보기가 생성됩니다
+                if (gameService.createGameQuiz(ready.getGameCode())) {
+                    newGame.round = gameService.updateGameRoundCnt(ready.getGameCode(), true);
 
-                gameService.updateGameIsStarted(ready.getGameCode(), true);
-                sendRoundReadyMessage(newGame);
+                    gameService.updateGameIsStarted(ready.getGameCode(), true);
+                    sendRoundReadyMessage(newGame);
 
-                gameReadyMap.put(ready.getGameCode(), newGame);
-                GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(newGame.gameCode);
-                if (quiz.getType() == BLANKSUBJECTIVE) {
-                    newGame.initSimilarity(quiz);
+                    gameReadyMap.put(ready.getGameCode(), newGame);
+                    GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(newGame.gameCode);
+                    if (quiz.getType() == BLANKSUBJECTIVE) {
+                        newGame.initSimilarity(quiz);
+                    }
+                }
+            }catch (Exception e){
+                log.debug("Start Error: " + e.getMessage());
+                if(newGame != null){
+                    gameReadyMap.remove(newGame.gameCode);
                 }
             }
+
         }
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("start game"));
     }
@@ -200,7 +209,7 @@ public class GameSocketController {
 
         switch (type) {
             case MULTIPLECHOICE, BLANKCHOICE:
-                List<GameQuizDetailResponseDto> quizList = gameQuizService.findDetailGameQuizzesByGameCode(gameCode);
+                List<GameQuizDetailResponseDto> quizList = gameQuizService.findCurrentDetailGameQuizzesByGameCode(gameCode);
                 responseData = ResponseData.success(quizList);
                 break;
             case BLANKSUBJECTIVE:
