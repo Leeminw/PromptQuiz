@@ -120,62 +120,30 @@ const Lobby = () => {
   };
 
   return (
-    <div className="w-[60rem] h-[40rem] min-w-[40rem] min-h-[40rem] flex flex-col bg-white/60 px-8 py-6 rounded-3xl drop-shadow-lg z-10">
-      <div className="grid grid-cols-8 gap-3 h-10 items-center">
-        <label className="col-span-2 flex items-center border-custom-mint bg-white text-sm h-8">
-          <p className="text-center w-full text-nowrap">{channelInfo?.name}</p>
+    <div className="w-[70rem] h-[40rem] min-w-[40rem] min-h-[40rem] flex flex-col px-8 py-6 z-10">
+      <div className="grid grid-cols-8 gap-3 min-h-14 items-center drop-shadow-lg pl-4">
+        <label className="col-span-2 flex items-center border-custom-mint text-lg font-extrabold h-12 bg-white/80">
+          <p className="text-center w-full text-nowrap text-mint">{channelInfo?.name}</p>
         </label>
-        <div className="col-span-6 flex items-center pl-2">
-          <Header channelUuid={channelUuid} handleState={handleState} />
-
-          <button
-            className="btn"
-            onClick={() => {
-              setTestRoomIdx((prev) => {
-                return prev + 1;
-              });
-              setRoomList((prev) => {
-                return [
-                  ...prev,
-                  {
-                    code: '98c33e13-0c70-4ea7-9847-5c9463b1e3cf',
-                    channelCode: '24dd7b36-034b-4ecb-8349-32c99ef3f1b3',
-                    password: null,
-                    title: 'ㅁㅁㄴㅇㄹ',
-                    mode: 0,
-                    style: 'realistic',
-                    isTeam: false,
-                    isPrivate: false,
-                    isStarted: false,
-                    timeLimit: 60,
-                    curRounds: 0,
-                    maxRounds: 12,
-                    curPlayers: 1,
-                    maxPlayers: 12,
-                  },
-                ];
-              });
-            }}
-          >
-            테스트
-          </button>
+        <div className="col-span-6 flex items-center">
+          <Header  channelUuid={channelUuid} handleState={handleState} />
         </div>
       </div>
 
-      <div className="w-full h-2/3 grid grid-cols-8 gap-3 pt-4 mb-4">
+      <div className="w-full h-2/3 grid grid-cols-8 gap-3 pt-4 mb-4 pl-4">
         {/* 접속 인원 */}
-        <div className="w-full h-full flex flex-col col-span-2 border-custom-mint bg-mint">
-          <div className="w-full h-5 bg-mint text-white font-bold text-sm flex items-center mb-2.5">
+        <div className="w-full h-full flex flex-col col-span-2 backdrop-blur-sm">
+          <div className="w-full h-7 border-custom-mint bg-mint text-white font-bold text-sm flex items-center mb-1">
             <p className="w-full h-full flex items-center pl-1.5">접속 인원</p>
           </div>
           <CurrentUserList currentUserList={currentUserList} />
         </div>
         {/* 방 리스트 */}
-        <div className="col-span-6 flex items-center px-1">
+        <div className="col-span-6 flex items-center pl-1 relative">
           <RoomList roomList={roomList} />
         </div>
       </div>
-      <div className="w-full grid grid-cols-8 gap-3">
+      <div className="w-full grid grid-cols-8 gap-3 pl-4">
         {/* 광고 */}
         <div className="w-full h-full bg-blue-200 flex items-center justify-center col-span-2">
           광고
@@ -187,7 +155,7 @@ const Lobby = () => {
               <div
                 className={`flex items-center w-full h-36 mb-2 transition-all origin-bottom duration-300`}
               >
-                <div className="absolute w-full h-[90%] px-3 py-0.5 text-sm chat z-10">
+                <div className="absolute w-full h-[90%] px-3 py-0.5 text-sm chat custom-scroll z-10">
                   <div className="z-10 text-gray-700" ref={chattingBox}>
                     {chat.map((chatItem, index) => (
                       <div className="flex" key={index}>
@@ -204,10 +172,10 @@ const Lobby = () => {
             </div>
           </div>
           {/* 로비 채팅 입력 */}
-          <div className="w-full h-10 bg-white/90 rounded-full flex relative">
+          <div className="w-full h-10 bg-white/80 rounded-full flex relative">
             <input
               ref={chatInput}
-              className="w-full h-10 bg-transparent rounded-full pl-5 pr-20 text-sm placeholder-gray-400 border border-gray-300"
+              className="w-full h-10 bg-transparent rounded-full pl-5 pr-20 text-sm border border-gray-300"
               maxLength={30}
               placeholder="Enter를 눌러 채팅 입력"
               onKeyDown={(e) => {

@@ -68,7 +68,7 @@ const RoomList = ({ roomList }: RoomListProps) => {
             ></div>
           ))}
       </div>
-      <div className="w-full h-full bg-white absolute top-0 -z-10 border-custom-white opacity-80"></div>
+      <div className="w-full h-full bg-white absolute top-0 -z-10 border-custom-white opacity-50"></div>
       <div className="w-full h-14 flex justify-center items-center gap-4 pt-4">
         {curPageNum == 1 ? (
           <button className="cursor-default">
