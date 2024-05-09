@@ -39,7 +39,7 @@ public class SocketServiceImpl implements SocketService {
         try {
             Session session = socketRepository.findBySessionId(sessionId).orElseThrow();
 
-            if (session.getType() == GAME) {
+            if (session.getType().equals(GAME)) {
                 gameUserService.deleteGameUser(session.getUuid(), session.getUserId());
             } else {
                 userChannelService.deleteExitUserChannelByUserIdAndCode(session.getUserId(), session.getUuid());
