@@ -39,16 +39,6 @@ public class S3Controller {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }
 
-//    @PostMapping("/upload")
-//    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("bucketName") String bucketName) {
-//        try {
-//            s3Service.uploadFile(bucketName, file.getOriginalFilename(), file.getInputStream(), file.getSize());
-//            return ResponseEntity.status(HttpStatus.OK).body("File uploaded successfully");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload file");
-//        }
-//    }
-//
 //    @GetMapping("/download")
 //    public ResponseEntity<Resource> downloadFile(@RequestParam("bucketName") String bucketName, @RequestParam("fileName") String fileName, HttpServletResponse response) {
 //        try {
@@ -61,4 +51,5 @@ public class S3Controller {
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 //        }
 //    }
+
 }

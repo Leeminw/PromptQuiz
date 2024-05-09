@@ -6,13 +6,20 @@ import com.ssafy.apm.common.dto.S3FileRequestDto;
 import com.ssafy.apm.common.dto.S3FileResponseDto;
 import com.ssafy.apm.common.repository.S3FileRepository;
 
+import com.ssafy.apm.prompt.domain.Prompt;
+import com.ssafy.apm.prompt.repository.PromptRepository;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 
+import java.io.*;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
-import java.io.IOException;
-import java.io.ByteArrayInputStream;
 
+//import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.multipart.MultipartFile;
@@ -84,22 +91,46 @@ public class S3ServiceImpl implements S3Service {
         return String.format("https://%s.s3.amazonaws.com/%s", bucketName, filename);
     }
 
-//    public String uploadFileToS3(MultipartFile multipartFile) {
-//        String s3Key = S3KEY_PREFIX + multipartFile.getOriginalFilename();
-//        amazonS3.putObject(new PutObjectRequest(bucketName, s3Key, videoFile));
-//
-//        // return uploaded file S3 URL
-//        log.info("[uploadVideoToS3] Upload Video to S3 Server: {}", s3Key);
-//        return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, amazonS3.getRegionName(), s3Key);
-//    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    private final PromptRepository promptRepository;
 
-//    @Override
-//    public String uploadFile(MultipartFile file) throws IOException {
-//        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-//        ObjectMetadata metadata = new ObjectMetadata();
-//        metadata.setContentLength(file.getSize());
-//        amazonS3.putObject(new PutObjectRequest(bucketName, fileName, file.getInputStream(), metadata));
-//        return fileName;
-//    }
+    // @Scheduled(cron = "0 */1 * * * *", zone = "Asia/Seoul")
+    private void backupS3() throws Exception {
+        List<Prompt> prompts = promptRepository.findAll();
+        for (Prompt prompt : prompts) {
+            if (prompt.getUrl() == null) continue;
+
+            String key  = new URL(prompt.getUrl()).getPath().substring(1);
+            log.info("[Processing Backup] S3 key: " + key);
+
+            // Check if exists downloads
+            Path savePath = Paths.get("downloads").resolve(key).getParent();
+            if (!Files.exists(savePath))
+                Files.createDirectories(savePath);
+            File filePath = savePath.resolve(Paths.get(key).getFileName().toString()).toFile();
+
+            // Download file from S3
+            try (InputStream inputStream = amazonS3.getObject(bucketName, key).getObjectContent();
+                 FileOutputStream outputStream = new FileOutputStream(filePath)) {
+                inputStream.transferTo(outputStream);
+                log.info("File downloaded to: " + filePath.getAbsolutePath());
+
+                String relativePath = "/downloads/" + filePath.getName();
+                promptRepository.save(prompt.updateUrl(relativePath));
+                log.info("Database Table Prompt url updated with: " + relativePath);
+            } catch (Exception e) {
+                log.error("Failed to download file", e);
+                continue;
+            }
+
+            // Delete file from S3
+            try {
+                amazonS3.deleteObject(bucketName, key);
+                log.info("File deleted from S3: " + key);
+            } catch (Exception e) {
+                log.error("Failed to delete file from S3", e);
+            }
+        }
+    }
 
 }
