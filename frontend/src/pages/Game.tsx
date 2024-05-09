@@ -292,7 +292,7 @@ const GamePage = () => {
     <div
       className={`w-[70rem] h-[37rem] min-w-[40rem] min-h-[37rem] max-w-[80vw] z-10 
       rounded-3xl drop-shadow-lg flex flex-col items-center justify-center 
-      ${earthquake && 'animate-earthquake'}`}
+      ${earthquake ? 'animate-earthquake':''}`}
     >
       <div
         className={`absolute bg-no-repeat bg-contain bg-center bg-[url(/public/ui/gamestart.png)] 
@@ -421,7 +421,7 @@ const GamePage = () => {
         <div className="w-full flex grow flex-col items-center justify-end px-4">
           <div className="w-full h-36 mb-2 relative">
             {/* 객관식 선택 */}
-            {!isQuiz ? <SelectionGame /> : <div>no game</div>}
+            {isQuiz ? <SelectionGame /> : <div>no game</div>}
           </div>
           {/* 채팅 */}
           <div className="w-full">
