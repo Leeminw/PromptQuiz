@@ -79,6 +79,11 @@ public class GameServiceImpl implements GameService {
 
         Game game = gameRepository.findByCode(gameCode)
                 .orElseThrow(() -> new GameNotFoundException(gameCode));
+        if (gameUserRepository.existsByUserIdAndGameCode(userId, gameCode)) {
+            entity = gameUserRepository.findByUserIdAndGameCode(userId, gameCode)
+                    .orElseThrow(() -> new GameUserNotFoundException("No gameUserEntity exist by userId, gameCode!"));
+            return new GameUserSimpleResponseDto(entity);
+        }
         if (game.getIsStarted()) throw new GameAlreadyStartedException(gameCode);
         if (game.getCurPlayers() >= game.getMaxPlayers()) throw new GameFullException(gameCode);
         game.increaseCurPlayers();
