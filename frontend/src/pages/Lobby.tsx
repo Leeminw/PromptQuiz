@@ -31,18 +31,7 @@ const Lobby = () => {
   const [roomList, setRoomList] = useState<RoomProps[]>([]);
   const [testRoomIdx, setTestRoomIdx] = useState<number>(1);
   const [currentUserList, setCurrentUserList] = useState<CurrentUser[]>([]);
-  const [channelInfo, setChannelInfo] = useState<Channel | null>(null);
-
-  useEffect(() => {
-    // 입장처리?
-    getChannelInfo();
-  }, []);
-
-  useEffect(() => {
-    //게임 리스트
-    getGameList();
-    getChannelUserList();
-  }, [channelInfo]);
+  const [channelInfo, setChannelInfo] = useState<Channel | null>();
 
   useEffect(() => {
     // 채널 구독하기
@@ -54,6 +43,11 @@ const Lobby = () => {
     };
   }, []);
 
+  useEffect(() => {
+    // 입장처리?
+    getChannelInfo();
+  }, []);
+
   const handleState = (data1: RoomProps[], data2: CurrentUser[]) => {
     setRoomList(data1);
     setCurrentUserList(data2);
@@ -62,16 +56,17 @@ const Lobby = () => {
   const getChannelInfo = async () => {
     try {
       const response = await LobbyApi.getChannelInfo(channelUuid);
-      console.log(response.data);
       setChannelInfo(response.data);
+      getGameList(response.data);
+      getChannelUserList(response.data);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const getGameList = async () => {
+  const getGameList = async (channelInfo: Channel) => {
     try {
-      const response = await LobbyApi.getGameList(channelInfo?.code);
+      const response = await LobbyApi.getGameList(channelInfo.code);
       console.log('gameList', response);
       setRoomList(response.data);
     } catch (error) {
@@ -79,9 +74,9 @@ const Lobby = () => {
     }
   };
 
-  const getChannelUserList = async () => {
+  const getChannelUserList = async (channelInfo: Channel) => {
     try {
-      const response = await UserChannelApi.channelUserList(channelInfo?.id);
+      const response = await UserChannelApi.channelUserList(channelInfo.id);
       setCurrentUserList(response.data);
     } catch (error) {
       console.error(error);

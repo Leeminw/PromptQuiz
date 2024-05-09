@@ -43,7 +43,7 @@ const RoomList = ({ roomList }: RoomListProps) => {
   useEffect(() => {
     setCurRoomList(roomArray.slice(0, 6));
     setCurPageNum(1);
-    console.log(roomArray);
+    // console.log(roomArray);
 
     initiateTotalPageNum(roomArray.length);
     // if (roomArray.length > 6) setTotalPageNum(Math.ceil(roomArray.length / 6));

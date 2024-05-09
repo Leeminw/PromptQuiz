@@ -13,7 +13,7 @@ interface UserListProps {
 }
 const CurrentUserList = ({ currentUserList }: UserListProps) => {
   const currentUserArray = Object.values(currentUserList);
-  console.log(currentUserArray);
+  // console.log(currentUserArray);
 
   const createRoom = () => {
     alert('예시 함수');
