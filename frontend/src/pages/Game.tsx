@@ -46,8 +46,8 @@ const GamePage = () => {
     const userResponse = await GameApi.getUserList(roomId);
     setGame(responseGame);
     setGameUserList(userResponse.data);
-    setMaxRound(responseGame.maxRounds);
-    enterGame();
+    // setMaxRound(responseGame.maxRounds);
+    // enterGame();
   };
   useEffect(() => {
     const updatedUserMap = new Map<bigint, GameChatRecieve>();
