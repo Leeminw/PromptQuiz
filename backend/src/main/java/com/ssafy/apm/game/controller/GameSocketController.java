@@ -3,9 +3,9 @@ package com.ssafy.apm.game.controller;
 import com.ssafy.apm.socket.dto.response.*;
 import com.ssafy.apm.chat.service.ChatService;
 import com.ssafy.apm.game.service.GameService;
-import com.ssafy.apm.quiz.service.QuizService;
 import com.ssafy.apm.common.util.GameRoomStatus;
 import com.ssafy.apm.common.domain.ResponseData;
+import com.ssafy.apm.game.service.GameAnswerService;
 import com.ssafy.apm.socket.dto.request.GameReadyDto;
 import com.ssafy.apm.gameuser.service.GameUserService;
 import com.ssafy.apm.gamequiz.service.GameQuizService;
@@ -36,7 +36,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 public class GameSocketController {
 
     private final ChatService chatService;
-    private final QuizService quizService;
+    private final GameAnswerService gameAnswerService;
     private final GameService gameService;
     private final GameQuizService gameQuizService;
     private final GameUserService gameUserService;
@@ -137,7 +137,7 @@ public class GameSocketController {
         GameRoomStatus game = gameOngoingMap.get(chatMessage.getGameCode());
 
         if (game != null && chatMessage.getRound().equals(game.round)) {
-            GameAnswerCheck check = quizService.checkAnswer(chatMessage, game.playerSimilarityMap.keySet());
+            GameAnswerCheck check = gameAnswerService.checkAnswer(chatMessage, game.playerSimilarityMap.keySet());
 
             switch (check.getType()) {
                 case MULTIPLECHOICE:
@@ -184,7 +184,6 @@ public class GameSocketController {
                 sendRoundReadyMessage(newGame);
 
                 gameReadyMap.put(ready.getGameCode(), newGame);
-
                 GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(newGame.gameCode);
                 if (quiz.getType() == BLANKSUBJECTIVE) {
                     newGame.initSimilarity(quiz);
@@ -194,12 +193,12 @@ public class GameSocketController {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("start game"));
     }
 
-    @GetMapping("/api/v1/game/quiz/{gameCode}")
-    public ResponseEntity<?> getRoundQuiz(@PathVariable String gameCode){
+    @GetMapping("/api/v1/round/quiz/{gameCode}")
+    public ResponseEntity<?> getRoundQuiz(@PathVariable String gameCode) {
         Integer type = gameQuizService.getCurrentGameQuizTypeByGameCode(gameCode);
-        ResponseData responseData = ResponseData.success();
+        ResponseData<Object> responseData = ResponseData.success();
 
-        switch (type){
+        switch (type) {
             case MULTIPLECHOICE, BLANKCHOICE:
                 List<GameQuizDetailResponseDto> quizList = gameQuizService.findDetailGameQuizzesByGameCode(gameCode);
                 responseData = ResponseData.success(quizList);
@@ -252,25 +251,20 @@ public class GameSocketController {
     // (라운드 종료) 현재 게임 라운드 종료상태로 만들기
     public void setRoundToEnd(GameRoomStatus game) {
         game.round = gameService.updateGameRoundCnt(game.gameCode, false);
-
         if (game.round < 0) {
             setGameResult(game);
             sendGameResultMessage(game);
-            return;
-        }
-
-        GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(game.gameCode);
-        if (quiz.getType() == BLANKSUBJECTIVE) {
-            game.initSimilarity(quiz);
+        }else{
+            GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(game.gameCode);
+            if (quiz.getType() == BLANKSUBJECTIVE) {
+                game.initSimilarity(quiz);
+            }
         }
     }
 
     // (게임 종료) 전체 게임 종료 이후 사용자 접수 업데이트
     public void setGameResult(GameRoomStatus game) {
-        // 게임 점수 적용
-        /* FIXME: GameService 에서 결과 처리 시 스코어 업데이트도 함께하도록 수정 예정 */
-        // gameUserService.updateUserScore(game.gameId);
-
+        gameService.updateUserScore(game.gameCode);
         gameOngoingMap.remove(game.gameCode);
         gameEndMap.remove(game.gameCode);
         gameReadyMap.remove(game.gameCode);
