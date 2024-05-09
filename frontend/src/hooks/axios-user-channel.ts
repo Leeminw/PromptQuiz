@@ -20,10 +20,6 @@ const UserChannelApi = {
       const response = await instance.delete(BASE_URL + `/user-channel/${userId}/${code}`);
       return response.data;
     } catch (error) {
-      console.log('채널퇴장 API 에러 발생');
-      console.log('-------------------------');
-
-      console.log('채널 퇴장 요청 URL : ');
       console.log(BASE_URL + `/user-channel/${userId}/${code}`);
 
       console.error(error);

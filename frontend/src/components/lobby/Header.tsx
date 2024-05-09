@@ -34,8 +34,6 @@ const Header = ({ userId, channelCode, channelUuid, handleState }: Props) => {
     handleState(roomData, currentUserData);
   };
   const exitChannel = () => {
-    // 백엔드 API 정상 동작 여부 확인하고
-    // 주석해제
     const response = UserChannelApi.exitChannel(userId, channelUuid)
       .then((response) => {
         console.log(response);
