@@ -41,12 +41,12 @@ const GamePage = () => {
 
   const getGameData = async () => {
     const response = await GameApi.getGame(roomId);
-    console.log('first response', response);
+    console.log('first response', response.data);
     const responseGame: Game = response.data;
     const userResponse = await GameApi.getUserList(roomId);
     setGame(responseGame);
     setGameUserList(userResponse.data);
-    setMaxRound(responseGame.rounds);
+    // setMaxRound(responseGame.rounds);
     // enterGame();
   };
   useEffect(() => {
@@ -192,6 +192,11 @@ const GamePage = () => {
 
   const publishChat = () => {
     let chatfilter = chatInput.current.value;
+    chatfilter = chatfilter.replaceAll('시발', '이런');
+    chatfilter = chatfilter.replaceAll('씨발', '이런');
+    chatfilter = chatfilter.replaceAll('존나', '매우');
+    chatfilter = chatfilter.replaceAll('병신', '아이');
+    chatfilter = chatfilter.replaceAll('좆', '어머');
     const destination = '/ws/pub/game/chat/send';
     const gameChat: GameChat = {
       userId: user.userId,
@@ -381,7 +386,7 @@ const GamePage = () => {
             )
         )}
         {Array.from({ length: 12 - gameUserList.length }, (_, index) => (
-          <div className="w-full h-full border-custom-gray bg-[#999999]"></div>
+          <div className="w-full h-full border-custom-gray bg-[#999999]" key={index}></div>
         ))}
       </div>
       {/* 광고, 채팅창, 게임 설정 */}
