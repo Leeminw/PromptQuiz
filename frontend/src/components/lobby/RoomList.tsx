@@ -3,10 +3,12 @@ import Room from '../../components/lobby/Room';
 import { FaPlay } from 'react-icons/fa';
 // roomList={roomList}
 // { roomList }: RoomProps[]
-
-const RoomList = (roomList: RoomProps[]) => {
-  const roomArray = Object.values(roomList);
-  console.log(roomArray);
+interface RoomListProps {
+  roomList: RoomProps[];
+}
+const RoomList = ({ roomList }: RoomListProps) => {
+  // console.log('CHILD: ', roomList);
+  const roomArray: RoomProps[] = Object.values(roomList);
 
   // 페이지네이션 처리 관련 변수들
   const [totalPageNum, setTotalPageNum] = useState<number>(0);
@@ -54,26 +56,9 @@ const RoomList = (roomList: RoomProps[]) => {
     <div className="w-full h-full gap-1 relative">
       <div className="grid grid-cols-2 grid-rows-3 gap-y-2 gap-x-3 pt-4 px-4">
         {roomArray.map(
-          (item, index) =>
+          (item: RoomProps, index) =>
             index >= (curPageNum - 1) * 6 &&
-            index < curPageNum * 6 && (
-              <Room
-                key={index}
-                id={item.id}
-                channelCode={item.channelCode}
-                type={item.type}
-                style={item.style}
-                code={item.code}
-                title={item.title}
-                password={item.password}
-                status={item.status}
-                isTeam={item.isTeam}
-                curRound={item.curRound}
-                rounds={item.rounds}
-                curPlayers={item.curPlayers}
-                maxPlayers={item.maxPlayers}
-              />
-            )
+            index < curPageNum * 6 && <Room roomInfo={item} key={item.code} />
         )}
         {curPageNum * 6 > roomArray.length &&
           Array.from({ length: curPageNum * 6 - roomArray.length }).map((_, index) => (

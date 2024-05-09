@@ -27,38 +27,25 @@ const Lobby = () => {
   const chatInput = useRef(null);
   const chattingBox = useRef(null);
   const location = useLocation();
-  const channelCode = location.state?.channelCode;
+  // const channelCode = location.state?.channelCode;
   const [roomList, setRoomList] = useState<RoomProps[]>([]);
   const [testRoomIdx, setTestRoomIdx] = useState<number>(1);
   const [currentUserList, setCurrentUserList] = useState<CurrentUser[]>([]);
-  const handleState = (data1: RoomProps[], data2: CurrentUser[]) => {
-    setRoomList(data1);
-    setCurrentUserList(data2);
-  };
+  const [channelInfo, setChannelInfo] = useState<Channel | null>(null);
 
   useEffect(() => {
-    // 방정보 가져오기
-    const response = LobbyApi.getGameList(channelCode)
-      .then((response) => {
-        setRoomList(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    console.log(channelCode);
+    // 입장처리?
+    getChannelInfo();
   }, []);
+
   useEffect(() => {
-    // 현재 채널 접속 인원정보 가져오기
-    const response = UserChannelApi.getChannelUserList(channelCode)
-      .then((response) => {
-        setCurrentUserList(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+    //게임 리스트
+    getGameList();
+    getChannelUserList();
+  }, [channelInfo]);
+
   useEffect(() => {
-    // 게임 로드하면 구독하기
+    // 채널 구독하기
     connectWebSocket(`/ws/sub/channel?uuid=${channelUuid}`, recieveChat, enterGame);
     document.addEventListener('click', handleOutsideClick);
     document.addEventListener('keydown', handleChatKey);
@@ -66,6 +53,41 @@ const Lobby = () => {
       document.removeEventListener('click', handleOutsideClick);
     };
   }, []);
+
+  const handleState = (data1: RoomProps[], data2: CurrentUser[]) => {
+    setRoomList(data1);
+    setCurrentUserList(data2);
+  };
+
+  const getChannelInfo = async () => {
+    try {
+      const response = await LobbyApi.getChannelInfo(channelUuid);
+      console.log(response.data);
+      setChannelInfo(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getGameList = async () => {
+    try {
+      const response = await LobbyApi.getGameList(channelInfo?.code);
+      console.log('gameList', response);
+      setRoomList(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getChannelUserList = async () => {
+    try {
+      const response = await UserChannelApi.channelUserList(channelInfo?.id);
+      setCurrentUserList(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const recieveChat = (message: IMessage) => {
     if (message.body) {
       const body: RecieveChannelChat = JSON.parse(message.body);
@@ -106,40 +128,10 @@ const Lobby = () => {
     <div className="w-[60rem] h-[40rem] min-w-[40rem] min-h-[40rem] flex flex-col bg-white/60 px-8 py-6 rounded-3xl drop-shadow-lg z-10">
       <div className="grid grid-cols-8 gap-3 h-10 items-center">
         <label className="col-span-2 flex items-center border-custom-mint bg-white text-sm h-8">
-          <p className="text-center w-full text-nowrap">{channelCode}채널</p>
+          <p className="text-center w-full text-nowrap">{channelInfo?.name}</p>
         </label>
         <div className="col-span-6 flex items-center pl-2">
-          <Header channelCode={channelCode} channelUuid={channelUuid} handleState={handleState} />
-          <button
-            className="btn"
-            onClick={() => {
-              setTestRoomIdx((prev) => {
-                return prev + 1;
-              });
-              setRoomList((prev) => {
-                return [
-                  ...prev,
-                  {
-                    id: 213123,
-                    channelCode: "123123",
-                    type: 123,
-                    style: 2,
-                    code: '1234',
-                    title: '테스트용클릭ㄴㄴㄴ' + testRoomIdx,
-                    password: '1234',
-                    status: false,
-                    isTeam: false,
-                    curRound: 1,
-                    rounds: 1,
-                    curPlayers: 1,
-                    maxPlayers: 1,
-                  },
-                ];
-              });
-            }}
-          >
-            테스트
-          </button>
+          <Header channelUuid={channelUuid} handleState={handleState} />
         </div>
       </div>
 
@@ -149,11 +141,11 @@ const Lobby = () => {
           <div className="w-full h-5 bg-mint text-white font-bold text-sm flex items-center mb-2.5">
             <p className="w-full h-full flex items-center pl-1.5">접속 인원</p>
           </div>
-          <CurrentUserList {...currentUserList} />
+          <CurrentUserList currentUserList={currentUserList} />
         </div>
         {/* 방 리스트 */}
         <div className="col-span-6 flex items-center px-1">
-          <RoomList {...roomList} />
+          <RoomList roomList={roomList} />
         </div>
       </div>
       <div className="w-full grid grid-cols-8 gap-3">
