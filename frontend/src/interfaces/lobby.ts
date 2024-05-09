@@ -32,7 +32,7 @@ interface RoomProps {
   password: string|null;
   title: string|null;
   mode: number|null;
-  style: number|null;
+  style: string|null;
   isTeam: boolean|null;
   isPrivate:boolean|null;
   isStarted: boolean|null;

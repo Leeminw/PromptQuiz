@@ -127,6 +127,38 @@ const Lobby = () => {
         </label>
         <div className="col-span-6 flex items-center pl-2">
           <Header channelUuid={channelUuid} handleState={handleState} />
+
+          <button
+            className="btn"
+            onClick={() => {
+              setTestRoomIdx((prev) => {
+                return prev + 1;
+              });
+              setRoomList((prev) => {
+                return [
+                  ...prev,
+                  {
+                    code: '98c33e13-0c70-4ea7-9847-5c9463b1e3cf',
+                    channelCode: '24dd7b36-034b-4ecb-8349-32c99ef3f1b3',
+                    password: null,
+                    title: 'ㅁㅁㄴㅇㄹ',
+                    mode: 0,
+                    style: 'realistic',
+                    isTeam: false,
+                    isPrivate: false,
+                    isStarted: false,
+                    timeLimit: 60,
+                    curRounds: 0,
+                    maxRounds: 12,
+                    curPlayers: 1,
+                    maxPlayers: 12,
+                  },
+                ];
+              });
+            }}
+          >
+            테스트
+          </button>
         </div>
       </div>
 

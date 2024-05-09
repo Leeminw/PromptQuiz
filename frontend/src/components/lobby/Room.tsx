@@ -48,7 +48,6 @@ const Room = ({ roomInfo }: Props) => {
       .then((response) => {
         console.log('게임방 진입 성공!');
         console.log(response);
-
         setTimeout(() => {
           navigate(`/game/${roomInfo.code}`);
         }, 1000);

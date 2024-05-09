@@ -10,30 +10,29 @@ import { LobbyApi } from '../../hooks/axios-lobby';
 import { UserChannelApi } from '../../hooks/axios-user-channel';
 import { error } from 'console';
 import Rank from './Rank';
+import useUserStore from '../../stores/userStore';
 interface HeaderProps {
-  // channelCode: string;
   channelUuid: string; // 랭킹화면에서 다시 로비 URL로 넘어가기 위해 추가
   handleState: (data1: RoomProps[], data2: CurrentUser[]) => void;
 }
 // const Header = ({ channelCode }: Props, handleState: (data: RoomProps[]) => void) => {
 const Header = ({ channelUuid, handleState }: HeaderProps) => {
+  const { user } = useUserStore();
   const navigate = useNavigate();
   const fastMatching = () => {
     alert('빠른대전 매칭완료!');
   };
   const refresh = async () => {
-    // alert('새로고침 버튼 누름');
-    // const { roomData } = await LobbyApi.getGameList(channelUuid);
-    // const { currentUserData } = await UserChannelApi.channelUserList(channelUuid);
-    // console.log('이거는 패치할 데이터 정보임');
-    // console.log(roomData);
-    // console.log(currentUserData);
-    // handleState(roomData, currentUserData);
+    alert('새로고침 버튼 누름');
+    const { roomData } = await LobbyApi.getGameList(channelUuid);
+    const { currentUserData } = await UserChannelApi.channelUserList(channelUuid);
+    console.log('이거는 패치할 데이터 정보임');
+    console.log(roomData);
+    console.log(currentUserData);
+    handleState(roomData, currentUserData);
   };
   const exitChannel = () => {
-    // 백엔드 API 정상 동작 여부 확인하고
-    // 주석해제
-    const response = UserChannelApi.exitChannel()
+    const response = UserChannelApi.exitChannel(user.userId, channelUuid)
       .then((response) => {
         console.log(response);
       })
@@ -45,11 +44,6 @@ const Header = ({ channelUuid, handleState }: HeaderProps) => {
     }, 1000);
   };
 
-  const enterRankingPage = () => {
-    setTimeout(() => {
-      navigate(`/ranking`, { state: { channelUuid: channelUuid } });
-    }, 1000);
-  };
   return (
     <nav className="w-full h-[2rem] flex gap-4">
       <CreateRoom channelCode={channelUuid} />
