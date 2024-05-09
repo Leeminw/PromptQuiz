@@ -76,27 +76,24 @@ const CreateRoom = ({ channelCode }: Props) => {
       return;
     }
 
-<<<<<<< HEAD
+    // console.log('방 생성 정보 받음');
+    // // console.log('사용자id:' + user.userId);
+    // // console.log('채널id:' + channelCode);
     // console.log('방 생성 정보 받음');
     // console.log('사용자id:' + user.userId);
     // console.log('채널id:' + channelCode);
-=======
-    console.log('방 생성 정보 받음');
-    console.log('사용자id:' + user.userId);
-    console.log('채널id:' + channelCode);
->>>>>>> develop
-    // console.log('방유형:' + type);
-    console.log('그림체:' + style);
-    console.log('방제목:' + title);
-    console.log('비밀번호:' + password);
-    console.log('방상태:' + status);
-    console.log('팀전여부:' + isTeam);
-    console.log('현재라운드:' + curRound);
-    // console.log('최대라운드:' + rounds);
-    console.log('현재플레이어:' + curPlayers);
-    console.log('최대플레이어:' + maxPlayers);
+    // // console.log('방유형:' + type);
+    // console.log('그림체:' + style);
+    // console.log('방제목:' + title);
+    // console.log('비밀번호:' + password);
+    // console.log('방상태:' + status);
+    // console.log('팀전여부:' + isTeam);
+    // console.log('현재라운드:' + curRound);
+    // // console.log('최대라운드:' + rounds);
+    // console.log('현재플레이어:' + curPlayers);
+    // console.log('최대플레이어:' + maxPlayers);
 
-    console.log('---------');
+    // console.log('---------');
 
     try {
       const room: CreateRoom = {
@@ -111,19 +108,12 @@ const CreateRoom = ({ channelCode }: Props) => {
         timeLimit: 60,
         title,
       };
-<<<<<<< HEAD
-      // const { data } = await LobbyApi.createRoom(room);
-      console.log(room);
-      // setTimeout(() => {
-      //   navigate(`/game/${data.code}`);
-      // }, 1000);
-=======
+
       const { data } = await LobbyApi.createRoom(room);
       console.log(data);
       setTimeout(() => {
         navigate(`/game/${data.code}`);
       }, 1000);
->>>>>>> develop
     } catch (error) {
       console.error(error);
     }
