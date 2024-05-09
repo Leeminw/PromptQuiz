@@ -2,6 +2,7 @@ package com.ssafy.apm.channel.repository;
 
 import com.ssafy.apm.channel.domain.Channel;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
