@@ -12,12 +12,6 @@ interface Props {
   maxPlayers: number;
 }
 const ChannelBox = ({ id, code, name, curPlayers, maxPlayers }: Props) => {
-  console.log('-----------');
-  console.log('-----------');
-
-  console.log(id);
-  console.log(code);
-
   const percentage = Math.floor((curPlayers / maxPlayers) * 100);
   const navigate = useNavigate();
 
@@ -25,7 +19,6 @@ const ChannelBox = ({ id, code, name, curPlayers, maxPlayers }: Props) => {
     const response = UserChannelApi.enterChannel(id)
       .then((response) => {
         console.log('채널 정상작동');
-
         console.log(response);
       })
       .catch((error) => {

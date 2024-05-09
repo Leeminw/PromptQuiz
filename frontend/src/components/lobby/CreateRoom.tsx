@@ -101,12 +101,15 @@ const CreateRoom = ({ channelCode }: Props) => {
 
     console.log('---------');
     console.log(Room);
-
-    const { data } = await LobbyApi.createRoom(Room);
-    console.log(data);
-    setTimeout(() => {
-      navigate(`/game/${data.code}`);
-    }, 1000);
+    try {
+      const { data } = await LobbyApi.createRoom(Room);
+      console.log(data);
+      setTimeout(() => {
+        navigate(`/game/${data.code}`);
+      }, 1000);
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     // className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 "
