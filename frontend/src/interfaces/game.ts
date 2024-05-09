@@ -80,7 +80,6 @@ interface GameTimer {
 }
 interface GameReady{
     gameCode: string,
-    uuid : string
 }
 interface GameStatus {
     type : string,
@@ -98,3 +97,27 @@ interface RoundUser {
     correct : boolean
 }
 
+interface SelectQuiz {
+    code: string,
+    gameCode: string,
+    quizId: number,
+    type: number,
+    number: number,
+    round: number,
+    isAnswer: boolean,
+    url: string,
+    style: string,
+    groupCode: string,
+    engVerb: string,
+    engObject: string,
+    engSubject: string,
+    engSentence: string,
+    engSubAdjective: string,
+    engObjAdjective: string,
+    korVerb: string,
+    korObject: string,
+    korSubject: string,
+    korSentence: string,
+    korSubAdjective: string,
+    korObjAdjective: string
+}

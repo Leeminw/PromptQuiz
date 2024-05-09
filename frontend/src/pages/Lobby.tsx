@@ -48,7 +48,9 @@ const Lobby = () => {
     // 입장처리?
     getChannelInfo();
   }, []);
-
+  useEffect(() => {
+    LobbyApi.enterLobby(channelUuid);
+  }, [channelInfo]);
   const handleState = (data1: RoomProps[], data2: CurrentUser[]) => {
     setRoomList(data1);
     setCurrentUserList(data2);
@@ -129,7 +131,7 @@ const Lobby = () => {
           <p className="text-center w-full text-nowrap text-mint">{channelInfo?.name}</p>
         </label>
         <div className="col-span-6 flex items-center">
-          <Header  channelUuid={channelUuid} handleState={handleState} />
+          <Header channelUuid={channelUuid} handleState={handleState} />
         </div>
       </div>
 

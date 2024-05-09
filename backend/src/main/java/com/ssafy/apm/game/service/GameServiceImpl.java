@@ -15,6 +15,8 @@ import com.ssafy.apm.gameuser.dto.response.GameUserSimpleResponseDto;
 import com.ssafy.apm.gameuser.exception.GameUserNotFoundException;
 import com.ssafy.apm.gameuser.repository.GameUserRepository;
 import com.ssafy.apm.quiz.domain.Quiz;
+import com.ssafy.apm.quiz.dto.request.QuizRequestDto;
+import com.ssafy.apm.quiz.dto.response.QuizResponseDto;
 import com.ssafy.apm.quiz.exception.QuizNotFoundException;
 import com.ssafy.apm.quiz.repository.QuizRepository;
 import com.ssafy.apm.user.domain.User;
@@ -79,6 +81,11 @@ public class GameServiceImpl implements GameService {
 
         Game game = gameRepository.findByCode(gameCode)
                 .orElseThrow(() -> new GameNotFoundException(gameCode));
+        if (gameUserRepository.existsByUserIdAndGameCode(userId, gameCode)) {
+            entity = gameUserRepository.findByUserIdAndGameCode(userId, gameCode)
+                    .orElseThrow(() -> new GameUserNotFoundException("No gameUserEntity exist by userId, gameCode!"));
+            return new GameUserSimpleResponseDto(entity);
+        }
         if (game.getIsStarted()) throw new GameAlreadyStartedException(gameCode);
         if (game.getCurPlayers() >= game.getMaxPlayers()) throw new GameFullException(gameCode);
         game.increaseCurPlayers();
@@ -88,48 +95,6 @@ public class GameServiceImpl implements GameService {
 
         return new GameUserSimpleResponseDto(entity);
     }
-
-    /* FIXME: GameService 로 이동하는 것이 나아보임 */
-//    @Override
-//    @Transactional
-//    public GameUserSimpleResponseDto postFastEnterGame() {
-////        Todo: 프론트에 던져줄 CustomException 만들기
-////        로그인 한놈 유저 정보 불러오기
-//        User user = userService.loadUser();
-//        Long userId = user.getId();
-//
-//        UserChannelEntity userChannel = userChannelRepository.findByUserId(userId)
-//                .orElseThrow(() -> new UserChannelNotFoundException("No entity exist by userId!"));
-//
-//        List<Game> gameList = gameRepository.findAllByChannelCode(userChannel.getChannelCode())
-//                .orElseThrow(() -> new GameNotFoundException("No entities exists by channelId!"));// 채널에 생성된 방이 없다면
-//
-////        에러 코드를 프론트에서 받아 방을 만들 수 있게 처리해야함
-//
-//        for (Game entity : gameList) {
-//            if (!entity.getIsStarted() && entity.getCurPlayers() < entity.getMaxPlayers()) { // 아직 입장할 수 있고 curPlayers가 maxPlayers보다 작을 때
-//                //        일반유저
-//                GameUser gameUser = GameUser.builder()
-//                        .gameCode(entity.getCode())
-//                        .userId(userId)
-//                        .isHost(false)
-//                        .score(0)
-//                        .team("NOTHING")
-//                        .build();
-//
-//                //        방에 접속 중인 인원 하나 늘려줌
-//                entity.increaseCurPlayers();
-//
-//                gameRepository.save(entity);
-//                gameUser = gameUserRepository.save(gameUser);
-//
-//                return new GameUserSimpleResponseDto(gameUser);
-//            }
-//        }
-////        입장 가능한 방이 없으므로 방을 만들어야 한다고 프론트에 전달
-//
-//        return null;
-//    }
     @Override
     public List<GameResponseDto> findGamesByChannelCode(String channelCode) {
         List<Game> entityList = gameRepository.findAllByChannelCode(channelCode)
@@ -297,7 +262,6 @@ public class GameServiceImpl implements GameService {
         gameUserRepository.delete(gameUser);
         return gameUserCode;
     }
-
     @Override
     @Transactional
     public Boolean createGameQuiz(String gameCode) {
@@ -315,8 +279,32 @@ public class GameServiceImpl implements GameService {
         gameQuizRepository.saveAll(gameQuizList);
         return true;
     }
+    @Override
+    @Transactional
+    public List<QuizResponseDto> createAnswerGameQuizCanShow(String gameCode) {
+        User user = userService.loadUser();
+        GameUser gameUser = gameUserRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new GameUserNotFoundException("No entities exists by userId"));
+        if (!gameUser.getIsHost()) return null;
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        Game game = gameRepository.findByCode(gameCode)
+                .orElseThrow(() -> new GameNotFoundException(gameCode));
+        List<Quiz> quizList = createQuizListByStyle(game.getStyle(), game);
+//        각 quiz마다 4가지 문제가 있어야함
+        List<GameQuiz> gameQuizList = createGameQuizListByMode(game, game.getMode(), quizList);
+
+        List<Quiz> multipleChoiceList = new ArrayList<>();
+
+        for(GameQuiz gameQuiz: gameQuizList) {
+            Quiz temp = quizRepository.findById(gameQuiz.getQuizId())
+                    .orElseThrow(() -> new QuizNotFoundException(gameQuiz.getQuizId()));
+            multipleChoiceList.add(temp);
+        }
+
+        return multipleChoiceList.stream().map(QuizResponseDto::new).toList();
+    }
+
+    /////////////////////////////////////////함수 내에서 사용하는 메서드들//////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -36,7 +36,7 @@ public class GameAnswerService {
             case BLANKCHOICE:
                 // todo: 순서가 맞을 경우 true
                 response.setType(BLANKCHOICE);
-                //response.setResult();
+                response.setResult(blankChoiceService.evaluateAnswers(answer));
                 break;
             case BLANKSUBJECTIVE:
                 response.setType(BLANKSUBJECTIVE);
