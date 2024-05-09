@@ -58,7 +58,7 @@ const App = () => {
           </div>
         </div>
       </dialog>
-      <div className="absolute top-6 right-6 flex flex-col gap-3">
+      <div className="absolute top-6 right-6 flex gap-3">
         <button
           className={`btn-mint hover:brightness-125 hover:scale-105 transition text-sm ${activateBtn[0] ? 'animate-clickbtn scale-105' : ''}`}
           onClick={() => {
@@ -66,10 +66,10 @@ const App = () => {
           }}
         >
           <label className="flex gap-1 items-center h-[1.5rem] px-2 cursor-pointer">
-            <IoSettings className="xl:w-8 xl:h-8 max-xl:w-6 max-xl:h-6" />
+            <IoSettings className="lg:w-8 lg:h-8 max-lg:w-6 max-lg:h-6" />
             <p
               className="text-center w-full text-nowrap text-sm overflow-hidden 
-              text-ellipsis justify-center xl:flex max-xl:hidden"
+              text-ellipsis justify-center lg:flex max-lg:hidden"
             >
               설정
             </p>
@@ -82,10 +82,10 @@ const App = () => {
           }}
         >
           <label className="flex gap-1 items-center h-[1.5rem] px-2 cursor-pointer">
-            <IoMdHelpCircle className="xl:w-8 xl:h-8 max-xl:w-6 max-xl:h-6" />
+            <IoMdHelpCircle className="lg:w-8 lg:h-8 max-lg:w-6 max-lg:h-6" />
             <p
               className="text-center w-full text-nowrap text-sm overflow-hidden 
-              text-ellipsis justify-center xl:flex max-xl:hidden"
+              text-ellipsis justify-center lg:flex max-lg:hidden"
             >
               도움말
             </p>

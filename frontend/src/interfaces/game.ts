@@ -1,5 +1,5 @@
 interface Game {
-    channelCode: number,
+    channelCode: string,
     type: number,
     style: number,
     code: string,
