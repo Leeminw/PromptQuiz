@@ -122,7 +122,7 @@ const CreateRoom = ({ channelCode }: Props) => {
     // className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 "
     <div className="w-fit h-full text-mint">
       <button
-        className="w-full h-full btn-mint flex justify-center items-center gap-2 px-3 hover:brightness-110"
+        className="w-full h-full btn-mint-border-white flex justify-center items-center gap-2 px-3 hover:brightness-110"
         onClick={() => (document.getElementById('my_modal_1') as HTMLDialogElement).showModal()}
       >
         <MdAddHome className="min-w-5 min-h-5" />
@@ -271,7 +271,6 @@ const CreateRoom = ({ channelCode }: Props) => {
                   실사체
                 </label>
               </div>
-
               <div className="flex gap-2 pr-2 items-center">
                 <input
                   type="radio"

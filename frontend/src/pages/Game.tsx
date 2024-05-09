@@ -14,9 +14,13 @@ import { Client, Message, IMessage } from '@stomp/stompjs';
 import { useWebSocketStore } from '../stores/socketStore';
 import useUserStore from '../stores/userStore';
 import instance from '../hooks/axios-instance';
+import { LobbyApi } from '../hooks/axios-lobby';
+import badwordsFiltering from '../hooks/badwords-filtering';
+
 const GamePage = () => {
   const { roomCode } = useParams();
   const { user } = useUserStore();
+  const navigate = useNavigate();
   const chatBtn = useRef(null);
   const chatInput = useRef(null);
   const chattingBox = useRef(null);
@@ -34,7 +38,40 @@ const GamePage = () => {
   const [result, setResult] = useState<RoundUser[]>([]);
   const [isQuiz, setIsQuiz] = useState<boolean>(false);
   const [messageMap, setMessageMap] = useState<Map<bigint, GameChatRecieve>>(new Map());
-  const navigate = useNavigate();
+  const [channelInfo, setChannelInfo] = useState<Channel | null>();
+
+  //  문제를 받았는지 ?
+  // false, , timer로받았을때>> 현재게임상태 ' '
+
+  const getGameData = async () => {
+    const response = await GameApi.getGame(roomCode);
+    console.log('first response', response.data);
+    const responseGame: Game = response.data;
+    const userResponse = await GameApi.getUserList(roomCode);
+    setGame(responseGame);
+    setGameUserList(userResponse.data);
+    getChannelInfo(responseGame?.channelCode);
+    // setMaxRound(responseGame.maxRounds);
+    // enterGame();
+  };
+  useEffect(() => {
+    const updatedUserMap = new Map<bigint, GameChatRecieve>();
+    gameUserList.forEach((user) => {
+      updatedUserMap.set(user.userId, null);
+    });
+    setMessageMap(updatedUserMap);
+  }, [gameUserList]);
+
+  const getChannelInfo = async (code: string) => {
+    try {
+      const response = await LobbyApi.getChannelInfo(code);
+      console.log('channel', response);
+      setChannelInfo(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   //  문제를 받았는지 ?
   // false, , timer로받았을때>> 현재게임상태 ' '
   useEffect(() => {
@@ -79,18 +116,18 @@ const GamePage = () => {
     }
   }, [isQuiz]);
 
-  const getGameData = async () => {
-    try {
-      const response = await GameApi.getGame(roomCode);
-      console.log('first response', response.data);
-      const responseGame: Game = response.data;
-      const userResponse = await GameApi.getUserList(roomCode);
-      setGame(responseGame);
-      setGameUserList(userResponse.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const getGameData = async () => {
+  //   try {
+  //     const response = await GameApi.getGame(roomCode);
+  //     console.log('first response', response.data);
+  //     const responseGame: Game = response.data;
+  //     const userResponse = await GameApi.getUserList(roomCode);
+  //     setGame(responseGame);
+  //     setGameUserList(userResponse.data);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const enterGameRoom = async () => {
     try {
@@ -214,12 +251,7 @@ const GamePage = () => {
   };
 
   const publishChat = () => {
-    let chatfilter = chatInput.current.value;
-    chatfilter = chatfilter.replaceAll('시발', '이런');
-    chatfilter = chatfilter.replaceAll('씨발', '이런');
-    chatfilter = chatfilter.replaceAll('존나', '매우');
-    chatfilter = chatfilter.replaceAll('병신', '아이');
-    chatfilter = chatfilter.replaceAll('좆', '어머');
+    let chatfilter = badwordsFiltering(chatInput.current?.value);
     const destination = '/ws/pub/game/chat/send';
     const gameChat: GameChat = {
       userId: user.userId,
@@ -301,9 +333,9 @@ const GamePage = () => {
 
   return (
     <div
-      className={`bg-white/60 w-[70rem] h-[42rem] min-w-[40rem] min-h-[40rem] max-w-[80vw] z-10 
-      rounded-3xl drop-shadow-lg px-8 py-6 flex flex-col items-center justify-center 
-      ${earthquake ? 'animate-earthquake' : ''}`}
+      className={`w-[70rem] h-[37rem] min-w-[40rem] min-h-[37rem] max-w-[80vw] z-10 
+      rounded-3xl drop-shadow-lg flex flex-col items-center justify-center 
+      ${earthquake ? 'animate-earthquake':''}`}
     >
       <div
         className={`absolute bg-no-repeat bg-contain bg-center bg-[url(/public/ui/gamestart.png)] 
@@ -313,13 +345,17 @@ const GamePage = () => {
       {/* 상단 : 제목, 버튼 */}
       <div className="w-full h-10 grid grid-cols-5 gap-3 mb-2">
         {/* 채널 */}
-        <label className="flex items-center border-custom-mint bg-white text-sm h-full">
-          <p className="text-center w-full text-nowrap">{game?.channelCode}채널</p>
+        <label className="h-full flex items-center font-extrabold bg-white/80 border-custom-mint">
+          <p className="text-center w-full text-nowrap text-mint">{channelInfo?.name}</p>
         </label>
         {/* 제목 */}
-        <label className="flex items-center justify-center col-span-3 w-full border-custom-mint bg-white text-sm">
-          <p className="text-center w-full text-nowrap line-clamp-1">{game?.title}</p>
-        </label>
+        <div className="w-full h-full flex col-span-3 px-4">
+          <label className="flex items-center justify-center w-full border-custom-mint bg-white/80 text-sm">
+            <p className="text-center w-full text-nowrap line-clamp-1 text-mint font-bold">
+              {game?.title}
+            </p>
+          </label>
+        </div>
         {/* 버튼 */}
         <div className="flex gap-3">
           <button
@@ -328,7 +364,7 @@ const GamePage = () => {
             ${
               isStart
                 ? 'border-custom-gray bg-[#999999] cursor-default'
-                : 'btn-mint-border-white hover:brightness-125 hover:scale-110 cursor-pointer'
+                : 'btn-mint-border-white hover:brightness-125 hover:scale-105 cursor-pointer'
             }
             `}
             onClick={() => {
@@ -343,7 +379,7 @@ const GamePage = () => {
             >
               <FaUserPlus className="min-w-5 min-h-5 mb-0.5" />
               <p
-                className="text-center w-full text-nowrap text-xs overflow-hidden 
+                className="text-center w-full text-nowrap text-sm overflow-hidden 
               text-ellipsis xl:flex max-xl:hidden"
               >
                 초대하기
@@ -355,11 +391,14 @@ const GamePage = () => {
             text-sm w-1/2 min-w-[3rem] ${activateBtn[1] ? 'animate-clickbtn scale-105' : ''}`}
             onClick={() => {
               handleClick(1);
+              setTimeout(() => {
+                navigate('/lobby/' + game?.channelCode);
+              }, 500);
             }}
           >
             <label className="flex gap-1 items-center px-2 cursor-pointer overflow-hidden max-xl:justify-center">
               <IoLogOut className="min-w-6 min-h-6 mb-0.5" />
-              <p className="text-center w-full text-nowrap text-xs overflow-hidden text-ellipsis xl:flex max-xl:hidden">
+              <p className="text-center w-full text-nowrap text-sm overflow-hidden text-ellipsis xl:flex max-xl:hidden">
                 나가기
               </p>
             </label>
@@ -367,18 +406,18 @@ const GamePage = () => {
         </div>
       </div>
       {/* 중간 : 플레이어, 문제 화면 */}
-      <div className="w-full h-[22rem] mt-2 mb-4 grid grid-rows-6 grid-cols-5 grid-flow-row gap-3">
+      <div className="w-full h-[25rem] mt-2 mb-4 grid grid-rows-6 grid-cols-5 grid-flow-row gap-3">
         {/* 첫번째 플레이어 */}
         <div className="w-full h-full">
           {gameUserList.length > 0 && (
             <GamePlayer
               userInfo={gameUserList[0]}
-              gameChat={messageMap.get(gameUserList[0].userId)}
+              gameChat={messageMap?.get(gameUserList[0].userId)}
             />
           )}
         </div>
         {/* 문제 화면, 타이머 */}
-        <div className="w-full grow flex flex-col row-span-6 col-span-3">
+        <div className="w-full grow flex flex-col row-span-6 col-span-3 px-4">
           <div className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint border relative overflow-hidden flex">
             <div className="w-full h-full rounded-full -translate-x-[50%] transition-transform duration-1000 bg-mint absolute"></div>
           </div>
@@ -409,11 +448,11 @@ const GamePage = () => {
             )
         )}
         {Array.from({ length: 12 - gameUserList.length }, (_, index) => (
-          <div className="w-full h-full border-custom-gray bg-[#999999]" key={index}></div>
+          <div className="w-full h-full border-custom-mint bg-white/50" key={index}></div>
         ))}
       </div>
       {/* 광고, 채팅창, 게임 설정 */}
-      <div className="w-full h-[12.5rem] flex gap-4">
+      <div className="w-full h-[10.5rem] flex gap-4">
         {/* 광고 */}
         <div className="w-1/3 bg-red-200 flex justify-center items-center">
           광고
@@ -422,7 +461,7 @@ const GamePage = () => {
           ))}
         </div>
         {/* 채팅창, 객관식 선택, 순서 배치 등 */}
-        <div className="w-full flex grow flex-col items-center justify-end">
+        <div className="w-full flex grow flex-col items-center justify-end px-4">
           <div className="w-full h-36 mb-2 relative">
             {/* 객관식 선택 */}
             {isQuiz ? <SelectionGame /> : <div>no game</div>}
@@ -431,7 +470,7 @@ const GamePage = () => {
           <div className="w-full">
             <div className="relative w-full">
               <div
-                className={`absolute flex items-center w-full h-[9.5rem] bottom-0 mb-2 transition-all origin-bottom duration-300 ${chatOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
+                className={`absolute flex items-center w-full h-[7.5rem] bottom-0 mb-2 transition-all origin-bottom duration-300 ${chatOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
               >
                 <div className="absolute w-full h-[90%] px-3 py-2 text-sm chat custom-scroll z-10">
                   <div className="z-10 text-gray-700" ref={chattingBox}>
