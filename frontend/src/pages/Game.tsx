@@ -7,16 +7,15 @@ import GamePlayer from '../components/game/Player';
 import SelectionGame from '../components/game/SelectionGame';
 import GameRoomSetting from '../components/game/GameRoomSetting';
 import GameApi from '../hooks/axios-game';
-import { useLoaderData } from 'react-router-dom';
+import { Navigate, useLoaderData, useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import SockJS from 'sockjs-client';
 import { Client, Message, IMessage } from '@stomp/stompjs';
 import { useWebSocketStore } from '../stores/socketStore';
 import useUserStore from '../stores/userStore';
 import instance from '../hooks/axios-instance';
-
 const GamePage = () => {
-  const { roomId } = useParams();
+  const { roomCode } = useParams();
   const { user } = useUserStore();
   const chatBtn = useRef(null);
   const chatInput = useRef(null);
@@ -35,45 +34,13 @@ const GamePage = () => {
   const [result, setResult] = useState<RoundUser[]>([]);
   const [isQuiz, setIsQuiz] = useState<boolean>(false);
   const [messageMap, setMessageMap] = useState<Map<bigint, GameChatRecieve>>(new Map());
-
+  const navigate = useNavigate();
   //  문제를 받았는지 ?
   // false, , timer로받았을때>> 현재게임상태 ' '
-
-  const getGameData = async () => {
-    const response = await GameApi.getGame(roomId);
-    console.log('first response', response.data);
-    const responseGame: Game = response.data;
-    const userResponse = await GameApi.getUserList(roomId);
-    setGame(responseGame);
-    setGameUserList(userResponse.data);
-    // setMaxRound(responseGame.rounds);
-    // enterGame();
-  };
   useEffect(() => {
-    const updatedUserMap = new Map<bigint, GameChatRecieve>();
-    gameUserList.forEach((user) => {
-      updatedUserMap.set(user.userId, null);
-    });
-    setMessageMap(updatedUserMap);
-  }, [gameUserList]);
-  useEffect(() => {
+    enterGameRoom();
     getGameData();
     // 채팅 입력 바깥 클릭 시 채팅창 닫기
-    const handleOutsideClick = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (target && !chatInput.current?.contains(target) && !chatBtn.current?.contains(target)) {
-        chatFocusOut();
-      }
-    };
-
-    // 채팅 입력 안하고 있을 때 Enter시 채팅창 열기
-    const handleChatKey = (event: KeyboardEvent) => {
-      const target = event.target as Node;
-      if (event.key === 'Enter' && !chatInput.current?.contains(target) && !chatOpen) {
-        chatFocus();
-      }
-    };
-
     // 클릭 & 키다운 이벤트 추가
     document.addEventListener('click', handleOutsideClick);
     document.addEventListener('keydown', handleChatKey);
@@ -83,17 +50,73 @@ const GamePage = () => {
   }, []);
 
   useEffect(() => {
+    const updatedUserMap = new Map<bigint, GameChatRecieve>();
+    gameUserList.forEach((user) => {
+      updatedUserMap.set(user.userId, null);
+    });
+    setMessageMap(updatedUserMap);
+  }, [gameUserList]);
+
+  useEffect(() => {
     // 게임 로드하면 구독하기
     connectWebSocket(`/ws/sub/game?uuid=${game?.code}`, recieveChat, enterGame, user.userId);
     return () => {
       disconnectWebSocket();
     };
   }, [game]);
+  const getGameDetail = async (gameCode: string) => {
+    try {
+      const response = await GameApi.getRoundGame(gameCode);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   useEffect(() => {
     if (isQuiz) {
+      getGameDetail(game?.code);
       console.log('isQuiz updated:', isQuiz);
     }
   }, [isQuiz]);
+
+  const getGameData = async () => {
+    try {
+      const response = await GameApi.getGame(roomCode);
+      console.log('first response', response.data);
+      const responseGame: Game = response.data;
+      const userResponse = await GameApi.getUserList(roomCode);
+      setGame(responseGame);
+      setGameUserList(userResponse.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const enterGameRoom = async () => {
+    try {
+      const response = await GameApi.enterGame(roomCode);
+      console.log('post game enter', response.data);
+    } catch (error) {
+      console.error(error);
+      navigate(-1);
+    }
+  };
+
+  const handleOutsideClick = (event: MouseEvent) => {
+    const target = event.target as Node;
+    if (target && !chatInput.current?.contains(target) && !chatBtn.current?.contains(target)) {
+      chatFocusOut();
+    }
+  };
+
+  // 채팅 입력 안하고 있을 때 Enter시 채팅창 열기
+  const handleChatKey = (event: KeyboardEvent) => {
+    const target = event.target as Node;
+    if (event.key === 'Enter' && !chatInput.current?.contains(target) && !chatOpen) {
+      chatFocus();
+    }
+  };
+
   // 채팅창 열기
   const chatFocus = () => {
     chatInput.current?.focus();
@@ -127,10 +150,10 @@ const GamePage = () => {
 
       console.log(messageMap);
     } else if (recieve.tag === 'enter') {
-      const userResponse = await GameApi.getUserList(roomId);
+      const userResponse = await GameApi.getUserList(roomCode);
       setGameUserList(userResponse.data);
     } else if (recieve.tag === 'leave') {
-      const userResponse = await GameApi.getUserList(roomId);
+      const userResponse = await GameApi.getUserList(roomCode);
       setGameUserList(userResponse.data);
     } else if (recieve.tag === 'timer') {
       const data: GameTimer = recieve.data as GameTimer;
@@ -215,14 +238,14 @@ const GamePage = () => {
     // const destination = '/ws/pub/game/start';
     const gameReady: GameReady = {
       gameCode: game.code,
-      uuid: game.code,
     };
+    console.log(gameReady);
     try {
       const response = await instance.post('game/start', gameReady);
       console.log(response);
-      handleGamestart();
       setIsStart(true);
     } catch (error) {
+      console.log('에러!');
       console.error(error);
     }
   };

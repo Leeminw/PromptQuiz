@@ -22,7 +22,7 @@ const RouterInfo = [
         label: 'channel',
       },
       {
-        path: '/game/:roomId',
+        path: '/game/:roomCode',
         element: <GamePage />,
         label: 'game',
       },
