@@ -10,10 +10,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
-import org.springframework.web.socket.messaging.AbstractSubProtocolEvent;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
-import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
+import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import org.springframework.web.socket.messaging.AbstractSubProtocolEvent;
+
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -38,7 +40,7 @@ public class WebSocketEventListener {
         SocketEventUrlParser parser = new SocketEventUrlParser(parsingUrlFromEvent(event));
 
         if (parser.isOk()) {
-            socketService.editSession(sessionId, parser.getUuid(), parser.getType());
+            socketService.editSession(sessionId, parseUserId(event), parser.getUuid(), parser.getType());
 
         } else {
             logger.info("destination format does not match.");
@@ -62,6 +64,11 @@ public class WebSocketEventListener {
     public String parsingUrlFromEvent(SessionSubscribeEvent event){
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         return accessor.getDestination();
+    }
+
+    public Long parseUserId(SessionSubscribeEvent event){
+        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
+        return Long.parseLong(Objects.requireNonNull(accessor.getFirstNativeHeader("userId")));
     }
 
 }
