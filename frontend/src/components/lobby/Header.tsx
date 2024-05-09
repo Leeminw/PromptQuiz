@@ -35,13 +35,13 @@ const Header = ({ channelCode, channelUuid, handleState }: Props) => {
   const exitChannel = () => {
     // 백엔드 API 정상 동작 여부 확인하고
     // 주석해제
-    // const response = UserChannelApi.exitChannel()
-    //   .then((response) => {
-    //     console.log(response);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
+    const response = UserChannelApi.exitChannel()
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     setTimeout(() => {
       navigate(`/channel`);
     }, 1000);
