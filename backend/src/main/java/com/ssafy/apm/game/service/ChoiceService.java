@@ -32,74 +32,28 @@ public class ChoiceService {
 
     private final Random random = new Random();
 
-    /* 4개 생성하는 코드 */
-    public List<GameQuiz> createGameQuiz(Game game, Quiz quiz, Integer curRound) {
+    /** 문제 1개(보기 4개) 생성하는 코드 */
+    public List<GameQuiz> createGameQuiz(Game game, Quiz quiz, Integer numRound) {
+        return createSelections(game, quiz, numRound);
+    }
+
+    /** 문제 10개(보기 40개) 생성하는 코드 */
+    public List<GameQuiz> createGameQuizList(Game game, List<Quiz> quizzes) {
         List<GameQuiz> response = new ArrayList<>();
-
-        int answerNumber = random.nextInt(4) + 1;
-        response.add(GameQuiz.builder()
-                .gameCode(game.getCode())
-                .quizId(quiz.getId())
-                .type(1)
-                .round(curRound)
-                .isAnswer(true)
-                .number(answerNumber)
-                .build());
-
-        int number = 1;
-        List<Quiz> wrongQuizzes = quizRepository.extractRandomQuizzesByStyleAndGroupCode(quiz.getStyle(), quiz.getGroupCode(), 3)
-                .orElseThrow(() -> new QuizNotFoundException("Quiz Not Found with GroupCode: " + quiz.getGroupCode()));
-        for (Quiz wrong : wrongQuizzes) {
-            if (number == answerNumber) number++;
-            response.add(GameQuiz.builder()
-                    .gameCode(game.getCode())
-                    .quizId(wrong.getId())
-                    .type(1)
-                    .round(curRound)
-                    .isAnswer(false)
-                    .number(number++)
-                    .build());
+        for (int numRound = 1; numRound <= quizzes.size(); numRound++) {
+            Quiz quiz = quizzes.get(numRound - 1);
+            response.addAll(createSelections(game, quiz, numRound));
         }
         return response;
     }
 
-    /* 40개 생성하는 코드 */
-    public List<GameQuiz> createGameQuizList(Game game, Integer type, List<Quiz> quizzes) {
-        List<GameQuiz> response = new ArrayList<>();
-        for (int curRound = 1; curRound <= quizzes.size(); curRound++) {
-            Quiz quiz = quizzes.get(curRound - 1);
-            int answerNumber = random.nextInt(4) + 1;
-            response.add(GameQuiz.builder()
-                    .gameCode(game.getCode())
-                    .quizId(quiz.getId())
-                    .type(1)
-                    .round(curRound)
-                    .isAnswer(true)
-                    .number(answerNumber)
-                    .build());
-
-            int number = 1;
-            List<Quiz> wrongQuizzes = quizRepository.extractRandomQuizzesByStyleAndGroupCode(quiz.getStyle(), quiz.getGroupCode(), 3)
-                    .orElseThrow(() -> new QuizNotFoundException("Quiz Not Found with GroupCode: " + quiz.getGroupCode()));
-            for (Quiz wrong : wrongQuizzes) {
-                if (number == answerNumber) number++;
-                response.add(GameQuiz.builder()
-                        .gameCode(game.getCode())
-                        .quizId(wrong.getId())
-                        .type(1)
-                        .round(curRound)
-                        .isAnswer(false)
-                        .number(number++)
-                        .build());
-            }
-        }
-
-        return response;
-    }
-
-    /** Boolean 타입 리턴, 매개변수 GameChatRequestDto 타입
-     *   정답이면 점수 추가까지 여기서 처리
-     *   오답이면 점수 감점까지 여기서 처리 */
+    /**
+     * 채팅 메세지로부터 GameCode 를 통해 현재 라운드의 정답값과 Content 비교
+     * content 가 정답 번호라면 GameUser 라운드 점수 증가
+     * content 가 오답 번호라면 GameUser 라운드 점수 감소
+     * @param requestDto gameCode, content
+     * @return 정답이면 true, 오답이면 false
+     */
     public Boolean checkAnswer(GameChatRequestDto requestDto) {
         String gameCode = requestDto.getGameCode();
         Game game = gameRepository.findByCode(gameCode)
@@ -115,6 +69,37 @@ public class ChoiceService {
         boolean isCorrect = Integer.parseInt(requestDto.getContent()) == answer;
         gameUserService.updateGameUserScore(isCorrect ? 10 : -5);
         return isCorrect;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    private List<GameQuiz> createSelections(Game game, Quiz quiz, Integer round) {
+        List<GameQuiz> selections = new ArrayList<>();
+        int answerNumber = random.nextInt(4) + 1;
+        selections.add(GameQuiz.builder()
+                .gameCode(game.getCode())
+                .quizId(quiz.getId())
+                .type(1)
+                .round(round)
+                .isAnswer(true)
+                .number(answerNumber)
+                .build());
+
+        int number = 1;
+        List<Quiz> quizzes = quizRepository.extractRandomQuizzesByStyleAndGroupCode(quiz.getStyle(), quiz.getGroupCode(), 3)
+                .orElseThrow(() -> new QuizNotFoundException("Quiz Not Found with GroupCode: " + quiz.getGroupCode()));
+        for (Quiz wrongQuiz : quizzes) {
+            if (number == answerNumber) number++;
+            selections.add(GameQuiz.builder()
+                    .gameCode(game.getCode())
+                    .quizId(wrongQuiz.getId())
+                    .type(1)
+                    .round(round)
+                    .isAnswer(false)
+                    .number(number++)
+                    .build());
+        }
+
+        return selections;
     }
 
 }
