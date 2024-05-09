@@ -18,4 +18,8 @@ public interface GameUserRepository extends CrudRepository<GameUser, String> {
 
     Optional<GameUser> findByCode(String code);
 
+    Boolean existsByUserIdAndGameCode(Long userId, String gameCode);
+
+    Optional<GameUser> findByUserIdAndGameCode(Long userId, String gameCode);
+
 }
