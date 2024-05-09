@@ -11,6 +11,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 @Repository
 public interface ChannelRepository extends JpaRepository<Channel, Long> {
     Optional<Channel> findByCode(String code);
-
-    Optional<List<Channel>> findAllBy
 }
