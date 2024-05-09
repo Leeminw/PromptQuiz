@@ -61,4 +61,9 @@ public interface GameUserService {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /* FIXME: 중복기능으로 판단됨, userId 보단 해시 ID인 code로 처리하는 것이 나아보임. */
     // Long deleteExitGameByUserId(Long userId, String gameCode);
+
+
+    // todo: updateGameUserScore(userId, gameCode) -> 소켓 통신은 현재 세션 정보가 없음
+    GameUserSimpleResponseDto updateGameUserScore(Long userId, Integer score);
+
 }

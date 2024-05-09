@@ -1,11 +1,14 @@
 package com.ssafy.apm.common.service;
 
+import com.ssafy.apm.channel.service.ChannelService;
 import com.ssafy.apm.common.domain.Session;
 import com.ssafy.apm.common.repository.SocketRepository;
 
+import com.ssafy.apm.gameuser.service.GameUserService;
+import com.ssafy.apm.userchannel.service.UserChannelService;
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class SocketServiceImpl implements SocketService {
 
+    private static final Integer GAME = 1, CHANNEL = 2;
+    private final GameUserService gameUserService;
     private final SocketRepository socketRepository;
+    private final UserChannelService userChannelService;
 
     @Override
     @Transactional
@@ -33,11 +39,10 @@ public class SocketServiceImpl implements SocketService {
         try {
             Session session = socketRepository.findBySessionId(sessionId).orElseThrow();
 
-            // todo: 현재 있는 채널 혹은 게임에서 강퇴시키기
-            if (session.getType() == 1) {
-
+            if (session.getType() == GAME) {
+                gameUserService.deleteGameUser(session.getUuid(), session.getUserId());
             } else {
-
+                userChannelService.deleteExitUserChannelByUserIdAndCode(session.getUserId(), session.getUuid());
             }
         } catch (Exception e) {
             log.debug(e.getMessage());
