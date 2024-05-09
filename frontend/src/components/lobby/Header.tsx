@@ -48,14 +48,14 @@ const Header = ({ channelUuid, handleState }: HeaderProps) => {
     <nav className="w-full h-14 flex gap-6 pl-2 py-2">
       <CreateRoom channelCode={channelUuid} />
       <button
-        className="w-fit h-full btn-mint hover:brightness-110 flex justify-center items-center gap-2 px-4"
+        className="w-fit h-full btn-mint-border-white hover:brightness-110 flex justify-center items-center gap-2 px-4"
         onClick={fastMatching}
       >
         <FaForward className="min-w-4 min-h-4 " />
         <p className="text-nowrap lg:flex max-lg:hidden">빠른대전</p>
       </button>
       <button
-        className="w-fit h-full btn-mint hover:brightness-110 flex justify-center items-center gap-2 pl-2 pr-3"
+        className="w-fit h-full btn-mint-border-white hover:brightness-110 flex justify-center items-center gap-2 pl-2 pr-3"
         onClick={refresh}
       >
         <IoMdRefresh className="lg:min-w-5 lg:min-h-5 max-lg:min-w-6 max-lg:min-h-6" />
@@ -66,7 +66,7 @@ const Header = ({ channelUuid, handleState }: HeaderProps) => {
 
       <div className="grow" />
       <button
-        className="w-fit h-full border-custom-red bg-customRed text-white font-extrabold hover:brightness-110 flex justify-center items-center gap-2 px-4"
+        className="w-fit h-full border-custom-red-select bg-customRed text-white font-extrabold hover:brightness-110 flex justify-center items-center gap-2 px-4"
         onClick={exitChannel}
       >
         <ImExit className="min-w-4 min-h-4 " />

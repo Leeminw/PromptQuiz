@@ -13,8 +13,8 @@ const CreateRoom = ({ channelCode }: Props) => {
   const [privacyStatus, setPrivacyStatus] = useState(0);
   const [isTeam, setIsTeam] = useState(false);
   const [mode, setMode] = useState(0);
-  const [maxPlayers, setMaxPlayers] = useState(1);
-  const [maxRounds, setMaxRounds] = useState(1);
+  const [maxPlayers, setMaxPlayers] = useState(12);
+  const [maxRounds, setMaxRounds] = useState(50);
   /**로그인 상태 정보를 가져오기 전에 임시로 userId 값을 부여 */
   // const [userId, setUserId] = useState(3);
   const { user } = useUserStore();
@@ -115,7 +115,7 @@ const CreateRoom = ({ channelCode }: Props) => {
     // className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 "
     <div className="w-fit h-full text-mint">
       <button
-        className="w-full h-full btn-mint flex justify-center items-center gap-2 px-3 hover:brightness-110"
+        className="w-full h-full btn-mint-border-white flex justify-center items-center gap-2 px-3 hover:brightness-110"
         onClick={() => (document.getElementById('my_modal_1') as HTMLDialogElement).showModal()}
       >
         <MdAddHome className="min-w-5 min-h-5" />
@@ -264,7 +264,6 @@ const CreateRoom = ({ channelCode }: Props) => {
                   실사체
                 </label>
               </div>
-
               <div className="flex gap-2 pr-2 items-center">
                 <input
                   type="radio"
