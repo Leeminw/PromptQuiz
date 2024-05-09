@@ -22,6 +22,7 @@ public class GameQuiz {
     private Integer type;
     @Indexed
     private Integer round;
+    private Integer number;
     @Indexed
     private Boolean isAnswer;
 
