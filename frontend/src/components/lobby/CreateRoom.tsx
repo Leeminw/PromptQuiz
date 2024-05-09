@@ -13,8 +13,8 @@ const CreateRoom = ({ channelCode }: Props) => {
   const [privacyStatus, setPrivacyStatus] = useState(0);
   const [isTeam, setIsTeam] = useState(false);
   const [mode, setMode] = useState(0);
-  const [maxPlayers, setMaxPlayers] = useState(1);
-  const [maxRounds, setMaxRounds] = useState(1);
+  const [maxPlayers, setMaxPlayers] = useState(12);
+  const [maxRounds, setMaxRounds] = useState(50);
   /**로그인 상태 정보를 가져오기 전에 임시로 userId 값을 부여 */
   // const [userId, setUserId] = useState(3);
   const { user } = useUserStore();
@@ -22,7 +22,8 @@ const CreateRoom = ({ channelCode }: Props) => {
   const [status, setStatus] = useState(false);
   const curPlayers = 1;
   const curRound = 0;
-  const [styleIndex, setStyleIndex] = useState(0);
+  // const [styleIndex, setStyleIndex] = useState(0); // style 변수가 string일 때 사용한 코드
+  const [style, setStyle] = useState(0);
   const [password, setPassword] = useState('');
   const [title, setTitle] = useState<string>('');
 
@@ -48,8 +49,8 @@ const CreateRoom = ({ channelCode }: Props) => {
     console.log(maxRounds);
   };
   const styleHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setStyleIndex(Number(event.target.value));
-    console.log(styleIndex);
+    setStyle(Number(event.target.value));
+    console.log(style);
   };
 
   const titleHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,7 +64,7 @@ const CreateRoom = ({ channelCode }: Props) => {
   const createRoom = async () => {
     const styleArr = ['realistic', 'anime', 'cartoon', 'random'];
     const stateNum = status ? 1 : 0;
-    const style = styleArr[styleIndex];
+    // const style = styleArr[styleIndex]; // 다시 string에서 number로 변경
     // const style = 2; // 임시값
 
     if (privacyStatus === 1 && password.trim().length === 0) {
@@ -71,24 +72,23 @@ const CreateRoom = ({ channelCode }: Props) => {
       return;
     }
 
- 
-    // console.log('방 생성 정보 받음');
-    // console.log('사용자id:' + user.userId);
-    // console.log('채널id:' + channelCode);
+    console.log('방 생성 정보 받음');
+    console.log('사용자id:' + user.userId);
+    console.log('채널id:' + channelCode);
     // console.log('방유형:' + type);
-    // console.log('그림체:' + style);
-    // console.log('방제목:' + title);
-    // console.log('비밀번호:' + password);
-    // console.log('방상태:' + status);
-    // console.log('팀전여부:' + isTeam);
-    // console.log('현재라운드:' + curRound);
+    console.log('그림체:' + style);
+    console.log('방제목:' + title);
+    console.log('비밀번호:' + password);
+    console.log('방상태:' + status);
+    console.log('팀전여부:' + isTeam);
+    console.log('현재라운드:' + curRound);
     // console.log('최대라운드:' + rounds);
-    // console.log('현재플레이어:' + curPlayers);
-    // console.log('최대플레이어:' + maxPlayers);
+    console.log('현재플레이어:' + curPlayers);
+    console.log('최대플레이어:' + maxPlayers);
 
     console.log('---------');
 
-    try{
+    try {
       const room: CreateRoom = {
         channelCode,
         isPrivate: privacyStatus === 1,
@@ -106,9 +106,8 @@ const CreateRoom = ({ channelCode }: Props) => {
       setTimeout(() => {
         navigate(`/game/${data.code}`);
       }, 1000);
-    }
-    catch(error) {
-      console.error(error)
+    } catch (error) {
+      console.error(error);
     }
   };
   return (
@@ -257,7 +256,7 @@ const CreateRoom = ({ channelCode }: Props) => {
                   value={0}
                   id="real"
                   onChange={styleHandler}
-                  checked={styleIndex === 0}
+                  checked={style === 0}
                   className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                 />
                 <label htmlFor="real" className="text-nowrap text-sm font-bold">
@@ -271,7 +270,7 @@ const CreateRoom = ({ channelCode }: Props) => {
                   value={1}
                   id="comic"
                   onChange={styleHandler}
-                  checked={styleIndex === 1}
+                  checked={style === 1}
                   className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                 />
                 <label htmlFor="comic" className="text-nowrap text-sm font-bold">
@@ -284,7 +283,7 @@ const CreateRoom = ({ channelCode }: Props) => {
                   value={2}
                   id="disney"
                   onChange={styleHandler}
-                  checked={styleIndex === 2}
+                  checked={style === 2}
                   className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                 />
                 <label htmlFor="disney" className="text-nowrap text-sm font-bold">
@@ -298,7 +297,7 @@ const CreateRoom = ({ channelCode }: Props) => {
                   value={3}
                   id="random"
                   onChange={styleHandler}
-                  checked={styleIndex === 3}
+                  checked={style === 3}
                   className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                 />
                 <label htmlFor="random" className="text-nowrap text-sm font-bold">
