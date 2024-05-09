@@ -57,6 +57,15 @@ const LobbyApi = {
     }catch (error) { 
       return Promise.reject(error);
     }
-  }
+  },
+  enterLobby: async (channelCode: string) => {
+    try {
+      const response = await instance.post(`/user-channel/code/${channelCode}`);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      return Promise.reject(error);
+    }
+  },
 };
 export { LobbyApi };
