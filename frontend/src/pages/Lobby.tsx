@@ -109,7 +109,13 @@ const Lobby = () => {
           <p className="text-center w-full text-nowrap">{channelCode}채널</p>
         </label>
         <div className="col-span-6 flex items-center pl-2">
-          <Header channelCode={channelCode} channelUuid={channelUuid} handleState={handleState} />
+          <Header
+            // userId는 임시값
+            userId={user.userId}
+            channelCode={channelCode}
+            channelUuid={channelUuid}
+            handleState={handleState}
+          />
           <button
             className="btn"
             onClick={() => {
@@ -121,7 +127,7 @@ const Lobby = () => {
                   ...prev,
                   {
                     id: 213123,
-                    channelCode: "123123",
+                    channelCode: '123123',
                     type: 123,
                     style: 2,
                     code: '1234',

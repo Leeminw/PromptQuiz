@@ -11,12 +11,13 @@ import { UserChannelApi } from '../../hooks/axios-user-channel';
 import { error } from 'console';
 import Rank from './Rank';
 interface Props {
+  userId: bigint;
   channelCode: string;
   channelUuid: string; // 랭킹화면에서 다시 로비 URL로 넘어가기 위해 추가
   handleState: (data1: RoomProps[], data2: CurrentUser[]) => void;
 }
 // const Header = ({ channelCode }: Props, handleState: (data: RoomProps[]) => void) => {
-const Header = ({ channelCode, channelUuid, handleState }: Props) => {
+const Header = ({ userId, channelCode, channelUuid, handleState }: Props) => {
   const navigate = useNavigate();
   const fastMatching = () => {
     alert('빠른대전 매칭완료!');
@@ -35,7 +36,7 @@ const Header = ({ channelCode, channelUuid, handleState }: Props) => {
   const exitChannel = () => {
     // 백엔드 API 정상 동작 여부 확인하고
     // 주석해제
-    const response = UserChannelApi.exitChannel()
+    const response = UserChannelApi.exitChannel(userId, channelUuid)
       .then((response) => {
         console.log(response);
       })
