@@ -1,6 +1,5 @@
 package com.ssafy.apm.common.service;
 
-import com.ssafy.apm.channel.service.ChannelService;
 import com.ssafy.apm.common.domain.Session;
 import com.ssafy.apm.common.repository.SocketRepository;
 
@@ -26,49 +25,42 @@ public class SocketServiceImpl implements SocketService {
     @Override
     @Transactional
     public void addSession(String sessionId) {
-        try {
+        if(!socketRepository.existsSessionBySessionId(sessionId)){
             socketRepository.save(new Session(sessionId, 1L, "0", 2));
-        } catch (Exception e) {
-            log.debug(e.getMessage());
         }
     }
 
     @Override
     @Transactional
     public void kickOutUser(String sessionId) {
-        try {
-            Session session = socketRepository.findBySessionId(sessionId).orElseThrow();
+        Session session = socketRepository.findBySessionId(sessionId).orElseThrow(
+                () -> new RuntimeException("Session not found " + sessionId));
 
+        if(!session.getUuid().equals("0")){
             if (session.getType().equals(GAME)) {
                 gameUserService.deleteGameUser(session.getUuid(), session.getUserId());
             } else {
                 userChannelService.deleteExitUserChannelByUserIdAndCode(session.getUserId(), session.getUuid());
             }
-        } catch (Exception e) {
-            log.debug(e.getMessage());
         }
     }
 
     @Override
     @Transactional
-    public void editSession(String sessionId, String uuid, Integer type) {
-        try {
-            Session session = socketRepository.findBySessionId(sessionId).orElseThrow();
-            session.updateState(uuid, type);
-        } catch (Exception e) {
-            log.debug(e.getMessage());
-        }
+    public void editSession(String sessionId, Long userId, String uuid, Integer type) {
+        Session session = socketRepository.findBySessionId(sessionId).orElseThrow(
+                () -> new RuntimeException("Session not found " + sessionId));
+
+        session.updateState(userId, uuid, type);
+        socketRepository.save(session);
     }
 
     @Override
     @Transactional
     public void deleteSession(String sessionId) {
-        try {
-            Session session = socketRepository.findBySessionId(sessionId).orElseThrow();
-            socketRepository.delete(session);
-        } catch (Exception e) {
-            log.debug(e.getMessage());
-        }
+        Session session = socketRepository.findBySessionId(sessionId).orElseThrow();
+        socketRepository.delete(session);
+
     }
 
 }
