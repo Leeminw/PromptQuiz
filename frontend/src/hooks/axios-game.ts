@@ -27,7 +27,14 @@ const GameApi = {
       return Promise.reject(error);
     }
   },
-  // getGameDetail : async ()
+  getRoundGame: async (gameCode:string) =>{
+    try{
+      const response = await instance.get(`/round/quiz/${gameCode}`)
+      return response.data;
+    }catch(error){
+      return Promise.reject(error);
+    }
+  }
 };
 
 export default GameApi;

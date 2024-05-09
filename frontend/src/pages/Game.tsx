@@ -64,9 +64,17 @@ const GamePage = () => {
       disconnectWebSocket();
     };
   }, [game]);
-
+  const getGameDetail = async (gameCode: string) => {
+    try {
+      const response = await GameApi.getRoundGame(gameCode);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   useEffect(() => {
     if (isQuiz) {
+      getGameDetail(game?.code);
       console.log('isQuiz updated:', isQuiz);
     }
   }, [isQuiz]);
@@ -230,14 +238,14 @@ const GamePage = () => {
     // const destination = '/ws/pub/game/start';
     const gameReady: GameReady = {
       gameCode: game.code,
-      uuid: game.code,
     };
+    console.log(gameReady);
     try {
       const response = await instance.post('game/start', gameReady);
       console.log(response);
-      handleGamestart();
       setIsStart(true);
     } catch (error) {
+      console.log('에러!');
       console.error(error);
     }
   };

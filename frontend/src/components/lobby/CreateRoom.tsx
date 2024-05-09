@@ -100,11 +100,11 @@ const CreateRoom = ({ channelCode }: Props) => {
         timeLimit: 60,
         title,
       };
-      const { data } = await LobbyApi.createRoom(room);
-      console.log(data);
-      setTimeout(() => {
-        navigate(`/game/${data.code}`);
-      }, 1000);
+      // const { data } = await LobbyApi.createRoom(room);
+      console.log(room);
+      // setTimeout(() => {
+      //   navigate(`/game/${data.code}`);
+      // }, 1000);
     } catch (error) {
       console.error(error);
     }
