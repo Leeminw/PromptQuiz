@@ -18,6 +18,7 @@ import { useWebSocketStore } from '../stores/socketStore';
 import useUserStore from '../stores/userStore';
 import { IMessage } from '@stomp/stompjs';
 import { UserChannelApi } from '../hooks/axios-user-channel';
+import badwordsFiltering from '../hooks/badwords-filtering';
 const Lobby = () => {
   const { channelUuid } = useParams();
   const { user } = useUserStore();
@@ -91,11 +92,13 @@ const Lobby = () => {
   };
   const enterGame = () => {};
   const publishChat = () => {
+    let chatFilter = badwordsFiltering(chatInput.current?.value);
+    console.log(chatFilter);
     const destination = '/ws/pub/channel/chat/send';
     const channelChat: ChannelChat = {
       nickname: user.nickName,
       uuid: channelUuid,
-      content: chatInput.current.value,
+      content: chatFilter,
     };
     publish(destination, channelChat);
     chatInput.current.value = '';

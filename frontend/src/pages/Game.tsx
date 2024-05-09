@@ -7,17 +7,20 @@ import GamePlayer from '../components/game/Player';
 import SelectionGame from '../components/game/SelectionGame';
 import GameRoomSetting from '../components/game/GameRoomSetting';
 import GameApi from '../hooks/axios-game';
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import SockJS from 'sockjs-client';
 import { Client, Message, IMessage } from '@stomp/stompjs';
 import { useWebSocketStore } from '../stores/socketStore';
 import useUserStore from '../stores/userStore';
 import instance from '../hooks/axios-instance';
+import { LobbyApi } from '../hooks/axios-lobby';
+import badwordsFiltering from '../hooks/badwords-filtering';
 
 const GamePage = () => {
   const { roomId } = useParams();
   const { user } = useUserStore();
+  const navigate = useNavigate();
   const chatBtn = useRef(null);
   const chatInput = useRef(null);
   const chattingBox = useRef(null);
@@ -35,6 +38,8 @@ const GamePage = () => {
   const [result, setResult] = useState<RoundUser[]>([]);
   const [isQuiz, setIsQuiz] = useState<boolean>(false);
   const [messageMap, setMessageMap] = useState<Map<bigint, GameChatRecieve>>(new Map());
+  const [channelInfo, setChannelInfo] = useState<Channel | null>();
+
 
   //  문제를 받았는지 ?
   // false, , timer로받았을때>> 현재게임상태 ' '
@@ -46,6 +51,7 @@ const GamePage = () => {
     const userResponse = await GameApi.getUserList(roomId);
     setGame(responseGame);
     setGameUserList(userResponse.data);
+    getChannelInfo(responseGame?.channelCode);
     // setMaxRound(responseGame.maxRounds);
     // enterGame();
   };
@@ -56,6 +62,17 @@ const GamePage = () => {
     });
     setMessageMap(updatedUserMap);
   }, [gameUserList]);
+
+  const getChannelInfo = async (code: string) => {
+    try {
+      const response = await LobbyApi.getChannelInfo(code);
+      console.log('channel', response);
+      setChannelInfo(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     getGameData();
     // 채팅 입력 바깥 클릭 시 채팅창 닫기
@@ -191,12 +208,7 @@ const GamePage = () => {
   };
 
   const publishChat = () => {
-    let chatfilter = chatInput.current.value;
-    chatfilter = chatfilter.replaceAll('시발', '이런');
-    chatfilter = chatfilter.replaceAll('씨발', '이런');
-    chatfilter = chatfilter.replaceAll('존나', '매우');
-    chatfilter = chatfilter.replaceAll('병신', '아이');
-    chatfilter = chatfilter.replaceAll('좆', '어머');
+    let chatfilter = badwordsFiltering(chatInput.current?.value);
     const destination = '/ws/pub/game/chat/send';
     const gameChat: GameChat = {
       userId: user.userId,
@@ -280,7 +292,7 @@ const GamePage = () => {
     <div
       className={`w-[70rem] h-[37rem] min-w-[40rem] min-h-[37rem] max-w-[80vw] z-10 
       rounded-3xl drop-shadow-lg flex flex-col items-center justify-center 
-      ${earthquake ? 'animate-earthquake' : ''}`}
+      ${earthquake && 'animate-earthquake'}`}
     >
       <div
         className={`absolute bg-no-repeat bg-contain bg-center bg-[url(/public/ui/gamestart.png)] 
@@ -291,7 +303,7 @@ const GamePage = () => {
       <div className="w-full h-10 grid grid-cols-5 gap-3 mb-2">
         {/* 채널 */}
         <label className="h-full flex items-center font-extrabold bg-white/80 border-custom-mint">
-          <p className="text-center w-full text-nowrap text-mint">{game?.channelCode}채널</p>
+          <p className="text-center w-full text-nowrap text-mint">{channelInfo?.name}</p>
         </label>
         {/* 제목 */}
         <div className="w-full h-full flex col-span-3 px-4">
@@ -336,6 +348,9 @@ const GamePage = () => {
             text-sm w-1/2 min-w-[3rem] ${activateBtn[1] ? 'animate-clickbtn scale-105' : ''}`}
             onClick={() => {
               handleClick(1);
+              setTimeout(() => {
+                navigate('/lobby/' + game?.channelCode);
+              }, 500);
             }}
           >
             <label className="flex gap-1 items-center px-2 cursor-pointer overflow-hidden max-xl:justify-center">

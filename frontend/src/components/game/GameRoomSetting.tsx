@@ -31,10 +31,10 @@ const GameRoomSetting = ({ gamestart }: GameRoomSettingProps) => {
         />
       </div>
       <div className="w-full h-40 border-custom-white bg-white grid grid-cols-2 grid-rows-2 gap-3 text-xs pt-1.5">
-        <div className='flex justify-center items-center text-mint font-extrabold'>개인전</div>
-        <div className='flex justify-center items-center text-mint font-extrabold'>객관식</div>
-        <div className='flex justify-center items-center text-mint font-extrabold'>20 라운드</div>
-        <div className='flex justify-center items-center text-mint font-extrabold'>60초</div>
+        <div className='flex justify-center items-center text-mint font-extrabold text-nowrap'>개인전</div>
+        <div className='flex justify-center items-center text-mint font-extrabold text-nowrap'>객관식</div>
+        <div className='flex justify-center items-center text-mint font-extrabold text-nowrap'>20 라운드</div>
+        <div className='flex justify-center items-center text-mint font-extrabold text-nowrap'>60초</div>
       </div>
     </div>
   );
