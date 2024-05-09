@@ -1,9 +1,9 @@
 package com.ssafy.apm.common.service;
 
+import com.ssafy.apm.game.service.GameService;
 import com.ssafy.apm.common.domain.Session;
 import com.ssafy.apm.common.repository.SocketRepository;
 import com.ssafy.apm.userchannel.service.UserChannelService;
-import com.ssafy.apm.gameuser.service.GameUserService;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class SocketServiceImpl implements SocketService {
 
     private static final Integer GAME = 1, CHANNEL = 2;
-    private final GameUserService gameUserService;
+    private final GameService gameService;
     private final SocketRepository socketRepository;
     private final UserChannelService userChannelService;
 
@@ -38,7 +38,7 @@ public class SocketServiceImpl implements SocketService {
 
         if(!session.getUuid().equals("0")){
             if (session.getType().equals(GAME)) {
-                gameUserService.deleteGameUser(session.getUuid(), session.getUserId());
+                gameService.exitGameByUserId(session.getUserId(),session.getUuid());
             } else {
                 userChannelService.deleteExitUserChannelByUserIdAndCode(session.getUserId(), session.getUuid());
             }
