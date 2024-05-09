@@ -13,6 +13,7 @@ const GameApi = {
     try {
       const response = await instance.get(`game-user/details?gameCode=${roomId}`);
       console.log('GetUserList', response.data);
+
       return response.data;
     } catch (error) {
       return Promise.reject(error);
