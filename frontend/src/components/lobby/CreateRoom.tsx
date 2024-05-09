@@ -110,33 +110,33 @@ const CreateRoom = ({ channelCode }: Props) => {
   };
   return (
     // className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 "
-    <div className="w-fit h-full">
+    <div className="w-fit h-full text-mint">
       <button
-        className="w-full h-full btn-mint flex justify-center items-center gap-2 px-1 hover:brightness-110"
+        className="w-full h-full btn-mint flex justify-center items-center gap-2 px-3 hover:brightness-110"
         onClick={() => (document.getElementById('my_modal_1') as HTMLDialogElement).showModal()}
       >
         <MdAddHome className="min-w-5 min-h-5" />
-        <p className="text-nowrap">방 만들기</p>
+        <p className="text-nowrap lg:flex max-lg:hidden">방 만들기</p>
       </button>
       <dialog id="my_modal_1" className="modal">
-        <div className="modal-box border-2 border-lightmint flex flex-col gap-3 min-h-[40rem]">
+        <div className="modal-box border-2 border-lightmint flex flex-col gap-3 pb-14 bg-white/90 backdrop-blur-lg">
           <h3 className="font-bold text-2xl">방 만들기</h3>
           <hr className="mb-1" />
-          <div className="flex items-center gap-3">
-            <span className="font-bold text-nowrap pr-6">방 이름</span>
-            <input
-              type="text"
-              className="input input-bordered input-sm w-full rounded-full border-lightmint"
-              placeholder="방 이름 (최대 20자)"
-              maxLength={20}
-              value={title}
-              onChange={titleHandler}
-            />
-          </div>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 overflow-y-scroll custom-scroll">
+            <div className="flex items-center gap-3 mt-1">
+              <span className="font-bold text-nowrap pr-6 text-darkmint">방 이름</span>
+              <input
+                type="text"
+                className="input input-bordered input-sm w-full rounded-full border-2 border-lightmint mr-1 pl-4 bg-white/60"
+                placeholder="방 이름 (최대 20자)"
+                maxLength={20}
+                value={title}
+                onChange={titleHandler}
+              />
+            </div>
             <div className="flex items-center gap-3">
               <div className="flex gap-2 pr-2 items-center">
-                <span className="font-bold text-nowrap pr-5">공개여부</span>
+                <span className="font-bold text-nowrap pr-5 text-darkmint">공개여부</span>
                 <input
                   type="radio"
                   value={0}
@@ -166,14 +166,14 @@ const CreateRoom = ({ channelCode }: Props) => {
               <input
                 type="password"
                 disabled={privacyStatus != 1 && true}
-                className="input input-bordered input-sm w-full rounded-full border-lightmint"
+                className="input input-bordered input-sm w-full rounded-full border-2 border-lightmint mr-1 pl-4 bg-white/70"
                 maxLength={20}
                 placeholder="비밀번호 (최대 20자)"
                 onChange={passwordHandler}
                 value={password}
               />
             </div>
-            <span className="font-bold text-nowrap">게임 종류</span>
+            <span className="font-bold text-nowrap text-darkmint">게임 종류</span>
             <div className="flex gap-3 flex-col">
               <div className="flex gap-3">
                 <div className="flex gap-2 pr-2 items-center">

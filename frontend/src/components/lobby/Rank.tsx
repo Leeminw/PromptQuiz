@@ -77,38 +77,36 @@ const Rank = () => {
     console.log(password);
   };
   return (
-    // className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 "
-    <div className="w-fit h-full">
+    <div className="w-full h-full">
       <button
-        className="w-full h-full bg-customYellow border-custom-yellow text-white flex justify-center items-center gap-2 px-1 hover:brightness-110"
+        className="w-fit h-full bg-customYellow border-custom-yellow text-white flex justify-center items-center gap-2 px-4 hover:brightness-110"
         onClick={() => (document.getElementById('ranking_modal') as HTMLDialogElement).showModal()}
       >
         <BsFillTrophyFill className="min-w-4 min-h-4 " />
-        <p className="text-nowrap font-extrabold">랭킹</p>
+        <p className="text-nowrap font-extrabold lg:flex max-lg:hidden">랭킹</p>
       </button>
       <dialog id="ranking_modal" className="modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">랭킹</h3>
-          <div>랭킹화면</div>
-          <div className="flex flex-row items-center">
-            <RankingList rankingTitle={'통합 랭킹'} users={totalRankingArray} />
-            <RankingList rankingTitle={'개인전 랭킹'} users={soloRankingArray} />
-            <RankingList rankingTitle={'팀 랭킹'} users={teamRankingArray} />
+        <div className="modal-box max-w-[60rem] border-2 border-lightmint">
+          <h3 className="font-bold text-2xl">랭킹</h3>
+          <hr className="my-4" />
+          <div className="flex flex-row items-center h-[30rem] gap-6">
+            <RankingList rankingTitle={'통합 랭킹'} users={totalRankingArray} rankingType={1} />
+            <RankingList rankingTitle={'개인전 랭킹'} users={soloRankingArray} rankingType={2} />
+            <RankingList rankingTitle={'팀 랭킹'} users={teamRankingArray} rankingType={3} />
           </div>
           <div className="modal-action">
             <form method="dialog">
-              <button
-                className="bg-customGreen text-white hover:brightness-125 hover:scale-105 transition 
-            text-sm w-1/4 min-w-[3rem]"
-              >
-                로비화면으로
+              <button className="bg-[#999999] text-white border-custom-gray px-6 font-bold hover:brightness-110">
+                닫기
               </button>
             </form>
           </div>
           {/* // */}
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+              <button className="btn btn-sm btn-circle btn-ghost absolute right-4 top-5 text-lg ">
+                ✕
+              </button>
             </form>
           </div>
           {/* // */}

@@ -28,7 +28,7 @@ const CurrentUserList = (currentUserList: Props[]) => {
     alert('예시 함수');
   };
   return (
-    <div className="w-full h-[18.5rem] flex flex-col gap-3 overflow-y-scroll userList border-custom-white bg-white py-1 pr-2 pl-1">
+    <div className="w-full h-[18.5rem] flex flex-col gap-3 overflow-y-scroll custom-scroll py-1 pr-2 pl-1 border-custom-mint">
       {currentUserArray.map((item, index) => (
         <CurrentUser
           key={index}

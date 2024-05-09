@@ -53,32 +53,32 @@ const Header = ({ channelCode, channelUuid, handleState }: Props) => {
     }, 1000);
   };
   return (
-    <nav className="w-full h-[2rem] flex gap-4">
+    <nav className="w-full h-14 flex gap-6 pl-2 py-2">
       <CreateRoom channelCode={channelCode} />
       <button
-        className="w-fit h-full btn-mint hover:brightness-110 flex justify-center items-center gap-2 px-2"
+        className="w-fit h-full btn-mint hover:brightness-110 flex justify-center items-center gap-2 px-4"
         onClick={fastMatching}
       >
         <FaForward className="min-w-4 min-h-4 " />
-        <p className="text-nowrap">빠른대전</p>
+        <p className="text-nowrap lg:flex max-lg:hidden">빠른대전</p>
       </button>
       <button
-        className="w-fit h-full btn-mint hover:brightness-110 flex justify-center items-center gap-2 pr-2 pl-1"
+        className="w-fit h-full btn-mint hover:brightness-110 flex justify-center items-center gap-2 pl-2 pr-3"
         onClick={refresh}
       >
-        <IoMdRefresh className="min-w-5 min-h-5 " />
-        <p className="text-nowrap">새로고침</p>
+        <IoMdRefresh className="lg:min-w-5 lg:min-h-5 max-lg:min-w-6 max-lg:min-h-6" />
+        <p className="text-nowrap lg:flex max-lg:hidden">새로고침</p>
       </button>
 
       <Rank />
 
       <div className="grow" />
       <button
-        className="w-fit h-full border-custom-red bg-customRed text-white font-extrabold hover:brightness-110 flex justify-center items-center gap-2 px-2 mr-2"
+        className="w-fit h-full border-custom-red bg-customRed text-white font-extrabold hover:brightness-110 flex justify-center items-center gap-2 px-4"
         onClick={exitChannel}
       >
         <ImExit className="min-w-4 min-h-4 " />
-        <p className="text-nowrap">나가기</p>
+        <p className="text-nowrap lg:flex max-lg:hidden">나가기</p>
       </button>
     </nav>
   );
