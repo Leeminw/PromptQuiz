@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { IoIosLock } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
+import { LobbyApi } from '../../hooks/axios-lobby';
 
 interface Props {
   id: number;
@@ -51,27 +52,44 @@ const Room = ({
   };
   const passwordCheck = () => {
     if (password === gamePassword) {
-      setTimeout(() => {
-        navigate(`/game/${id}`);
-      }, 1000);
+      enterRoom();
+      // setTimeout(() => {
+      //   navigate(`/game/${id}`);
+      // }, 1000);
     } else {
       alert('잘못된 비밀번호입니다');
     }
   };
-  const enterRoom = () => {
+  const chooseRoom = () => {
     if (password) {
       (document.getElementById(modalId) as HTMLDialogElement).showModal(); // 'my_modal_2'
       return;
     } else {
-      setTimeout(() => {
-        navigate(`/game/${code}`);
-      }, 1000);
+      enterRoom();
     }
   };
+  // 인증 절차에 문제가 없을 때 방으로 입장시키는 함수
+  const enterRoom = () => {
+    const response = LobbyApi.enterGame(code)
+      .then((response) => {
+        console.log('게임방 진입 성공!');
+        console.log(response);
+
+        setTimeout(() => {
+          navigate(`/game/${code}`);
+        }, 1000);
+      })
+      .catch((error) => {
+        console.log('게임방 진입 실패');
+        console.log(error);
+      });
+  };
+  console.log(`게임방 관련 정보 ${code}`);
+
   return (
     <div
       className="w-full h-20 relative gap-1 border-2 bg-white border-mint rounded-3xl px-5 py-2 cursor-pointer hover:scale-105 transition ring-mint hover:ring-2"
-      onClick={enterRoom}
+      onClick={chooseRoom}
     >
       <div className="flex items-start">
         <p className="w-full h-10 font-extrabold line-clamp-2 leading-5 pt-1">{title}</p>

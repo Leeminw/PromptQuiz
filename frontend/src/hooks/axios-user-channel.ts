@@ -15,6 +15,7 @@ const UserChannelApi = {
     }
   },
   // 채널 퇴장
+
   exitChannel: async () => {
     try {
       const response = await instance.delete(BASE_URL + `/user-channel`);
@@ -27,7 +28,9 @@ const UserChannelApi = {
   // 채널 유저 리스트 반환
   getChannelUserList: async (channelCode: string) => {
     try {
-      const response = await instance.get(BASE_URL + `/user-channel/userChannelList/${channelCode}`);
+      const response = await instance.get(
+        BASE_URL + `/user-channel/userChannelList/${channelCode}`
+      );
       return response.data;
     } catch (error) {
       console.error(error);
