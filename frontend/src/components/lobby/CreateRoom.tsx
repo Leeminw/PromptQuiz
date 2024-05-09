@@ -67,6 +67,10 @@ const CreateRoom = ({ channelCode }: Props) => {
     // const style = styleArr[styleIndex]; // 다시 string에서 number로 변경
     // const style = 2; // 임시값
 
+    if (title.trim().length === 0) {
+      alert('방 이름을 입력해주세요');
+      return;
+    }
     if (privacyStatus === 1 && password.trim().length === 0) {
       alert('비공개 방의 비밀번호를 입력해주세요');
       return;
