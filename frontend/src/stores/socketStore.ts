@@ -4,7 +4,7 @@ import { Client, Message, messageCallbackType } from '@stomp/stompjs';
 import WebSocketManager from '../utils/WebSocketManager';
 type WebSocketStore = {
   isConnected: boolean;
-  connectWebSocket: (url:string, sub:messageCallbackType, enter:()=>void ) => void;
+  connectWebSocket: (url:string, sub:messageCallbackType, enter:()=>void ,userId:bigint ) => void;
   disconnectWebSocket: () => void;
   subscribeWebSocket: (subUrl:string, callback: messageCallbackType) => void;
   publish: (destination:string, body:object) => void;
@@ -14,8 +14,8 @@ export const useWebSocketStore = create(
   persist<WebSocketStore>(
     (set) => ({
       isConnected: false,
-      connectWebSocket: (url:string, callback:messageCallbackType,  enter:()=>void) => {
-        WebSocketManager.connect(url, callback, enter);
+      connectWebSocket: (url:string, callback:messageCallbackType,  enter:()=>void, userId:bigint) => {
+        WebSocketManager.connect(url, callback, enter, String(userId));
         set({ isConnected: true });
       },
       disconnectWebSocket: () => {

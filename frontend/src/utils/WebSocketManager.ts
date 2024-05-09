@@ -9,7 +9,7 @@ class WebSocketManager {
     this.client = null;
   }
 
-  public connect(url:string, sub:messageCallbackType, enter:()=>void): void {
+  public connect(url:string, sub:messageCallbackType, enter:()=>void , userId:string): void {
     const socket = new SockJS(`${process.env.REACT_APP_SOCKET}`); // WebSocket 서버 주소
     this.client = new Client({
         webSocketFactory: () => socket,
@@ -23,7 +23,9 @@ class WebSocketManager {
       });
       
       this.client.onConnect = (frame) => {
-          this.client.subscribe(url, sub)
+          this.client.subscribe(url, sub, {
+            'userId': userId
+          })
           enter()
           console.log('connected!!!');
       };
