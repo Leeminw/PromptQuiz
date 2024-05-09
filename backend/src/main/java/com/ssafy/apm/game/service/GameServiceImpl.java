@@ -324,7 +324,7 @@ public class GameServiceImpl implements GameService {
     private List<GameQuiz> createGameQuizListByMode(Game gameEntity, Integer gameType, List<Quiz> quizList) {
         List<GameQuiz> mainGameQuizList = new ArrayList<>();
         switch (gameType) {
-            case 1 -> mainGameQuizList = choiceService.createGameQuizList(gameEntity, gameType, quizList);
+            case 1 -> mainGameQuizList = choiceService.createGameQuizList(gameEntity, quizList);
             case 2 -> mainGameQuizList = blankChoiceService.createGameQuizList(gameEntity, gameType, quizList);
             case 4 -> mainGameQuizList = blankSubjectiveService.createGameQuizList(gameEntity, gameType, quizList);
             case 3, 5, 6, 7 -> mainGameQuizList = randomCreateGameQuizList(gameEntity, gameType, quizList);

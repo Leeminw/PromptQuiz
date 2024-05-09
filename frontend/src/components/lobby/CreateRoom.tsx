@@ -12,9 +12,9 @@ interface Props {
 const CreateRoom = ({ channelCode }: Props) => {
   const [privacyStatus, setPrivacyStatus] = useState(0);
   const [isTeam, setIsTeam] = useState(false);
-  const [type, setType] = useState(0);
+  const [mode, setMode] = useState(0);
   const [maxPlayers, setMaxPlayers] = useState(1);
-  const [rounds, setRounds] = useState(1);
+  const [maxRounds, setMaxRounds] = useState(1);
   /**로그인 상태 정보를 가져오기 전에 임시로 userId 값을 부여 */
   // const [userId, setUserId] = useState(3);
   const { user } = useUserStore();
@@ -36,16 +36,16 @@ const CreateRoom = ({ channelCode }: Props) => {
     console.log(isTeam);
   };
   const typeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setType(Number(event.target.value));
-    console.log(type);
+    setMode(Number(event.target.value));
+    console.log(mode);
   };
   const maxPlayersHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMaxPlayers(Number(event.target.value));
     console.log(maxPlayers);
   };
   const maxRoundHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRounds(Number(event.target.value));
-    console.log(rounds);
+    setMaxRounds(Number(event.target.value));
+    console.log(maxRounds);
   };
   const styleHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStyleIndex(Number(event.target.value));
@@ -71,38 +71,46 @@ const CreateRoom = ({ channelCode }: Props) => {
       return;
     }
 
-    const Room: Room = {
-      userId: user.userId,
-      channelCode,
-      type,
-      style,
-      title,
-      password,
-      status,
-      isTeam,
-      curRound, // 게임 시작전 현재 라운드는 0라운드로 간주
-      rounds,
-      curPlayers, // 초기 플레이어는 방장 1명
-      maxPlayers,
-    };
-    console.log('방 생성 정보 받음');
-    console.log('사용자id:' + user.userId);
-    console.log('채널id:' + channelCode);
-    console.log('방유형:' + type);
-    console.log('그림체:' + style);
-    console.log('방제목:' + title);
-    console.log('비밀번호:' + password);
-    console.log('방상태:' + status);
-    console.log('팀전여부:' + isTeam);
-    console.log('현재라운드:' + curRound);
-    console.log('최대라운드:' + rounds);
-    console.log('현재플레이어:' + curPlayers);
-    console.log('최대플레이어:' + maxPlayers);
+    // const Room: Room = {
+    //   channelCode,
+    //   style,
+    //   title,
+    //   password,
+    //   isTeam,
+    //   curPlayers, // 초기 플레이어는 방장 1명
+    //   maxPlayers,
+    // };
+    // console.log('방 생성 정보 받음');
+    // console.log('사용자id:' + user.userId);
+    // console.log('채널id:' + channelCode);
+    // console.log('방유형:' + type);
+    // console.log('그림체:' + style);
+    // console.log('방제목:' + title);
+    // console.log('비밀번호:' + password);
+    // console.log('방상태:' + status);
+    // console.log('팀전여부:' + isTeam);
+    // console.log('현재라운드:' + curRound);
+    // console.log('최대라운드:' + rounds);
+    // console.log('현재플레이어:' + curPlayers);
+    // console.log('최대플레이어:' + maxPlayers);
 
-    console.log('---------');
-    console.log(Room);
+    // console.log('---------');
+    // console.log(Room);
     try {
-      const { data } = await LobbyApi.createRoom(Room);
+      const room: CreateRoom = {
+        channelCode,
+        isPrivate: privacyStatus === 1,
+        isTeam,
+        maxPlayers,
+        maxRounds,
+        mode,
+        password,
+        style,
+        timeLimit: 60,
+        title,
+      };
+
+      const { data } = await LobbyApi.createRoom(room);
       console.log(data);
       setTimeout(() => {
         navigate(`/game/${data.code}`);
@@ -183,7 +191,7 @@ const CreateRoom = ({ channelCode }: Props) => {
                 value={0}
                 id="choice"
                 onChange={typeHandler}
-                checked={type === 0}
+                checked={mode === 0}
               />
               <label htmlFor="choice">객관식</label>
               <input
@@ -191,7 +199,7 @@ const CreateRoom = ({ channelCode }: Props) => {
                 value={1}
                 id="subjective"
                 onChange={typeHandler}
-                checked={type === 1}
+                checked={mode === 1}
               />
               <label htmlFor="subjective">주관식</label>
               <input
@@ -199,7 +207,7 @@ const CreateRoom = ({ channelCode }: Props) => {
                 value={2}
                 id="sequence"
                 onChange={typeHandler}
-                checked={type === 2}
+                checked={mode === 2}
               />
               <label htmlFor="sequence">순서</label>
             </div>

@@ -4,41 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import { LobbyApi } from '../../hooks/axios-lobby';
 
 interface Props {
-  id: number;
-  channelCode: string;
-  type: number;
-  style: number;
-  code: string;
-  title: string;
-  password: string | null;
-  status: boolean;
-  isTeam: boolean;
-  curRound: number;
-  rounds: number;
-  curPlayers: number;
-  maxPlayers: number;
+  roomInfo: RoomProps;
 }
-const Room = ({
-  id,
-  channelCode,
-  type,
-  style,
-  code,
-  title,
-  password,
-  status,
-  isTeam,
-  curRound,
-  rounds,
-  curPlayers,
-  maxPlayers,
-}: Props) => {
-  const modalId = `my_modal${id}`;
+const Room = ({ roomInfo }: Props) => {
+  const modalId = `my_modal${roomInfo.code}`;
   const navigate = useNavigate();
   const [gamePassword, setGamePassword] = useState<string>('');
   const findRoomType = (type: number) => {
     // 객관식, 주관식, 순서
-    switch (type) {
+    switch (roomInfo.mode) {
       case 0:
         return '객관식';
       case 1:
@@ -51,7 +25,7 @@ const Room = ({
     setGamePassword(event.target.value);
   };
   const passwordCheck = () => {
-    if (password === gamePassword) {
+    if (roomInfo.password === gamePassword) {
       enterRoom();
       // setTimeout(() => {
       //   navigate(`/game/${id}`);
@@ -61,7 +35,7 @@ const Room = ({
     }
   };
   const chooseRoom = () => {
-    if (password) {
+    if (roomInfo.password) {
       (document.getElementById(modalId) as HTMLDialogElement).showModal(); // 'my_modal_2'
       return;
     } else {
@@ -70,13 +44,12 @@ const Room = ({
   };
   // 인증 절차에 문제가 없을 때 방으로 입장시키는 함수
   const enterRoom = () => {
-    const response = LobbyApi.enterGame(code)
+    const response = LobbyApi.enterGame(roomInfo.code)
       .then((response) => {
         console.log('게임방 진입 성공!');
         console.log(response);
-
         setTimeout(() => {
-          navigate(`/game/${code}`);
+          navigate(`/game/${roomInfo.code}`);
         }, 1000);
       })
       .catch((error) => {
@@ -84,7 +57,7 @@ const Room = ({
         console.log(error);
       });
   };
-  console.log(`게임방 관련 정보 ${code}`);
+  // console.log(`게임방 관련 정보 ${roomInfo.code}`);
 
   return (
     <div
@@ -92,15 +65,15 @@ const Room = ({
       onClick={chooseRoom}
     >
       <div className="flex items-start">
-        <p className="w-full h-10 font-extrabold line-clamp-2 leading-5 pt-1">{title}</p>
-        {password ? <IoIosLock className="text-gray-500 min-w-6 min-h-6" /> : ''}
+        <p className="w-full h-10 font-extrabold line-clamp-2 leading-5 pt-1">{roomInfo.title}</p>
+        {roomInfo.password ? <IoIosLock className="text-gray-500 min-w-6 min-h-6" /> : ''}
       </div>
       <div className="flex items-end font-bold text-mint">
         <span className="w-full text-nowrap text-xs flex gap-1.5">
-          <p>{findRoomType(type)}</p> <p>|</p> <p>{isTeam ? '팀전' : '개인전'}</p>
+          <p>{findRoomType(roomInfo.mode)}</p> <p>|</p> <p>{roomInfo.isTeam ? '팀전' : '개인전'}</p>
         </span>
         <span className="text-nowrap text-sm font-extrabold">
-          {curPlayers} / {maxPlayers}
+          {roomInfo.curPlayers} / {roomInfo.maxPlayers}
         </span>
       </div>
       <dialog id={modalId} className="modal">
