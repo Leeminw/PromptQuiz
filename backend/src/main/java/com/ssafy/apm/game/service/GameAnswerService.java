@@ -15,10 +15,10 @@ import org.springframework.stereotype.Service;
 public class GameAnswerService {
 
     private static final int MULTIPLECHOICE = 1, BLANKCHOICE = 2, BLANKSUBJECTIVE = 4;
-    private GameQuizService gameQuizService;
-    private BlankSubjectiveService blankSubjectiveService;
-    private BlankChoiceService blankChoiceService;
-    private ChoiceService choiceService;
+    private final ChoiceService choiceService;
+    private final GameQuizService gameQuizService;
+    private final BlankChoiceService blankChoiceService;
+    private final BlankSubjectiveService blankSubjectiveService;
 
     public GameAnswerCheck checkAnswer(GameChatRequestDto answer, Set<String> checkPrompt) {
         // 초기값 설정은 false로 설정
@@ -31,7 +31,7 @@ public class GameAnswerService {
             case MULTIPLECHOICE:
                 // todo: 객관식 번호가 정답일 경우 true
                 response.setType(MULTIPLECHOICE);
-                //response.setResult();
+                response.setResult(choiceService.checkAnswer(answer));
                 break;
             case BLANKCHOICE:
                 // todo: 순서가 맞을 경우 true
