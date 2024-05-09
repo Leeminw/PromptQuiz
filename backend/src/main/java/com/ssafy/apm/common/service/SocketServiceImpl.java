@@ -2,9 +2,9 @@ package com.ssafy.apm.common.service;
 
 import com.ssafy.apm.common.domain.Session;
 import com.ssafy.apm.common.repository.SocketRepository;
-
-import com.ssafy.apm.gameuser.service.GameUserService;
 import com.ssafy.apm.userchannel.service.UserChannelService;
+import com.ssafy.apm.gameuser.service.GameUserService;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 
@@ -58,9 +58,9 @@ public class SocketServiceImpl implements SocketService {
     @Override
     @Transactional
     public void deleteSession(String sessionId) {
-        Session session = socketRepository.findBySessionId(sessionId).orElseThrow();
+        Session session = socketRepository.findBySessionId(sessionId).orElseThrow(
+                () -> new RuntimeException("Session not found " + sessionId));
         socketRepository.delete(session);
-
     }
 
 }
