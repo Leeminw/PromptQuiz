@@ -84,7 +84,7 @@ const GamePage = () => {
 
   useEffect(() => {
     // 게임 로드하면 구독하기
-    connectWebSocket(`/ws/sub/game?uuid=${game?.code}`, recieveChat, enterGame);
+    connectWebSocket(`/ws/sub/game?uuid=${game?.code}`, recieveChat, enterGame, user.userId);
     return () => {
       disconnectWebSocket();
     };

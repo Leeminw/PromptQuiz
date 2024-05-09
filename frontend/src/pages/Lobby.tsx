@@ -35,7 +35,7 @@ const Lobby = () => {
 
   useEffect(() => {
     // 채널 구독하기
-    connectWebSocket(`/ws/sub/channel?uuid=${channelUuid}`, recieveChat, enterGame);
+    connectWebSocket(`/ws/sub/channel?uuid=${channelUuid}`, recieveChat, enterGame, user.userId);
     document.addEventListener('click', handleOutsideClick);
     document.addEventListener('keydown', handleChatKey);
     return () => {
