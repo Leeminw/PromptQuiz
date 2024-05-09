@@ -12,9 +12,9 @@ interface Props {
 const CreateRoom = ({ channelCode }: Props) => {
   const [privacyStatus, setPrivacyStatus] = useState(0);
   const [isTeam, setIsTeam] = useState(false);
-  const [type, setType] = useState(0);
+  const [mode, setMode] = useState(0);
   const [maxPlayers, setMaxPlayers] = useState(1);
-  const [rounds, setRounds] = useState(1);
+  const [maxRounds, setMaxRounds] = useState(1);
   /**로그인 상태 정보를 가져오기 전에 임시로 userId 값을 부여 */
   // const [userId, setUserId] = useState(3);
   const { user } = useUserStore();
@@ -36,16 +36,16 @@ const CreateRoom = ({ channelCode }: Props) => {
     console.log(isTeam);
   };
   const typeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setType(Number(event.target.value));
-    console.log(type);
+    setMode(Number(event.target.value));
+    console.log(mode);
   };
   const maxPlayersHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMaxPlayers(Number(event.target.value));
     console.log(maxPlayers);
   };
   const maxRoundHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRounds(Number(event.target.value));
-    console.log(rounds);
+    setMaxRounds(Number(event.target.value));
+    console.log(maxRounds);
   };
   const styleHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStyleIndex(Number(event.target.value));
@@ -71,38 +71,46 @@ const CreateRoom = ({ channelCode }: Props) => {
       return;
     }
 
-    const Room: Room = {
-      userId: user.userId,
-      channelCode,
-      type,
-      style,
-      title,
-      password,
-      status,
-      isTeam,
-      curRound, // 게임 시작전 현재 라운드는 0라운드로 간주
-      rounds,
-      curPlayers, // 초기 플레이어는 방장 1명
-      maxPlayers,
-    };
-    console.log('방 생성 정보 받음');
-    console.log('사용자id:' + user.userId);
-    console.log('채널id:' + channelCode);
-    console.log('방유형:' + type);
-    console.log('그림체:' + style);
-    console.log('방제목:' + title);
-    console.log('비밀번호:' + password);
-    console.log('방상태:' + status);
-    console.log('팀전여부:' + isTeam);
-    console.log('현재라운드:' + curRound);
-    console.log('최대라운드:' + rounds);
-    console.log('현재플레이어:' + curPlayers);
-    console.log('최대플레이어:' + maxPlayers);
+    // const Room: Room = {
+    //   channelCode,
+    //   style,
+    //   title,
+    //   password,
+    //   isTeam,
+    //   curPlayers, // 초기 플레이어는 방장 1명
+    //   maxPlayers,
+    // };
+    // console.log('방 생성 정보 받음');
+    // console.log('사용자id:' + user.userId);
+    // console.log('채널id:' + channelCode);
+    // console.log('방유형:' + type);
+    // console.log('그림체:' + style);
+    // console.log('방제목:' + title);
+    // console.log('비밀번호:' + password);
+    // console.log('방상태:' + status);
+    // console.log('팀전여부:' + isTeam);
+    // console.log('현재라운드:' + curRound);
+    // console.log('최대라운드:' + rounds);
+    // console.log('현재플레이어:' + curPlayers);
+    // console.log('최대플레이어:' + maxPlayers);
 
-    console.log('---------');
-    console.log(Room);
+    // console.log('---------');
+    // console.log(Room);
     try {
-      const { data } = await LobbyApi.createRoom(Room);
+      const room: CreateRoom = {
+        channelCode,
+        isPrivate: privacyStatus === 1,
+        isTeam,
+        maxPlayers,
+        maxRounds,
+        mode,
+        password,
+        style,
+        timeLimit: 60,
+        title,
+      };
+
+      const { data } = await LobbyApi.createRoom(room);
       console.log(data);
       setTimeout(() => {
         navigate(`/game/${data.code}`);
@@ -118,254 +126,155 @@ const CreateRoom = ({ channelCode }: Props) => {
         className="w-full h-full btn-mint flex justify-center items-center gap-2 px-1 hover:brightness-110"
         onClick={() => (document.getElementById('my_modal_1') as HTMLDialogElement).showModal()}
       >
-        <MdAddHome className="min-w-5 min-h-5" />
+        <MdAddHome className="min-w-5 min-h-5 " />
         <p className="text-nowrap">방 만들기</p>
       </button>
       <dialog id="my_modal_1" className="modal">
-        <div className="modal-box border-2 border-lightmint flex flex-col gap-3 min-h-[40rem]">
-          <h3 className="font-bold text-2xl">방 만들기</h3>
-          <hr className="mb-1" />
-          <div className="flex items-center gap-3">
-            <span className="font-bold text-nowrap pr-6">방 이름</span>
-            <input
-              type="text"
-              className="input input-bordered input-sm w-full rounded-full border-lightmint"
-              placeholder="방 이름 (최대 20자)"
-              maxLength={20}
-              value={title}
-              onChange={titleHandler}
-            />
-          </div>
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-3">
-              <div className="flex gap-2 pr-2 items-center">
-                <span className="font-bold text-nowrap pr-5">공개여부</span>
-                <input
-                  type="radio"
-                  value={0}
-                  id="open"
-                  onChange={privacyHandler}
-                  checked={privacyStatus == 0}
-                  className="radio radio-sm border-lightmint bg-white checked:bg-mint"
-                />
-                <label htmlFor="open" className="text-nowrap text-sm font-bold">
-                  공개
-                </label>
-              </div>
-              <div className="flex gap-2 pr-2 items-center">
-                <input
-                  type="radio"
-                  value={1}
-                  id="close"
-                  onChange={privacyHandler}
-                  checked={privacyStatus == 1}
-                  className="radio radio-sm border-lightmint bg-white checked:bg-mint"
-                />
-                <label htmlFor="close" className="text-nowrap text-sm font-bold">
-                  비공개
-                </label>
-              </div>
+        <div className="modal-box">
+          <h3 className="font-bold text-2xl ">방 만들기</h3>
+          {/* <p className="py-4">내용</p> */}
 
+          <div className="pt-4 flex flex-col gap-3">
+            <div className="flex items-center gap-3">
+              <span className="font-bold text-nowrap">방 이름</span>
               <input
-                type="password"
-                disabled={privacyStatus != 1 && true}
-                className="input input-bordered input-sm w-full rounded-full border-lightmint"
-                maxLength={20}
-                placeholder="비밀번호 (최대 20자)"
-                onChange={passwordHandler}
-                value={password}
+                type="text"
+                className="input input-bordered input-sm w-full"
+                placeholder="최대 20자"
+                value={title}
+                onChange={titleHandler}
               />
             </div>
-            <span className="font-bold text-nowrap">게임 종류</span>
-            <div className="flex gap-3 flex-col">
-              <div className="flex gap-3">
-                <div className="flex gap-2 pr-2 items-center">
-                  <input
-                    type="radio"
-                    value={0}
-                    id="individual"
-                    onChange={isTeamHandler}
-                    checked={!isTeam}
-                    className="radio radio-sm border-lightmint bg-white checked:bg-mint"
-                  />
-                  <label htmlFor="individual" className="text-nowrap text-sm font-bold">
-                    개인전
-                  </label>
-                </div>
-                <div className="flex gap-2 pr-2 items-center">
-                  <input
-                    type="radio"
-                    value={1}
-                    id="team"
-                    onChange={isTeamHandler}
-                    checked={isTeam}
-                    className="radio radio-sm border-lightmint bg-white checked:bg-mint"
-                  />
-                  <label htmlFor="team" className="text-nowrap text-sm font-bold">
-                    팀전
-                  </label>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <div className="flex gap-2 pr-2 items-center">
-                  <input
-                    type="radio"
-                    value={0}
-                    id="choice"
-                    onChange={typeHandler}
-                    checked={type === 0}
-                    className="radio radio-sm border-lightmint bg-white checked:bg-mint"
-                  />
-                  <label htmlFor="choice" className="text-nowrap text-sm font-bold">
-                    객관식
-                  </label>
-                </div>
-                <div className="flex gap-2 pr-2 items-center">
-                  <input
-                    type="radio"
-                    value={1}
-                    id="subjective"
-                    onChange={typeHandler}
-                    checked={type === 1}
-                    className="radio radio-sm border-lightmint bg-white checked:bg-mint"
-                  />
-                  <label htmlFor="subjective" className="text-nowrap text-sm font-bold">
-                    주관식
-                  </label>
-                </div>
-
-                <div className="flex gap-2 pr-2 items-center">
-                  <input
-                    type="radio"
-                    value={2}
-                    id="sequence"
-                    onChange={typeHandler}
-                    checked={type === 2}
-                    className="radio radio-sm border-lightmint bg-white checked:bg-mint"
-                  />
-                  <label htmlFor="sequence" className="text-nowrap text-sm font-bold">
-                    순서 맞추기
-                  </label>
-                </div>
-              </div>
-            </div>
-            <span className="font-bold text-nowrap mt-2">그림체</span>
-            <div className="flex gap-3">
-              <div className="flex gap-2 pr-2 items-center">
-                <input
-                  type="radio"
-                  value={0}
-                  id="real"
-                  onChange={styleHandler}
-                  checked={styleIndex === 0}
-                  className="radio radio-sm border-lightmint bg-white checked:bg-mint"
-                />
-                <label htmlFor="real" className="text-nowrap text-sm font-bold">
-                  실사체
-                </label>
-              </div>
-
-              <div className="flex gap-2 pr-2 items-center">
-                <input
-                  type="radio"
-                  value={1}
-                  id="comic"
-                  onChange={styleHandler}
-                  checked={styleIndex === 1}
-                  className="radio radio-sm border-lightmint bg-white checked:bg-mint"
-                />
-                <label htmlFor="comic" className="text-nowrap text-sm font-bold">
-                  만화체
-                </label>
-              </div>
-              <div className="flex gap-2 pr-2 items-center">
-                <input
-                  type="radio"
-                  value={2}
-                  id="disney"
-                  onChange={styleHandler}
-                  checked={styleIndex === 2}
-                  className="radio radio-sm border-lightmint bg-white checked:bg-mint"
-                />
-                <label htmlFor="disney" className="text-nowrap text-sm font-bold">
-                  디즈니체
-                </label>
-              </div>
-
-              <div className="flex gap-2 pr-2 items-center">
-                <input
-                  type="radio"
-                  value={3}
-                  id="random"
-                  onChange={styleHandler}
-                  checked={styleIndex === 3}
-                  className="radio radio-sm border-lightmint bg-white checked:bg-mint"
-                />
-                <label htmlFor="random" className="text-nowrap text-sm font-bold">
-                  랜덤
-                </label>
-              </div>
-            </div>
-            <span className="font-bold text-nowrap mt-2">인원 수</span>
-            <div className="w-full">
+            <div className="flex items-center gap-3">
+              <span className="font-bold">공개여부</span>
               <input
-                type="range"
-                min={2}
-                max="12"
-                className="range range-xs [--range-shdw:#359DB0]"
-                step="1"
+                type="radio"
+                value={0}
+                id="open"
+                onChange={privacyHandler}
+                checked={privacyStatus == 0}
+              />
+              <label htmlFor="open">공개</label>
+              <input
+                type="radio"
+                value={1}
+                id="close"
+                onChange={privacyHandler}
+                checked={privacyStatus == 1}
+              />
+              <label htmlFor="close">비공개</label>
+              {privacyStatus == 1 && (
+                <input
+                  type="password"
+                  placeholder="비밀번호폼"
+                  onChange={passwordHandler}
+                  value={password}
+                />
+              )}
+            </div>
+            <div>
+              <div>게임 종류</div>
+              <input
+                type="radio"
+                value={0}
+                id="individual"
+                onChange={isTeamHandler}
+                checked={!isTeam}
+              />
+              <label htmlFor="individual">개인전</label>
+              <input type="radio" value={1} id="team" onChange={isTeamHandler} checked={isTeam} />
+              <label htmlFor="team">팀전</label>
+
+              <hr />
+              <input
+                type="radio"
+                value={0}
+                id="choice"
+                onChange={typeHandler}
+                checked={mode === 0}
+              />
+              <label htmlFor="choice">객관식</label>
+              <input
+                type="radio"
+                value={1}
+                id="subjective"
+                onChange={typeHandler}
+                checked={mode === 1}
+              />
+              <label htmlFor="subjective">주관식</label>
+              <input
+                type="radio"
+                value={2}
+                id="sequence"
+                onChange={typeHandler}
+                checked={mode === 2}
+              />
+              <label htmlFor="sequence">순서</label>
+            </div>
+            <div>
+              <div>그림체</div>
+              <input
+                type="radio"
+                value={0}
+                id="real"
+                onChange={styleHandler}
+                checked={styleIndex === 0}
+              />
+              <label htmlFor="real">실사체</label>
+              <input
+                type="radio"
+                value={1}
+                id="comic"
+                onChange={styleHandler}
+                checked={styleIndex === 1}
+              />
+              <label htmlFor="comic">만화체</label>
+              <input
+                type="radio"
+                value={2}
+                id="disney"
+                onChange={styleHandler}
+                checked={styleIndex === 2}
+              />
+              <label htmlFor="disney">디즈니체</label>
+              <input
+                type="radio"
+                value={3}
+                id="random"
+                onChange={styleHandler}
+                checked={styleIndex === 3}
+              />
+              <label htmlFor="random">랜덤</label>
+            </div>
+            <div>
+              <div>인원수</div>
+              <input
+                type="number"
+                min={1}
+                max={12}
+                placeholder="인원수입력하세요"
                 onChange={maxPlayersHandler}
               />
-              <div className="w-full flex justify-between text-xs">
-                <span className="pl-1.5">2</span>
-                <span className="pl-1.5">3</span>
-                <span className="pl-1.5">4</span>
-                <span className="pl-1.5">5</span>
-                <span className="pl-1.5">6</span>
-                <span className="pl-1.5">7</span>
-                <span className="pl-1.5">8</span>
-                <span className="pl-1.5">9</span>
-                <span>10</span>
-                <span>11</span>
-                <span>12</span>
-              </div>
             </div>
-            <span className="font-bold text-nowrap mt-2">라운드 수</span>
-            <div className="w-full">
+            <div>
+              <div>라운드수</div>
               <input
-                type="range"
-                min={10}
-                max="50"
-                className="range range-xs [--range-shdw:#359DB0]"
-                step="10"
+                type="number"
+                min={1}
+                max={100}
+                placeholder="라운드수입력하세요"
                 onChange={maxRoundHandler}
               />
-              <div className="w-full flex justify-between text-xs">
-                <span>10</span>
-                <span>20</span>
-                <span>30</span>
-                <span>40</span>
-                <span>50</span>
-              </div>
             </div>
-            <div className="absolute bottom-6 right-6 flex gap-4 w-full justify-end">
-              <button
-                onClick={createRoom}
-                className="bg-mint text-white btn-mint px-6 hover:brightness-110"
-              >
-                생성
-              </button>
-              <form method="dialog">
-                <button className="bg-[#999999] text-white border-custom-gray px-6 font-bold hover:brightness-110">
-                  취소
-                </button>
-              </form>
+            <div>
+              <button onClick={createRoom}>생성</button>
+              <button>취소</button>
             </div>
           </div>
 
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn btn-sm btn-circle btn-ghost absolute right-4 top-5 text-lg ">
+              <button className="btn btn-sm btn-circle btn-ghost absolute right-4 top-5 text-lg">
                 ✕
               </button>
             </form>

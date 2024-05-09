@@ -51,6 +51,7 @@ const ChannelSelectPage = () => {
         {/* <ChannelBox id={1} code="code1" name="채널1" curPlayers={10} maxPlayers={100} /> */}
         {channelArray.map((item, idx) => (
           <ChannelBox
+            key={idx}
             id={item.id}
             code={item.code}
             name={item.name}
