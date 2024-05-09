@@ -2,12 +2,12 @@ package com.ssafy.apm.gamemonitor.service;
 
 import com.ssafy.apm.common.util.GameRoomStatus;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 
 public interface GameMonitorService {
 
-    void saveRoomList(ConcurrentHashMap<String, GameRoomStatus> gameEndMap,
-                      ConcurrentHashMap<String, GameRoomStatus> gameReadyMap,
-                      ConcurrentHashMap<String, GameRoomStatus> gameOngoingMap);
+    void saveRoomList(HashMap<String, GameRoomStatus> gameEndMap,
+        HashMap<String, GameRoomStatus> gameReadyMap,
+        HashMap<String, GameRoomStatus> gameOngoingMap);
 
 }

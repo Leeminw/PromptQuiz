@@ -50,10 +50,14 @@ public class WebSocketEventListener {
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         logger.info("Received a web socket disconnection(event: " + event + ")");
+        try{
+            String sessionId = parsingSessionIdFromEvent(event);
+            socketService.kickOutUser(sessionId);
+            socketService.deleteSession(sessionId);
 
-        String sessionId = parsingSessionIdFromEvent(event);
-        socketService.kickOutUser(sessionId);
-        socketService.deleteSession(sessionId);
+        }catch (Exception e){
+            logger.debug("Socket Disconnect Exception : " + e.getMessage());
+        }
     }
 
     public String parsingSessionIdFromEvent(AbstractSubProtocolEvent event){

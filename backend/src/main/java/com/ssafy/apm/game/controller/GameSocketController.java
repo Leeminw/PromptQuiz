@@ -1,5 +1,6 @@
 package com.ssafy.apm.game.controller;
 
+import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.socket.dto.response.*;
 import com.ssafy.apm.chat.service.ChatService;
 import com.ssafy.apm.game.service.GameService;
@@ -16,7 +17,6 @@ import com.ssafy.apm.gameuser.dto.response.GameUserSimpleResponseDto;
 import com.ssafy.apm.gamequiz.dto.response.GameQuizDetailResponseDto;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
@@ -48,11 +48,11 @@ public class GameSocketController {
     private static final int MULTIPLECHOICE = 1, BLANKCHOICE = 2, BLANKSUBJECTIVE = 4;
 
     // 라운드 끝나고 대기중인 리스트 (REST_TIME 초 대기)
-    private static final ConcurrentHashMap<String, GameRoomStatus> gameEndMap = new ConcurrentHashMap<>();
+    private static final HashMap<String, GameRoomStatus> gameEndMap = new HashMap<>();
     // 라운드 끝나고 결과확인 리스트 (REST_TIME 초 대기)
-    private static final ConcurrentHashMap<String, GameRoomStatus> gameReadyMap = new ConcurrentHashMap<>();
+    private static final HashMap<String, GameRoomStatus> gameReadyMap = new HashMap<>();
     // 현재 게임 진행중인 리스트 (max_time 초 대기)
-    private static final ConcurrentHashMap<String, GameRoomStatus> gameOngoingMap = new ConcurrentHashMap<>();
+    private static final HashMap<String, GameRoomStatus> gameOngoingMap = new HashMap<>();
 
     @Scheduled(fixedRate = 360000)
     private void saveCurrentGameList() {
@@ -61,14 +61,22 @@ public class GameSocketController {
 
     @Scheduled(fixedRate = 1000)
     private void roundOngoingScheduler() {
+
         List<GameRoomStatus> list = new ArrayList<>(gameOngoingMap.values());
         for (GameRoomStatus game : list) {
             if (!gameOngoingMap.containsKey(game.gameCode) || game.round < 0) continue;
 
             if (game.time <= 0) {
                 if (game.time == 0) {
-                    sendRoundEndMessage(game);
-                    setRoundToEnd(game);
+                    try{
+                        sendRoundEndMessage(game);
+                        setRoundToEnd(game);
+                    }catch (GameNotFoundException e){
+                        gameOngoingMap.remove(game.gameCode);
+                        sendGameResultMessage(game);
+                        continue;
+                    }
+
                 }
                 gameEndMap.put(game.gameCode, game);
                 gameOngoingMap.remove(game.gameCode);
@@ -183,15 +191,17 @@ public class GameSocketController {
                     newGame.round = gameService.updateGameRoundCnt(ready.getGameCode(), true);
 
                     gameService.updateGameIsStarted(ready.getGameCode(), true);
-                    sendRoundReadyMessage(newGame);
 
-                    gameReadyMap.put(ready.getGameCode(), newGame);
                     GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(newGame.gameCode);
                     if (quiz.getType() == BLANKSUBJECTIVE) {
                         newGame.initSimilarity(quiz);
                     }
+
+                    sendRoundReadyMessage(newGame);
+                    gameReadyMap.put(ready.getGameCode(), newGame);
                 }
             }catch (Exception e){
+
                 log.debug("Start Error: " + e.getMessage());
                 if(newGame != null){
                     gameReadyMap.remove(newGame.gameCode);
