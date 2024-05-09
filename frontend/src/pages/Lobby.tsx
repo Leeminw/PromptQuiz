@@ -49,6 +49,7 @@ const Lobby = () => {
     getChannelInfo();
   }, []);
   useEffect(() => {
+    console.log("channelUuid", channelUuid);
     LobbyApi.enterLobby(channelUuid);
   }, [channelInfo]);
   const handleState = (data1: RoomProps[], data2: CurrentUser[]) => {
