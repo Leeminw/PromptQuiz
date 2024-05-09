@@ -1,6 +1,5 @@
 package com.ssafy.apm.gameuser.service;
 
-import com.ssafy.apm.game.repository.GameRepository;
 import com.ssafy.apm.gameuser.domain.GameUser;
 import com.ssafy.apm.gameuser.dto.request.GameUserCreateRequestDto;
 import com.ssafy.apm.gameuser.dto.request.GameUserUpdateRequestDto;
@@ -23,7 +22,6 @@ import java.util.List;
 public class GameUserServiceImpl implements GameUserService {
 
     private final GameUserRepository gameUserRepository;
-    private final GameRepository gameRepository;
     private final UserRepository userRepository;
     private final UserService userService;
 
@@ -133,4 +131,14 @@ public class GameUserServiceImpl implements GameUserService {
         gameUser = gameUserRepository.save(gameUser.updateIsHost(isHost));
         return new GameUserSimpleResponseDto(gameUser);
     }
+
+    @Override
+    @Transactional
+    public GameUserSimpleResponseDto updateGameUserScore(Long userId, Integer score) {
+        GameUser gameUser = gameUserRepository.findByUserId(userId).orElseThrow(
+                () -> new GameUserNotFoundException("Entity Not Found with UserId: " + userId));
+        gameUser = gameUserRepository.save(gameUser.updateScore(score));
+        return new GameUserSimpleResponseDto(gameUser);
+    }
+
 }
