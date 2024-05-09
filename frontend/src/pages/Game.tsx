@@ -192,11 +192,6 @@ const GamePage = () => {
 
   const publishChat = () => {
     let chatfilter = chatInput.current.value;
-    chatfilter = chatfilter.replaceAll("시발","이런");
-    chatfilter = chatfilter.replaceAll("씨발","이런");
-    chatfilter = chatfilter.replaceAll("존나","매우");
-    chatfilter = chatfilter.replaceAll("병신","아이");
-    chatfilter = chatfilter.replaceAll("좆","어머");
     const destination = '/ws/pub/game/chat/send';
     const gameChat: GameChat = {
       userId: user.userId,
