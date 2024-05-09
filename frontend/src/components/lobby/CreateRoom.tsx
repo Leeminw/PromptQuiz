@@ -13,8 +13,8 @@ const CreateRoom = ({ channelCode }: Props) => {
   const [privacyStatus, setPrivacyStatus] = useState(0);
   const [isTeam, setIsTeam] = useState(false);
   const [mode, setMode] = useState(0);
-  const [maxPlayers, setMaxPlayers] = useState(1);
-  const [maxRounds, setMaxRounds] = useState(1);
+  const [maxPlayers, setMaxPlayers] = useState(12);
+  const [maxRounds, setMaxRounds] = useState(50);
   /**로그인 상태 정보를 가져오기 전에 임시로 userId 값을 부여 */
   // const [userId, setUserId] = useState(3);
   const { user } = useUserStore();
@@ -71,7 +71,6 @@ const CreateRoom = ({ channelCode }: Props) => {
       return;
     }
 
- 
     // console.log('방 생성 정보 받음');
     // console.log('사용자id:' + user.userId);
     // console.log('채널id:' + channelCode);
@@ -88,7 +87,7 @@ const CreateRoom = ({ channelCode }: Props) => {
 
     console.log('---------');
 
-    try{
+    try {
       const room: CreateRoom = {
         channelCode,
         isPrivate: privacyStatus === 1,
@@ -106,9 +105,8 @@ const CreateRoom = ({ channelCode }: Props) => {
       setTimeout(() => {
         navigate(`/game/${data.code}`);
       }, 1000);
-    }
-    catch(error) {
-      console.error(error)
+    } catch (error) {
+      console.error(error);
     }
   };
   return (

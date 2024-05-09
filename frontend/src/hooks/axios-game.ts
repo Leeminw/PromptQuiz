@@ -19,6 +19,14 @@ const GameApi = {
       return Promise.reject(error);
     }
   },
+  enterGame: async (gameCode: string) => {
+    try {
+      const response = await instance.post(`/game/enterGame/${gameCode}`);
+      return response.data;
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  },
   // getGameDetail : async ()
 };
 
