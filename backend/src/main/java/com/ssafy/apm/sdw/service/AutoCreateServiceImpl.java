@@ -8,7 +8,7 @@ import com.ssafy.apm.sdw.dto.SdwRequestDto;
 import com.ssafy.apm.sdw.dto.SdwResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
+//import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class AutoCreateServiceImpl implements AutoCreateService {
     private static List<Prompt> prompts;
 
     @Override
-    @Scheduled(cron = "0 */1 * * * *", zone = "Asia/Seoul")
+//    @Scheduled(cron = "0 */1 * * * *", zone = "Asia/Seoul")
     public void autoCreateScheduler() {
         prompts = promptRepository.findAll();
         for (Prompt prompt : prompts) {
