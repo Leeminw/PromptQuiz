@@ -6,7 +6,7 @@ public interface SocketService {
 
     void kickOutUser(String sessionId);
 
-    void editSession(String sessionId, String uuid, Integer type);
+    void editSession(String sessionId, Long userId, String uuid, Integer type);
 
     void deleteSession(String sessionId);
 
