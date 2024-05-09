@@ -14,6 +14,7 @@ public class GameQuizSimpleResponseDto {
     private Long quizId;
     private Integer type;
     private Integer round;
+    private Integer number;
     private Boolean isAnswer;
 
     public GameQuizSimpleResponseDto(GameQuiz entity) {

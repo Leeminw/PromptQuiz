@@ -15,6 +15,7 @@ public class GameQuizCreateRequestDto {
     private Long quizId;
     private Integer type;
     private Integer round;
+    private Integer number;
     private Boolean isAnswer;
 
     public GameQuiz toEntity() {
@@ -23,6 +24,7 @@ public class GameQuizCreateRequestDto {
                 .quizId(this.quizId)
                 .type(this.type)
                 .round(this.round)
+                .number(this.number)
                 .isAnswer(this.isAnswer)
                 .build();
     }
