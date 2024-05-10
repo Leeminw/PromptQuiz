@@ -53,7 +53,7 @@ const RoomList = ({ roomList }: RoomListProps) => {
     return <div>게임방이 없습니다.</div>;
   }
   return (
-    <div className="w-full h-full gap-1 relative">
+    <div className="w-full h-full gap-1 relative backdrop-blur-sm">
       <div className="grid grid-cols-2 grid-rows-3 gap-y-2 gap-x-3 pt-4 px-4">
         {roomArray.map(
           (item: RoomProps, index) =>
@@ -63,7 +63,7 @@ const RoomList = ({ roomList }: RoomListProps) => {
         {curPageNum * 6 > roomArray.length &&
           Array.from({ length: curPageNum * 6 - roomArray.length }).map((_, index) => (
             <div
-              className="w-full h-20 relative gap-1 border bg-gray-100 border-gray-400 rounded-3xl px-5 py-2 cursor-default"
+              className="w-full h-20 relative gap-1 border bg-gray-600/30 border-gray-400 rounded-3xl px-5 py-2 cursor-default"
               key={index}
             ></div>
           ))}

@@ -147,8 +147,8 @@ const CreateRoom = ({ channelCode }: Props) => {
               />
             </div>
             <div className="flex items-center gap-3">
-              <div className="flex gap-2 pr-2 items-center">
-                <span className="font-extrabold text-nowrap pr-5">공개여부</span>
+              <div className="flex pr-2 items-center">
+                <span className="font-extrabold text-nowrap pr-7">공개여부</span>
                 <input
                   type="radio"
                   value={0}
@@ -157,11 +157,11 @@ const CreateRoom = ({ channelCode }: Props) => {
                   checked={privacyStatus == 0}
                   className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                 />
-                <label htmlFor="open" className="text-nowrap text-sm font-bold">
+                <label htmlFor="open" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
                   공개
                 </label>
               </div>
-              <div className="flex gap-2 pr-2 items-center">
+              <div className="flex pr-2 items-center">
                 <input
                   type="radio"
                   value={1}
@@ -170,7 +170,7 @@ const CreateRoom = ({ channelCode }: Props) => {
                   checked={privacyStatus == 1}
                   className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                 />
-                <label htmlFor="close" className="text-nowrap text-sm font-bold">
+                <label htmlFor="close" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
                   비공개
                 </label>
               </div>
@@ -188,7 +188,7 @@ const CreateRoom = ({ channelCode }: Props) => {
             <span className="font-extrabold text-nowrap">게임 종류</span>
             <div className="flex gap-3 flex-col">
               <div className="flex gap-3">
-                <div className="flex gap-2 pr-2 items-center">
+                <div className="flex pr-2 items-center">
                   <input
                     type="radio"
                     value={0}
@@ -197,11 +197,11 @@ const CreateRoom = ({ channelCode }: Props) => {
                     checked={!isTeam}
                     className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                   />
-                  <label htmlFor="individual" className="text-nowrap text-sm font-bold">
+                  <label htmlFor="individual" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
                     개인전
                   </label>
                 </div>
-                <div className="flex gap-2 pr-2 items-center">
+                <div className="flex pr-2 items-center">
                   <input
                     type="radio"
                     value={1}
@@ -210,49 +210,52 @@ const CreateRoom = ({ channelCode }: Props) => {
                     checked={isTeam}
                     className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                   />
-                  <label htmlFor="team" className="text-nowrap text-sm font-bold">
+                  <label htmlFor="team" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
                     팀전
                   </label>
                 </div>
               </div>
               <div className="flex gap-3">
-                <div className="flex gap-2 pr-2 items-center">
+                <div className="flex pr-2 items-center">
                   <input
-                    type="radio"
+                    type="checkbox"
                     value={1}
                     id="choice"
+                    defaultChecked
                     onChange={typeHandler}
                     checked={(mode & 1) > 0}
-                    className="radio radio-sm border-lightmint bg-white checked:bg-mint"
+                    className="checkbox checkbox-sm border-lightmint bg-white checked:bg-mint [--chkbg:theme(colors.mint)] [--chkfg:white]"
                   />
-                  <label htmlFor="choice" className="text-nowrap text-sm font-bold">
+                  <label htmlFor="choice" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
                     객관식
                   </label>
                 </div>
-                <div className="flex gap-2 pr-2 items-center">
+                <div className="flex pr-2 items-center">
                   <input
-                    type="radio"
+                    type="checkbox"
                     value={2}
                     id="subjective"
+                    defaultChecked
                     onChange={typeHandler}
                     checked={(mode & 2) > 0}
-                    className="radio radio-sm border-lightmint bg-white checked:bg-mint"
+                    className="checkbox checkbox-sm border-lightmint bg-white checked:bg-mint [--chkbg:theme(colors.mint)] [--chkfg:white]"
                   />
-                  <label htmlFor="subjective" className="text-nowrap text-sm font-bold">
+                  <label htmlFor="subjective" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
                     주관식
                   </label>
                 </div>
 
-                <div className="flex gap-2 pr-2 items-center">
+                <div className="flex pr-2 items-center">
                   <input
-                    type="radio"
+                    type="checkbox"
                     value={4}
                     id="sequence"
+                    defaultChecked
                     onChange={typeHandler}
                     checked={(mode & 4) > 0}
-                    className="radio radio-sm border-lightmint bg-white checked:bg-mint"
+                    className="checkbox checkbox-sm border-lightmint bg-white checked:bg-mint [--chkbg:theme(colors.mint)] [--chkfg:white]"
                   />
-                  <label htmlFor="sequence" className="text-nowrap text-sm font-bold">
+                  <label htmlFor="sequence" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
                     순서 맞추기
                   </label>
                 </div>
@@ -260,7 +263,7 @@ const CreateRoom = ({ channelCode }: Props) => {
             </div>
             <span className="font-extrabold text-nowrap mt-2">그림체</span>
             <div className="flex gap-3">
-              <div className="flex gap-2 pr-2 items-center">
+              <div className="flex pr-2 items-center">
                 <input
                   type="radio"
                   value={0}
@@ -269,11 +272,11 @@ const CreateRoom = ({ channelCode }: Props) => {
                   checked={style === 0}
                   className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                 />
-                <label htmlFor="real" className="text-nowrap text-sm font-bold">
+                <label htmlFor="real" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
                   실사체
                 </label>
               </div>
-              <div className="flex gap-2 pr-2 items-center">
+              <div className="flex pr-2 items-center">
                 <input
                   type="radio"
                   value={1}
@@ -282,11 +285,11 @@ const CreateRoom = ({ channelCode }: Props) => {
                   checked={style === 1}
                   className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                 />
-                <label htmlFor="comic" className="text-nowrap text-sm font-bold">
+                <label htmlFor="comic" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
                   만화체
                 </label>
               </div>
-              <div className="flex gap-2 pr-2 items-center">
+              <div className="flex pr-2 items-center">
                 <input
                   type="radio"
                   value={2}
@@ -295,12 +298,12 @@ const CreateRoom = ({ channelCode }: Props) => {
                   checked={style === 2}
                   className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                 />
-                <label htmlFor="disney" className="text-nowrap text-sm font-bold">
+                <label htmlFor="disney" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
                   디즈니체
                 </label>
               </div>
 
-              <div className="flex gap-2 pr-2 items-center">
+              <div className="flex pr-2 items-center">
                 <input
                   type="radio"
                   value={3}
@@ -309,7 +312,7 @@ const CreateRoom = ({ channelCode }: Props) => {
                   checked={style === 3}
                   className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                 />
-                <label htmlFor="random" className="text-nowrap text-sm font-bold">
+                <label htmlFor="random" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
                   랜덤
                 </label>
               </div>

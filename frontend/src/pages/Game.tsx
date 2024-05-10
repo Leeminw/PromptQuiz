@@ -488,7 +488,7 @@ const GamePage = () => {
           <div className="w-full">
             <div className="relative w-full">
               <div
-                className={`absolute flex items-center w-full h-[7.5rem] bottom-0 mb-2 transition-all origin-bottom duration-300 ${chatOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
+                className={`absolute flex items-center w-full h-[7.5rem] bottom-0 mb-2 transition-all origin-bottom duration-300 ${chatOpen&&!gamestart ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
               >
                 <div className="absolute w-full h-[90%] px-3 py-2 text-sm chat custom-scroll z-10">
                   <div className="z-10 text-gray-700" ref={chattingBox}>
@@ -542,9 +542,9 @@ const GamePage = () => {
           <GameRoomSetting gamestart={isStart} />
 
           {/* 팀 선택, 게임 시작 버튼 */}
-          <div className="w-full h-7 my-3 flex gap-2">
+          <div className="w-full h-6 my-3 flex gap-3">
             <button
-              className={`w-1/3 h-full flex items-center justify-center text-white text-sm font-bold transition 
+              className={`w-1/3 h-full flex items-center justify-center text-white text-sm font-bold transition text-nowrap
               ${activateBtn[2] ? 'animate-clickbtn scale-105' : ''}
               ${
                 isStart
@@ -578,7 +578,7 @@ const GamePage = () => {
               1팀
             </button>
             <button
-              className={`w-1/3 h-full flex items-center justify-center
+              className={`w-1/3 h-full flex items-center justify-center text-nowrap
               text-white text-sm font-bold transition 
               ${activateBtn[3] ? 'animate-clickbtn scale-105' : ''}
               ${
@@ -594,7 +594,7 @@ const GamePage = () => {
               2팀
             </button>
             <button
-              className={`w-1/3 h-full flex items-center justify-center text-white text-sm font-bold transition
+              className={`w-1/3 h-full flex items-center justify-center text-white text-sm font-bold transition text-nowrap
               ${activateBtn[4] ? 'animate-clickbtn scale-105' : ''}
               ${
                 isStart
@@ -610,7 +610,7 @@ const GamePage = () => {
             </button>
           </div>
           <button
-            className={`w-full h-8 font-extrabold
+            className={`w-full h-10 font-extrabold mt-2
              transition mb-1 ${activateBtn[5] ? 'animate-clickbtn scale-105' : ''}
              ${
                isStart

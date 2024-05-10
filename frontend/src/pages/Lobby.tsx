@@ -127,8 +127,8 @@ const Lobby = () => {
 
   return (
     <div className="w-[70rem] h-[40rem] min-w-[40rem] min-h-[40rem] flex flex-col px-8 py-6 z-10">
-      <div className="grid grid-cols-8 gap-3 min-h-14 items-center drop-shadow-lg pl-4">
-        <label className="col-span-2 flex items-center border-custom-mint text-lg font-extrabold h-12 bg-white/80">
+      <div className="grid grid-cols-8 gap-3 min-h-14 items-center drop-shadow-lg pl-4 backdrop-blur-sm">
+        <label className="col-span-2 flex items-center border-custom-mint text-lg font-extrabold h-12 bg-white/90">
           <p className="text-center w-full text-nowrap text-mint">{channelInfo?.name}</p>
         </label>
         <div className="col-span-6 flex items-center">
@@ -138,7 +138,7 @@ const Lobby = () => {
 
       <div className="w-full h-2/3 grid grid-cols-8 gap-3 pt-4 mb-4 pl-4">
         {/* 접속 인원 */}
-        <div className="w-full h-full flex flex-col col-span-2 backdrop-blur-sm">
+        <div className="w-full h-full flex flex-col col-span-2 backdrop-blur-sm bg-white/50">
           <div className="w-full h-7 border-custom-mint bg-mint text-white font-bold text-sm flex items-center mb-1">
             <p className="w-full h-full flex items-center pl-1.5">접속 인원</p>
           </div>
@@ -154,7 +154,7 @@ const Lobby = () => {
         <div className="w-full h-full bg-blue-200 flex items-center justify-center col-span-2">
           광고
         </div>
-        <div className="w-full h-full col-span-6">
+        <div className="w-full h-full col-span-6 backdrop-blur-sm">
           {/* 로비 채팅창 */}
           <div className="w-full px-1">
             <div className="relative w-full">

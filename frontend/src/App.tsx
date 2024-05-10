@@ -42,8 +42,9 @@ const App = () => {
   return (
     <div
       className="w-[100vw] h-[100vh] flex justify-center items-center 
-    bg-[url(/public/ui/bg.jpg)] bg-no-repeat bg-cover bg-center overflow-hidden"
+    bg-[url(/public/ui/bg.jpg)] bg-no-repeat bg-cover bg-center overflow-hidden relative"
     >
+      <div className='absolute w-full h-full'></div>
       <dialog id="helpModal" className="modal">
         <div className="modal-box">
           <h3 className="font-bold text-lg">도움말</h3>
