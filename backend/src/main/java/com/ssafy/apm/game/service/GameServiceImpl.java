@@ -7,6 +7,7 @@ import com.ssafy.apm.game.dto.response.GameResponseDto;
 import com.ssafy.apm.game.exception.GameAlreadyStartedException;
 import com.ssafy.apm.game.exception.GameFullException;
 import com.ssafy.apm.game.exception.GameNotFoundException;
+import com.ssafy.apm.game.exception.GameValidationException;
 import com.ssafy.apm.game.repository.GameRepository;
 import com.ssafy.apm.gamequiz.domain.GameQuiz;
 import com.ssafy.apm.gamequiz.repository.GameQuizRepository;
@@ -16,6 +17,7 @@ import com.ssafy.apm.gameuser.exception.GameUserNotFoundException;
 import com.ssafy.apm.gameuser.repository.GameUserRepository;
 import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.quiz.exception.QuizNotFoundException;
+import com.ssafy.apm.quiz.exception.QuizValidationException;
 import com.ssafy.apm.quiz.repository.QuizRepository;
 import com.ssafy.apm.user.domain.User;
 import com.ssafy.apm.user.dto.UserScoreUpdateRequestDto;
@@ -372,6 +374,8 @@ public class GameServiceImpl implements GameService {
                 if (randomMode == 3) response.add(blankSubjectiveService.createGameQuiz(gameEntity, quiz, curRound));
                 curRound++;
             }
+        } else {
+            throw new GameValidationException("Mode 값이 잘못됐습니다.");
         }
         return response;
     }
@@ -381,9 +385,11 @@ public class GameServiceImpl implements GameService {
         if (gameStyle.equals("random")) {
             quizList = quizRepository.extractRandomQuizzes(gameEntity.getMaxRounds())
                     .orElseThrow(() -> new QuizNotFoundException("No entities exists by random!"));
-        } else {
+        } else if (gameStyle.equals("anime") || gameStyle.equals("realistic") || gameStyle.equals("cartoon")){
             quizList = quizRepository.extractRandomQuizzesByStyle(gameStyle, gameEntity.getMaxRounds())
                     .orElseThrow(() -> new QuizNotFoundException("No entities exists by style!"));
+        } else {
+            throw new GameValidationException("Style 값이 잘못됐습니다.");
         }
         return quizList;
     }
