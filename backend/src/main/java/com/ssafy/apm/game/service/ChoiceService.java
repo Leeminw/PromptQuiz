@@ -56,6 +56,7 @@ public class ChoiceService {
      */
     public Boolean checkAnswer(GameChatRequestDto requestDto) {
         String gameCode = requestDto.getGameCode();
+
         Game game = gameRepository.findByCode(gameCode)
                 .orElseThrow(() -> new GameNotFoundException("Game Not Found with code: " + gameCode));
 
@@ -66,8 +67,9 @@ public class ChoiceService {
                 .orElseThrow(() -> new IllegalStateException("Answer Not Found"));
 
         Integer answer = answerGameQuiz.getNumber();
+
         boolean isCorrect = Integer.parseInt(requestDto.getContent()) == answer;
-        gameUserService.updateGameUserScore(isCorrect ? 10 : -5);
+        gameUserService.updateGameUserScore(requestDto.getUserId(), isCorrect ? 10 : -5);
         return isCorrect;
     }
 
