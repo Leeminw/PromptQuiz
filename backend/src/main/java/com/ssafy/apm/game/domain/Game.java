@@ -85,7 +85,7 @@ public class Game {
     }
 
     public Game decreaseCurPlayers() {
-        this.curPlayers--;
+        this.curRounds = Math.max(0,this.curPlayers-1);
         return this;
     }
 
