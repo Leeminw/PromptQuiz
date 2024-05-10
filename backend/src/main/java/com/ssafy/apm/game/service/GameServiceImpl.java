@@ -65,9 +65,6 @@ public class GameServiceImpl implements GameService {
         return new GameResponseDto(game);
     }
 
-    /* FIXME: 입장 조건을 GameService 에서 판단하고,
-        GameService 에서 createGameUser() 를 호출하는 것이 나아보임 */
-    //    게임 입장할때
     @Override
     @Transactional
     public GameUserSimpleResponseDto enterGame(String gameCode) {
