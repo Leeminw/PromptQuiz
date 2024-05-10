@@ -16,6 +16,7 @@ import useUserStore from '../stores/userStore';
 import instance from '../hooks/axios-instance';
 import { LobbyApi } from '../hooks/axios-lobby';
 import badwordsFiltering from '../hooks/badwords-filtering';
+import InviteUser from '../components/game/InviteUser';
 
 const GamePage = () => {
   const { roomCode } = useParams();
@@ -337,6 +338,10 @@ const GamePage = () => {
     }, 500);
   };
 
+  // 초대코드 발송
+  const inviteUser = () => {
+    alert('초대코드 전송하기!!');
+  };
   return (
     <div
       className={`w-[70rem] h-[37rem] min-w-[40rem] min-h-[37rem] max-w-[80vw] z-10 
@@ -364,7 +369,10 @@ const GamePage = () => {
         </div>
         {/* 버튼 */}
         <div className="flex gap-3">
-          <button
+          {/* 초대코드 모달 창 추가 */}
+          {/* 기존 버튼 UI InviteUser에 적용필요 */}
+          <InviteUser />
+          {/* <button
             className={`
             transition text-sm w-1/2 text-white ${activateBtn[0] ? 'animate-clickbtn scale-105' : ''}
             ${
@@ -375,6 +383,7 @@ const GamePage = () => {
             `}
             onClick={() => {
               handleClick(0);
+              inviteUser();
             }}
           >
             <label
@@ -391,7 +400,7 @@ const GamePage = () => {
                 초대하기
               </p>
             </label>
-          </button>
+          </button> */}
           <button
             className={`btn-red text-white hover:brightness-125 hover:scale-105 transition 
             text-sm w-1/2 min-w-[3rem] ${activateBtn[1] ? 'animate-clickbtn scale-105' : ''}`}

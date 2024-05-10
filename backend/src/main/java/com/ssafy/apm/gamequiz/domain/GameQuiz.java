@@ -16,14 +16,12 @@ public class GameQuiz {
     private String code;
     @Indexed
     private String gameCode;
-    @Indexed
     private Long quizId;
     /* 객관식, 빈칸 객관식, 빈칸 주관식 */
     private Integer type;
     @Indexed
     private Integer round;
     private Integer number;
-    @Indexed
     private Boolean isAnswer;
 
     public GameQuiz update(GameQuizUpdateRequestDto requestDto) {
