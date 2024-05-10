@@ -1,6 +1,7 @@
 package com.ssafy.apm.chat.repository;
 
 import com.ssafy.apm.chat.domain.Chat;
+import com.influxdb.client.domain.WritePrecision;
 import com.ssafy.apm.common.config.InfluxDBConfig;
 import com.ssafy.apm.chat.exception.ChatNotFoundException;
 import com.ssafy.apm.chat.exception.ChatValidationException;
@@ -8,7 +9,6 @@ import com.ssafy.apm.chat.exception.ChatValidationException;
 import com.influxdb.query.FluxTable;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.client.InfluxDBClient;
-import com.influxdb.client.domain.WritePrecision;
 
 import java.util.List;
 import java.util.ArrayList;

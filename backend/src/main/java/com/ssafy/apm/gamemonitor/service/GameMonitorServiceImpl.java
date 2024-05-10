@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Service;
 
@@ -22,9 +22,9 @@ public class GameMonitorServiceImpl implements GameMonitorService {
     private final GameMonitorRepository gameMonitorRepository;
 
     @Override
-    public void saveRoomList(ConcurrentHashMap<String, GameRoomStatus> gameEndMap,
-                             ConcurrentHashMap<String, GameRoomStatus> gameReadyMap,
-                             ConcurrentHashMap<String, GameRoomStatus> gameOngoingMap) {
+    public void saveRoomList(HashMap<String, GameRoomStatus> gameEndMap,
+        HashMap<String, GameRoomStatus> gameReadyMap,
+        HashMap<String, GameRoomStatus> gameOngoingMap) {
         try {
             List<GameMonitor> gameMonitorList = new ArrayList<>();
 

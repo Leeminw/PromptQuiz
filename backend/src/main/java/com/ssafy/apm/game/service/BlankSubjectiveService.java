@@ -1,22 +1,18 @@
 package com.ssafy.apm.game.service;
 
 import com.ssafy.apm.game.domain.Game;
-import com.ssafy.apm.gameuser.service.GameUserService;
 import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.gamequiz.domain.GameQuiz;
+import com.ssafy.apm.gameuser.service.GameUserService;
 import com.ssafy.apm.gamequiz.service.GameQuizService;
-import com.ssafy.apm.gamequiz.dto.response.GameQuizDetailResponseDto;
 import com.ssafy.apm.socket.dto.request.GameChatRequestDto;
+import com.ssafy.apm.gamequiz.dto.response.GameQuizDetailResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
-import java.util.Set;
-import java.util.List;
-import java.util.HashMap;
-import java.util.ArrayList;
+import java.util.*;
 
 import org.springframework.stereotype.Service;
-import org.apache.commons.text.similarity.CosineDistance;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -62,10 +58,10 @@ public class BlankSubjectiveService {
         for (String prompt : checkPrompt) {
             Double rate = 0.0;
             switch (prompt){
-                case "kor_subject" -> rate = calculateSimilarity(quiz.getKorSubject(), answer.getContent());
-                case "kor_sub_adjective" -> rate = calculateSimilarity(quiz.getKorSubAdjective(), answer.getContent());
-                case "kor_object" -> rate = calculateSimilarity(quiz.getKorObject(), answer.getContent());
-                case "kor_obj_adjective" -> rate = calculateSimilarity(quiz.getKorObjAdjective(), answer.getContent());
+                case "kor_subject" -> rate = calculate(quiz.getKorSubject(), answer.getContent());
+                case "kor_sub_adjective" -> rate = calculate(quiz.getKorSubAdjective(), answer.getContent());
+                case "kor_object" -> rate = calculate(quiz.getKorObject(), answer.getContent());
+                case "kor_obj_adjective" -> rate = calculate(quiz.getKorObjAdjective(), answer.getContent());
             }
             if(rate >= 0.9){
                 /* todo: 유저 점수 올리기 (맞춤 처리를 어떻게 할 것인가..
@@ -79,13 +75,41 @@ public class BlankSubjectiveService {
         return resultMap;
     }
 
-    private Double calculateSimilarity(String input, String answer){
-        input = input.replace(" ", "");
-        answer = answer.replace(" ", "");
+    public static double calculate(String str1, String str2) {
+        Map<String, Integer> vector1 = getTermFrequencyVector(str1);
+        Map<String, Integer> vector2 = getTermFrequencyVector(str2);
 
-        CosineDistance ld = new CosineDistance();
-        int maxLen = Math.max(input.length(), answer.length());
-        double temp = ld.apply(input, answer);
-        return (maxLen - temp) / maxLen;
+        double dotProduct = 0.0;
+        double magnitude1 = 0.0;
+        double magnitude2 = 0.0;
+
+        for (String term : vector1.keySet()) {
+            if (vector2.containsKey(term)) {
+                dotProduct += vector1.get(term) * vector2.get(term);
+            }
+            magnitude1 += Math.pow(vector1.get(term), 2);
+        }
+
+        for (String term : vector2.keySet()) {
+            magnitude2 += Math.pow(vector2.get(term), 2);
+        }
+
+        if (magnitude1 == 0 || magnitude2 == 0) {
+            return 0.0;
+        }
+
+        return dotProduct / (Math.sqrt(magnitude1) * Math.sqrt(magnitude2));
     }
+
+    private static Map<String, Integer> getTermFrequencyVector(String str) {
+        Map<String, Integer> vector = new HashMap<>();
+        String[] terms = str.split("\\s+");
+
+        for (String term : terms) {
+            vector.put(term, vector.getOrDefault(term, 0) + 1);
+        }
+
+        return vector;
+    }
+
 }
