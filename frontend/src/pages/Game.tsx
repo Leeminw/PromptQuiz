@@ -17,6 +17,7 @@ import instance from '../hooks/axios-instance';
 import { LobbyApi } from '../hooks/axios-lobby';
 import badwordsFiltering from '../hooks/badwords-filtering';
 import InviteUser from '../components/game/InviteUser';
+import SequenceGame from '../components/game/SequenceGame';
 
 const GamePage = () => {
   const { roomCode } = useParams();
@@ -482,7 +483,9 @@ const GamePage = () => {
         <div className="w-full flex grow flex-col items-center justify-end px-4">
           <div className="w-full h-36 mb-2 relative">
             {/* 객관식 선택 */}
-            {isQuiz ? <SelectionGame choiceList={multipleChoice} /> : <div>no game</div>}
+            {/* {isQuiz ? <SelectionGame choiceList={multipleChoice} /> : <div>no game</div>} */}
+            {/* 순서 맞추기 */}
+            <SequenceGame choiceList={multipleChoice}/>
           </div>
           {/* 채팅 */}
           <div className="w-full">
