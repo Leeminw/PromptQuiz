@@ -59,7 +59,6 @@ const App = () => {
       <dialog id="settingModal" className="modal">
         <div className="modal-box">
           <h3 className="font-bold text-lg">설정</h3>
-          {/* <p className="py-4">내용</p> */}
           <p className="py-4">음소거</p>
           <div className="modal-action">
             <form method="dialog">
