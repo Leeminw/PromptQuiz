@@ -25,7 +25,7 @@ public class Channel {
     }
 
     public void decreaseCurPlayers() {
-        this.curPlayers = Math.min(0, this.curPlayers-1);
+        this.curPlayers = Math.max(0, this.curPlayers-1);
     }
 
     public void increaseCurPlayers() {
