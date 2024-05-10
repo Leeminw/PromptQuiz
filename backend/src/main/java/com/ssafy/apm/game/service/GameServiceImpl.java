@@ -270,14 +270,24 @@ public class GameServiceImpl implements GameService {
         GameUser gameUser = gameUserRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new GameUserNotFoundException("No entities exists by userId"));
         if (!gameUser.getIsHost()) return false;
-
+        long startTime, endTime;
         Game game = gameRepository.findByCode(gameCode)
                 .orElseThrow(() -> new GameNotFoundException(gameCode));
+        startTime = System.currentTimeMillis();
         List<Quiz> quizList = createQuizListByStyle(game.getStyle(), game);
+        endTime = System.currentTimeMillis();
+        System.out.println("[Test] 처음 퀴즈 10개 생성 시간 : "+ (endTime-startTime));
 //        각 quiz마다 4가지 문제가 있어야함
-        List<GameQuiz> gameQuizList = createGameQuizListByMode(game, game.getMode(), quizList);
 
+        startTime = System.currentTimeMillis();
+        List<GameQuiz> gameQuizList = createGameQuizListByMode(game, game.getMode(), quizList);
+        endTime = System.currentTimeMillis();
+        System.out.println("[Test]10개에 대한 보기 생성 시간 : "+ (endTime-startTime));
+
+        startTime = System.currentTimeMillis();
         gameQuizRepository.saveAll(gameQuizList);
+        endTime = System.currentTimeMillis();
+        System.out.println("[Test] 전체 저장 시간 : "+ (endTime-startTime));
         return true;
     }
 
@@ -291,18 +301,18 @@ public class GameServiceImpl implements GameService {
 
         Game game = gameRepository.findByCode(gameCode)
                 .orElseThrow(() -> new GameNotFoundException(gameCode));
+
         List<Quiz> quizList = createQuizListByStyle(game.getStyle(), game);
+
 //        각 quiz마다 4가지 문제가 있어야함
         List<GameQuiz> gameQuizList = createGameQuizListByMode(game, game.getMode(), quizList);
-
         List<Quiz> multipleChoiceList = new ArrayList<>();
-
         for (GameQuiz gameQuiz : gameQuizList) {
             Quiz temp = quizRepository.findById(gameQuiz.getQuizId())
                     .orElseThrow(() -> new QuizNotFoundException(gameQuiz.getQuizId()));
             multipleChoiceList.add(temp);
         }
-
+        
         return multipleChoiceList.stream().map(QuizResponseDto::new).toList();
     }
 
@@ -319,7 +329,6 @@ public class GameServiceImpl implements GameService {
             case 4 -> mainGameQuizList = blankSubjectiveService.createGameQuizList(gameEntity, gameType, quizList);
             case 3, 5, 6, 7 -> mainGameQuizList = randomCreateGameQuizList(gameEntity, gameType, quizList);
         }
-
         return mainGameQuizList;
     }
 

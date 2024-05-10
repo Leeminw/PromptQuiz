@@ -1,25 +1,26 @@
 package com.ssafy.apm.gamequiz.domain;
 
 import com.ssafy.apm.gamequiz.dto.request.GameQuizUpdateRequestDto;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.*;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.index.Indexed;
 
+
+@Entity
 @Getter
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@RedisHash(timeToLive = 3600)
 public class GameQuiz {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String code;
-    @Indexed
     private String gameCode;
     private Long quizId;
-    /* 객관식, 빈칸 객관식, 빈칸 주관식 */
     private Integer type;
-    @Indexed
     private Integer round;
     private Integer number;
     private Boolean isAnswer;
