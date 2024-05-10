@@ -10,6 +10,7 @@ interface Props {
 }
 
 const CreateRoom = ({ channelCode }: Props) => {
+  const mappingStyle: string[] = ['realistic', 'cartoon', 'anime', 'random'];
   const [privacyStatus, setPrivacyStatus] = useState(0);
   const [isTeam, setIsTeam] = useState(false);
   const [mode, setMode] = useState(0);
@@ -38,7 +39,8 @@ const CreateRoom = ({ channelCode }: Props) => {
   };
   const typeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMode(Number(event.target.value));
-    console.log(mode);
+    console.log('TYPE', event.target.value);
+    // console.log(mode);
   };
   const maxPlayersHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMaxPlayers(Number(event.target.value));
@@ -50,7 +52,7 @@ const CreateRoom = ({ channelCode }: Props) => {
   };
   const styleHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStyle(Number(event.target.value));
-    console.log(style);
+    console.log('style', event.target.value);
   };
 
   const titleHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,13 +106,13 @@ const CreateRoom = ({ channelCode }: Props) => {
         maxRounds,
         mode,
         password,
-        style,
+        style: mappingStyle[style],
         timeLimit: 60,
         title,
       };
 
+      console.log(room);
       const { data } = await LobbyApi.createRoom(room);
-      console.log(data);
       setTimeout(() => {
         navigate(`/game/${data.code}`);
       }, 1000);
@@ -217,10 +219,10 @@ const CreateRoom = ({ channelCode }: Props) => {
                 <div className="flex gap-2 pr-2 items-center">
                   <input
                     type="radio"
-                    value={0}
+                    value={1}
                     id="choice"
                     onChange={typeHandler}
-                    checked={mode === 0}
+                    checked={(mode & 1) > 0}
                     className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                   />
                   <label htmlFor="choice" className="text-nowrap text-sm font-bold">
@@ -230,10 +232,10 @@ const CreateRoom = ({ channelCode }: Props) => {
                 <div className="flex gap-2 pr-2 items-center">
                   <input
                     type="radio"
-                    value={1}
+                    value={2}
                     id="subjective"
                     onChange={typeHandler}
-                    checked={mode === 1}
+                    checked={(mode & 2) > 0}
                     className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                   />
                   <label htmlFor="subjective" className="text-nowrap text-sm font-bold">
@@ -244,10 +246,10 @@ const CreateRoom = ({ channelCode }: Props) => {
                 <div className="flex gap-2 pr-2 items-center">
                   <input
                     type="radio"
-                    value={2}
+                    value={4}
                     id="sequence"
                     onChange={typeHandler}
-                    checked={mode === 2}
+                    checked={(mode & 4) > 0}
                     className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                   />
                   <label htmlFor="sequence" className="text-nowrap text-sm font-bold">
