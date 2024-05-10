@@ -231,6 +231,12 @@ public class GameSocketController {
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
 
+    // (게임 시작) 게임 시작 메세지 전송
+    @MessageMapping("/api/v1/game/start")
+    public void sendGameStartMessage(GameRoomStatus game) {
+        sendMessage(game.gameCode, new GameResponseDto("startGame", "start"));
+    }
+
     // (라운드 대기) 라운드 대기 메세지 전송
     public void sendRoundReadyMessage(GameRoomStatus game) {
         GameSystemContentDto responseDto = new GameSystemContentDto(game.round);
