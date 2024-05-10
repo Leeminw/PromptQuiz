@@ -54,6 +54,7 @@ public class ChoiceService {
      * @param requestDto gameCode, content
      * @return 정답이면 true, 오답이면 false
      */
+    @Transactional
     public Boolean checkAnswer(GameChatRequestDto requestDto) {
         String gameCode = requestDto.getGameCode();
 
