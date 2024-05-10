@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { IoSettings } from 'react-icons/io5';
+import { MdKeyboardArrowDown } from 'react-icons/md';
 interface GameRoomSettingProps {
   gamestart: boolean;
 }
 
 const GameRoomSetting = ({ gamestart }: GameRoomSettingProps) => {
-  useEffect(()=>{
-    console.log("게임이 시작됐나요?",gamestart)
-  },[])
+  const [unfold, setUnfold] = useState<boolean>(false);
+  useEffect(() => {
+    console.log('게임이 시작됐나요?', gamestart);
+  }, []);
   return (
-    <div className="w-full h-20 flex flex-col cursor-default">
+    <div className="w-full mt-2 h-16 flex flex-col cursor-default relative">
       <dialog id="modalopen" className="modal">
         <div className="modal-box">
           <h3 className="font-bold text-lg">방 만들기</h3>
@@ -30,11 +32,37 @@ const GameRoomSetting = ({ gamestart }: GameRoomSettingProps) => {
           }}
         />
       </div>
-      <div className="w-full h-40 border-custom-white bg-white grid grid-cols-2 grid-rows-2 gap-3 text-xs pt-1.5">
-        <div className='flex justify-center items-center text-mint font-extrabold text-nowrap'>개인전</div>
-        <div className='flex justify-center items-center text-mint font-extrabold text-nowrap'>객관식</div>
-        <div className='flex justify-center items-center text-mint font-extrabold text-nowrap'>20 라운드</div>
-        <div className='flex justify-center items-center text-mint font-extrabold text-nowrap'>60초</div>
+      <div
+        className={`absolute w-full grid grid-cols-3 grid-rows-3 bg-white h-24 border-custom-white translate-y-14 transition text-xs origin-top z-10 ${unfold ? '' : 'scale-y-0'}`}
+      >
+        <div className="flex justify-center items-center text-gray-300 font-extrabold text-nowrap border-r border-gray-200">
+          실사체
+        </div>
+        <div className="flex justify-center items-center text-gray-300 font-extrabold text-nowrap border-r border-gray-200">
+          
+        </div>
+        <div className="flex justify-center items-center text-gray-300 font-extrabold text-nowrap">
+          객관식
+        </div>
+      </div>
+      <div
+        className="w-full h-8 border-custom-white bg-white grid grid-cols-7 text-xs pt-0.5 cursor-pointer"
+        onMouseOver={() => {
+          setUnfold(true);
+        }}
+        onMouseOut={() => {
+          setUnfold(false);
+        }}
+      >
+        <div className="col-span-3 flex justify-center items-center text-mint font-extrabold text-nowrap border-r border-gray-200">
+          개인전
+        </div>
+        <div className="col-span-3 flex justify-center items-center text-mint font-extrabold text-nowrap">
+          객관식
+        </div>
+        <div className="h-full flex items-center justify-end text-2xl text-gray-500">
+          <MdKeyboardArrowDown />
+        </div>
       </div>
     </div>
   );
