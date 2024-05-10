@@ -17,15 +17,7 @@ const ChannelBox = ({ id, code, name, curPlayers, maxPlayers }: Props) => {
 
   const enterLobby = () => {
     alert(`code는${code}`);
-    const response = UserChannelApi.enterChannel(id)
-      .then((response) => {
-        console.log('채널 정상작동');
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log('채널 잘못작동');
-        console.log(error);
-      });
+    
     setTimeout(() => {
       // navigate(`/lobby/${code}`);
       navigate(`/lobby/${code}`, { state: { channelCode: id } });
