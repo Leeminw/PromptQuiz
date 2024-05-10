@@ -34,6 +34,18 @@ const GameApi = {
     }catch(error){
       return Promise.reject(error);
     }
+  },
+  startGame : async (gameCode:string) =>{
+    try{
+      const gameReady:GameReady = {
+        gameCode
+      }
+      const response = await instance.post('game/start', gameReady)
+      return response.data;
+    }
+    catch (error) {
+      return Promise.reject(error);
+    }
   }
 };
 

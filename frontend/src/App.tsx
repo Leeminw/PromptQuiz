@@ -2,6 +2,14 @@ import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { IoSettings } from 'react-icons/io5';
 import { IoMdHelpCircle } from 'react-icons/io';
+
+// 카카오 API 적용을 위해 추가
+declare global {
+  interface Window {
+    Kakao: any;
+  }
+}
+
 const App = () => {
   // 버튼 제어
   const [activateBtn, setActivateBtn] = useState<ActivateButton>({});

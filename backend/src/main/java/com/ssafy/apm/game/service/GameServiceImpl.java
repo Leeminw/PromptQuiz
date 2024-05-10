@@ -7,6 +7,7 @@ import com.ssafy.apm.game.dto.response.GameResponseDto;
 import com.ssafy.apm.game.exception.GameAlreadyStartedException;
 import com.ssafy.apm.game.exception.GameFullException;
 import com.ssafy.apm.game.exception.GameNotFoundException;
+import com.ssafy.apm.game.exception.GameValidationException;
 import com.ssafy.apm.game.repository.GameRepository;
 import com.ssafy.apm.gamequiz.domain.GameQuiz;
 import com.ssafy.apm.gamequiz.repository.GameQuizRepository;
@@ -18,6 +19,7 @@ import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.quiz.dto.request.QuizRequestDto;
 import com.ssafy.apm.quiz.dto.response.QuizResponseDto;
 import com.ssafy.apm.quiz.exception.QuizNotFoundException;
+import com.ssafy.apm.quiz.exception.QuizValidationException;
 import com.ssafy.apm.quiz.repository.QuizRepository;
 import com.ssafy.apm.user.domain.User;
 import com.ssafy.apm.user.dto.UserScoreUpdateRequestDto;
@@ -63,9 +65,6 @@ public class GameServiceImpl implements GameService {
         return new GameResponseDto(game);
     }
 
-    /* FIXME: 입장 조건을 GameService 에서 판단하고,
-        GameService 에서 createGameUser() 를 호출하는 것이 나아보임 */
-    //    게임 입장할때
     @Override
     @Transactional
     public GameUserSimpleResponseDto enterGame(String gameCode) {
@@ -95,6 +94,7 @@ public class GameServiceImpl implements GameService {
 
         return new GameUserSimpleResponseDto(entity);
     }
+
     @Override
     public List<GameResponseDto> findGamesByChannelCode(String channelCode) {
         List<Game> entityList = gameRepository.findAllByChannelCode(channelCode)
@@ -137,7 +137,7 @@ public class GameServiceImpl implements GameService {
         int loserListSize = gameUserList.size() - winnerListSize;
         int totalScore = 10 * game.getMaxRounds();
 //        12가 최대 게임 참여자 수
-        int getWinnerMaxScore = Math.round(totalScore * ( (float) game.getCurPlayers() / 12));
+        int getWinnerMaxScore = Math.round(totalScore * ((float) game.getCurPlayers() / 12));
 
         //            score를 기준으로 높은 순서대로 리스트가 정렬됨
         List<GameUser> GameUsers = gameUserList.stream()
@@ -262,6 +262,7 @@ public class GameServiceImpl implements GameService {
         gameUserRepository.delete(gameUser);
         return gameUserCode;
     }
+
     @Override
     @Transactional
     public Boolean createGameQuiz(String gameCode) {
@@ -269,16 +270,27 @@ public class GameServiceImpl implements GameService {
         GameUser gameUser = gameUserRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new GameUserNotFoundException("No entities exists by userId"));
         if (!gameUser.getIsHost()) return false;
-
+        long startTime, endTime;
         Game game = gameRepository.findByCode(gameCode)
                 .orElseThrow(() -> new GameNotFoundException(gameCode));
+        startTime = System.currentTimeMillis();
         List<Quiz> quizList = createQuizListByStyle(game.getStyle(), game);
+        endTime = System.currentTimeMillis();
+        System.out.println("[Test] 처음 퀴즈 10개 생성 시간 : "+ (endTime-startTime));
 //        각 quiz마다 4가지 문제가 있어야함
-        List<GameQuiz> gameQuizList = createGameQuizListByMode(game, game.getMode(), quizList);
 
+        startTime = System.currentTimeMillis();
+        List<GameQuiz> gameQuizList = createGameQuizListByMode(game, game.getMode(), quizList);
+        endTime = System.currentTimeMillis();
+        System.out.println("[Test]10개에 대한 보기 생성 시간 : "+ (endTime-startTime));
+
+        startTime = System.currentTimeMillis();
         gameQuizRepository.saveAll(gameQuizList);
+        endTime = System.currentTimeMillis();
+        System.out.println("[Test] 전체 저장 시간 : "+ (endTime-startTime));
         return true;
     }
+
     @Override
     @Transactional
     public List<QuizResponseDto> createAnswerGameQuizCanShow(String gameCode) {
@@ -289,18 +301,18 @@ public class GameServiceImpl implements GameService {
 
         Game game = gameRepository.findByCode(gameCode)
                 .orElseThrow(() -> new GameNotFoundException(gameCode));
+
         List<Quiz> quizList = createQuizListByStyle(game.getStyle(), game);
+
 //        각 quiz마다 4가지 문제가 있어야함
         List<GameQuiz> gameQuizList = createGameQuizListByMode(game, game.getMode(), quizList);
-
         List<Quiz> multipleChoiceList = new ArrayList<>();
-
-        for(GameQuiz gameQuiz: gameQuizList) {
+        for (GameQuiz gameQuiz : gameQuizList) {
             Quiz temp = quizRepository.findById(gameQuiz.getQuizId())
                     .orElseThrow(() -> new QuizNotFoundException(gameQuiz.getQuizId()));
             multipleChoiceList.add(temp);
         }
-
+        
         return multipleChoiceList.stream().map(QuizResponseDto::new).toList();
     }
 
@@ -317,7 +329,6 @@ public class GameServiceImpl implements GameService {
             case 4 -> mainGameQuizList = blankSubjectiveService.createGameQuizList(gameEntity, gameType, quizList);
             case 3, 5, 6, 7 -> mainGameQuizList = randomCreateGameQuizList(gameEntity, gameType, quizList);
         }
-
         return mainGameQuizList;
     }
 
@@ -355,6 +366,8 @@ public class GameServiceImpl implements GameService {
                 if (randomMode == 3) response.add(blankSubjectiveService.createGameQuiz(gameEntity, quiz, curRound));
                 curRound++;
             }
+        } else {
+            throw new GameValidationException("Mode 값이 잘못됐습니다.");
         }
         return response;
     }
@@ -364,9 +377,11 @@ public class GameServiceImpl implements GameService {
         if (gameStyle.equals("random")) {
             quizList = quizRepository.extractRandomQuizzes(gameEntity.getMaxRounds())
                     .orElseThrow(() -> new QuizNotFoundException("No entities exists by random!"));
-        } else {
+        } else if (gameStyle.equals("anime") || gameStyle.equals("realistic") || gameStyle.equals("cartoon")) {
             quizList = quizRepository.extractRandomQuizzesByStyle(gameStyle, gameEntity.getMaxRounds())
                     .orElseThrow(() -> new QuizNotFoundException("No entities exists by style!"));
+        } else {
+            throw new GameValidationException("Style 값이 잘못됐습니다.");
         }
         return quizList;
     }
@@ -387,27 +402,26 @@ public class GameServiceImpl implements GameService {
         }
         if (redTeamTotalScore == blueTeamTotalScore) {
             for (int i = 0; i < redTeamEntity.size(); i++) {
-                if(redTeamEntity.get(i).getScore() > blueTeamEntity.get(i).getScore()) {
+                if (redTeamEntity.get(i).getScore() > blueTeamEntity.get(i).getScore()) {
                     winnerTeamScore(userList, redTeamEntity, getWinnerMaxScore);
                     loserTeamScore(userList, blueTeamEntity, getWinnerMaxScore);
                     break;
-                } else if(redTeamEntity.get(i).getScore() < blueTeamEntity.get(i).getScore()) {
+                } else if (redTeamEntity.get(i).getScore() < blueTeamEntity.get(i).getScore()) {
                     winnerTeamScore(userList, blueTeamEntity, getWinnerMaxScore);
                     loserTeamScore(userList, redTeamEntity, getWinnerMaxScore);
                     break;
                 }
             }
-        }
-        else if (redTeamTotalScore > blueTeamTotalScore) {
+        } else if (redTeamTotalScore > blueTeamTotalScore) {
             winnerTeamScore(userList, redTeamEntity, getWinnerMaxScore);
             loserTeamScore(userList, blueTeamEntity, getWinnerMaxScore);
-        }
-        else {
+        } else {
             winnerTeamScore(userList, blueTeamEntity, getWinnerMaxScore);
             loserTeamScore(userList, redTeamEntity, getWinnerMaxScore);
         }
     }
-    private void isSoloCalculateScore(int winnerListSize, int loserListSize, int getWinnerMaxScore, List<GameUser> GameUsers, List<User> userList){
+
+    private void isSoloCalculateScore(int winnerListSize, int loserListSize, int getWinnerMaxScore, List<GameUser> GameUsers, List<User> userList) {
         /* 10라운드 6명 기준
          * getWinnerMaxScore = 10*10(10라운드) * (curPlayers/maxPlayers) = 50( 6명이서 게임할 때 1등이 받을 점수 )
          * 1등 : 50 * 0.8^0 = 50,  2등 : 50 * 0.8^1 = 40, 3등 : 50*0.8^2 = 32

@@ -16,6 +16,7 @@ import useUserStore from '../stores/userStore';
 import instance from '../hooks/axios-instance';
 import { LobbyApi } from '../hooks/axios-lobby';
 import badwordsFiltering from '../hooks/badwords-filtering';
+import InviteUser from '../components/game/InviteUser';
 
 const GamePage = () => {
   const { roomCode } = useParams();
@@ -39,7 +40,8 @@ const GamePage = () => {
   const [isQuiz, setIsQuiz] = useState<boolean>(false);
   const [messageMap, setMessageMap] = useState<Map<bigint, GameChatRecieve>>(new Map());
   const [channelInfo, setChannelInfo] = useState<Channel | null>();
-
+  const [imageUrl, setImageUrl] = useState<string>('');
+  const [multipleChoice, setMultipleChoice] = useState<SelectQuiz[] | null>(null);
   //  문제를 받았는지 ?
   // false, , timer로받았을때>> 현재게임상태 ' '
 
@@ -104,15 +106,46 @@ const GamePage = () => {
   const getGameDetail = async (gameCode: string) => {
     try {
       const response = await GameApi.getRoundGame(gameCode);
-      console.log(response.data);
+      const quiz: ReiceveQuiz = response.data;
+      // 객관식 퀴즈
+      if (quiz.quizType == 1) {
+        const data: SelectQuiz[] = quiz.data as SelectQuiz[];
+        console.log(data);
+        // 이미지 세팅
+        data.forEach((element) => {
+          if (element.isAnswer) {
+            setImageUrl(element.url);
+          }
+        });
+        // 보기 구성
+        setMultipleChoice(data);
+      } else if (quiz.quizType == 2) {
+        const data: SelectQuiz[] = quiz.data as SelectQuiz[];
+        console.log(data);
+        // 이미지 세팅
+        data.forEach((element) => {
+          if (element.isAnswer) {
+            setImageUrl(element.url);
+          }
+        });
+      } else if (quiz.quizType == 4) {
+        // 주관식 퀴즈
+        console.log(quiz.data);
+      }
     } catch (error) {
       console.error(error);
     }
   };
+
   useEffect(() => {
     if (isQuiz) {
       getGameDetail(game?.code);
+
       console.log('isQuiz updated:', isQuiz);
+    } else {
+      // 퀴즈 내리기
+      setImageUrl('');
+      setMultipleChoice(null);
     }
   }, [isQuiz]);
 
@@ -160,19 +193,15 @@ const GamePage = () => {
     }
   };
   const gameController = async (recieve: RecieveData) => {
-    console.log('gameController : recieve', recieve);
     if (recieve.tag === 'chat') {
       const data: GameChatRecieve = recieve.data as GameChatRecieve;
-      // 로고
-      // if(data.createdDate < )
+
       setChat((prevItems) => [...prevItems, data]);
       setMessageMap((prevMap) => {
         const updatedMap = new Map(prevMap);
         updatedMap.set(data.userId, data);
         return updatedMap;
       });
-
-      console.log(messageMap);
     } else if (recieve.tag === 'enter') {
       const userResponse = await GameApi.getUserList(roomCode);
       setGameUserList(userResponse.data);
@@ -186,13 +215,14 @@ const GamePage = () => {
       setRound(data.round);
     } else if (recieve.tag === 'wrongSignal') {
       const data: bigint = recieve.data as bigint;
+      console.log('wrong Signal', data);
       if (data === user.userId) {
         console.log('난 틀렸어..');
       }
     } else if (recieve.tag === 'similarity') {
+      console.log(recieve.data);
     } else if (recieve.tag === 'game') {
       const data: GameStatus = recieve.data as GameStatus;
-
       if (data.type === 'ready') {
         setIsQuiz(false);
       } else if (data.type === 'start') {
@@ -216,14 +246,8 @@ const GamePage = () => {
         const roundInfo = data.content;
         const roundResult = roundInfo.roundList;
         setResult(roundResult);
+        setIsStart(false);
       }
-
-      // type 정리
-      // ready : 0,1,2 출력
-      // start : 라운드 시작했다 알려줌 >> 게임시작버튼 누르면 처음 한번
-      // if(recieve.data)
-      // end : 라운드가 끝났을때 한번 >> userlist가 온다.
-      // result : 모든라운드가 끝났을때, 한번
     }
   };
 
@@ -245,7 +269,7 @@ const GamePage = () => {
       nickname: user.nickName,
       uuid: game.code,
       gameCode: game.code,
-      round: 0,
+      round: round,
       content: chatfilter,
     };
     publish(destination, gameChat);
@@ -255,16 +279,13 @@ const GamePage = () => {
   const publishStart = async () => {
     // 모두 레디가 되있는지?
     // const destination = '/ws/pub/game/start';
-    const gameReady: GameReady = {
-      gameCode: game.code,
-    };
-    console.log(gameReady);
+    // 소켓으로 start 전송
+    // 받으면 >> response 보내느걸로 하면안되나..?
     try {
-      const response = await instance.post('game/start', gameReady);
-      console.log(response);
+      const response = await GameApi.startGame(game?.code);
+      console.log(response.data);
       setIsStart(true);
     } catch (error) {
-      console.log('에러!');
       console.error(error);
     }
   };
@@ -318,11 +339,15 @@ const GamePage = () => {
     }, 500);
   };
 
+  // 초대코드 발송
+  const inviteUser = () => {
+    alert('초대코드 전송하기!!');
+  };
   return (
     <div
       className={`w-[70rem] h-[37rem] min-w-[40rem] min-h-[37rem] max-w-[80vw] z-10 
       rounded-3xl drop-shadow-lg flex flex-col items-center justify-center 
-      ${earthquake ? 'animate-earthquake':''}`}
+      ${earthquake ? 'animate-earthquake' : ''}`}
     >
       <div
         className={`absolute bg-no-repeat bg-contain bg-center bg-[url(/public/ui/gamestart.png)] 
@@ -345,7 +370,10 @@ const GamePage = () => {
         </div>
         {/* 버튼 */}
         <div className="flex gap-3">
-          <button
+          {/* 초대코드 모달 창 추가 */}
+          {/* 기존 버튼 UI InviteUser에 적용필요 */}
+          {/* <InviteUser /> */}
+          {/* <button
             className={`
             transition text-sm w-1/2 text-white ${activateBtn[0] ? 'animate-clickbtn scale-105' : ''}
             ${
@@ -356,6 +384,7 @@ const GamePage = () => {
             `}
             onClick={() => {
               handleClick(0);
+              inviteUser();
             }}
           >
             <label
@@ -372,7 +401,7 @@ const GamePage = () => {
                 초대하기
               </p>
             </label>
-          </button>
+          </button> */}
           <button
             className={`btn-red text-white hover:brightness-125 hover:scale-105 transition 
             text-sm w-1/2 min-w-[3rem] ${activateBtn[1] ? 'animate-clickbtn scale-105' : ''}`}
@@ -419,7 +448,9 @@ const GamePage = () => {
               <div className="w-fit h-7 px-3 absolute top-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
                 {roundState} : {time}
               </div>
-              <div className="w-full h-full bg-[url(https://contents-cdn.viewus.co.kr/image/2023/08/CP-2023-0056/image-7adf97c8-ef11-4def-81e8-fe2913667983.jpeg)] bg-cover bg-center"></div>
+              <div className={`w-full h-full bg-cover bg-center`}>
+                <img src={imageUrl} alt="" />
+              </div>
             </div>
           </div>
         </div>
@@ -451,7 +482,7 @@ const GamePage = () => {
         <div className="w-full flex grow flex-col items-center justify-end px-4">
           <div className="w-full h-36 mb-2 relative">
             {/* 객관식 선택 */}
-            {isQuiz ? <SelectionGame /> : <div>no game</div>}
+            {isQuiz ? <SelectionGame choiceList={multipleChoice} /> : <div>no game</div>}
           </div>
           {/* 채팅 */}
           <div className="w-full">

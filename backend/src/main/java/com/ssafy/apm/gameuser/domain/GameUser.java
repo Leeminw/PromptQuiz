@@ -1,22 +1,22 @@
 package com.ssafy.apm.gameuser.domain;
 
 import com.ssafy.apm.gameuser.dto.request.GameUserUpdateRequestDto;
-import lombok.*;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.index.Indexed;
 
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
 @Getter
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@RedisHash(timeToLive = 3600)
+@Table(name = "game-user")
 public class GameUser {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String code;
-    @Indexed
     private String gameCode;
-    @Indexed
     private Long userId;
     private String team;
     private Integer score;
