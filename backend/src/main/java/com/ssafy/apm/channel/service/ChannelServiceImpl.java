@@ -32,6 +32,7 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public List<ChannelGetResponseDto> getChannelList() {
         List<Channel> channelList = channelRepository.findAll();
+        if (channelList.isEmpty()) throw new ChannelNotFoundException("No channel entities exists");
         return channelList.stream()
                 .map(ChannelGetResponseDto::new)
                 .toList();

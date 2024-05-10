@@ -22,9 +22,9 @@ public class GameCreateRequestDto {
     private Integer maxPlayers;
 
     public Game toEntity() {
-        if(!(style.equals("random") || style.equals("anime") || style.equals("cartoon") || style.equals("realistic")))
+        if (!(style.equals("random") || style.equals("anime") || style.equals("cartoon") || style.equals("realistic")))
             style = "random";
-        if(mode < 1 || mode > 7 ) mode = 7;
+        if (mode < 1 || mode > 7) mode = 7;
         return Game.builder()
                 .channelCode(this.channelCode)
                 .password(this.password)

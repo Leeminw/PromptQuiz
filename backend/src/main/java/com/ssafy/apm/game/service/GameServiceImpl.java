@@ -94,6 +94,7 @@ public class GameServiceImpl implements GameService {
 
         return new GameUserSimpleResponseDto(entity);
     }
+
     @Override
     public List<GameResponseDto> findGamesByChannelCode(String channelCode) {
         List<Game> entityList = gameRepository.findAllByChannelCode(channelCode)
@@ -136,7 +137,7 @@ public class GameServiceImpl implements GameService {
         int loserListSize = gameUserList.size() - winnerListSize;
         int totalScore = 10 * game.getMaxRounds();
 //        12가 최대 게임 참여자 수
-        int getWinnerMaxScore = Math.round(totalScore * ( (float) game.getCurPlayers() / 12));
+        int getWinnerMaxScore = Math.round(totalScore * ((float) game.getCurPlayers() / 12));
 
         //            score를 기준으로 높은 순서대로 리스트가 정렬됨
         List<GameUser> GameUsers = gameUserList.stream()
@@ -261,6 +262,7 @@ public class GameServiceImpl implements GameService {
         gameUserRepository.delete(gameUser);
         return gameUserCode;
     }
+
     @Override
     @Transactional
     public Boolean createGameQuiz(String gameCode) {
@@ -278,6 +280,7 @@ public class GameServiceImpl implements GameService {
         gameQuizRepository.saveAll(gameQuizList);
         return true;
     }
+
     @Override
     @Transactional
     public List<QuizResponseDto> createAnswerGameQuizCanShow(String gameCode) {
@@ -294,7 +297,7 @@ public class GameServiceImpl implements GameService {
 
         List<Quiz> multipleChoiceList = new ArrayList<>();
 
-        for(GameQuiz gameQuiz: gameQuizList) {
+        for (GameQuiz gameQuiz : gameQuizList) {
             Quiz temp = quizRepository.findById(gameQuiz.getQuizId())
                     .orElseThrow(() -> new QuizNotFoundException(gameQuiz.getQuizId()));
             multipleChoiceList.add(temp);
@@ -365,7 +368,7 @@ public class GameServiceImpl implements GameService {
         if (gameStyle.equals("random")) {
             quizList = quizRepository.extractRandomQuizzes(gameEntity.getMaxRounds())
                     .orElseThrow(() -> new QuizNotFoundException("No entities exists by random!"));
-        } else if (gameStyle.equals("anime") || gameStyle.equals("realistic") || gameStyle.equals("cartoon")){
+        } else if (gameStyle.equals("anime") || gameStyle.equals("realistic") || gameStyle.equals("cartoon")) {
             quizList = quizRepository.extractRandomQuizzesByStyle(gameStyle, gameEntity.getMaxRounds())
                     .orElseThrow(() -> new QuizNotFoundException("No entities exists by style!"));
         } else {
@@ -390,27 +393,26 @@ public class GameServiceImpl implements GameService {
         }
         if (redTeamTotalScore == blueTeamTotalScore) {
             for (int i = 0; i < redTeamEntity.size(); i++) {
-                if(redTeamEntity.get(i).getScore() > blueTeamEntity.get(i).getScore()) {
+                if (redTeamEntity.get(i).getScore() > blueTeamEntity.get(i).getScore()) {
                     winnerTeamScore(userList, redTeamEntity, getWinnerMaxScore);
                     loserTeamScore(userList, blueTeamEntity, getWinnerMaxScore);
                     break;
-                } else if(redTeamEntity.get(i).getScore() < blueTeamEntity.get(i).getScore()) {
+                } else if (redTeamEntity.get(i).getScore() < blueTeamEntity.get(i).getScore()) {
                     winnerTeamScore(userList, blueTeamEntity, getWinnerMaxScore);
                     loserTeamScore(userList, redTeamEntity, getWinnerMaxScore);
                     break;
                 }
             }
-        }
-        else if (redTeamTotalScore > blueTeamTotalScore) {
+        } else if (redTeamTotalScore > blueTeamTotalScore) {
             winnerTeamScore(userList, redTeamEntity, getWinnerMaxScore);
             loserTeamScore(userList, blueTeamEntity, getWinnerMaxScore);
-        }
-        else {
+        } else {
             winnerTeamScore(userList, blueTeamEntity, getWinnerMaxScore);
             loserTeamScore(userList, redTeamEntity, getWinnerMaxScore);
         }
     }
-    private void isSoloCalculateScore(int winnerListSize, int loserListSize, int getWinnerMaxScore, List<GameUser> GameUsers, List<User> userList){
+
+    private void isSoloCalculateScore(int winnerListSize, int loserListSize, int getWinnerMaxScore, List<GameUser> GameUsers, List<User> userList) {
         /* 10라운드 6명 기준
          * getWinnerMaxScore = 10*10(10라운드) * (curPlayers/maxPlayers) = 50( 6명이서 게임할 때 1등이 받을 점수 )
          * 1등 : 50 * 0.8^0 = 50,  2등 : 50 * 0.8^1 = 40, 3등 : 50*0.8^2 = 32
