@@ -220,12 +220,12 @@ public class GameSocketController {
         switch (type) {
             case MULTIPLECHOICE, BLANKCHOICE:
                 List<GameQuizDetailResponseDto> quizList = gameQuizService.findCurrentDetailGameQuizzesByGameCode(gameCode);
-                responseData = ResponseData.success(quizList);
+                responseData = ResponseData.success(new RoundQuizResponseDto(type,quizList));
                 break;
             case BLANKSUBJECTIVE:
                 GameRoomStatus game = gameOngoingMap.get(gameCode);
                 GameBlankResponseDto responseDto = new GameBlankResponseDto(game);
-                responseData = ResponseData.success(responseDto);
+                responseData = ResponseData.success(new RoundQuizResponseDto(type,responseDto));
                 break;
         }
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
