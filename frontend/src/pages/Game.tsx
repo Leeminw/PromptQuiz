@@ -106,6 +106,7 @@ const GamePage = () => {
     try {
       const response = await GameApi.getRoundGame(gameCode);
       const quiz: ReiceveQuiz = response.data;
+      // 객관식 퀴즈
       if (quiz.quizType == 1) {
         const data: SelectQuiz[] = quiz.data as SelectQuiz[];
         console.log(data);
@@ -118,7 +119,17 @@ const GamePage = () => {
         // 보기 구성
         setMultipleChoice(data);
       } else if (quiz.quizType == 2) {
+        const data: SelectQuiz[] = quiz.data as SelectQuiz[];
+        console.log(data);
+        // 이미지 세팅
+        data.forEach((element) => {
+          if (element.isAnswer) {
+            setImageUrl(element.url);
+          }
+        });
       } else if (quiz.quizType == 4) {
+        // 주관식 퀴즈
+        console.log(quiz.data);
       }
     } catch (error) {
       console.error(error);
@@ -203,6 +214,7 @@ const GamePage = () => {
       setRound(data.round);
     } else if (recieve.tag === 'wrongSignal') {
       const data: bigint = recieve.data as bigint;
+      console.log('wrong Signal', data);
       if (data === user.userId) {
         console.log('난 틀렸어..');
       }
@@ -265,6 +277,8 @@ const GamePage = () => {
   const publishStart = async () => {
     // 모두 레디가 되있는지?
     // const destination = '/ws/pub/game/start';
+    // 소켓으로 start 전송
+    // 받으면 >> response 보내느걸로 하면안되나..?
     try {
       const response = await GameApi.startGame(game?.code);
       console.log(response.data);
