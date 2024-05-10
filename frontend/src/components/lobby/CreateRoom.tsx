@@ -38,7 +38,8 @@ const CreateRoom = ({ channelCode }: Props) => {
     console.log(isTeam);
   };
   const typeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setMode(Number(event.target.value));
+    // XOR토글 형식으로 변경
+    setMode(mode ^ Number(event.target.value));
     console.log('TYPE', event.target.value);
     // console.log(mode);
   };
@@ -77,7 +78,10 @@ const CreateRoom = ({ channelCode }: Props) => {
       alert('비공개 방의 비밀번호를 입력해주세요');
       return;
     }
-
+    if (mode === 0) {
+      alert('모드를 선택해주세요');
+      return;
+    }
     // console.log('방 생성 정보 받음');
     // // console.log('사용자id:' + user.userId);
     // // console.log('채널id:' + channelCode);
@@ -157,7 +161,10 @@ const CreateRoom = ({ channelCode }: Props) => {
                   checked={privacyStatus == 0}
                   className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                 />
-                <label htmlFor="open" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
+                <label
+                  htmlFor="open"
+                  className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none"
+                >
                   공개
                 </label>
               </div>
@@ -170,7 +177,10 @@ const CreateRoom = ({ channelCode }: Props) => {
                   checked={privacyStatus == 1}
                   className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                 />
-                <label htmlFor="close" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
+                <label
+                  htmlFor="close"
+                  className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none"
+                >
                   비공개
                 </label>
               </div>
@@ -197,7 +207,10 @@ const CreateRoom = ({ channelCode }: Props) => {
                     checked={!isTeam}
                     className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                   />
-                  <label htmlFor="individual" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
+                  <label
+                    htmlFor="individual"
+                    className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none"
+                  >
                     개인전
                   </label>
                 </div>
@@ -210,7 +223,10 @@ const CreateRoom = ({ channelCode }: Props) => {
                     checked={isTeam}
                     className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                   />
-                  <label htmlFor="team" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
+                  <label
+                    htmlFor="team"
+                    className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none"
+                  >
                     팀전
                   </label>
                 </div>
@@ -226,21 +242,27 @@ const CreateRoom = ({ channelCode }: Props) => {
                     checked={(mode & 1) > 0}
                     className="checkbox checkbox-sm border-lightmint bg-white checked:bg-mint [--chkbg:theme(colors.mint)] [--chkfg:white]"
                   />
-                  <label htmlFor="choice" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
+                  <label
+                    htmlFor="choice"
+                    className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none"
+                  >
                     객관식
                   </label>
                 </div>
                 <div className="flex pr-2 items-center">
                   <input
                     type="checkbox"
-                    value={2}
+                    value={4}
                     id="subjective"
                     defaultChecked
                     onChange={typeHandler}
-                    checked={(mode & 2) > 0}
+                    checked={(mode & 4) > 0}
                     className="checkbox checkbox-sm border-lightmint bg-white checked:bg-mint [--chkbg:theme(colors.mint)] [--chkfg:white]"
                   />
-                  <label htmlFor="subjective" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
+                  <label
+                    htmlFor="subjective"
+                    className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none"
+                  >
                     주관식
                   </label>
                 </div>
@@ -248,14 +270,17 @@ const CreateRoom = ({ channelCode }: Props) => {
                 <div className="flex pr-2 items-center">
                   <input
                     type="checkbox"
-                    value={4}
+                    value={2}
                     id="sequence"
                     defaultChecked
                     onChange={typeHandler}
-                    checked={(mode & 4) > 0}
+                    checked={(mode & 2) > 0}
                     className="checkbox checkbox-sm border-lightmint bg-white checked:bg-mint [--chkbg:theme(colors.mint)] [--chkfg:white]"
                   />
-                  <label htmlFor="sequence" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
+                  <label
+                    htmlFor="sequence"
+                    className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none"
+                  >
                     순서 맞추기
                   </label>
                 </div>
@@ -272,7 +297,10 @@ const CreateRoom = ({ channelCode }: Props) => {
                   checked={style === 0}
                   className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                 />
-                <label htmlFor="real" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
+                <label
+                  htmlFor="real"
+                  className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none"
+                >
                   실사체
                 </label>
               </div>
@@ -285,7 +313,10 @@ const CreateRoom = ({ channelCode }: Props) => {
                   checked={style === 1}
                   className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                 />
-                <label htmlFor="comic" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
+                <label
+                  htmlFor="comic"
+                  className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none"
+                >
                   만화체
                 </label>
               </div>
@@ -298,7 +329,10 @@ const CreateRoom = ({ channelCode }: Props) => {
                   checked={style === 2}
                   className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                 />
-                <label htmlFor="disney" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
+                <label
+                  htmlFor="disney"
+                  className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none"
+                >
                   디즈니체
                 </label>
               </div>
@@ -312,7 +346,10 @@ const CreateRoom = ({ channelCode }: Props) => {
                   checked={style === 3}
                   className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                 />
-                <label htmlFor="random" className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none">
+                <label
+                  htmlFor="random"
+                  className="text-nowrap text-sm font-bold pl-2 cursor-pointer select-none"
+                >
                   랜덤
                 </label>
               </div>
