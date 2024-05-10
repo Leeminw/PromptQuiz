@@ -220,6 +220,7 @@ const GamePage = () => {
         console.log('난 틀렸어..');
       }
     } else if (recieve.tag === 'similarity') {
+      console.log(recieve.data);
     } else if (recieve.tag === 'game') {
       const data: GameStatus = recieve.data as GameStatus;
       if (data.type === 'ready') {
@@ -371,7 +372,7 @@ const GamePage = () => {
         <div className="flex gap-3">
           {/* 초대코드 모달 창 추가 */}
           {/* 기존 버튼 UI InviteUser에 적용필요 */}
-          <InviteUser />
+          {/* <InviteUser /> */}
           {/* <button
             className={`
             transition text-sm w-1/2 text-white ${activateBtn[0] ? 'animate-clickbtn scale-105' : ''}
