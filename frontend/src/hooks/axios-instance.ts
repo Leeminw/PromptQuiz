@@ -5,12 +5,12 @@ const BASE_URL = process.env.REACT_APP_SERVER;
 
 const instance = axios.create({
     baseURL : BASE_URL,
-    timeout : 5000,
+    // timeout : 5000,
 });
 
 const apiClient = axios.create({
     baseURL : BASE_URL,
-    timeout :5000,
+    // timeout :5000,
 })
 
 instance.interceptors.request.use(
