@@ -87,7 +87,7 @@ public class BlankChoiceService {
         }
         return response;
     }
-
+    @Transactional
     public Boolean evaluateAnswers(GameChatRequestDto answer) {
         String gameCode = answer.getGameCode();
         Game game = gameRepository.findByCode(gameCode)
