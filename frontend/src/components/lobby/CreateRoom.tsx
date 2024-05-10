@@ -76,21 +76,24 @@ const CreateRoom = ({ channelCode }: Props) => {
       return;
     }
 
-    console.log('방 생성 정보 받음');
-    console.log('사용자id:' + user.userId);
-    console.log('채널id:' + channelCode);
-    // console.log('방유형:' + type);
-    console.log('그림체:' + style);
-    console.log('방제목:' + title);
-    console.log('비밀번호:' + password);
-    console.log('방상태:' + status);
-    console.log('팀전여부:' + isTeam);
-    console.log('현재라운드:' + curRound);
-    // console.log('최대라운드:' + rounds);
-    console.log('현재플레이어:' + curPlayers);
-    console.log('최대플레이어:' + maxPlayers);
+    // console.log('방 생성 정보 받음');
+    // // console.log('사용자id:' + user.userId);
+    // // console.log('채널id:' + channelCode);
+    // console.log('방 생성 정보 받음');
+    // console.log('사용자id:' + user.userId);
+    // console.log('채널id:' + channelCode);
+    // // console.log('방유형:' + type);
+    // console.log('그림체:' + style);
+    // console.log('방제목:' + title);
+    // console.log('비밀번호:' + password);
+    // console.log('방상태:' + status);
+    // console.log('팀전여부:' + isTeam);
+    // console.log('현재라운드:' + curRound);
+    // // console.log('최대라운드:' + rounds);
+    // console.log('현재플레이어:' + curPlayers);
+    // console.log('최대플레이어:' + maxPlayers);
 
-    console.log('---------');
+    // console.log('---------');
 
     try {
       const room: CreateRoom = {
@@ -105,6 +108,7 @@ const CreateRoom = ({ channelCode }: Props) => {
         timeLimit: 60,
         title,
       };
+
       const { data } = await LobbyApi.createRoom(room);
       console.log(data);
       setTimeout(() => {
@@ -118,7 +122,7 @@ const CreateRoom = ({ channelCode }: Props) => {
     // className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 "
     <div className="w-fit h-full text-mint">
       <button
-        className="w-full h-full btn-mint flex justify-center items-center gap-2 px-3 hover:brightness-110"
+        className="w-full h-full btn-mint-border-white flex justify-center items-center gap-2 px-3 hover:brightness-110"
         onClick={() => (document.getElementById('my_modal_1') as HTMLDialogElement).showModal()}
       >
         <MdAddHome className="min-w-5 min-h-5" />
@@ -267,7 +271,6 @@ const CreateRoom = ({ channelCode }: Props) => {
                   실사체
                 </label>
               </div>
-
               <div className="flex gap-2 pr-2 items-center">
                 <input
                   type="radio"

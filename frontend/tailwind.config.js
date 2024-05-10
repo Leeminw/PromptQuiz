@@ -216,6 +216,16 @@ module.exports = {
           color: 'white',
           fontWeight: '800',
         },
+        '.btn-yellow-border-white': {
+          borderWidth: '0.3rem',
+          borderImageSource: "url('../public/ui/border-yellow-btn.png')",
+          borderImageSlice: '14%',
+          borderImageOutset: '0.25rem',
+          borderImageRepeat: 'stretch',
+          backgroundColor: '#de9e23',
+          color: 'white',
+          fontWeight: '800',
+        },
         '.btn-red': {
           borderWidth: '0.3rem',
           borderImageSource: "url('../public/ui/border-red-btn.png')",

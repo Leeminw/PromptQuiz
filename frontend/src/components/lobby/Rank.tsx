@@ -79,7 +79,7 @@ const Rank = () => {
   return (
     <div className="w-full h-full">
       <button
-        className="w-fit h-full bg-customYellow border-custom-yellow text-white flex justify-center items-center gap-2 px-4 hover:brightness-110"
+        className="w-fit h-full bg-customYellow btn-yellow-border-white text-white flex justify-center items-center gap-2 px-4 hover:brightness-110"
         onClick={() => (document.getElementById('ranking_modal') as HTMLDialogElement).showModal()}
       >
         <BsFillTrophyFill className="min-w-4 min-h-4 " />

@@ -18,6 +18,7 @@ import { useWebSocketStore } from '../stores/socketStore';
 import useUserStore from '../stores/userStore';
 import { IMessage } from '@stomp/stompjs';
 import { UserChannelApi } from '../hooks/axios-user-channel';
+import badwordsFiltering from '../hooks/badwords-filtering';
 const Lobby = () => {
   const { channelUuid } = useParams();
   const { user } = useUserStore();
@@ -47,7 +48,10 @@ const Lobby = () => {
     // 입장처리?
     getChannelInfo();
   }, []);
-
+  useEffect(() => {
+    console.log("channelUuid", channelUuid);
+    LobbyApi.enterLobby(channelUuid);
+  }, [channelInfo]);
   const handleState = (data1: RoomProps[], data2: CurrentUser[]) => {
     setRoomList(data1);
     setCurrentUserList(data2);
@@ -91,11 +95,13 @@ const Lobby = () => {
   };
   const enterGame = () => {};
   const publishChat = () => {
+    let chatFilter = badwordsFiltering(chatInput.current?.value);
+    console.log(chatFilter);
     const destination = '/ws/pub/channel/chat/send';
     const channelChat: ChannelChat = {
       nickname: user.nickName,
       uuid: channelUuid,
-      content: chatInput.current.value,
+      content: chatFilter,
     };
     publish(destination, channelChat);
     chatInput.current.value = '';
@@ -126,7 +132,7 @@ const Lobby = () => {
           <p className="text-center w-full text-nowrap text-mint">{channelInfo?.name}</p>
         </label>
         <div className="col-span-6 flex items-center">
-          <Header  channelUuid={channelUuid} handleState={handleState} />
+          <Header channelUuid={channelUuid} handleState={handleState} />
         </div>
       </div>
 

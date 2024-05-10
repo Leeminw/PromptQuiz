@@ -19,7 +19,22 @@ const GameApi = {
       return Promise.reject(error);
     }
   },
-  // getGameDetail : async ()
+  enterGame: async (gameCode: string) => {
+    try {
+      const response = await instance.post(`/game/enterGame/${gameCode}`);
+      return response.data;
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  },
+  getRoundGame: async (gameCode:string) =>{
+    try{
+      const response = await instance.get(`/round/quiz/${gameCode}`)
+      return response.data;
+    }catch(error){
+      return Promise.reject(error);
+    }
+  }
 };
 
 export default GameApi;
