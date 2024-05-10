@@ -17,7 +17,7 @@ interface Room {
 interface CreateRoom {
   channelCode: string | null;
   title: string | null;
-  style: number | null;
+  style: string | null;
   mode: number | null;
   password: string | null;
   isTeam: boolean | null;
