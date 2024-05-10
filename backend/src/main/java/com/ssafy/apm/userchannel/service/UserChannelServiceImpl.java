@@ -9,6 +9,7 @@ import com.ssafy.apm.user.repository.UserRepository;
 import com.ssafy.apm.user.service.UserService;
 import com.ssafy.apm.userchannel.domain.UserChannel;
 import com.ssafy.apm.userchannel.dto.response.UserChannelGetResponseDto;
+import com.ssafy.apm.userchannel.exception.UserChannelFullException;
 import com.ssafy.apm.userchannel.exception.UserChannelNotFoundException;
 import com.ssafy.apm.userchannel.repository.UserChannelRepository;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +48,8 @@ public class UserChannelServiceImpl implements UserChannelService {
         Channel channel = channelRepository.findById(channelId)
                 .orElseThrow(() -> new ChannelNotFoundException(channelId));
 
+        if(channel.getCurPlayers() >= channel.getMaxPlayers()) throw new UserChannelFullException();
+
         deleteAllDummyUserChannel(user);
 
         UserChannel entity = UserChannel.builder()
@@ -67,6 +70,7 @@ public class UserChannelServiceImpl implements UserChannelService {
         Channel channel = channelRepository.findByCode(code)
                 .orElseThrow(() -> new ChannelNotFoundException("No entity exist by code!"));
 
+        if(channel.getCurPlayers() >= channel.getMaxPlayers()) throw new UserChannelFullException();
         deleteAllDummyUserChannel(user);
 
         UserChannel entity = UserChannel.builder()
