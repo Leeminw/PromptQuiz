@@ -184,7 +184,7 @@ public class GameSocketController {
         if (!gameReadyMap.containsKey(ready.getGameCode())) {
             GameRoomStatus newGame = null;
             try {
-                newGame = new GameRoomStatus(ready.getGameCode(), 0, 10, 0);
+                newGame = new GameRoomStatus(ready.getGameCode(), 0, Math.max(gameService.getMaxTimeByGameCode(ready.getGameCode()), 10), 0);
 
                 // 방장일 경우에만 게임 보기가 생성됩니다
                 if (gameService.createGameQuiz(ready.getGameCode())) {
@@ -229,6 +229,12 @@ public class GameSocketController {
                 break;
         }
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
+    }
+
+    // (게임 시작) 게임 시작 메세지 전송
+    @MessageMapping("/api/v1/game/start")
+    public void sendGameStartMessage(GameRoomStatus game) {
+        sendMessage(game.gameCode, new GameResponseDto("startGame", "start"));
     }
 
     // (라운드 대기) 라운드 대기 메세지 전송

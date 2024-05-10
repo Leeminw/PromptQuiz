@@ -512,4 +512,11 @@ public class GameServiceImpl implements GameService {
             userList.add(user);
         }
     }
+
+    @Override
+    public Integer getMaxTimeByGameCode(String gameCode) {
+        Game game = gameRepository.findByCode(gameCode)
+                .orElseThrow(() -> new GameNotFoundException(gameCode));
+        return game.getTimeLimit();
+    }
 }

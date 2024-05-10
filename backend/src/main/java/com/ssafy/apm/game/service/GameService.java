@@ -47,4 +47,6 @@ public interface GameService {
 
 
     List<QuizResponseDto> createAnswerGameQuizCanShow(String gameCode);
+
+    Integer getMaxTimeByGameCode(String gameCode);
 }
