@@ -96,7 +96,10 @@ interface RoundUser {
     score : number,
     correct : boolean
 }
-
+interface ReiceveQuiz {
+    quizType:number,
+    data : SelectQuiz[]
+}
 interface SelectQuiz {
     code: string,
     gameCode: string,
