@@ -7,7 +7,7 @@ const UserChannelApi = {
   // 채널 입장
   enterChannel: async (channelCode: string) => {
     try {
-      const response = await instance.post(BASE_URL + `/user-channel/${channelCode}`);
+      const response = await instance.post(`/user-channel/code/${channelCode}`);
       return response.data;
     } catch (error) {
       console.error(error);
