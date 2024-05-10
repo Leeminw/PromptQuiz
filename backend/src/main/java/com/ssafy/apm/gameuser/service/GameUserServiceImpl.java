@@ -137,7 +137,10 @@ public class GameUserServiceImpl implements GameUserService {
     public GameUserSimpleResponseDto updateGameUserScore(Long userId, Integer score) {
         GameUser gameUser = gameUserRepository.findByUserId(userId).orElseThrow(
                 () -> new GameUserNotFoundException("Entity Not Found with UserId: " + userId));
+        System.out.println(gameUser);
         gameUser = gameUserRepository.save(gameUser.updateScore(score));
+        System.out.println("업데이트 완료"+ gameUser);
+
         return new GameUserSimpleResponseDto(gameUser);
     }
 
