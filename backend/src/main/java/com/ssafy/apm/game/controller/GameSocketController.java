@@ -184,7 +184,7 @@ public class GameSocketController {
         if (!gameReadyMap.containsKey(ready.getGameCode())) {
             GameRoomStatus newGame = null;
             try {
-                newGame = new GameRoomStatus(ready.getGameCode(), 0, 10, 0);
+                newGame = new GameRoomStatus(ready.getGameCode(), 0, Math.max(gameService.getMaxTimeByGameCode(ready.getGameCode()), 10), 0);
 
                 // 방장일 경우에만 게임 보기가 생성됩니다
                 if (gameService.createGameQuiz(ready.getGameCode())) {
