@@ -18,6 +18,7 @@ import { LobbyApi } from '../hooks/axios-lobby';
 import badwordsFiltering from '../hooks/badwords-filtering';
 import InviteUser from '../components/game/InviteUser';
 import SequenceGame from '../components/game/SequenceGame';
+import CustomButton from '../components/ui/CustomButton';
 
 const GamePage = () => {
   const { roomCode } = useParams();
@@ -293,36 +294,43 @@ const GamePage = () => {
 
   // 버튼 제어
   // [0]초대하기 | [1]나가기 | [2]1팀 | [3]2팀 | [4]랜덤 | [5]게임시작
-  const [activateBtn, setActivateBtn] = useState<ActivateButton>({});
-  const [isStart, setIsStart] = useState<boolean>(false);
+  // const [activateBtn, setActivateBtn] = useState<ActivateButton>({});
   const [btnCurrentActivate, setBtnCurrentActivate] = useState<boolean>(false);
-  const handleClick = (id: number) => {
-    // 버튼 비활성화 상태라면 이벤트 방지
-    setIsStart((disable) => {
-      if (!disable || id === 1) {
-        // 버튼이 활성돼있는 동안 버튼 클릭 방지
-        setBtnCurrentActivate((current) => {
-          if (!current) {
-            setBtnCurrentActivate(true);
-            setActivateBtn((prev) => ({ ...prev, [id]: true }));
-            setTimeout(() => {
-              // 게임 시작 시 버튼 비활성화
-              if (id === 5) {
-                handleGamestart();
-              }
-              // 버튼 이벤트 활성화
-              setActivateBtn((prev) => ({ ...prev, [id]: false }));
-              setTimeout(() => {
-                setBtnCurrentActivate(false);
-              }, 300);
-            }, 400);
-            return true;
-          }
-          return current;
-        });
-      }
-      return disable;
-    });
+  const [isStart, setIsStart] = useState<boolean>(false);
+  // const handleClick = (id: number) => {
+  //   // 버튼 비활성화 상태라면 이벤트 방지
+  //   setIsStart((disable) => {
+  //     if (!disable || id === 1) {
+  //       // 버튼이 활성돼있는 동안 버튼 클릭 방지
+  //       setBtnCurrentActivate((current) => {
+  //         if (!current) {
+  //           setBtnCurrentActivate(true);
+  //           // setActivateBtn((prev) => ({ ...prev, [id]: true }));
+  //           setTimeout(() => {
+  //             // 게임 시작 시 버튼 비활성화
+  //             if (id === 5) {
+  //               handleGamestart();
+  //             }
+  //             // 버튼 이벤트 활성화
+  //             // setActivateBtn((prev) => ({ ...prev, [id]: false }));
+  //             setTimeout(() => {
+  //               setBtnCurrentActivate(false);
+  //             }, 300);
+  //           }, 400);
+  //           return true;
+  //         }
+  //         return current;
+  //       });
+  //     }
+  //     return disable;
+  //   });
+  // };
+
+  const activateBtnFunc = async () => {
+    setBtnCurrentActivate(true);
+    await setTimeout(() => {
+      setBtnCurrentActivate(false);
+    }, 800);
   };
 
   // 게임 시작 이벤트
@@ -372,54 +380,41 @@ const GamePage = () => {
         {/* 버튼 */}
         <div className="flex gap-3">
           {/* 초대코드 모달 창 추가 */}
+          <InviteUser />
           {/* 기존 버튼 UI InviteUser에 적용필요 */}
-          {/* <InviteUser /> */}
-          {/* <button
-            className={`
-            transition text-sm w-1/2 text-white ${activateBtn[0] ? 'animate-clickbtn scale-105' : ''}
-            ${
-              isStart
-                ? 'border-custom-gray bg-[#999999] cursor-default'
-                : 'btn-mint-border-white hover:brightness-125 hover:scale-105 cursor-pointer'
-            }
-            `}
+          <CustomButton
+            btnCurrentActivate={btnCurrentActivate}
+            className="btn-mint-border-white gap-1 px-2 max-xl:justify-center"
             onClick={() => {
-              handleClick(0);
-              inviteUser();
+              activateBtnFunc();
+              setTimeout(() => {
+                (document.getElementById('invite_modal') as HTMLDialogElement).showModal();
+              }, 500);
             }}
           >
-            <label
-              className={`
-            flex gap-1 items-center px-2 overflow-hidden max-xl:justify-center font-extrabold
-            ${isStart ? 'cursor-default' : 'cursor-pointer'}
-            `}
-            >
-              <FaUserPlus className="min-w-5 min-h-5 mb-0.5" />
-              <p
-                className="text-center w-full text-nowrap text-sm overflow-hidden 
+            <FaUserPlus className="min-w-5 min-h-5 mb-0.5" />
+            <p
+              className="text-center w-full text-nowrap text-sm overflow-hidden 
               text-ellipsis xl:flex max-xl:hidden"
-              >
-                초대하기
-              </p>
-            </label>
-          </button> */}
-          <button
-            className={`btn-red text-white hover:brightness-125 hover:scale-105 transition 
-            text-sm w-1/2 min-w-[3rem] ${activateBtn[1] ? 'animate-clickbtn scale-105' : ''}`}
+            >
+              초대하기
+            </p>
+          </CustomButton>
+          <CustomButton
+            btnCurrentActivate={btnCurrentActivate}
+            className="w-1/2 text-sm min-w-[3rem] btn-red text-white gap-1 px-2 max-xl:justify-center"
             onClick={() => {
-              handleClick(1);
+              activateBtnFunc();
               setTimeout(() => {
                 navigate('/lobby/' + game?.channelCode);
               }, 500);
             }}
           >
-            <label className="flex gap-1 items-center px-2 cursor-pointer overflow-hidden max-xl:justify-center">
-              <IoLogOut className="min-w-6 min-h-6 mb-0.5" />
-              <p className="text-center w-full text-nowrap text-sm overflow-hidden text-ellipsis xl:flex max-xl:hidden">
-                나가기
-              </p>
-            </label>
-          </button>
+            <IoLogOut className="min-w-6 min-h-6 mb-0.5" />
+            <p className="text-center w-full text-nowrap text-sm overflow-hidden text-ellipsis xl:flex max-xl:hidden">
+              나가기
+            </p>
+          </CustomButton>
         </div>
       </div>
       {/* 중간 : 플레이어, 문제 화면 */}
@@ -480,18 +475,18 @@ const GamePage = () => {
           ))}
         </div>
         {/* 채팅창, 객관식 선택, 순서 배치 등 */}
-        <div className="w-full flex grow flex-col items-center justify-end px-4">
+        <div className="w-full flex grow flex-col items-center justify-end px-4 mt-1">
           <div className="w-full h-36 mb-2 relative">
             {/* 객관식 선택 */}
             {/* {isQuiz ? <SelectionGame choiceList={multipleChoice} /> : <div>no game</div>} */}
             {/* 순서 맞추기 */}
-            <SequenceGame choiceList={multipleChoice}/>
+            <SequenceGame choiceList={multipleChoice} />
           </div>
           {/* 채팅 */}
           <div className="w-full">
             <div className="relative w-full">
               <div
-                className={`absolute flex items-center w-full h-[7.5rem] bottom-0 mb-2 transition-all origin-bottom duration-300 ${chatOpen&&!gamestart ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
+                className={`absolute flex items-center w-full h-[7.5rem] bottom-0 mb-2 transition-all origin-bottom duration-300 ${chatOpen && !gamestart ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
               >
                 <div className="absolute w-full h-[90%] px-3 py-2 text-sm chat custom-scroll z-10">
                   <div className="z-10 text-gray-700" ref={chattingBox}>
@@ -545,88 +540,92 @@ const GamePage = () => {
           <GameRoomSetting gamestart={isStart} />
 
           {/* 팀 선택, 게임 시작 버튼 */}
-          <div className="w-full h-6 my-3 flex gap-3">
-            <button
-              className={`w-1/3 h-full flex items-center justify-center text-white text-sm font-bold transition text-nowrap
-              ${activateBtn[2] ? 'animate-clickbtn scale-105' : ''}
-              ${
-                isStart
-                  ? 'border-custom-gray bg-[#999999] cursor-default'
-                  : 'border-custom-red bg-customRed hover:brightness-125 hover:scale-110 cursor-pointer'
-              }
-              `}
-              onClick={() => {
-                handleClick(2);
-                gameUserList.push({
-                  userId: BigInt(123),
-                  userName: '123',
-                  nickName: '123',
-                  picture: '',
-                  statusMessage: '',
-                  totalScore: 1,
-                  teamScore: 1,
-                  soloScore: 1,
-                  created_date: '',
-                  updated_date: '',
-                  gameUserId: BigInt(123),
-                  gameCode: '123',
-                  isHost: false,
-                  isReady: false,
-                  score: 123,
-                  team: '',
-                  ranking: 1,
-                });
-              }}
-            >
-              1팀
-            </button>
-            <button
-              className={`w-1/3 h-full flex items-center justify-center text-nowrap
-              text-white text-sm font-bold transition 
-              ${activateBtn[3] ? 'animate-clickbtn scale-105' : ''}
-              ${
-                isStart
-                  ? 'border-custom-gray bg-[#999999] cursor-default'
-                  : 'border-custom-blue bg-customBlue hover:brightness-125 hover:scale-110 cursor-pointer'
-              }
-              `}
-              onClick={() => {
-                handleClick(3);
-              }}
-            >
-              2팀
-            </button>
-            <button
-              className={`w-1/3 h-full flex items-center justify-center text-white text-sm font-bold transition text-nowrap
-              ${activateBtn[4] ? 'animate-clickbtn scale-105' : ''}
-              ${
-                isStart
-                  ? 'border-custom-gray bg-[#999999] cursor-default'
-                  : 'border-custom-green bg-customGreen hover:brightness-125 hover:scale-110 cursor-pointer'
-              }
-              `}
-              onClick={() => {
-                handleClick(4);
-              }}
-            >
-              랜덤
-            </button>
+          <div className="w-full h-6 my-3 flex">
+            {isStart ? (
+              <div className="w-full h-full flex gap-3">
+                <div className="w-1/3 h-full flex items-center justify-center text-white text-sm font-bold transition text-nowrap border-custom-gray bg-[#999999] cursor-default">
+                  1팀
+                </div>
+                <div className="w-1/3 h-full flex items-center justify-center text-white text-sm font-bold transition text-nowrap border-custom-gray bg-[#999999] cursor-default">
+                  2팀
+                </div>
+                <div className="w-1/3 h-full flex items-center justify-center text-white text-sm font-bold transition text-nowrap border-custom-gray bg-[#999999] cursor-default">
+                  랜덤
+                </div>
+              </div>
+            ) : (
+              <div className="w-full h-full flex gap-3">
+                <CustomButton
+                  btnCurrentActivate={btnCurrentActivate}
+                  className="w-1/3 h-full text-white text-sm font-bold text-nowrap border-custom-red bg-customRed"
+                  onClick={() => {
+                    activateBtnFunc();
+                    // 1팀 선택 시 실행 (밑 코드는 껍데기만 보이는 유저 추가용)
+                    gameUserList.push({
+                      userId: BigInt(123),
+                      userName: '123',
+                      nickName: '123',
+                      picture: '',
+                      statusMessage: '',
+                      totalScore: 1,
+                      teamScore: 1,
+                      soloScore: 1,
+                      created_date: '',
+                      updated_date: '',
+                      gameUserId: BigInt(123),
+                      gameCode: '123',
+                      isHost: false,
+                      isReady: false,
+                      score: 123,
+                      team: '',
+                      ranking: 1,
+                    });
+                  }}
+                >
+                  1팀
+                </CustomButton>
+                <CustomButton
+                  btnCurrentActivate={btnCurrentActivate}
+                  className="w-1/3 h-full text-white text-sm font-bold text-nowrap border-custom-blue bg-customBlue"
+                  onClick={() => {
+                    activateBtnFunc();
+                    // 2팀 선택 시 실행
+                  }}
+                >
+                  2팀
+                </CustomButton>
+                <CustomButton
+                  btnCurrentActivate={btnCurrentActivate}
+                  className="w-1/3 h-full text-white text-sm font-bold text-nowrap border-custom-green bg-customGreen"
+                  onClick={() => {
+                    activateBtnFunc();
+                    // 랜덤 선택 시 실행
+                  }}
+                >
+                  랜덤
+                </CustomButton>
+              </div>
+            )}
           </div>
-          <button
-            className={`w-full h-10 font-extrabold mt-2
-             transition mb-1 ${activateBtn[5] ? 'animate-clickbtn scale-105' : ''}
-             ${
-               isStart
-                 ? 'border-custom-gray bg-[#999999] cursor-default text-white'
-                 : 'btn-mint-border-white hover:brightness-125 hover:scale-110 cursor-pointer'
-             }
-             `}
-            onClick={() => {
-              handleClick(5);
-            }}
-          >
-            게임시작
-          </button>
+          {isStart ? (
+            <div className="w-full h-10 font-extrabold mt-2 transition mb-1 border-custom-gray bg-[#999999] cursor-default text-white select-none">
+              게임시작
+            </div>
+          ) : (
+            <CustomButton
+              btnCurrentActivate={btnCurrentActivate}
+              className="w-full h-10 text-white font-extrabold text-nowrap btn-mint-border-white mt-2 mb-1"
+              onClick={() => {
+                activateBtnFunc();
+                // 게임 시작
+                setTimeout(() => {
+                  handleGamestart();
+                }, 500);
+              }}
+            >
+              게임시작
+            </CustomButton>
+          )}
         </div>
       </div>
     </div>
