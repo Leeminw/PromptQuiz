@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import customSetTimeout from '../../hooks/CustomSetTimeout';
+import customSetTimeout from '../../hooks/customSetTimeout';
 interface GamePlayerProps {
   // idx: number;
   userInfo: GameUser | null;
