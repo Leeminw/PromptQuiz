@@ -539,7 +539,7 @@ const GamePage = () => {
           </div>
         </div>
         {/* 게임 설정 */}
-        <div className="w-1/3 flex flex-col cursor-default">
+        <div className="w-1/3 flex flex-col cursor-default select-none">
           {/* 방 설정 */}
           <GameRoomSetting gamestart={isStart} />
 
@@ -612,7 +612,7 @@ const GamePage = () => {
             )}
           </div>
           {isStart ? (
-            <div className="w-full h-10 font-extrabold mt-2 flex items-center justify-center transition mb-1 border-custom-gray bg-[#999999] cursor-default text-white select-none">
+            <div className="w-full h-10 font-extrabold mt-2 flex items-center justify-center transition mb-1 border-custom-gray bg-[#999999] cursor-default text-white">
               게임시작
             </div>
           ) : (
