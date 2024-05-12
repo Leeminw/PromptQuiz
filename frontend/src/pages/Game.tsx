@@ -45,6 +45,7 @@ const GamePage = () => {
   const [channelInfo, setChannelInfo] = useState<Channel | null>();
   const [imageUrl, setImageUrl] = useState<string>('');
   const [multipleChoice, setMultipleChoice] = useState<SelectQuiz[] | null>(null);
+  const [gameUser, setGameUser] = useState<GameUser | null>(null);
   //  문제를 받았는지 ?
   // false, , timer로받았을때>> 현재게임상태 ' '
 
@@ -53,9 +54,15 @@ const GamePage = () => {
     console.log('first response', response.data);
     const responseGame: Game = response.data;
     const userResponse = await GameApi.getUserList(roomCode);
+    const gameUserList: GameUser[] = userResponse.data;
     setGame(responseGame);
-    setGameUserList(userResponse.data);
+    setGameUserList(gameUserList);
     getChannelInfo(responseGame?.channelCode);
+    
+    const foundUser: GameUser = gameUserList.find((gameUser) => {
+      return gameUser.userId == user.userId
+    })
+    setGameUser(foundUser);
     // setMaxRound(responseGame.maxRounds);
     // enterGame();
   };
@@ -196,9 +203,13 @@ const GamePage = () => {
     }
   };
   const gameController = async (recieve: RecieveData) => {
-    if (recieve.tag === 'chat') {
+    if (recieve.tag === 'startGame') {
+      console.log('game start!! '  , recieve)
+      handleGamestart();
+    }
+    else if (recieve.tag === 'chat') {
       const data: GameChatRecieve = recieve.data as GameChatRecieve;
-
+      
       setChat((prevItems) => [...prevItems, data]);
       setMessageMap((prevMap) => {
         const updatedMap = new Map(prevMap);
@@ -280,17 +291,19 @@ const GamePage = () => {
   };
 
   const publishStart = async () => {
+    if (!gameUser.isHost) {
+      // console.log("호스트가 아님;;")
+      return;
+    }
     // 모두 레디가 되있는지?
-    // const destination = '/ws/pub/game/start';
+    const destination = '/ws/pub/api/v1/game/start';
+    const data = {
+      gameCode : game.code
+    }
+    publish(destination, data)
     // 소켓으로 start 전송
     // 받으면 >> response 보내느걸로 하면안되나..?
-    try {
-      const response = await GameApi.startGame(game?.code);
-      console.log(response.data);
-      setIsStart(true);
-    } catch (error) {
-      console.error(error);
-    }
+    
   };
 
   // 버튼 제어
@@ -311,11 +324,20 @@ const GamePage = () => {
         setEarthquake(false);
         setTimeout(() => {
           setGamestart(false);
-          publishStart();
+          try {
+            if (gameUser.isHost) {
+              GameApi.startGame(game.code);
+              setIsStart(true);
+            }
+          } catch (error) {
+            console.error(error);
+          }
+          //
         }, 1000);
       }, 600);
     }, 500);
   };
+
   // --- 과거의 유산 ---
   // [0]초대하기 | [1]나가기 | [2]1팀 | [3]2팀 | [4]랜덤 | [5]게임시작
   // const [activateBtn, setActivateBtn] = useState<ActivateButton>({});
@@ -623,7 +645,7 @@ const GamePage = () => {
                 activateBtnFunc();
                 // 게임 시작
                 setTimeout(() => {
-                  handleGamestart();
+                  publishStart();
                 }, 500);
               }}
             >
