@@ -182,7 +182,7 @@ const Lobby = () => {
             <input
               ref={chatInput}
               className="w-full h-10 bg-transparent rounded-full pl-5 pr-20 text-sm border border-gray-300"
-              maxLength={30}
+              maxLength={100}
               placeholder="Enter를 눌러 채팅 입력"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
