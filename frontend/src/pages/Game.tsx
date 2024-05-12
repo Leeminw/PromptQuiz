@@ -481,10 +481,10 @@ const GamePage = () => {
         <div className="w-full flex grow flex-col items-center justify-end px-4 mt-1">
           <div className="w-full h-36 mb-2 relative">
             {/* 객관식 선택 */}
-            {/* {isQuiz ? <SelectionGame choiceList={multipleChoice} /> : <div>no game</div>} */}
+            {isQuiz ? <SelectionGame choiceList={multipleChoice} /> : <div>no game</div>}
             {/* 순서 맞추기 */}
-            <SubjectiveGame choiceList={multipleChoice} />
-            {/* <SequenceGame choiceList={multipleChoice} /> */}
+            {/* <SubjectiveGame /> */}
+            {/* <SequenceGame /> */}
           </div>
           {/* 채팅 */}
           <div className="w-full">
@@ -612,7 +612,7 @@ const GamePage = () => {
             )}
           </div>
           {isStart ? (
-            <div className="w-full h-10 font-extrabold mt-2 transition mb-1 border-custom-gray bg-[#999999] cursor-default text-white select-none">
+            <div className="w-full h-10 font-extrabold mt-2 flex items-center justify-center transition mb-1 border-custom-gray bg-[#999999] cursor-default text-white select-none">
               게임시작
             </div>
           ) : (

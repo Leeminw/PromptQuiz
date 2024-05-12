@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
-interface SelectionGameProps {
-  // idx: number;
-  choiceList: SelectQuiz[] | null;
-}
 
-const SubjectiveGame = ({ choiceList }: SelectionGameProps) => {
+const SubjectiveGame = () => {
   // if (!choiceList) return <div>no game</div>;
   return (
     <div className="w-full h-full flex relative">
