@@ -5,6 +5,8 @@ import { UserApi } from '../hooks/axios-user';
 import TestChild from './TestChild';
 import useUserStore from '../stores/userStore';
 import { useWebSocketStore } from '../stores/socketStore';
+import WebSocketTest from './WebSocketTest';
+
 const TestPage = () => {
   const [userList, setUserList] = useState<ChannelUser[]>([]);
   const { user } = useUserStore();
@@ -49,6 +51,10 @@ const TestPage = () => {
         로그아웃
       </button>
       <div>{isConnected ? 'connected' : 'not connected'}</div>
+      <hr />
+      <div>
+        <WebSocketTest />
+      </div>
     </div>
   );
 };
