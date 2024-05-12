@@ -19,6 +19,7 @@ import badwordsFiltering from '../hooks/badwords-filtering';
 import InviteUser from '../components/game/InviteUser';
 import SequenceGame from '../components/game/SequenceGame';
 import CustomButton from '../components/ui/CustomButton';
+import SubjectiveGame from '../components/game/SubjectiveGame';
 
 const GamePage = () => {
   const { roomCode } = useParams();
@@ -293,10 +294,31 @@ const GamePage = () => {
   };
 
   // 버튼 제어
-  // [0]초대하기 | [1]나가기 | [2]1팀 | [3]2팀 | [4]랜덤 | [5]게임시작
-  // const [activateBtn, setActivateBtn] = useState<ActivateButton>({});
   const [btnCurrentActivate, setBtnCurrentActivate] = useState<boolean>(false);
   const [isStart, setIsStart] = useState<boolean>(false);
+  const activateBtnFunc = async () => {
+    setBtnCurrentActivate(true);
+    await setTimeout(() => {
+      setBtnCurrentActivate(false);
+    }, 800);
+  };
+  // 게임 시작 이벤트
+  const handleGamestart = () => {
+    setGamestart(true);
+    setTimeout(() => {
+      setEarthquake(true);
+      setTimeout(() => {
+        setEarthquake(false);
+        setTimeout(() => {
+          setGamestart(false);
+          publishStart();
+        }, 1000);
+      }, 600);
+    }, 500);
+  };
+  // --- 과거의 유산 ---
+  // [0]초대하기 | [1]나가기 | [2]1팀 | [3]2팀 | [4]랜덤 | [5]게임시작
+  // const [activateBtn, setActivateBtn] = useState<ActivateButton>({});
   // const handleClick = (id: number) => {
   //   // 버튼 비활성화 상태라면 이벤트 방지
   //   setIsStart((disable) => {
@@ -314,9 +336,9 @@ const GamePage = () => {
   //             // 버튼 이벤트 활성화
   //             // setActivateBtn((prev) => ({ ...prev, [id]: false }));
   //             setTimeout(() => {
-  //               setBtnCurrentActivate(false);
   //             }, 300);
   //           }, 400);
+  //               setBtnCurrentActivate(false);
   //           return true;
   //         }
   //         return current;
@@ -326,32 +348,13 @@ const GamePage = () => {
   //   });
   // };
 
-  const activateBtnFunc = async () => {
-    setBtnCurrentActivate(true);
-    await setTimeout(() => {
-      setBtnCurrentActivate(false);
-    }, 800);
-  };
 
-  // 게임 시작 이벤트
-  const handleGamestart = () => {
-    setGamestart(true);
-    setTimeout(() => {
-      setEarthquake(true);
-      setTimeout(() => {
-        setEarthquake(false);
-        setTimeout(() => {
-          setGamestart(false);
-          publishStart();
-        }, 1000);
-      }, 600);
-    }, 500);
-  };
 
   // 초대코드 발송
   const inviteUser = () => {
     alert('초대코드 전송하기!!');
   };
+
   return (
     <div
       className={`w-[70rem] h-[37rem] min-w-[40rem] min-h-[37rem] max-w-[80vw] z-10 
@@ -384,7 +387,7 @@ const GamePage = () => {
           {/* 기존 버튼 UI InviteUser에 적용필요 */}
           <CustomButton
             btnCurrentActivate={btnCurrentActivate}
-            className="btn-mint-border-white gap-1 px-2 max-xl:justify-center"
+            className="w-1/2 min-w-12 btn-mint-border-white gap-1 px-2 max-xl:justify-center"
             onClick={() => {
               activateBtnFunc();
               setTimeout(() => {
@@ -402,7 +405,7 @@ const GamePage = () => {
           </CustomButton>
           <CustomButton
             btnCurrentActivate={btnCurrentActivate}
-            className="w-1/2 text-sm min-w-[3rem] btn-red text-white gap-1 px-2 max-xl:justify-center"
+            className="w-1/2 min-w-12 btn-red text-white gap-1 px-2 max-xl:justify-center"
             onClick={() => {
               activateBtnFunc();
               setTimeout(() => {
@@ -480,7 +483,8 @@ const GamePage = () => {
             {/* 객관식 선택 */}
             {/* {isQuiz ? <SelectionGame choiceList={multipleChoice} /> : <div>no game</div>} */}
             {/* 순서 맞추기 */}
-            <SequenceGame choiceList={multipleChoice} />
+            <SubjectiveGame choiceList={multipleChoice} />
+            {/* <SequenceGame choiceList={multipleChoice} /> */}
           </div>
           {/* 채팅 */}
           <div className="w-full">

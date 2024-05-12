@@ -5,35 +5,53 @@ interface SelectionGameProps {
 }
 
 const SubjectiveGame = ({ choiceList }: SelectionGameProps) => {
-  if (!choiceList) return <div>no game</div>;
+  // if (!choiceList) return <div>no game</div>;
   return (
-    <div className="absolute w-full h-full grid grid-rows-2 grid-cols-2 gap-3 text-sm text-white font-extrabold">
-      <button className="w-full h-full bg-[#e37070] border-custom-red flex items-center justify-center cursor-pointer hover:brightness-125 hover:scale-105 transition">
-        <div className="w-full h-full flex items-center justify-center px-3 py-4">
-          1. {choiceList[0]?.korSentence}
+    <div className="w-full h-full flex relative">
+      <div className="absolute w-full h-full flex gap-4 opacity-80 -z-10">
+        <div className="bg-white border-custom-red text-black w-1/3 h-full flex flex-col items-center justify-center">
+        <div className="text-2xl text-center font-bold">
+            <p className="font-bold inline">풀</p>
+            <p className="font-extrabold inline px-1">[72%]</p>
+          </div>
+          <div className="text-lg text-center mt-0.5">
+            <p className="font-bold inline">비서</p>
+            <p className="font-bold inline px-1">[43%]</p>
+          </div>
+          <div className="text-lg text-center">
+            <p className="font-bold inline">꼼짝</p>
+            <p className="font-bold inline px-1">[21%]</p>
+          </div>
         </div>
-      </button>
-      <button
-        className={`w-full h-full bg-customYellow border-custom-yellow flex items-center justify-center cursor-pointer hover:brightness-125 hover:scale-105 transition`}
-      >
-        <div className="w-full h-full flex items-center justify-center">
-          2. {choiceList[1]?.korSentence}
+        <div className="bg-white border-custom-blue text-black w-1/3 h-full flex flex-col items-center justify-center">
+          <div className="text-2xl text-center font-bold">
+            <p className="font-bold inline">먹는</p>
+            <p className="font-extrabold inline px-1">[72%]</p>
+          </div>
+          <div className="text-lg text-center mt-0.5">
+            <p className="font-bold inline">뜯는</p>
+            <p className="font-bold inline px-1">[43%]</p>
+          </div>
+          <div className="text-lg text-center">
+            <p className="font-bold inline">식사하는</p>
+            <p className="font-bold inline px-1">[21%]</p>
+          </div>
         </div>
-      </button>
-      <button
-        className={`w-full h-full bg-customGreen border-custom-green flex items-center justify-center cursor-pointer hover:brightness-125 hover:scale-105 transition`}
-      >
-        <div className="w-full h-full flex items-center justify-center px-3 py-4">
-          3. {choiceList[2]?.korSentence}
+        <div className="bg-white border-custom-green text-black w-1/3 h-full flex flex-col items-center justify-center">
+          <div className="text-2xl text-center font-bold">
+            <p className="font-bold inline">푸바오</p>
+            <p className="font-extrabold inline px-1">[72%]</p>
+          </div>
+          <div className="text-lg text-center mt-0.5">
+            <p className="font-bold inline">사장</p>
+            <p className="font-bold inline px-1">[43%]</p>
+          </div>
+          <div className="text-lg text-center">
+            <p className="font-bold inline">대통령</p>
+            <p className="font-bold inline px-1">[21%]</p>
+          </div>
         </div>
-      </button>
-      <button
-        className={`w-full h-full bg-customBlue border-custom-blue flex items-center justify-center cursor-pointer hover:brightness-125 hover:scale-105 transition`}
-      >
-        <div className="w-full h-ful flex items-center justify-center px-3 py-4">
-          4. {choiceList[3]?.korSentence}
-        </div>
-      </button>
+      </div>
     </div>
   );
 };
