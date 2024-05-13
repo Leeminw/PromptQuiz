@@ -28,6 +28,7 @@ const GamePage = () => {
   const chatBtn = useRef(null);
   const chatInput = useRef(null);
   const chattingBox = useRef(null);
+  const [gamestartui, setGamestartui] = useState(false);
   const [gamestart, setGamestart] = useState(false);
   const [earthquake, setEarthquake] = useState(false);
   const [game, setGame] = useState<Game | null>(null);
@@ -45,17 +46,36 @@ const GamePage = () => {
   const [channelInfo, setChannelInfo] = useState<Channel | null>();
   const [imageUrl, setImageUrl] = useState<string>('');
   const [multipleChoice, setMultipleChoice] = useState<SelectQuiz[] | null>(null);
-  //  문제를 받았는지 ?
-  // false, , timer로받았을때>> 현재게임상태 ' '
+  const [gameUser, setGameUser] = useState<GameUser | null>(null);
+  const [quizType, setQuizType] = useState<number>(0);
+  const [choosedButton, setChoosedButton] = useState<boolean[]>([false, false, false, false]);
+  const [answerWord, setAnswerWord] = useState<Word | null>(null);
+  const [playerSimilarity, setPlayerSimilarity] = useState<PlayerSimilarity | null>(null);
 
+  //문제 틀렸을때 틀린거 표기
+  const [timeRatio, setTimeRatio] = useState<number>(0);
   const getGameData = async () => {
-    const response = await GameApi.getGame(roomCode);
-    console.log('first response', response.data);
-    const responseGame: Game = response.data;
-    const userResponse = await GameApi.getUserList(roomCode);
-    setGame(responseGame);
-    setGameUserList(userResponse.data);
-    getChannelInfo(responseGame?.channelCode);
+    try {
+      const response = await GameApi.getGame(roomCode);
+      console.log('first response', response.data);
+      const responseGame: Game = response.data;
+      const userResponse = await GameApi.getUserList(roomCode);
+      const gameUserList: GameUser[] = userResponse.data;
+      setGame(responseGame);
+      setGameUserList(gameUserList);
+      getChannelInfo(responseGame?.channelCode);
+      const foundUser: GameUser = gameUserList.find((gUser) => {
+        return gUser.userId == user.userId;
+      });
+      console.log('foundUser', foundUser);
+      setGameUser(foundUser);
+    } catch (error) {
+      console.error(error);
+      // navigate(-1);
+    }
+    return () => {
+      disconnectWebSocket();
+    };
     // setMaxRound(responseGame.maxRounds);
     // enterGame();
   };
@@ -70,7 +90,7 @@ const GamePage = () => {
   const getChannelInfo = async (code: string) => {
     try {
       const response = await LobbyApi.getChannelInfo(code);
-      console.log('channel', response);
+      // console.log('channel', response);
       setChannelInfo(response.data);
     } catch (error) {
       console.error(error);
@@ -80,8 +100,8 @@ const GamePage = () => {
   //  문제를 받았는지 ?
   // false, , timer로받았을때>> 현재게임상태 ' '
   useEffect(() => {
-    enterGameRoom();
-    getGameData();
+    // enterGameRoom();
+    // getGameData();
     // 채팅 입력 바깥 클릭 시 채팅창 닫기
     // 클릭 & 키다운 이벤트 추가
     document.addEventListener('click', handleOutsideClick);
@@ -110,10 +130,11 @@ const GamePage = () => {
     try {
       const response = await GameApi.getRoundGame(gameCode);
       const quiz: ReiceveQuiz = response.data;
+      setQuizType(quiz.quizType);
       // 객관식 퀴즈
       if (quiz.quizType == 1) {
         const data: SelectQuiz[] = quiz.data as SelectQuiz[];
-        console.log(data);
+        // console.log(data);
         // 이미지 세팅
         data.forEach((element) => {
           if (element.isAnswer) {
@@ -122,18 +143,18 @@ const GamePage = () => {
         });
         // 보기 구성
         setMultipleChoice(data);
+        // choosed button 초기화
+        setChoosedButton([false, false, false, false]);
       } else if (quiz.quizType == 2) {
-        const data: SelectQuiz[] = quiz.data as SelectQuiz[];
-        console.log(data);
-        // 이미지 세팅
-        data.forEach((element) => {
-          if (element.isAnswer) {
-            setImageUrl(element.url);
-          }
-        });
+        // 순서 맞추기
       } else if (quiz.quizType == 4) {
         // 주관식 퀴즈
-        console.log(quiz.data);
+        const data: SimilarityQuiz = quiz.data as SimilarityQuiz;
+        console.log('주관식 ', quiz.data);
+        // 이미지 세팅
+        setImageUrl(data.url);
+        setAnswerWord(data.answerWord);
+        setPlayerSimilarity(data.playerSimilarity);
       }
     } catch (error) {
       console.error(error);
@@ -196,7 +217,11 @@ const GamePage = () => {
     }
   };
   const gameController = async (recieve: RecieveData) => {
-    if (recieve.tag === 'chat') {
+    console.log(recieve);
+    if (recieve.tag === 'startGame') {
+      console.log('game start!! ', recieve);
+      handleGamestart();
+    } else if (recieve.tag === 'chat') {
       const data: GameChatRecieve = recieve.data as GameChatRecieve;
 
       setChat((prevItems) => [...prevItems, data]);
@@ -215,12 +240,14 @@ const GamePage = () => {
       const data: GameTimer = recieve.data as GameTimer;
       setRoundState(data.state);
       setTime(data.time);
+      setTimeRatio(Math.round((data.time / game.timeLimit) * 100));
+      console.log('timeRatio', Math.round((data.time / game.timeLimit) * 100));
       setRound(data.round);
     } else if (recieve.tag === 'wrongSignal') {
       const data: bigint = recieve.data as bigint;
       console.log('wrong Signal', data);
       if (data === user.userId) {
-        console.log('난 틀렸어..');
+        alert('난 틀렸어..');
       }
     } else if (recieve.tag === 'similarity') {
       console.log(recieve.data);
@@ -278,19 +305,32 @@ const GamePage = () => {
     publish(destination, gameChat);
     chatInput.current.value = '';
   };
-
+  const publishAnswer = (answer: number) => {
+    // console.log('recieve', answer);
+    const destination = '/ws/pub/game/chat/send';
+    const gameChat: GameChat = {
+      userId: user.userId,
+      nickname: user.nickName,
+      uuid: game.code,
+      gameCode: game.code,
+      round: round,
+      content: String(answer),
+    };
+    publish(destination, gameChat);
+  };
   const publishStart = async () => {
+    console.log('publish start', gameUser);
+    if (!gameUser.isHost) {
+      return;
+    }
     // 모두 레디가 되있는지?
-    // const destination = '/ws/pub/game/start';
+    const destination = '/ws/pub//api/v1/game/start';
+    const data = {
+      gameCode: game.code,
+    };
+    publish(destination, data);
     // 소켓으로 start 전송
     // 받으면 >> response 보내느걸로 하면안되나..?
-    try {
-      const response = await GameApi.startGame(game?.code);
-      console.log(response.data);
-      setIsStart(true);
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   // 버튼 제어
@@ -302,59 +342,48 @@ const GamePage = () => {
       setBtnCurrentActivate(false);
     }, 800);
   };
+  const postStart = () => {
+    try {
+      console.log('post start', gameUser);
+      if (gameUser?.isHost) {
+        const response = GameApi.startGame(game.code);
+        console.log('post start response', response);
+        console.log(game.code);
+        setIsStart(true);
+      } else {
+        console.log(gameUser);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
   // 게임 시작 이벤트
   const handleGamestart = () => {
+    setGamestartui(true);
     setGamestart(true);
     setTimeout(() => {
       setEarthquake(true);
       setTimeout(() => {
         setEarthquake(false);
         setTimeout(() => {
-          setGamestart(false);
-          publishStart();
+          setGamestartui(false);
+          postStart();
+          //
         }, 1000);
       }, 600);
     }, 500);
   };
-  // --- 과거의 유산 ---
-  // [0]초대하기 | [1]나가기 | [2]1팀 | [3]2팀 | [4]랜덤 | [5]게임시작
-  // const [activateBtn, setActivateBtn] = useState<ActivateButton>({});
-  // const handleClick = (id: number) => {
-  //   // 버튼 비활성화 상태라면 이벤트 방지
-  //   setIsStart((disable) => {
-  //     if (!disable || id === 1) {
-  //       // 버튼이 활성돼있는 동안 버튼 클릭 방지
-  //       setBtnCurrentActivate((current) => {
-  //         if (!current) {
-  //           setBtnCurrentActivate(true);
-  //           // setActivateBtn((prev) => ({ ...prev, [id]: true }));
-  //           setTimeout(() => {
-  //             // 게임 시작 시 버튼 비활성화
-  //             if (id === 5) {
-  //               handleGamestart();
-  //             }
-  //             // 버튼 이벤트 활성화
-  //             // setActivateBtn((prev) => ({ ...prev, [id]: false }));
-  //             setTimeout(() => {
-  //             }, 300);
-  //           }, 400);
-  //               setBtnCurrentActivate(false);
-  //           return true;
-  //         }
-  //         return current;
-  //       });
-  //     }
-  //     return disable;
-  //   });
-  // };
-
-
 
   // 초대코드 발송
   const inviteUser = () => {
     alert('초대코드 전송하기!!');
   };
 
+  // 비율 표시
+  const progressStyle = {
+    transform: `translateX(-${timeRatio}%)`,
+    transition: 'transform 1s ease-in-out', // transition 효과 추가
+  };
   return (
     <div
       className={`w-[70rem] h-[37rem] min-w-[40rem] min-h-[37rem] max-w-[80vw] z-10 
@@ -364,7 +393,7 @@ const GamePage = () => {
       <div
         className={`absolute bg-no-repeat bg-contain bg-center bg-[url(/public/ui/gamestart.png)] 
         w-full h-full flex items-center justify-center text-white text-6xl z-20 font-extrabold 
-        transition ease-in duration-500 ${gamestart ? 'block translate-y-0' : 'translate-y-[-100vh]'}`}
+        transition ease-in duration-500 ${gamestartui ? 'block translate-y-0' : 'translate-y-[-100vh]'}`}
       ></div>
       {/* 상단 : 제목, 버튼 */}
       <div className="w-full h-10 grid grid-cols-5 gap-3 mb-2">
@@ -434,21 +463,38 @@ const GamePage = () => {
         {/* 문제 화면, 타이머 */}
         <div className="w-full grow flex flex-col row-span-6 col-span-3 px-4">
           <div className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint border relative overflow-hidden flex">
-            <div className="w-full h-full rounded-full -translate-x-[50%] transition-transform duration-1000 bg-mint absolute"></div>
+            {roundState === 'ongoing' ? (
+              <div
+                className="w-full h-full rounded-full bg-mint absolute"
+                style={progressStyle}
+              ></div>
+            ) : (
+              <div
+                className={`w-full h-full rounded-full translate-x-[0%] transition-transform duration-1000 bg-mint absolute`}
+              ></div>
+            )}
           </div>
           <div className="border-custom- w-full h-full flex items-center justify-center relative">
-            <div className="w-16 h-7 absolute top-2 left-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
-              {round} / {maxRound}
-            </div>
             <div className="border-custom- w-full h-full flex items-center justify-center relative">
-              <div className="w-16 h-7 absolute top-2 left-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
-                {round} / {maxRound}
-              </div>
-              <div className="w-fit h-7 px-3 absolute top-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
-                {roundState} : {time}
-              </div>
+              {roundState === 'ongoing' ? (
+                <div className="w-16 h-7 absolute top-2 left-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
+                  {round} 라운드
+                </div>
+              ) : (
+                <div></div>
+              )}
+              {roundState === 'ongoing' ? (
+                <div className="w-fit h-7 px-3 absolute top-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
+                  {time}
+                </div>
+              ) : (
+                <div></div>
+              )}
               <div className={`w-full h-full bg-cover bg-center`}>
                 <img src={imageUrl} alt="" />
+                <div className={`w-full h-full bg-blue-200`}>
+                  
+                </div>
               </div>
             </div>
           </div>
@@ -465,7 +511,10 @@ const GamePage = () => {
             )
         )}
         {Array.from({ length: 12 - gameUserList.length }, (_, index) => (
-          <div className="w-full h-full border-custom-mint bg-white/50" key={index}></div>
+          <div
+            className="w-full h-full border-custom-mint bg-gray-200/70 backdrop-blur-sm"
+            key={index}
+          ></div>
         ))}
       </div>
       {/* 광고, 채팅창, 게임 설정 */}
@@ -481,10 +530,25 @@ const GamePage = () => {
         <div className="w-full flex grow flex-col items-center justify-end px-4 mt-1">
           <div className="w-full h-36 mb-2 relative">
             {/* 객관식 선택 */}
-            {isQuiz ? <SelectionGame choiceList={multipleChoice} /> : <div>no game</div>}
+            {isQuiz && (quizType & 1) > 0 ? (
+              <SelectionGame
+                choiceList={multipleChoice}
+                onButtonClick={publishAnswer}
+                choosedButton={choosedButton}
+              />
+            ) : (
+              <div></div>
+            )}
+
             {/* 순서 맞추기 */}
-            {/* <SubjectiveGame /> */}
-            {/* <SequenceGame /> */}
+            {isQuiz && (quizType & 4) > 0 ? (
+              <SubjectiveGame answerWord={answerWord} playerSimilarity={playerSimilarity} />
+            ) : (
+              <div></div>
+            )}
+
+            {isQuiz && (quizType & 2) > 0 ? <div>SequenceGame</div> : <div></div>}
+            {/* <SequenceGame choiceList={multipleChoice} /> */}
           </div>
           {/* 채팅 */}
           <div className="w-full">
@@ -564,26 +628,7 @@ const GamePage = () => {
                   className="w-1/3 h-full text-white text-sm font-bold text-nowrap border-custom-red bg-customRed"
                   onClick={() => {
                     activateBtnFunc();
-                    // 1팀 선택 시 실행 (밑 코드는 껍데기만 보이는 유저 추가용)
-                    gameUserList.push({
-                      userId: BigInt(123),
-                      userName: '123',
-                      nickName: '123',
-                      picture: '',
-                      statusMessage: '',
-                      totalScore: 1,
-                      teamScore: 1,
-                      soloScore: 1,
-                      created_date: '',
-                      updated_date: '',
-                      gameUserId: BigInt(123),
-                      gameCode: '123',
-                      isHost: false,
-                      isReady: false,
-                      score: 123,
-                      team: '',
-                      ranking: 1,
-                    });
+                    // 1팀 선택 시 실행
                   }}
                 >
                   1팀
@@ -623,7 +668,7 @@ const GamePage = () => {
                 activateBtnFunc();
                 // 게임 시작
                 setTimeout(() => {
-                  handleGamestart();
+                  publishStart();
                 }, 500);
               }}
             >

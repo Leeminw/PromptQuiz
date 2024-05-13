@@ -52,18 +52,18 @@ public class BlankSubjectiveService {
     }
 
     @Transactional
-    public HashMap<String, Double> evaluateAnswers(GameChatRequestDto answer, Set<String> checkPrompt){
+    public HashMap<String, Double> evaluateAnswers(GameChatRequestDto answer, Set<String> checkPrompt) {
         GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(answer.getGameCode());
         HashMap<String, Double> resultMap = new HashMap<>();
         for (String prompt : checkPrompt) {
             Double rate = 0.0;
-            switch (prompt){
+            switch (prompt) {
                 case "kor_subject" -> rate = calculate(quiz.getKorSubject(), answer.getContent());
                 case "kor_sub_adjective" -> rate = calculate(quiz.getKorSubAdjective(), answer.getContent());
                 case "kor_object" -> rate = calculate(quiz.getKorObject(), answer.getContent());
                 case "kor_obj_adjective" -> rate = calculate(quiz.getKorObjAdjective(), answer.getContent());
             }
-            if(rate >= 0.9){
+            if (rate >= 0.9) {
                 /* todo: 유저 점수 올리기 (맞춤 처리를 어떻게 할 것인가..
                     transaction처리가 되야 한다. 그럼 DB로 맞춘사람 관리를 해야 되는데..
                 */
@@ -111,5 +111,4 @@ public class BlankSubjectiveService {
 
         return vector;
     }
-
 }

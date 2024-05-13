@@ -1,6 +1,6 @@
 package com.ssafy.apm.sdw.service;
 
-import com.ssafy.apm.sdw.dto.DottegiRequestDto;
+import com.ssafy.apm.dottegi.dto.DottegiRequestDto;
 
 public interface AutoCreateService {
     void autoCreateScheduler();

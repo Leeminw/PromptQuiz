@@ -1,4 +1,4 @@
-package com.ssafy.apm.sdw.dto;
+package com.ssafy.apm.dottegi.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
