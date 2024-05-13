@@ -319,7 +319,6 @@ const GamePage = () => {
   };
   const publishStart = async () => {
     if (!gameUser.isHost) {
-      // console.log("호스트가 아님;;")
       return;
     }
     // 모두 레디가 되있는지?
