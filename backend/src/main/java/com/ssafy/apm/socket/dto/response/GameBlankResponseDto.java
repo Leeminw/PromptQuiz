@@ -11,11 +11,13 @@ import java.util.PriorityQueue;
 @Data
 @RequiredArgsConstructor
 public class GameBlankResponseDto {
-    private HashMap<String, PriorityQueue<SimilarityResponseDto>> playerSimilarity;
+    private String url;
     private HashMap<String, String> answerWord;
+    private HashMap<String, PriorityQueue<SimilarityResponseDto>> playerSimilarity;
 
-    public GameBlankResponseDto(GameRoomStatus game) {
-        this.playerSimilarity = game.playerSimilarityMap;
+    public GameBlankResponseDto(GameRoomStatus game, String url) {
+        this.url = url;
         this.answerWord = game.answerWordMap;
+        this.playerSimilarity = game.playerSimilarityMap;
     }
 }

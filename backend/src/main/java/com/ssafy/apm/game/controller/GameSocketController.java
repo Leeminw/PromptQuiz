@@ -1,5 +1,6 @@
 package com.ssafy.apm.game.controller;
 
+import com.ssafy.apm.gamequiz.domain.GameQuiz;
 import com.ssafy.apm.socket.dto.response.*;
 import com.ssafy.apm.chat.service.ChatService;
 import com.ssafy.apm.game.service.GameService;
@@ -166,7 +167,8 @@ public class GameSocketController {
                     if (game.similarityGameEnd()) {
                         setEndGame(game, chatMessage.getUserId());
                     } else {
-                        sendMessage(chatMessage.getUuid(), new GameResponseDto("similarity", new GameBlankResponseDto(game)));
+                        GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(chatMessage.getGameCode());
+                        sendMessage(chatMessage.getUuid(), new GameResponseDto("similarity", new GameBlankResponseDto(game, quiz.getUrl())));
                     }
                     break;
             }
@@ -218,18 +220,18 @@ public class GameSocketController {
 
     @GetMapping("/api/v1/round/quiz/{gameCode}")
     public ResponseEntity<?> getRoundQuiz(@PathVariable String gameCode) {
-        Integer type = gameQuizService.getCurrentGameQuizTypeByGameCode(gameCode);
+        GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(gameCode);
         ResponseData<Object> responseData = ResponseData.success();
 
-        switch (type) {
+        switch (quiz.getType()) {
             case MULTIPLECHOICE, BLANKCHOICE:
                 List<GameQuizDetailResponseDto> quizList = gameQuizService.findCurrentDetailGameQuizzesByGameCode(gameCode);
-                responseData = ResponseData.success(new RoundQuizResponseDto(type, quizList));
+                responseData = ResponseData.success(new RoundQuizResponseDto(quiz.getType(), quizList));
                 break;
             case BLANKSUBJECTIVE:
                 GameRoomStatus game = gameOngoingMap.get(gameCode);
-                GameBlankResponseDto responseDto = new GameBlankResponseDto(game);
-                responseData = ResponseData.success(new RoundQuizResponseDto(type, responseDto));
+                GameBlankResponseDto responseDto = new GameBlankResponseDto(game, quiz.getUrl());
+                responseData = ResponseData.success(new RoundQuizResponseDto(quiz.getType(), responseDto));
                 break;
         }
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
