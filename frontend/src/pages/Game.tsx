@@ -49,7 +49,7 @@ const GamePage = () => {
   const [quizType, setQuizType] = useState<number>(0);
   const [choosedButton, setChoosedButton] = useState<boolean[]>([false, false, false, false]);
   //문제 틀렸을때 틀린거 표기
-
+  const [timeRatio, setTimeRatio] = useState<number>(0);
   const getGameData = async () => {
     try {
       const response = await GameApi.getGame(roomCode);
@@ -67,7 +67,7 @@ const GamePage = () => {
       setGameUser(foundUser);
     } catch (error) {
       console.error(error);
-      navigate(-1);
+      // navigate(-1);
     }
     // setMaxRound(responseGame.maxRounds);
     // enterGame();
@@ -234,6 +234,8 @@ const GamePage = () => {
       const data: GameTimer = recieve.data as GameTimer;
       setRoundState(data.state);
       setTime(data.time);
+      setTimeRatio(Math.round((data.time / game.timeLimit) * 100));
+      console.log('timeRatio', Math.round((data.time / game.timeLimit) * 100));
       setRound(data.round);
     } else if (recieve.tag === 'wrongSignal') {
       const data: bigint = recieve.data as bigint;
@@ -362,6 +364,11 @@ const GamePage = () => {
     alert('초대코드 전송하기!!');
   };
 
+  // 비율 표시
+  const progressStyle = {
+    transform: `translateX(-${timeRatio}%)`,
+    transition: 'transform 1s ease-in-out', // transition 효과 추가
+  };
   return (
     <div
       className={`w-[70rem] h-[37rem] min-w-[40rem] min-h-[37rem] max-w-[80vw] z-10 
@@ -443,7 +450,8 @@ const GamePage = () => {
           <div className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint border relative overflow-hidden flex">
             {roundState === 'ongoing' ? (
               <div
-                className={`w-full h-full rounded-full translate-x-[${(time / game.timeLimit) * 100}%] transition-transform duration-1000 bg-mint absolute`}
+                className="w-full h-full rounded-full bg-mint absolute"
+                style={progressStyle}
               ></div>
             ) : (
               <div
