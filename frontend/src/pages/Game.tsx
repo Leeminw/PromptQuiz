@@ -28,6 +28,7 @@ const GamePage = () => {
   const chatBtn = useRef(null);
   const chatInput = useRef(null);
   const chattingBox = useRef(null);
+  const [gamestartui, setGamestartui] = useState(false);
   const [gamestart, setGamestart] = useState(false);
   const [earthquake, setEarthquake] = useState(false);
   const [game, setGame] = useState<Game | null>(null);
@@ -343,8 +344,11 @@ const GamePage = () => {
   };
   const postStart = () => {
     try {
+      console.log('post start', gameUser);
       if (gameUser?.isHost) {
-        GameApi.startGame(game.code);
+        const response = GameApi.startGame(game.code);
+        console.log('post start response', response);
+        console.log(game.code);
         setIsStart(true);
       } else {
         console.log(gameUser);
@@ -355,13 +359,14 @@ const GamePage = () => {
   };
   // 게임 시작 이벤트
   const handleGamestart = () => {
+    setGamestartui(true);
     setGamestart(true);
     setTimeout(() => {
       setEarthquake(true);
       setTimeout(() => {
         setEarthquake(false);
         setTimeout(() => {
-          setGamestart(false);
+          setGamestartui(false);
           postStart();
           //
         }, 1000);
@@ -388,7 +393,7 @@ const GamePage = () => {
       <div
         className={`absolute bg-no-repeat bg-contain bg-center bg-[url(/public/ui/gamestart.png)] 
         w-full h-full flex items-center justify-center text-white text-6xl z-20 font-extrabold 
-        transition ease-in duration-500 ${gamestart ? 'block translate-y-0' : 'translate-y-[-100vh]'}`}
+        transition ease-in duration-500 ${gamestartui ? 'block translate-y-0' : 'translate-y-[-100vh]'}`}
       ></div>
       {/* 상단 : 제목, 버튼 */}
       <div className="w-full h-10 grid grid-cols-5 gap-3 mb-2">
@@ -617,23 +622,7 @@ const GamePage = () => {
                   className="w-1/3 h-full text-white text-sm font-bold text-nowrap border-custom-red bg-customRed"
                   onClick={() => {
                     activateBtnFunc();
-                    // 1팀 선택 시 실행 (밑 코드는 껍데기만 보이는 유저 추가용)
-                    // gameUserList.push({
-                    //   userId: BigInt(123),
-                    //   userName: '123',
-                    //   nickName: '123',
-                    //   picture: '',
-                    //   statusMessage: '',
-
-                    //   soloScore: 1,
-                    //   created_date: '',
-
-                    //   gameCode: '123',
-                    //   isHost: false,
-
-                    //   score: 123,
-                    //   team: '',
-                    // });
+                    // 1팀 선택 시 실행
                   }}
                 >
                   1팀
