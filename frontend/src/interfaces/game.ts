@@ -14,23 +14,19 @@ interface Game {
     maxPlayers: number
 }
 interface GameUser {
-    userId: bigint,
-    userName: string,
+    created_date: string,
+    gameCode: string,
+    gameUserCode: string,
+    isHost: boolean,
     nickName: string,
     picture: string,
-    statusMessage: string|null,
-    totalScore: number,
-    teamScore: number,
-    soloScore: number,
-    created_date: string,
-    updated_date: string,
-    gameUserId: bigint,
-    gameCode: string,
-    isHost: boolean,
-    isReady: boolean,
     score: number,
+    soloScore: number,
+    statusMessage: string|null,
     team: string,
-    ranking: number
+    userId: bigint,
+    userName: string,
+
 }
 interface GameRoomSettingProps {
     teammode: boolean;
