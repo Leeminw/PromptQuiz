@@ -11,16 +11,9 @@ import com.ssafy.apm.gamequiz.dto.response.GameQuizDetailResponseDto;
 import lombok.RequiredArgsConstructor;
 
 import java.util.*;
-import java.io.File;
 
-import org.nd4j.linalg.api.ndarray.INDArray;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.deeplearning4j.models.embeddings.wordvectors.WordVectors;
-import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
-import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
-import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreprocessor;
-import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
 
 @Service
 @RequiredArgsConstructor
