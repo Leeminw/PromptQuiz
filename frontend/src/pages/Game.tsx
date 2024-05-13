@@ -338,40 +338,6 @@ const GamePage = () => {
     }, 500);
   };
 
-  // --- 과거의 유산 ---
-  // [0]초대하기 | [1]나가기 | [2]1팀 | [3]2팀 | [4]랜덤 | [5]게임시작
-  // const [activateBtn, setActivateBtn] = useState<ActivateButton>({});
-  // const handleClick = (id: number) => {
-  //   // 버튼 비활성화 상태라면 이벤트 방지
-  //   setIsStart((disable) => {
-  //     if (!disable || id === 1) {
-  //       // 버튼이 활성돼있는 동안 버튼 클릭 방지
-  //       setBtnCurrentActivate((current) => {
-  //         if (!current) {
-  //           setBtnCurrentActivate(true);
-  //           // setActivateBtn((prev) => ({ ...prev, [id]: true }));
-  //           setTimeout(() => {
-  //             // 게임 시작 시 버튼 비활성화
-  //             if (id === 5) {
-  //               handleGamestart();
-  //             }
-  //             // 버튼 이벤트 활성화
-  //             // setActivateBtn((prev) => ({ ...prev, [id]: false }));
-  //             setTimeout(() => {
-  //             }, 300);
-  //           }, 400);
-  //               setBtnCurrentActivate(false);
-  //           return true;
-  //         }
-  //         return current;
-  //       });
-  //     }
-  //     return disable;
-  //   });
-  // };
-
-
-
   // 초대코드 발송
   const inviteUser = () => {
     alert('초대코드 전송하기!!');
