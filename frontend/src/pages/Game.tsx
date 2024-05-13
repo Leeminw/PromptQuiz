@@ -63,6 +63,12 @@ const GamePage = () => {
       setGame(responseGame);
       setGameUserList(gameUserList);
       getChannelInfo(responseGame?.channelCode);
+      connectWebSocket(
+        `/ws/sub/game?uuid=${responseGame.code}`,
+        recieveChat,
+        enterGame,
+        user.userId
+      );
 
       const foundUser: GameUser = gameUserList.find((gameUser) => {
         return gameUser.userId == user.userId;
@@ -72,6 +78,9 @@ const GamePage = () => {
       console.error(error);
       // navigate(-1);
     }
+    return () => {
+      disconnectWebSocket();
+    };
     // setMaxRound(responseGame.maxRounds);
     // enterGame();
   };
@@ -115,13 +124,13 @@ const GamePage = () => {
     setMessageMap(updatedUserMap);
   }, [gameUserList]);
 
-  useEffect(() => {
-    // 게임 로드하면 구독하기
-    connectWebSocket(`/ws/sub/game?uuid=${game?.code}`, recieveChat, enterGame, user.userId);
-    return () => {
-      disconnectWebSocket();
-    };
-  }, [game]);
+  // useEffect(() => {
+  //   // 게임 로드하면 구독하기
+  //   connectWebSocket(`/ws/sub/game?uuid=${game?.code}`, recieveChat, enterGame, user.userId);
+  //   return () => {
+  //     disconnectWebSocket();
+  //   };
+  // }, [game]);
   const getGameDetail = async (gameCode: string) => {
     try {
       const response = await GameApi.getRoundGame(gameCode);
