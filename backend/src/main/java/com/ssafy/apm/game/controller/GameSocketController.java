@@ -1,6 +1,6 @@
 package com.ssafy.apm.game.controller;
 
-import com.ssafy.apm.game.exception.GameNotFoundException;
+import com.ssafy.apm.gamequiz.domain.GameQuiz;
 import com.ssafy.apm.socket.dto.response.*;
 import com.ssafy.apm.chat.service.ChatService;
 import com.ssafy.apm.game.service.GameService;
@@ -10,6 +10,7 @@ import com.ssafy.apm.game.service.GameAnswerService;
 import com.ssafy.apm.socket.dto.request.GameReadyDto;
 import com.ssafy.apm.gameuser.service.GameUserService;
 import com.ssafy.apm.gamequiz.service.GameQuizService;
+import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.socket.dto.request.GameChatRequestDto;
 import com.ssafy.apm.socket.dto.request.EnterUserMessageDto;
 import com.ssafy.apm.gamemonitor.service.GameMonitorService;
@@ -17,6 +18,8 @@ import com.ssafy.apm.gameuser.dto.response.GameUserSimpleResponseDto;
 import com.ssafy.apm.gamequiz.dto.response.GameQuizDetailResponseDto;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
@@ -68,10 +71,10 @@ public class GameSocketController {
 
             if (game.time <= 0) {
                 if (game.time == 0) {
-                    try{
-                        sendRoundEndMessage(game);
+                    try {
+                        sendRoundEndMessage(game, -1L);
                         setRoundToEnd(game);
-                    }catch (GameNotFoundException e){
+                    } catch (GameNotFoundException e) {
                         gameOngoingMap.remove(game.gameCode);
                         sendGameResultMessage(game);
                         continue;
@@ -150,19 +153,22 @@ public class GameSocketController {
             switch (check.getType()) {
                 case MULTIPLECHOICE:
                 case BLANKCHOICE:
-                    if (check.getResult()) {
-                        setEndGame(game);
-                    } else {
-                        sendMessage(chatMessage.getUuid(), new GameResponseDto("wrongSignal", chatMessage.getUserId()));
+                    if (choiceCheck(chatMessage.getContent())) {
+                        if (check.getResult()) {
+                            setEndGame(game, chatMessage.getUserId());
+                        } else {
+                            sendMessage(chatMessage.getUuid(), new GameResponseDto("wrongSignal", new GameWorndAnswerResponseDto(chatMessage.getUserId(), chatMessage.getContent())));
+                        }
                     }
                     break;
                 case BLANKSUBJECTIVE:
                     game.updateSimilarityRanking(chatMessage.getContent(), check.getSimilarity());
 
                     if (game.similarityGameEnd()) {
-                        setEndGame(game);
+                        setEndGame(game, chatMessage.getUserId());
                     } else {
-                        sendMessage(chatMessage.getUuid(), new GameResponseDto("similarity", new GameBlankResponseDto(game)));
+                        GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(chatMessage.getGameCode());
+                        sendMessage(chatMessage.getUuid(), new GameResponseDto("similarity", new GameBlankResponseDto(game, quiz.getUrl())));
                     }
                     break;
             }
@@ -172,9 +178,9 @@ public class GameSocketController {
         sendMessage(chat.getUuid(), new GameResponseDto("chat", chat));
     }
 
-    public void setEndGame(GameRoomStatus game) {
+    public void setEndGame(GameRoomStatus game, Long userId) {
         game.time = -game.maxTime;
-        sendRoundEndMessage(game);
+        sendRoundEndMessage(game, userId);
         setRoundToEnd(game);
     }
 
@@ -200,10 +206,10 @@ public class GameSocketController {
                     sendRoundReadyMessage(newGame);
                     gameReadyMap.put(ready.getGameCode(), newGame);
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
 
                 log.debug("Start Error: " + e.getMessage());
-                if(newGame != null){
+                if (newGame != null) {
                     gameReadyMap.remove(newGame.gameCode);
                 }
             }
@@ -214,18 +220,18 @@ public class GameSocketController {
 
     @GetMapping("/api/v1/round/quiz/{gameCode}")
     public ResponseEntity<?> getRoundQuiz(@PathVariable String gameCode) {
-        Integer type = gameQuizService.getCurrentGameQuizTypeByGameCode(gameCode);
+        GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(gameCode);
         ResponseData<Object> responseData = ResponseData.success();
 
-        switch (type) {
+        switch (quiz.getType()) {
             case MULTIPLECHOICE, BLANKCHOICE:
                 List<GameQuizDetailResponseDto> quizList = gameQuizService.findCurrentDetailGameQuizzesByGameCode(gameCode);
-                responseData = ResponseData.success(new RoundQuizResponseDto(type,quizList));
+                responseData = ResponseData.success(new RoundQuizResponseDto(quiz.getType(), quizList));
                 break;
             case BLANKSUBJECTIVE:
                 GameRoomStatus game = gameOngoingMap.get(gameCode);
-                GameBlankResponseDto responseDto = new GameBlankResponseDto(game);
-                responseData = ResponseData.success(new RoundQuizResponseDto(type,responseDto));
+                GameBlankResponseDto responseDto = new GameBlankResponseDto(game, quiz.getUrl());
+                responseData = ResponseData.success(new RoundQuizResponseDto(quiz.getType(), responseDto));
                 break;
         }
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
@@ -250,16 +256,18 @@ public class GameSocketController {
     }
 
     // (라운드 종료) 라운드 종료 메세지 전송
-    public void sendRoundEndMessage(GameRoomStatus game) {
+    public void sendRoundEndMessage(GameRoomStatus game, Long userId) {
         List<GameUserSimpleResponseDto> list = gameUserService.findSimpleGameUsersByGameCode(game.gameCode);
-        GameSystemContentDto responseDto = new GameSystemContentDto(game.round, list);
+        List<GameRoundResultResponseDto> response = GameRoundResultResponseDto.build(list, userId);
+        GameSystemContentDto responseDto = new GameSystemContentDto(game.round, response);
         sendMessage(game.gameCode, new GameResponseDto("game", GameSystemResponseDto.end(responseDto)));
     }
 
     // (게임 종료) 게임 종료 메세지 전송
     public void sendGameResultMessage(GameRoomStatus game) {
         List<GameUserSimpleResponseDto> list = gameUserService.findSimpleGameUsersByGameCode(game.gameCode);
-        GameSystemContentDto responseDto = new GameSystemContentDto(list);
+        List<GameRoundResultResponseDto> response = GameRoundResultResponseDto.build(list, -1L);
+        GameSystemContentDto responseDto = new GameSystemContentDto(response);
         sendMessage(game.gameCode, new GameResponseDto("game", GameSystemResponseDto.result(responseDto)));
     }
 
@@ -279,7 +287,7 @@ public class GameSocketController {
         if (game.round < 0) {
             setGameResult(game);
             sendGameResultMessage(game);
-        }else{
+        } else {
             GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(game.gameCode);
             if (quiz.getType() == BLANKSUBJECTIVE) {
                 game.initSimilarity(quiz);
@@ -293,5 +301,12 @@ public class GameSocketController {
         gameOngoingMap.remove(game.gameCode);
         gameEndMap.remove(game.gameCode);
         gameReadyMap.remove(game.gameCode);
+    }
+
+    public boolean choiceCheck(String data) {
+        String pattern = "[1234]";
+        Pattern regex = Pattern.compile(pattern);
+        Matcher matcher = regex.matcher(data);
+        return matcher.matches();
     }
 }

@@ -13,14 +13,14 @@ import java.util.List;
 public class GameSystemContentDto {
 
     private Integer round;
-    private List<GameUserSimpleResponseDto> roundList;
+    private List<GameRoundResultResponseDto> roundList;
 
-    public GameSystemContentDto(Integer round){
+    public GameSystemContentDto(Integer round) {
         this.round = round;
         this.roundList = null;
     }
 
-    public GameSystemContentDto(List<GameUserSimpleResponseDto> roundList){
+    public GameSystemContentDto(List<GameRoundResultResponseDto> roundList) {
         this.round = 0;
         this.roundList = roundList;
     }
