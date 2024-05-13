@@ -91,7 +91,7 @@ const WebSocketTest = () => {
       <hr />
       <div>
         {top10Messages1.length > 0 && (
-          <div>
+          <div className="border-custom-mint border p-1">
             {top10Messages4.length > 0 && Object.keys(top10Messages4[0])[0]}&nbsp;
             {top10Messages1.length > 0 && Object.keys(top10Messages1[0])[0]}이(가)&nbsp;
             {top10Messages5.length > 0 && Object.keys(top10Messages5[0])[0]}&nbsp;
@@ -141,8 +141,9 @@ const WebSocketTest = () => {
         {[inputMessage1, inputMessage2, inputMessage3, inputMessage4, inputMessage5].map(
           (input, index) => (
             <div key={index} className="flex flex-col w-1/6">
-              <h1>품사타이틀!!!</h1>
-              <div className="overflow-auto h-48 mb-2 p-2 border border-gray-200">
+              <h1>{wordClass[index]}</h1>
+              {/* 입력한 내용 표시 */}
+              <div className="overflow-auto h-48 mb-2 p-2 border border-custom-mint border-gray-200 custom-scroll">
                 {[messages1, messages2, messages3, messages4, messages5][index].map(
                   (msg, msgIndex) => (
                     <div key={msgIndex} className="text-sm">
@@ -181,7 +182,7 @@ const WebSocketTest = () => {
                     setters[index]('');
                   }
                 }}
-                placeholder={`Type your message in chat ${index + 1}...`}
+                placeholder={`${wordClass[index]}를 입력해주세요 ${index + 1}...`}
                 className="p-2 border border-gray-300 rounded mb-2"
               />
               <button
