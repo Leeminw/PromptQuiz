@@ -51,19 +51,24 @@ const GamePage = () => {
   //문제 틀렸을때 틀린거 표기
 
   const getGameData = async () => {
-    const response = await GameApi.getGame(roomCode);
-    console.log('first response', response.data);
-    const responseGame: Game = response.data;
-    const userResponse = await GameApi.getUserList(roomCode);
-    const gameUserList: GameUser[] = userResponse.data;
-    setGame(responseGame);
-    setGameUserList(gameUserList);
-    getChannelInfo(responseGame?.channelCode);
+    try {
+      const response = await GameApi.getGame(roomCode);
+      console.log('first response', response.data);
+      const responseGame: Game = response.data;
+      const userResponse = await GameApi.getUserList(roomCode);
+      const gameUserList: GameUser[] = userResponse.data;
+      setGame(responseGame);
+      setGameUserList(gameUserList);
+      getChannelInfo(responseGame?.channelCode);
 
-    const foundUser: GameUser = gameUserList.find((gameUser) => {
-      return gameUser.userId == user.userId;
-    });
-    setGameUser(foundUser);
+      const foundUser: GameUser = gameUserList.find((gameUser) => {
+        return gameUser.userId == user.userId;
+      });
+      setGameUser(foundUser);
+    } catch (error) {
+      console.error(error);
+      navigate(-1);
+    }
     // setMaxRound(responseGame.maxRounds);
     // enterGame();
   };
