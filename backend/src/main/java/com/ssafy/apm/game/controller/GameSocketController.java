@@ -1,6 +1,5 @@
 package com.ssafy.apm.game.controller;
 
-import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.socket.dto.response.*;
 import com.ssafy.apm.chat.service.ChatService;
 import com.ssafy.apm.game.service.GameService;
@@ -10,6 +9,7 @@ import com.ssafy.apm.game.service.GameAnswerService;
 import com.ssafy.apm.socket.dto.request.GameReadyDto;
 import com.ssafy.apm.gameuser.service.GameUserService;
 import com.ssafy.apm.gamequiz.service.GameQuizService;
+import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.socket.dto.request.GameChatRequestDto;
 import com.ssafy.apm.socket.dto.request.EnterUserMessageDto;
 import com.ssafy.apm.gamemonitor.service.GameMonitorService;
@@ -154,7 +154,7 @@ public class GameSocketController {
                 case BLANKCHOICE:
                     if (choiceCheck(chatMessage.getContent())) {
                         if (check.getResult()) {
-                            setEndGame(game);
+                            setEndGame(game, chatMessage.getUserId());
                         } else {
                             sendMessage(chatMessage.getUuid(), new GameResponseDto("wrongSignal", new GameWorndAnswerResponseDto(chatMessage.getUserId(), chatMessage.getContent())));
                         }
@@ -164,7 +164,7 @@ public class GameSocketController {
                     game.updateSimilarityRanking(chatMessage.getContent(), check.getSimilarity());
 
                     if (game.similarityGameEnd()) {
-                        setEndGame(game);
+                        setEndGame(game, chatMessage.getUserId());
                     } else {
                         sendMessage(chatMessage.getUuid(), new GameResponseDto("similarity", new GameBlankResponseDto(game)));
                     }
@@ -176,9 +176,9 @@ public class GameSocketController {
         sendMessage(chat.getUuid(), new GameResponseDto("chat", chat));
     }
 
-    public void setEndGame(GameRoomStatus game) {
+    public void setEndGame(GameRoomStatus game, Long userId) {
         game.time = -game.maxTime;
-        sendRoundEndMessage(game, -1L);
+        sendRoundEndMessage(game, userId);
         setRoundToEnd(game);
     }
 
