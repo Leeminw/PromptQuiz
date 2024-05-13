@@ -19,6 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class BlankSubjectiveService {
+    // 초성 유니코드 범위
+    private static final int CHOSUNG_UNICODE_START = 0xAC00;
+
+    private static final char[] CHOSUNG_LIST = {
+            'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'
+    };
 
     private final GameUserService gameUserService;
     private final GameQuizService gameQuizService;
@@ -76,39 +82,34 @@ public class BlankSubjectiveService {
     }
 
     public static double calculate(String str1, String str2) {
-        Map<String, Integer> vector1 = getTermFrequencyVector(str1);
-        Map<String, Integer> vector2 = getTermFrequencyVector(str2);
-
-        double dotProduct = 0.0;
-        double magnitude1 = 0.0;
-        double magnitude2 = 0.0;
-
-        for (String term : vector1.keySet()) {
-            if (vector2.containsKey(term)) {
-                dotProduct += vector1.get(term) * vector2.get(term);
-            }
-            magnitude1 += Math.pow(vector1.get(term), 2);
-        }
-
-        for (String term : vector2.keySet()) {
-            magnitude2 += Math.pow(vector2.get(term), 2);
-        }
-
-        if (magnitude1 == 0 || magnitude2 == 0) {
-            return 0.0;
-        }
-
-        return dotProduct / (Math.sqrt(magnitude1) * Math.sqrt(magnitude2));
+        return 0.0;
     }
 
-    private static Map<String, Integer> getTermFrequencyVector(String str) {
-        Map<String, Integer> vector = new HashMap<>();
-        String[] terms = str.split("\\s+");
+    public GameQuizDetailResponseDto setInitialSound(GameQuizDetailResponseDto quiz) {
+        try {
+            quiz.setKorObjAdjective(extractInitialSound(quiz.getKorObjAdjective()));
+            quiz.setKorObject(extractInitialSound(quiz.getKorObject()));
+            quiz.setKorSubAdjective(extractInitialSound(quiz.getKorSubAdjective()));
+            quiz.setKorSubject(extractInitialSound(quiz.getKorSubject()));
 
-        for (String term : terms) {
-            vector.put(term, vector.getOrDefault(term, 0) + 1);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return quiz;
+    }
+
+    public static String extractInitialSound(String word) {
+        StringBuilder result = new StringBuilder();
+
+        for (char ch : word.toCharArray()) {
+            if (ch >= '가' && ch <= '힣') {
+                int chosungIndex = ((int) ch - CHOSUNG_UNICODE_START) / (21 * 28);
+                result.append(CHOSUNG_LIST[chosungIndex]);
+            } else {
+                result.append(ch);
+            }
         }
 
-        return vector;
+        return result.toString();
     }
 }
