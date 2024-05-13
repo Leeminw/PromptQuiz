@@ -64,10 +64,13 @@ const GamePage = () => {
       setGame(responseGame);
       setGameUserList(gameUserList);
       getChannelInfo(responseGame?.channelCode);
+
       const foundUser: GameUser = gameUserList.find((gUser) => {
         return gUser.userId == user.userId;
       });
+
       console.log('foundUser', foundUser);
+
       setGameUser(foundUser);
     } catch (error) {
       console.error(error);
@@ -170,6 +173,8 @@ const GamePage = () => {
       // 퀴즈 내리기
       setImageUrl('');
       setMultipleChoice(null);
+      setAnswerWord(null);
+      setPlayerSimilarity(null);
     }
   }, [isQuiz]);
 
@@ -250,7 +255,10 @@ const GamePage = () => {
         alert('난 틀렸어..');
       }
     } else if (recieve.tag === 'similarity') {
-      console.log(recieve.data);
+      console.log('유사도 갱신', recieve.data);
+      const data: SimilarityQuiz = recieve.data as SimilarityQuiz;
+      setAnswerWord(data.answerWord);
+      setPlayerSimilarity(data.playerSimilarity);
     } else if (recieve.tag === 'game') {
       const data: GameStatus = recieve.data as GameStatus;
       if (data.type === 'ready') {
@@ -324,7 +332,7 @@ const GamePage = () => {
       return;
     }
     // 모두 레디가 되있는지?
-    const destination = '/ws/pub//api/v1/game/start';
+    const destination = '/ws/pub/api/v1/game/start';
     const data = {
       gameCode: game.code,
     };
@@ -342,16 +350,13 @@ const GamePage = () => {
       setBtnCurrentActivate(false);
     }, 800);
   };
-  const postStart = () => {
+  const postStart = async () => {
     try {
       console.log('post start', gameUser);
       if (gameUser?.isHost) {
-        const response = GameApi.startGame(game.code);
-        console.log('post start response', response);
-        console.log(game.code);
+        console.log('post start', gameUser);
+        const response = await GameApi.startGame(game.code);
         setIsStart(true);
-      } else {
-        console.log(gameUser);
       }
     } catch (error) {
       console.error(error);
