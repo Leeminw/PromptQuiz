@@ -63,10 +63,10 @@ const GamePage = () => {
       setGame(responseGame);
       setGameUserList(gameUserList);
       getChannelInfo(responseGame?.channelCode);
-
-      const foundUser: GameUser = gameUserList.find((gameUser) => {
-        return gameUser.userId == user.userId;
+      const foundUser: GameUser = gameUserList.find((gUser) => {
+        return gUser.userId == user.userId;
       });
+      console.log('foundUser', foundUser);
       setGameUser(foundUser);
     } catch (error) {
       console.error(error);
@@ -318,11 +318,12 @@ const GamePage = () => {
     publish(destination, gameChat);
   };
   const publishStart = async () => {
+    console.log('publish start', gameUser);
     if (!gameUser.isHost) {
       return;
     }
     // 모두 레디가 되있는지?
-    const destination = '/ws/pub/game/start';
+    const destination = '/ws/pub//api/v1/game/start';
     const data = {
       gameCode: game.code,
     };
@@ -340,6 +341,18 @@ const GamePage = () => {
       setBtnCurrentActivate(false);
     }, 800);
   };
+  const postStart = () => {
+    try {
+      if (gameUser?.isHost) {
+        GameApi.startGame(game.code);
+        setIsStart(true);
+      } else {
+        console.log(gameUser);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
   // 게임 시작 이벤트
   const handleGamestart = () => {
     setGamestart(true);
@@ -349,14 +362,7 @@ const GamePage = () => {
         setEarthquake(false);
         setTimeout(() => {
           setGamestart(false);
-          try {
-            if (gameUser.isHost) {
-              GameApi.startGame(game.code);
-              setIsStart(true);
-            }
-          } catch (error) {
-            console.error(error);
-          }
+          postStart();
           //
         }, 1000);
       }, 600);
@@ -612,25 +618,22 @@ const GamePage = () => {
                   onClick={() => {
                     activateBtnFunc();
                     // 1팀 선택 시 실행 (밑 코드는 껍데기만 보이는 유저 추가용)
-                    gameUserList.push({
-                      userId: BigInt(123),
-                      userName: '123',
-                      nickName: '123',
-                      picture: '',
-                      statusMessage: '',
-                      totalScore: 1,
-                      teamScore: 1,
-                      soloScore: 1,
-                      created_date: '',
-                      updated_date: '',
-                      gameUserId: BigInt(123),
-                      gameCode: '123',
-                      isHost: false,
-                      isReady: false,
-                      score: 123,
-                      team: '',
-                      ranking: 1,
-                    });
+                    // gameUserList.push({
+                    //   userId: BigInt(123),
+                    //   userName: '123',
+                    //   nickName: '123',
+                    //   picture: '',
+                    //   statusMessage: '',
+
+                    //   soloScore: 1,
+                    //   created_date: '',
+
+                    //   gameCode: '123',
+                    //   isHost: false,
+
+                    //   score: 123,
+                    //   team: '',
+                    // });
                   }}
                 >
                   1팀
