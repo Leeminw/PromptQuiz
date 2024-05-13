@@ -94,11 +94,11 @@ interface RoundInfo {
 interface RoundUser {
     userId : bigint,
     score : number,
-    correct : boolean
+    isCorrect : boolean
 }
 interface ReiceveQuiz {
     quizType:number,
-    data : SelectQuiz[]
+    data : SelectQuiz[]|SimilarityQuiz
 }
 interface SelectQuiz {
     code: string,
@@ -123,4 +123,31 @@ interface SelectQuiz {
     korSentence: string,
     korSubAdjective: string,
     korObjAdjective: string
+}
+
+interface SimilarityQuiz{
+    answerWord : Word
+    playerSimilarity: PlayerSimilarity
+    url:string
+
+}
+interface PlayerSimilarity{
+    korObjAdjective:Similarity[]
+    korObject:Similarity[]
+    korSubAdjective:Similarity[]
+    korSubject:Similarity[]
+    korVerb:Similarity[]
+}
+
+interface Word {
+    korObjAdjective:string
+    korObject:string
+    korSubAdjective:string
+    korSubject:string
+    korVerb:string
+}
+
+interface Similarity{
+    value:string,
+    rate :number
 }
