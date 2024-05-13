@@ -20,12 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class BlankSubjectiveService {
     // 초성 유니코드 범위
-    private static final int CHOSUNG_UNICODE_START = 0x1100;
-    private static final int CHOSUNG_UNICODE_END = 0x1112;
+    private static final int CHOSUNG_UNICODE_START = 0xAC00;
+
     private static final char[] CHOSUNG_LIST = {
             'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'
     };
-
 
     private final GameUserService gameUserService;
     private final GameQuizService gameQuizService;
@@ -87,10 +86,15 @@ public class BlankSubjectiveService {
     }
 
     public GameQuizDetailResponseDto setInitialSound(GameQuizDetailResponseDto quiz) {
-        quiz.setKorObjAdjective(extractInitialSound(quiz.getKorObjAdjective()));
-        quiz.setKorObject(extractInitialSound(quiz.getKorObject()));
-        quiz.setKorSubAdjective(extractInitialSound(quiz.getKorSubAdjective()));
-        quiz.setKorSubject(extractInitialSound(quiz.getKorSubject()));
+        try {
+            quiz.setKorObjAdjective(extractInitialSound(quiz.getKorObjAdjective()));
+            quiz.setKorObject(extractInitialSound(quiz.getKorObject()));
+            quiz.setKorSubAdjective(extractInitialSound(quiz.getKorSubAdjective()));
+            quiz.setKorSubject(extractInitialSound(quiz.getKorSubject()));
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         return quiz;
     }
 
@@ -99,7 +103,7 @@ public class BlankSubjectiveService {
 
         for (char ch : word.toCharArray()) {
             if (ch >= '가' && ch <= '힣') {
-                int chosungIndex = ((int) ch - CHOSUNG_UNICODE_START) / 28;
+                int chosungIndex = ((int) ch - CHOSUNG_UNICODE_START) / (21 * 28);
                 result.append(CHOSUNG_LIST[chosungIndex]);
             } else {
                 result.append(ch);

@@ -1,7 +1,6 @@
 package com.ssafy.apm.game.controller;
 
 import com.ssafy.apm.game.service.BlankSubjectiveService;
-import com.ssafy.apm.gamequiz.domain.GameQuiz;
 import com.ssafy.apm.socket.dto.response.*;
 import com.ssafy.apm.chat.service.ChatService;
 import com.ssafy.apm.game.service.GameService;
@@ -87,6 +86,12 @@ public class GameSocketController {
                 gameOngoingMap.remove(game.gameCode);
                 game.time = REST_TIME;
             } else {
+                if(game.time == 40 && gameQuizService.getCurrentGameQuizTypeByGameCode(game.gameCode) == BLANKSUBJECTIVE){
+                    GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(game.gameCode);
+                    quiz = blankSubjectiveService.setInitialSound(quiz);
+                    game.addInitialSound(quiz);
+                    sendMessage(game.gameCode, new GameResponseDto("similarity", new GameBlankResponseDto(game, quiz.getUrl())));
+                }
                 sendTimerMessage(game, "ongoing");
                 game.time--;
             }
@@ -292,7 +297,6 @@ public class GameSocketController {
         } else {
             GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(game.gameCode);
             if (quiz.getType() == BLANKSUBJECTIVE) {
-                quiz = blankSubjectiveService.setInitialSound(quiz);
                 game.initSimilarity(quiz);
             }
         }
