@@ -2,7 +2,7 @@
 
 IMAGE_NAME="server/pycosine"
 CONTAINER_NAME="server-pycosine"
-CONTAINER_ID=$(docker ps -aqf "name=$CONTAINER_NAME")
+CONTAINER_ID=$(sudo docker ps -aqf "name=$CONTAINER_NAME")
 
 
 echo -e "\n<<<<<<<<<< PyCosine Deploy Process Start >>>>>>>>>>\n"
@@ -19,7 +19,7 @@ echo ">>> DOCKER CONTAINER $CONTAINER_NAME 존재 여부 검사 시작..."
 if [ ! -z "$CONTAINER_ID" ]; then
     echo ">>> DOCKER CONTAINER $CONTAINER_NAME 존재 확인."
     echo ">>> DOCKER CONTAINER $CONTAINER_NAME 중지 시작..."
-    docker stop $CONTAINER_ID || {
+    sudo docker stop $CONTAINER_ID || {
         echo ">>> DOCKER CONTAINER $CONTAINER_NAME 중지 실패."
         exit 1
     }
@@ -27,7 +27,7 @@ if [ ! -z "$CONTAINER_ID" ]; then
 
 
     echo ">>> DOCKER CONTAINER $CONTAINER_NAME 삭제 시작..."
-    docker rm -f $CONTAINER_ID || {
+    sudo docker rm -f $CONTAINER_ID || {
         echo ">>> DOCKER CONTAINER $CONTAINER_NAME 삭제 실패."
         exit 1
     }
@@ -39,7 +39,7 @@ echo ""
 
 ## Run Docker Container
 echo ">>> DOCKER CONTAINER $CONTAINER_NAME 실행 시작..."
-docker run -d -p 8080:8080 \
+sudo docker run -d -p 8080:8080 \
     --name $CONTAINER_NAME $IMAGE_NAME || {
         echo ">>> DOCKER IMAGE $IMAGE_NAME 실행 실패."
         exit 1
