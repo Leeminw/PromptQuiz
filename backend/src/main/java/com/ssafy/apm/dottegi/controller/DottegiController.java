@@ -14,19 +14,11 @@ public class DottegiController {
 
     private final DottegiService dottegiService;
 
-    /* TODO: GetMapping 으로 RDB에서 불러오는 방식 구현 필요 */
-//    @MessageMapping("/register")
-//    @SendToUser("/dottegi")
-//    public Map<String, Object> registerNewUser(SimpMessageHeaderAccessor headerAccessor) {
-//        // This method gets called when a new user subscribes to the "/dottegi" topic
-//        // Check if there's stored data
-//        Map<String, Object> lastPayload = dottegiService.getLastPayload();
-//        if (lastPayload != null) {
-//            return lastPayload;
-//        } else {
-//            return new HashMap<>(); // Or send some default welcome message
-//        }
-//    }
+    @MessageMapping("/dottegi/style")
+    @SendTo("/dottegi/style")
+    public void handleMessage4Style(String message) {
+        dottegiService.processMessageStyle(message);
+    }
 
     /* TODO: DTO 클래스로 return */
     /** FullPath: /chat/dottegi/subject */

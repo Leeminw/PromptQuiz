@@ -7,12 +7,14 @@ type JsonItem = {
 };
 
 const WebSocketTest = () => {
+  const [top3MessagesStyle, setTop3MessagesStyle] = useState<JsonItem[]>([]);
   const [top10Messages1, setTop10Messages1] = useState<JsonItem[]>([]);
   const [top10Messages2, setTop10Messages2] = useState<JsonItem[]>([]);
   const [top10Messages3, setTop10Messages3] = useState<JsonItem[]>([]);
   const [top10Messages4, setTop10Messages4] = useState<JsonItem[]>([]);
   const [top10Messages5, setTop10Messages5] = useState<JsonItem[]>([]);
 
+  const [remainTime, setRemainTime] = useState<string>('');
   const [messages1, setMessages1] = useState<string[]>([]);
   const [messages2, setMessages2] = useState<string[]>([]);
   const [messages3, setMessages3] = useState<string[]>([]);
@@ -37,6 +39,17 @@ const WebSocketTest = () => {
           { topic: '/dottegi/sub-adjective', setter: setMessages4, top10Setter: setTop10Messages4 },
           { topic: '/dottegi/obj-adjective', setter: setMessages5, top10Setter: setTop10Messages5 },
         ];
+
+        // Subscribe for reamining time
+        client.subscribe('/dottegi', (message) => {
+          const jsonObject = JSON.parse(message.body);
+          setRemainTime(jsonObject.remainingTime);
+        });
+
+        client.subscribe('/dottegi/style', (message) => {
+          const jsonData = JSON.parse(message.body);
+          setTop3MessagesStyle(jsonData);
+        });
 
         // Subscribe to each topic
         topics.forEach(({ topic, setter, top10Setter }) => {
@@ -86,6 +99,7 @@ const WebSocketTest = () => {
   return (
     <div className="flex flex-col items-center w-full">
       <h1 className="text-2xl font-bold my-4">WebSocket STOMP Multi-Channel Chat</h1>
+      <h1 className="text-8xl font-bold my-4">{remainTime}</h1>
       결과화면
       <hr />
       <div>
@@ -98,6 +112,37 @@ const WebSocketTest = () => {
             {top10Messages3.length > 0 && Object.keys(top10Messages3[0])[0]}
           </div>
         )}
+      </div>
+      {top3MessagesStyle.map((item, index) => (
+        <div key={index} className="mb-2">
+          Key: {Object.keys(item)[0]}, Value: {Object.values(item)[0]}
+        </div>
+      ))}
+      <div className="flex justify-around w-full">
+        <div className="flex flex-col">
+          <button
+            onClick={() => sendMessage('Anime', '/chat/dottegi/style')}
+            className="bg-red-500 text-white p-2 rounded hover:bg-blue-700 transition duration-200"
+          >
+            애니
+          </button>
+        </div>
+        <div className="flex flex-col">
+          <button
+            onClick={() => sendMessage('Cartoon', '/chat/dottegi/style')}
+            className="bg-red-500 text-white p-2 rounded hover:bg-blue-700 transition duration-200"
+          >
+            카툰
+          </button>
+        </div>
+        <div className="flex flex-col">
+          <button
+            onClick={() => sendMessage('Realistic', '/chat/dottegi/style')}
+            className="bg-red-500 text-white p-2 rounded hover:bg-blue-700 transition duration-200"
+          >
+            실사
+          </button>
+        </div>
       </div>
       <div className="flex justify-around w-full">
         <div className="flex flex-col">
