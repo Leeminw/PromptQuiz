@@ -48,8 +48,11 @@ const GamePage = () => {
   const [gameUser, setGameUser] = useState<GameUser | null>(null);
   const [quizType, setQuizType] = useState<number>(0);
   const [choosedButton, setChoosedButton] = useState<boolean[]>([false, false, false, false]);
-  //문제 틀렸을때 틀린거 표기
+  const [answerWord, setAnswerWord] = useState<Word | null>(null);
+  const [playerSimilarity, setPlayerSimilarity] = useState<PlayerSimilarity | null>(null);
 
+  //문제 틀렸을때 틀린거 표기
+  const [timeRatio, setTimeRatio] = useState<number>(0);
   const getGameData = async () => {
     try {
       const response = await GameApi.getGame(roomCode);
@@ -67,7 +70,7 @@ const GamePage = () => {
       setGameUser(foundUser);
     } catch (error) {
       console.error(error);
-      navigate(-1);
+      // navigate(-1);
     }
     // setMaxRound(responseGame.maxRounds);
     // enterGame();
@@ -139,17 +142,15 @@ const GamePage = () => {
         // choosed button 초기화
         setChoosedButton([false, false, false, false]);
       } else if (quiz.quizType == 2) {
-        const data: SelectQuiz[] = quiz.data as SelectQuiz[];
-        console.log(data);
-        // 이미지 세팅
-        data.forEach((element) => {
-          if (element.isAnswer) {
-            setImageUrl(element.url);
-          }
-        });
+        // 순서 맞추기
       } else if (quiz.quizType == 4) {
         // 주관식 퀴즈
-        console.log(quiz.data);
+        const data: SimilarityQuiz = quiz.data as SimilarityQuiz;
+        console.log('주관식 ', quiz.data);
+        // 이미지 세팅
+        setImageUrl(data.url);
+        setAnswerWord(data.answerWord);
+        setPlayerSimilarity(data.playerSimilarity);
       }
     } catch (error) {
       console.error(error);
@@ -212,6 +213,7 @@ const GamePage = () => {
     }
   };
   const gameController = async (recieve: RecieveData) => {
+    console.log(recieve);
     if (recieve.tag === 'startGame') {
       console.log('game start!! ', recieve);
       handleGamestart();
@@ -234,6 +236,8 @@ const GamePage = () => {
       const data: GameTimer = recieve.data as GameTimer;
       setRoundState(data.state);
       setTime(data.time);
+      setTimeRatio(Math.round((data.time / game.timeLimit) * 100));
+      console.log('timeRatio', Math.round((data.time / game.timeLimit) * 100));
       setRound(data.round);
     } else if (recieve.tag === 'wrongSignal') {
       const data: bigint = recieve.data as bigint;
@@ -316,7 +320,7 @@ const GamePage = () => {
       return;
     }
     // 모두 레디가 되있는지?
-    const destination = '/ws/pub/api/v1/game/start';
+    const destination = '/ws/pub/game/start';
     const data = {
       gameCode: game.code,
     };
@@ -362,6 +366,11 @@ const GamePage = () => {
     alert('초대코드 전송하기!!');
   };
 
+  // 비율 표시
+  const progressStyle = {
+    transform: `translateX(-${timeRatio}%)`,
+    transition: 'transform 1s ease-in-out', // transition 효과 추가
+  };
   return (
     <div
       className={`w-[70rem] h-[37rem] min-w-[40rem] min-h-[37rem] max-w-[80vw] z-10 
@@ -443,7 +452,8 @@ const GamePage = () => {
           <div className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint border relative overflow-hidden flex">
             {roundState === 'ongoing' ? (
               <div
-                className={`w-full h-full rounded-full translate-x-[${(time / game.timeLimit) * 100}%] transition-transform duration-1000 bg-mint absolute`}
+                className="w-full h-full rounded-full bg-mint absolute"
+                style={progressStyle}
               ></div>
             ) : (
               <div
@@ -512,11 +522,11 @@ const GamePage = () => {
             )}
 
             {/* 순서 맞추기 */}
-            {/* {isQuiz && (quizType & 4) > 0 ? (
-              <SubjectiveGame choiceList={multipleChoice} />
+            {isQuiz && (quizType & 4) > 0 ? (
+              <SubjectiveGame answerWord={answerWord} playerSimilarity={playerSimilarity} />
             ) : (
               <div></div>
-            )} */}
+            )}
 
             {isQuiz && (quizType & 2) > 0 ? <div>SequenceGame</div> : <div></div>}
             {/* <SequenceGame choiceList={multipleChoice} /> */}

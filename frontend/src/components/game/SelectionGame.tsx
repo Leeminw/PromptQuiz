@@ -7,6 +7,9 @@ interface SelectionGameProps {
 }
 
 const SelectionGame = ({ choiceList, onButtonClick, choosedButton }: SelectionGameProps) => {
+  useEffect(() => {
+    console.log('child', choosedButton);
+  }, []);
   const buttonClass = [
     'w-full h-full bg-[#e37070] border-custom-red flex items-center justify-center cursor-pointer hover:brightness-125 hover:scale-105 transition',
     'w-full h-full bg-customYellow border-custom-yellow flex items-center justify-center cursor-pointer hover:brightness-125 hover:scale-105 transition',
@@ -15,28 +18,44 @@ const SelectionGame = ({ choiceList, onButtonClick, choosedButton }: SelectionGa
   ];
 
   const choosedButtonClass = [
-    'w-full h-full bg-[#919191] border-custom-red flex items-center justify-center cursor-pointer hover:brightness-125 hover:scale-105 transition',
-    'w-full h-full bg-[#919191] border-custom-yellow flex items-center justify-center cursor-pointer hover:brightness-125 hover:scale-105 transition',
-    'w-full h-full bg-[#919191] border-custom-green flex items-center justify-center cursor-pointer hover:brightness-125 hover:scale-105 transition',
-    'w-full h-full bg-[#919191] border-custom-blue flex items-center justify-center cursor-pointer hover:brightness-125 hover:scale-105 transition',
+    'w-full h-full bg-[#404040] border-custom-red flex items-center justify-center cursor-pointer hover:brightness-125 hover:scale-100 transition',
+    'w-full h-full bg-[#404040] border-custom-yellow flex items-center justify-center cursor-pointer hover:brightness-125 hover:scale-100 transition',
+    'w-full h-full bg-[#404040] border-custom-green flex items-center justify-center cursor-pointer hover:brightness-125 hover:scale-100 transition',
+    'w-full h-full bg-[#404040] border-custom-blue flex items-center justify-center cursor-pointer hover:brightness-125 hover:scale-100 transition',
   ];
   const innerDivClass = [
-    'w-full h-full flex items-center justify-center px-3 py-4',
-    'w-full h-full flex items-center justify-center',
-    'w-full h-full flex items-center justify-center px-3 py-4',
-    'w-full h-ful flex items-center justify-center px-3 py-4',
+    'w-full h-full flex items-center justify-center px-3 py-4 text-white font-extrabold',
+    'w-full h-full flex items-center justify-center text-white font-extrabold',
+    'w-full h-full flex items-center justify-center px-3 py-4 text-white font-extrabold',
+    'w-full h-ful flex items-center justify-center px-3 py-4 text-white font-extrabold',
+  ];
+
+  const choosedInnerDivClass = [
+    'w-full h-full flex items-center justify-center px-3 py-4 text-red-500 font-extrabold',
+    'w-full h-full flex items-center justify-center text-red-500 font-extrabold',
+    'w-full h-full flex items-center justify-center px-3 py-4 text-red-500 font-extrabold',
+    'w-full h-ful flex items-center justify-center px-3 py-4 text-red-500 font-extrabold',
   ];
 
   const sendAnswer = (answer: number) => {
+    if (choosedButton[answer - 1]) return;
     // console.log('send answer ', answer);
     onButtonClick(answer);
   };
   if (!choiceList) return <div></div>;
   return (
-    <div className="absolute w-full h-full grid grid-rows-2 grid-cols-2 gap-3 text-sm text-white font-extrabold">
+    <div className="absolute w-full h-full grid grid-rows-2 grid-cols-2 gap-3 text-sm">
       {choiceList.map((item, index) => (
-        <button className={buttonClass[index]} onClick={() => sendAnswer(index + 1)} key={index}>
-          <div className={innerDivClass[index]}>
+        <button
+          className={choosedButton[index] ? choosedButtonClass[index] : buttonClass[index]}
+          onClick={() => sendAnswer(index + 1)}
+          key={index}
+          disabled={choosedButton[index]}
+          style={{ pointerEvents: choosedButton[index] ? 'none' : 'auto' }}
+        >
+          <div
+            className={choosedButton[index] ? choosedInnerDivClass[index] : innerDivClass[index]}
+          >
             {index + 1}. {item.korSentence}
           </div>
         </button>
