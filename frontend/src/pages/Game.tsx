@@ -48,6 +48,9 @@ const GamePage = () => {
   const [gameUser, setGameUser] = useState<GameUser | null>(null);
   const [quizType, setQuizType] = useState<number>(0);
   const [choosedButton, setChoosedButton] = useState<boolean[]>([false, false, false, false]);
+  const [answerWord, setAnswerWord] = useState<Word | null>(null);
+  const [playerSimilarity, setPlayerSimilarity] = useState<PlayerSimilarity | null>(null);
+
   //문제 틀렸을때 틀린거 표기
   const [timeRatio, setTimeRatio] = useState<number>(0);
   const getGameData = async () => {
@@ -139,17 +142,15 @@ const GamePage = () => {
         // choosed button 초기화
         setChoosedButton([false, false, false, false]);
       } else if (quiz.quizType == 2) {
-        const data: SelectQuiz[] = quiz.data as SelectQuiz[];
-        console.log(data);
-        // 이미지 세팅
-        data.forEach((element) => {
-          if (element.isAnswer) {
-            setImageUrl(element.url);
-          }
-        });
+        // 순서 맞추기
       } else if (quiz.quizType == 4) {
         // 주관식 퀴즈
-        console.log(quiz.data);
+        const data: SimilarityQuiz = quiz.data as SimilarityQuiz;
+        console.log('주관식 ', quiz.data);
+        // 이미지 세팅
+        setImageUrl(data.url);
+        setAnswerWord(data.answerWord);
+        setPlayerSimilarity(data.playerSimilarity);
       }
     } catch (error) {
       console.error(error);
@@ -212,6 +213,7 @@ const GamePage = () => {
     }
   };
   const gameController = async (recieve: RecieveData) => {
+    console.log(recieve);
     if (recieve.tag === 'startGame') {
       console.log('game start!! ', recieve);
       handleGamestart();
@@ -318,7 +320,7 @@ const GamePage = () => {
       return;
     }
     // 모두 레디가 되있는지?
-    const destination = '/ws/pub/api/v1/game/start';
+    const destination = '/ws/pub/game/start';
     const data = {
       gameCode: game.code,
     };
@@ -520,11 +522,11 @@ const GamePage = () => {
             )}
 
             {/* 순서 맞추기 */}
-            {/* {isQuiz && (quizType & 4) > 0 ? (
-              <SubjectiveGame choiceList={multipleChoice} />
+            {isQuiz && (quizType & 4) > 0 ? (
+              <SubjectiveGame answerWord={answerWord} playerSimilarity={playerSimilarity} />
             ) : (
               <div></div>
-            )} */}
+            )}
 
             {isQuiz && (quizType & 2) > 0 ? <div>SequenceGame</div> : <div></div>}
             {/* <SequenceGame choiceList={multipleChoice} /> */}
