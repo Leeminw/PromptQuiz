@@ -512,11 +512,11 @@ const GamePage = () => {
             )}
 
             {/* 순서 맞추기 */}
-            {isQuiz && (quizType & 4) > 0 ? (
+            {/* {isQuiz && (quizType & 4) > 0 ? (
               <SubjectiveGame choiceList={multipleChoice} />
             ) : (
               <div></div>
-            )}
+            )} */}
 
             {isQuiz && (quizType & 2) > 0 ? <div>SequenceGame</div> : <div></div>}
             {/* <SequenceGame choiceList={multipleChoice} /> */}
