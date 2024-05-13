@@ -7,6 +7,7 @@ type JsonItem = {
 };
 
 const WebSocketTest = () => {
+  const wordClass = ['주어', '목적어', '동사', '주형용사', '목형용사'];
   const [top10Messages1, setTop10Messages1] = useState<JsonItem[]>([]);
   const [top10Messages2, setTop10Messages2] = useState<JsonItem[]>([]);
   const [top10Messages3, setTop10Messages3] = useState<JsonItem[]>([]);
@@ -140,6 +141,7 @@ const WebSocketTest = () => {
         {[inputMessage1, inputMessage2, inputMessage3, inputMessage4, inputMessage5].map(
           (input, index) => (
             <div key={index} className="flex flex-col w-1/6">
+              <h1>품사타이틀!!!</h1>
               <div className="overflow-auto h-48 mb-2 p-2 border border-gray-200">
                 {[messages1, messages2, messages3, messages4, messages5][index].map(
                   (msg, msgIndex) => (
@@ -161,6 +163,23 @@ const WebSocketTest = () => {
                     setInputMessage5,
                   ];
                   setters[index](e.target.value);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    sendMessage(
+                      input,
+                      `/chat/dottegi/${['subject', 'object', 'verb', 'sub-adjective', 'obj-adjective'][index]}`
+                    );
+                    // 엔터 눌렀을 때 input 초기화 코드
+                    const setters = [
+                      setInputMessage1,
+                      setInputMessage2,
+                      setInputMessage3,
+                      setInputMessage4,
+                      setInputMessage5,
+                    ];
+                    setters[index]('');
+                  }
                 }}
                 placeholder={`Type your message in chat ${index + 1}...`}
                 className="p-2 border border-gray-300 rounded mb-2"
