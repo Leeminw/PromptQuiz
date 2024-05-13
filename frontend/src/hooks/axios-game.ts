@@ -12,7 +12,7 @@ const GameApi = {
   getUserList: async (roomId: string) => {
     try {
       const response = await instance.get(`game-user/details?gameCode=${roomId}`);
-      console.log('GetUserList', response.data);
+      // console.log('GetUserList', response.data);
 
       return response.data;
     } catch (error) {
