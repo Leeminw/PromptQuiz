@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Client } from '@stomp/stompjs';
+import { last } from 'lodash';
 
 type JsonItem = {
   key: string;
@@ -84,6 +85,12 @@ const WebSocketTest = () => {
     client.activate();
   };
 
+  // 한글 문자 받침 여부 확인
+  const checkLastKoreanCharacter = (word: string) => {
+    const lastCh = word.charCodeAt(word.length - 1);
+    const checkLastCh = (lastCh - 0xac00) % 28;
+    return checkLastCh ? true : false;
+  };
   return (
     <div className="flex flex-col items-center w-full">
       <h1 className="text-2xl font-bold my-4">WebSocket STOMP Multi-Channel Chat</h1>
