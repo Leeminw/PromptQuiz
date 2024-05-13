@@ -70,10 +70,10 @@ public class GameSocketController {
 
             if (game.time <= 0) {
                 if (game.time == 0) {
-                    try{
-                        sendRoundEndMessage(game);
+                    try {
+                        sendRoundEndMessage(game, -1L);
                         setRoundToEnd(game);
-                    }catch (GameNotFoundException e){
+                    } catch (GameNotFoundException e) {
                         gameOngoingMap.remove(game.gameCode);
                         sendGameResultMessage(game);
                         continue;
@@ -152,7 +152,7 @@ public class GameSocketController {
             switch (check.getType()) {
                 case MULTIPLECHOICE:
                 case BLANKCHOICE:
-                    if(choiceCheck(chatMessage.getContent())){
+                    if (choiceCheck(chatMessage.getContent())) {
                         if (check.getResult()) {
                             setEndGame(game);
                         } else {
@@ -178,7 +178,7 @@ public class GameSocketController {
 
     public void setEndGame(GameRoomStatus game) {
         game.time = -game.maxTime;
-        sendRoundEndMessage(game);
+        sendRoundEndMessage(game, -1L);
         setRoundToEnd(game);
     }
 
@@ -204,10 +204,10 @@ public class GameSocketController {
                     sendRoundReadyMessage(newGame);
                     gameReadyMap.put(ready.getGameCode(), newGame);
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
 
                 log.debug("Start Error: " + e.getMessage());
-                if(newGame != null){
+                if (newGame != null) {
                     gameReadyMap.remove(newGame.gameCode);
                 }
             }
@@ -224,12 +224,12 @@ public class GameSocketController {
         switch (type) {
             case MULTIPLECHOICE, BLANKCHOICE:
                 List<GameQuizDetailResponseDto> quizList = gameQuizService.findCurrentDetailGameQuizzesByGameCode(gameCode);
-                responseData = ResponseData.success(new RoundQuizResponseDto(type,quizList));
+                responseData = ResponseData.success(new RoundQuizResponseDto(type, quizList));
                 break;
             case BLANKSUBJECTIVE:
                 GameRoomStatus game = gameOngoingMap.get(gameCode);
                 GameBlankResponseDto responseDto = new GameBlankResponseDto(game);
-                responseData = ResponseData.success(new RoundQuizResponseDto(type,responseDto));
+                responseData = ResponseData.success(new RoundQuizResponseDto(type, responseDto));
                 break;
         }
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
@@ -254,16 +254,18 @@ public class GameSocketController {
     }
 
     // (라운드 종료) 라운드 종료 메세지 전송
-    public void sendRoundEndMessage(GameRoomStatus game) {
+    public void sendRoundEndMessage(GameRoomStatus game, Long userId) {
         List<GameUserSimpleResponseDto> list = gameUserService.findSimpleGameUsersByGameCode(game.gameCode);
-        GameSystemContentDto responseDto = new GameSystemContentDto(game.round, list);
+        List<GameRoundResultResponseDto> response = GameRoundResultResponseDto.build(list, userId);
+        GameSystemContentDto responseDto = new GameSystemContentDto(game.round, response);
         sendMessage(game.gameCode, new GameResponseDto("game", GameSystemResponseDto.end(responseDto)));
     }
 
     // (게임 종료) 게임 종료 메세지 전송
     public void sendGameResultMessage(GameRoomStatus game) {
         List<GameUserSimpleResponseDto> list = gameUserService.findSimpleGameUsersByGameCode(game.gameCode);
-        GameSystemContentDto responseDto = new GameSystemContentDto(list);
+        List<GameRoundResultResponseDto> response = GameRoundResultResponseDto.build(list, -1L);
+        GameSystemContentDto responseDto = new GameSystemContentDto(response);
         sendMessage(game.gameCode, new GameResponseDto("game", GameSystemResponseDto.result(responseDto)));
     }
 
@@ -283,7 +285,7 @@ public class GameSocketController {
         if (game.round < 0) {
             setGameResult(game);
             sendGameResultMessage(game);
-        }else{
+        } else {
             GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(game.gameCode);
             if (quiz.getType() == BLANKSUBJECTIVE) {
                 game.initSimilarity(quiz);
@@ -299,7 +301,7 @@ public class GameSocketController {
         gameReadyMap.remove(game.gameCode);
     }
 
-    public boolean choiceCheck(String data){
+    public boolean choiceCheck(String data) {
         String pattern = "[1234]";
         Pattern regex = Pattern.compile(pattern);
         Matcher matcher = regex.matcher(data);
