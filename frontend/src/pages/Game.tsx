@@ -172,6 +172,8 @@ const GamePage = () => {
       // 퀴즈 내리기
       setImageUrl('');
       setMultipleChoice(null);
+      setAnswerWord(null);
+      setPlayerSimilarity(null);
     }
   }, [isQuiz]);
 
@@ -252,7 +254,10 @@ const GamePage = () => {
         alert('난 틀렸어..');
       }
     } else if (recieve.tag === 'similarity') {
-      console.log(recieve.data);
+      console.log('유사도 갱신', recieve.data);
+      const data: SimilarityQuiz = recieve.data as SimilarityQuiz;
+      setAnswerWord(data.answerWord);
+      setPlayerSimilarity(data.playerSimilarity);
     } else if (recieve.tag === 'game') {
       const data: GameStatus = recieve.data as GameStatus;
       if (data.type === 'ready') {

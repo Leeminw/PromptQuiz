@@ -56,7 +56,7 @@ interface GameLeave {
 
 interface RecieveData {
     tag: string,
-    data : GameChatRecieve|GameTimer|GameReady|GameLeave|GameStatus|bigint
+    data : GameChatRecieve|GameTimer|GameReady|GameLeave|GameStatus|bigint|SimilarityQuiz
 }
 
 interface GameChatRecieve {
@@ -128,19 +128,11 @@ interface SimilarityQuiz{
 
 }
 interface PlayerSimilarity{
-    korObjAdjective:Similarity[]
-    korObject:Similarity[]
-    korSubAdjective:Similarity[]
-    korSubject:Similarity[]
-    korVerb:Similarity[]
+    [key:string] : Similarity[]
 }
 
 interface Word {
-    korObjAdjective:string
-    korObject:string
-    korSubAdjective:string
-    korSubject:string
-    korVerb:string
+    [key: string]: string;
 }
 
 interface Similarity{
