@@ -103,8 +103,8 @@ const GamePage = () => {
   //  문제를 받았는지 ?
   // false, , timer로받았을때>> 현재게임상태 ' '
   useEffect(() => {
-    // enterGameRoom();
-    // getGameData();
+    enterGameRoom();
+    getGameData();
     // 채팅 입력 바깥 클릭 시 채팅창 닫기
     // 클릭 & 키다운 이벤트 추가
     document.addEventListener('click', handleOutsideClick);
