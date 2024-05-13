@@ -59,18 +59,18 @@ public class BlankSubjectiveService {
     }
 
     @Transactional
-    public HashMap<String, Double> evaluateAnswers(GameChatRequestDto answer, Set<String> checkPrompt){
+    public HashMap<String, Double> evaluateAnswers(GameChatRequestDto answer, Set<String> checkPrompt) {
         GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(answer.getGameCode());
         HashMap<String, Double> resultMap = new HashMap<>();
         for (String prompt : checkPrompt) {
             Double rate = 0.0;
-            switch (prompt){
+            switch (prompt) {
                 case "kor_subject" -> rate = calculate(quiz.getKorSubject(), answer.getContent());
                 case "kor_sub_adjective" -> rate = calculate(quiz.getKorSubAdjective(), answer.getContent());
                 case "kor_object" -> rate = calculate(quiz.getKorObject(), answer.getContent());
                 case "kor_obj_adjective" -> rate = calculate(quiz.getKorObjAdjective(), answer.getContent());
             }
-            if(rate >= 0.9){
+            if (rate >= 0.9) {
                 /* todo: 유저 점수 올리기 (맞춤 처리를 어떻게 할 것인가..
                     transaction처리가 되야 한다. 그럼 DB로 맞춘사람 관리를 해야 되는데..
                 */
@@ -118,42 +118,4 @@ public class BlankSubjectiveService {
 
         return vector;
     }
-
-        public static void main(String[] args) {
-            // 학습된 Word2Vec 모델 파일 경로
-            String modelFilePath = "path/to/your/word2vec/model.txt";
-
-            // WordVectors 객체 초기화
-            WordVectors wordVectors = WordVectorSerializer.readWord2VecModel(new File(modelFilePath));
-
-            // 비교할 두 단어
-            String word1 = "apple";
-            String word2 = "banana";
-
-            // 토크나이저 설정
-            TokenizerFactory tokenizerFactory = new DefaultTokenizerFactory();
-            tokenizerFactory.setTokenPreProcessor(new CommonPreprocessor());
-
-            // 두 단어의 벡터 표현 얻기
-            INDArray vector1 = wordVectors.getWordVectorMatrix(word1);
-            INDArray vector2 = wordVectors.getWordVectorMatrix(word2);
-
-            // 코사인 유사도 계산
-            double similarity = calculateCosineSimilarity(vector1, vector2);
-
-            System.out.println("Similarity between " + word1 + " and " + word2 + ": " + similarity);
-        }
-
-    private static double calculateCosineSimilarity(INDArray vector1, INDArray vector2) {
-        // 벡터 간 내적(dot product) 계산
-        double dotProduct = vector1.mul(vector2).sumNumber().doubleValue();
-
-        // 각 벡터의 크기(norm) 계산
-        double norm1 = vector1.norm2Number().doubleValue();
-        double norm2 = vector2.norm2Number().doubleValue();
-
-        // 코사인 유사도 계산
-        return dotProduct / (norm1 * norm2);
-    }
-
 }

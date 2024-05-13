@@ -57,9 +57,6 @@ dependencies {
     implementation 'org.influxdb:influxdb-java:2.17'
     // AWS S3
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.707'
-    // word2vec
-    implementation 'org.deeplearning4j:deeplearning4j-core:1.0.0-beta7'
-    implementation 'org.deeplearning4j:deeplearning4j-nlp:1.0.0-beta7'
 }
 
 tasks.named('test') {

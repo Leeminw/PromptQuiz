@@ -17,6 +17,8 @@ import com.ssafy.apm.gameuser.dto.response.GameUserSimpleResponseDto;
 import com.ssafy.apm.gamequiz.dto.response.GameQuizDetailResponseDto;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
@@ -150,10 +152,12 @@ public class GameSocketController {
             switch (check.getType()) {
                 case MULTIPLECHOICE:
                 case BLANKCHOICE:
-                    if (check.getResult()) {
-                        setEndGame(game);
-                    } else {
-                        sendMessage(chatMessage.getUuid(), new GameResponseDto("wrongSignal", chatMessage.getUserId()));
+                    if(choiceCheck(chatMessage.getContent())){
+                        if (check.getResult()) {
+                            setEndGame(game);
+                        } else {
+                            sendMessage(chatMessage.getUuid(), new GameResponseDto("wrongSignal", new GameWorndAnswerResponseDto(chatMessage.getUserId(), chatMessage.getContent())));
+                        }
                     }
                     break;
                 case BLANKSUBJECTIVE:
@@ -293,5 +297,12 @@ public class GameSocketController {
         gameOngoingMap.remove(game.gameCode);
         gameEndMap.remove(game.gameCode);
         gameReadyMap.remove(game.gameCode);
+    }
+
+    public boolean choiceCheck(String data){
+        String pattern = "[1234]";
+        Pattern regex = Pattern.compile(pattern);
+        Matcher matcher = regex.matcher(data);
+        return matcher.matches();
     }
 }
