@@ -469,9 +469,9 @@ const GamePage = () => {
         <div className="w-full flex grow flex-col items-center justify-end px-4 mt-1">
           <div className="w-full h-36 mb-2 relative">
             {/* 객관식 선택 */}
-            {isQuiz ? <SelectionGame choiceList={multipleChoice} /> : <div>no game</div>}
+            {isQuiz ? <SelectionGame choiceList={multipleChoice} /> : ""}
             {/* 순서 맞추기 */}
-            {/* <SubjectiveGame /> */}
+            <SubjectiveGame />
             {/* <SequenceGame /> */}
           </div>
           {/* 채팅 */}
