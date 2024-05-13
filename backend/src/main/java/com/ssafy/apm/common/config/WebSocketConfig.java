@@ -14,9 +14,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/ws/sub");
         config.setApplicationDestinationPrefixes("/ws/pub");
-
-        config.enableSimpleBroker("/dottegi");
-        config.setApplicationDestinationPrefixes("/chat");
     }
 
     @Override
