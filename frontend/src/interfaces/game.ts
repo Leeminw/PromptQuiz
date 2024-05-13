@@ -94,7 +94,7 @@ interface RoundInfo {
 interface RoundUser {
     userId : bigint,
     score : number,
-    correct : boolean
+    isCorrect : boolean
 }
 interface ReiceveQuiz {
     quizType:number,
