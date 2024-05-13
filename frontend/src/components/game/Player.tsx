@@ -4,6 +4,8 @@ interface GamePlayerProps {
   // idx: number;
   userInfo: GameUser | null;
   gameChat: GameChatRecieve | null;
+  // correctAnswer: boolean | null;
+  // wrongAnswer: boolean | null;
 }
 // { idx }: GamePlayerProps
 // const GamePlayer = forwardRef((props, ref) => {
