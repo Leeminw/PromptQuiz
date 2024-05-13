@@ -238,7 +238,7 @@ public class GameSocketController {
     }
 
     // (게임 시작) 게임 시작 메세지 전송
-    @MessageMapping("/game/start")
+    @MessageMapping("/api/v1/game/start")
     public void sendGameStartMessage(GameRoomStatus game) {
         sendMessage(game.gameCode, new GameResponseDto("startGame", "start"));
     }
