@@ -63,10 +63,13 @@ const GamePage = () => {
       setGame(responseGame);
       setGameUserList(gameUserList);
       getChannelInfo(responseGame?.channelCode);
+
       const foundUser: GameUser = gameUserList.find((gUser) => {
         return gUser.userId == user.userId;
       });
+
       console.log('foundUser', foundUser);
+
       setGameUser(foundUser);
     } catch (error) {
       console.error(error);
@@ -324,7 +327,7 @@ const GamePage = () => {
       return;
     }
     // 모두 레디가 되있는지?
-    const destination = '/ws/pub//api/v1/game/start';
+    const destination = '/ws/pub/api/v1/game/start';
     const data = {
       gameCode: game.code,
     };
@@ -342,13 +345,12 @@ const GamePage = () => {
       setBtnCurrentActivate(false);
     }, 800);
   };
-  const postStart = () => {
+  const postStart = async () => {
     try {
       if (gameUser?.isHost) {
-        GameApi.startGame(game.code);
+        console.log('post start', gameUser);
+        const response = await GameApi.startGame(game.code);
         setIsStart(true);
-      } else {
-        console.log(gameUser);
       }
     } catch (error) {
       console.error(error);
