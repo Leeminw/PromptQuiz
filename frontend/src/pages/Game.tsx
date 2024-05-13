@@ -100,8 +100,8 @@ const GamePage = () => {
   //  문제를 받았는지 ?
   // false, , timer로받았을때>> 현재게임상태 ' '
   useEffect(() => {
-    enterGameRoom();
-    getGameData();
+    // enterGameRoom();
+    // getGameData();
     // 채팅 입력 바깥 클릭 시 채팅창 닫기
     // 클릭 & 키다운 이벤트 추가
     document.addEventListener('click', handleOutsideClick);
@@ -492,6 +492,9 @@ const GamePage = () => {
               )}
               <div className={`w-full h-full bg-cover bg-center`}>
                 <img src={imageUrl} alt="" />
+                <div className={`w-full h-full bg-blue-200`}>
+                  
+                </div>
               </div>
             </div>
           </div>
@@ -508,7 +511,10 @@ const GamePage = () => {
             )
         )}
         {Array.from({ length: 12 - gameUserList.length }, (_, index) => (
-          <div className="w-full h-full border-custom-mint bg-white/50" key={index}></div>
+          <div
+            className="w-full h-full border-custom-mint bg-gray-200/70 backdrop-blur-sm"
+            key={index}
+          ></div>
         ))}
       </div>
       {/* 광고, 채팅창, 게임 설정 */}
