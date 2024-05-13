@@ -46,8 +46,9 @@ const GamePage = () => {
   const [imageUrl, setImageUrl] = useState<string>('');
   const [multipleChoice, setMultipleChoice] = useState<SelectQuiz[] | null>(null);
   const [gameUser, setGameUser] = useState<GameUser | null>(null);
-  //  문제를 받았는지 ?
-  // false, , timer로받았을때>> 현재게임상태 ' '
+  const [quizType, setQuizType] = useState<number>(0);
+  const [choosedButton, setChoosedButton] = useState<boolean[]>([false, false, false, false]);
+  //문제 틀렸을때 틀린거 표기
 
   const getGameData = async () => {
     const response = await GameApi.getGame(roomCode);
@@ -58,10 +59,10 @@ const GamePage = () => {
     setGame(responseGame);
     setGameUserList(gameUserList);
     getChannelInfo(responseGame?.channelCode);
-    
+
     const foundUser: GameUser = gameUserList.find((gameUser) => {
-      return gameUser.userId == user.userId
-    })
+      return gameUser.userId == user.userId;
+    });
     setGameUser(foundUser);
     // setMaxRound(responseGame.maxRounds);
     // enterGame();
@@ -77,7 +78,7 @@ const GamePage = () => {
   const getChannelInfo = async (code: string) => {
     try {
       const response = await LobbyApi.getChannelInfo(code);
-      console.log('channel', response);
+      // console.log('channel', response);
       setChannelInfo(response.data);
     } catch (error) {
       console.error(error);
@@ -117,10 +118,11 @@ const GamePage = () => {
     try {
       const response = await GameApi.getRoundGame(gameCode);
       const quiz: ReiceveQuiz = response.data;
+      setQuizType(quiz.quizType);
       // 객관식 퀴즈
       if (quiz.quizType == 1) {
         const data: SelectQuiz[] = quiz.data as SelectQuiz[];
-        console.log(data);
+        // console.log(data);
         // 이미지 세팅
         data.forEach((element) => {
           if (element.isAnswer) {
@@ -129,6 +131,8 @@ const GamePage = () => {
         });
         // 보기 구성
         setMultipleChoice(data);
+        // choosed button 초기화
+        setChoosedButton([false, false, false, false]);
       } else if (quiz.quizType == 2) {
         const data: SelectQuiz[] = quiz.data as SelectQuiz[];
         console.log(data);
@@ -204,12 +208,11 @@ const GamePage = () => {
   };
   const gameController = async (recieve: RecieveData) => {
     if (recieve.tag === 'startGame') {
-      console.log('game start!! '  , recieve)
+      console.log('game start!! ', recieve);
       handleGamestart();
-    }
-    else if (recieve.tag === 'chat') {
+    } else if (recieve.tag === 'chat') {
       const data: GameChatRecieve = recieve.data as GameChatRecieve;
-      
+
       setChat((prevItems) => [...prevItems, data]);
       setMessageMap((prevMap) => {
         const updatedMap = new Map(prevMap);
@@ -231,7 +234,7 @@ const GamePage = () => {
       const data: bigint = recieve.data as bigint;
       console.log('wrong Signal', data);
       if (data === user.userId) {
-        console.log('난 틀렸어..');
+        alert('난 틀렸어..');
       }
     } else if (recieve.tag === 'similarity') {
       console.log(recieve.data);
@@ -289,7 +292,19 @@ const GamePage = () => {
     publish(destination, gameChat);
     chatInput.current.value = '';
   };
-
+  const publishAnswer = (answer: number) => {
+    // console.log('recieve', answer);
+    const destination = '/ws/pub/game/chat/send';
+    const gameChat: GameChat = {
+      userId: user.userId,
+      nickname: user.nickName,
+      uuid: game.code,
+      gameCode: game.code,
+      round: round,
+      content: String(answer),
+    };
+    publish(destination, gameChat);
+  };
   const publishStart = async () => {
     if (!gameUser.isHost) {
       // console.log("호스트가 아님;;")
@@ -298,12 +313,11 @@ const GamePage = () => {
     // 모두 레디가 되있는지?
     const destination = '/ws/pub/api/v1/game/start';
     const data = {
-      gameCode : game.code
-    }
-    publish(destination, data)
+      gameCode: game.code,
+    };
+    publish(destination, data);
     // 소켓으로 start 전송
     // 받으면 >> response 보내느걸로 하면안되나..?
-    
   };
 
   // 버튼 제어
@@ -369,8 +383,6 @@ const GamePage = () => {
   //     return disable;
   //   });
   // };
-
-
 
   // 초대코드 발송
   const inviteUser = () => {
@@ -456,19 +468,32 @@ const GamePage = () => {
         {/* 문제 화면, 타이머 */}
         <div className="w-full grow flex flex-col row-span-6 col-span-3 px-4">
           <div className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint border relative overflow-hidden flex">
-            <div className="w-full h-full rounded-full -translate-x-[50%] transition-transform duration-1000 bg-mint absolute"></div>
+            {roundState === 'ongoing' ? (
+              <div
+                className={`w-full h-full rounded-full translate-x-[${(time / game.timeLimit) * 100}%] transition-transform duration-1000 bg-mint absolute`}
+              ></div>
+            ) : (
+              <div
+                className={`w-full h-full rounded-full translate-x-[0%] transition-transform duration-1000 bg-mint absolute`}
+              ></div>
+            )}
           </div>
           <div className="border-custom- w-full h-full flex items-center justify-center relative">
-            <div className="w-16 h-7 absolute top-2 left-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
-              {round} / {maxRound}
-            </div>
             <div className="border-custom- w-full h-full flex items-center justify-center relative">
-              <div className="w-16 h-7 absolute top-2 left-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
-                {round} / {maxRound}
-              </div>
-              <div className="w-fit h-7 px-3 absolute top-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
-                {roundState} : {time}
-              </div>
+              {roundState === 'ongoing' ? (
+                <div className="w-16 h-7 absolute top-2 left-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
+                  {round} 라운드
+                </div>
+              ) : (
+                <div></div>
+              )}
+              {roundState === 'ongoing' ? (
+                <div className="w-fit h-7 px-3 absolute top-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
+                  {time}
+                </div>
+              ) : (
+                <div></div>
+              )}
               <div className={`w-full h-full bg-cover bg-center`}>
                 <img src={imageUrl} alt="" />
               </div>
@@ -503,9 +528,24 @@ const GamePage = () => {
         <div className="w-full flex grow flex-col items-center justify-end px-4 mt-1">
           <div className="w-full h-36 mb-2 relative">
             {/* 객관식 선택 */}
-            {/* {isQuiz ? <SelectionGame choiceList={multipleChoice} /> : <div>no game</div>} */}
+            {isQuiz && (quizType & 1) > 0 ? (
+              <SelectionGame
+                choiceList={multipleChoice}
+                onButtonClick={publishAnswer}
+                choosedButton={choosedButton}
+              />
+            ) : (
+              <div></div>
+            )}
+
             {/* 순서 맞추기 */}
-            <SubjectiveGame choiceList={multipleChoice} />
+            {isQuiz && (quizType & 4) > 0 ? (
+              <SubjectiveGame choiceList={multipleChoice} />
+            ) : (
+              <div></div>
+            )}
+
+            {isQuiz && (quizType & 2) > 0 ? <div>SequenceGame</div> : <div></div>}
             {/* <SequenceGame choiceList={multipleChoice} /> */}
           </div>
           {/* 채팅 */}
