@@ -1,8 +1,8 @@
 package com.ssafy.apm.sdw.controller;
 
 import com.ssafy.apm.common.domain.ResponseData;
-import com.ssafy.apm.sdw.dto.DottegiRequestDto;
-import com.ssafy.apm.sdw.dto.DottegiResponseDto;
+import com.ssafy.apm.dottegi.dto.DottegiRequestDto;
+import com.ssafy.apm.dottegi.dto.DottegiResponseDto;
 import com.ssafy.apm.sdw.dto.SdwRequestDto;
 import com.ssafy.apm.sdw.dto.SdwResponseDto;
 import com.ssafy.apm.sdw.service.SdwService;

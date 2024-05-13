@@ -3,7 +3,7 @@ package com.ssafy.apm.sdw.service;
 import com.ssafy.apm.common.service.S3Service;
 import com.ssafy.apm.prompt.domain.Prompt;
 import com.ssafy.apm.prompt.repository.PromptRepository;
-import com.ssafy.apm.sdw.dto.DottegiRequestDto;
+import com.ssafy.apm.dottegi.dto.DottegiRequestDto;
 import com.ssafy.apm.sdw.dto.SdwRequestDto;
 import com.ssafy.apm.sdw.dto.SdwResponseDto;
 import lombok.RequiredArgsConstructor;
