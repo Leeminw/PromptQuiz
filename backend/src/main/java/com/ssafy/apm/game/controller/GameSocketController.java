@@ -1,5 +1,6 @@
 package com.ssafy.apm.game.controller;
 
+import com.ssafy.apm.game.service.BlankSubjectiveService;
 import com.ssafy.apm.gamequiz.domain.GameQuiz;
 import com.ssafy.apm.socket.dto.response.*;
 import com.ssafy.apm.chat.service.ChatService;
@@ -39,11 +40,12 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 public class GameSocketController {
 
     private final ChatService chatService;
-    private final GameAnswerService gameAnswerService;
     private final GameService gameService;
     private final GameQuizService gameQuizService;
     private final GameUserService gameUserService;
+    private final GameAnswerService gameAnswerService;
     private final GameMonitorService gameMonitorService;
+    private final BlankSubjectiveService blankSubjectiveService;
     private final SimpMessagingTemplate template;
 
     private static final int REST_TIME = 3;
@@ -290,6 +292,7 @@ public class GameSocketController {
         } else {
             GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(game.gameCode);
             if (quiz.getType() == BLANKSUBJECTIVE) {
+                quiz = blankSubjectiveService.setInitialSound(quiz);
                 game.initSimilarity(quiz);
             }
         }
