@@ -25,6 +25,8 @@ const Room = ({ roomInfo }: Props) => {
     setGamePassword(event.target.value);
   };
   const passwordCheck = () => {
+    console.log(gamePassword);
+
     if (roomInfo.password === gamePassword) {
       enterRoom();
       // setTimeout(() => {
@@ -37,8 +39,12 @@ const Room = ({ roomInfo }: Props) => {
   const chooseRoom = () => {
     if (roomInfo.password) {
       (document.getElementById(modalId) as HTMLDialogElement).showModal(); // 'my_modal_2'
+      console.log('패스워드 존재하는 방');
+
       return;
     } else {
+      console.log('패스워드 없는 방');
+
       enterRoom();
     }
   };
@@ -62,10 +68,12 @@ const Room = ({ roomInfo }: Props) => {
   return (
     <div
       className="w-full h-20 relative gap-1 border-2 bg-white/80 border-mint rounded-3xl px-5 py-2 cursor-pointer hover:scale-105 hover:bg-white/80 transition ring-mint hover:ring-2"
-      onClick={enterRoom}
+      onClick={chooseRoom}
     >
       <div className="flex items-start">
-        <p className="w-full h-10 font-extrabold line-clamp-2 leading-5 pt-1 text-mint">{roomInfo.title}</p>
+        <p className="w-full h-10 font-extrabold line-clamp-2 leading-5 pt-1 text-mint">
+          {roomInfo.title}
+        </p>
         {roomInfo.password ? <IoIosLock className="text-gray-500 min-w-6 min-h-6" /> : ''}
       </div>
       <div className="flex items-end font-bold text-mint">
