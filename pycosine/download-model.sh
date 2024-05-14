@@ -14,13 +14,13 @@ MODEL_URL="https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.ko.300.vec.g
 #MODEL_URL="https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.ko.300.bin.gz"
 
 # models 디렉토리 생성 (없을 경우)
-sudo mkdir -p $MODEL_DIR
+mkdir -p $MODEL_DIR
 
 # 모델 파일 다운로드 및 압축 해제
 if [ ! -f $MODEL_PATH ]; then
     if [ ! -f $MODEL_GZ_PATH ]; then
         echo "모델 압축 파일을 다운로드 중..."
-        sudo wget -O $MODEL_GZ_PATH $MODEL_URL
+        wget -O $MODEL_GZ_PATH $MODEL_URL
     else
         echo "압축 파일이 이미 다운로드되어 있습니다."
     fi
