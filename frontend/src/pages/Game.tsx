@@ -133,6 +133,8 @@ const GamePage = () => {
   }, [game]);
   const getGameDetail = async (gameCode: string) => {
     try {
+      const userResponse = await GameApi.getUserList(roomCode);
+      setGameUserList(userResponse.data);
       const response = await GameApi.getRoundGame(gameCode);
       const quiz: ReiceveQuiz = response.data;
       setQuizType(quiz.quizType);
@@ -142,12 +144,14 @@ const GamePage = () => {
         // console.log(data);
         // 이미지 세팅
         data.forEach((element) => {
+          console.log(element);
           if (element.isAnswer) {
             setImageUrl(element.url);
           }
         });
-        // 보기 구성
-        setMultipleChoice(data);
+        // 보기 구성\
+        const sortedData = data.sort((a: SelectQuiz, b: SelectQuiz) => a.number - b.number);
+        setMultipleChoice(sortedData);
         // choosed button 초기화
         setChoosedButton([false, false, false, false]);
       } else if (quiz.quizType == 2) {
@@ -272,18 +276,17 @@ const GamePage = () => {
         setIsQuiz(true);
       } else if (data.type === 'end') {
         setIsQuiz(false);
+
         const roundInfo = data.content;
+        // 라운드 결과
+        // {
+        //     gameCode, isCorrect, score, userId
+        // }
         const roundResult = roundInfo.roundList;
-        const updateUserList = [...gameUserList];
-        for (const user of updateUserList) {
-          for (const result of roundResult) {
-            if (user.userId === result.userId) {
-              user.score = result.score;
-              break; // 같은 userId를 찾았으므로 반복문 종료
-            }
-          }
-        }
-        setGameUserList(updateUserList);
+
+        const userResponse = await GameApi.getUserList(roomCode);
+        setGameUserList(userResponse.data);
+        // setGameUserList(updateUserList);
       } else if (data.type === 'result') {
         setRoundState('result');
         const roundInfo = data.content;
@@ -357,9 +360,9 @@ const GamePage = () => {
   };
   const postStart = async () => {
     try {
+      setIsStart(true);
       if (gameUser?.isHost) {
         const response = await GameApi.startGame(game.code);
-        setIsStart(true);
       }
     } catch (error) {
       console.error(error);
@@ -480,7 +483,7 @@ const GamePage = () => {
         {/* 문제 화면, 타이머 */}
         <div className="w-full grow flex flex-col row-span-6 col-span-3 px-4">
           <div className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint border relative overflow-hidden flex">
-            {roundState === 'ongoing' ? (
+            {isQuiz ? (
               <div
                 className="w-full h-full rounded-full bg-mint absolute"
                 style={progressStyle}
@@ -509,6 +512,7 @@ const GamePage = () => {
               )}
               <div className={`w-full h-full bg-cover bg-center relative`}>
                 <img src={imageUrl} alt="" />
+
                 <QuizCorrect nickname={quizCorrectUser} />
               </div>
             </div>
