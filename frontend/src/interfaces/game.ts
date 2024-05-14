@@ -139,3 +139,8 @@ interface Similarity{
     value:string,
     rate :number
 }
+
+interface QuizCorrectUser {
+    nickname:string,
+    
+}
