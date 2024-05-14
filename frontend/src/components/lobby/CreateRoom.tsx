@@ -5,6 +5,7 @@ import { LobbyApi } from '../../hooks/axios-lobby';
 import instance from '../../hooks/axios-instance';
 import { useNavigate } from 'react-router-dom';
 import useUserStore from '../../stores/userStore';
+import CustomButton from '../ui/CustomButton';
 interface Props {
   channelCode: string;
 }
@@ -82,6 +83,7 @@ const CreateRoom = ({ channelCode }: Props) => {
       alert('모드를 선택해주세요');
       return;
     }
+
     // console.log('방 생성 정보 받음');
     // // console.log('사용자id:' + user.userId);
     // // console.log('채널id:' + channelCode);
@@ -123,6 +125,14 @@ const CreateRoom = ({ channelCode }: Props) => {
     } catch (error) {
       console.error(error);
     }
+  };
+  // 버튼 제어
+  const [btnCurrentActivate, setBtnCurrentActivate] = useState<boolean>(false);
+  const activateBtnFunc = async () => {
+    setBtnCurrentActivate(true);
+    await setTimeout(() => {
+      setBtnCurrentActivate(false);
+    }, 800);
   };
   return (
     // className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 "
@@ -397,12 +407,18 @@ const CreateRoom = ({ channelCode }: Props) => {
               </div>
             </div>
             <div className="absolute bottom-6 right-6 flex gap-4 w-full justify-end">
-              <button
-                onClick={createRoom}
-                className="bg-mint text-white btn-mint px-6 hover:brightness-110"
+              <CustomButton
+                className="bg-mint text-white btn-mint px-6"
+                btnCurrentActivate={btnCurrentActivate}
+                onClick={() => {
+                  activateBtnFunc();
+                  setTimeout(() => {
+                    createRoom();
+                  }, 500);
+                }}
               >
                 생성
-              </button>
+              </CustomButton>
               <form method="dialog">
                 <button className="bg-[#999999] text-white border-custom-gray px-6 font-bold hover:brightness-110">
                   취소
