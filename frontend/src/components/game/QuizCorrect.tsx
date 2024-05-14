@@ -16,6 +16,7 @@ const QuizCorrect = ({ correctUser }: QuizCorrectProp) => {
         correctUser?.nickname !== ''
       ) {
         console.log('HI');
+
         setShow(true);
         setStartShow(true);
         setTimeout(() => {
