@@ -12,16 +12,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 @Repository
 public interface GameUserRepository extends JpaRepository<GameUser, String> {
 
-    Optional<GameUser> findByGameCodeAndUserId(String gameCode, Long UserId);
-
-    Optional<GameUser> findByUserId(Long userId);
-
-    Optional<List<GameUser>> findAllByGameCode(String gameCode);
-
     Optional<GameUser> findByCode(String code);
-
-    Boolean existsByUserIdAndGameCode(Long userId, String gameCode);
-
+    Optional<GameUser> findByUserId(Long userId);
     Optional<GameUser> findByUserIdAndGameCode(Long userId, String gameCode);
+    Optional<GameUser> findByGameCodeAndUserId(String gameCode, Long UserId);
+    ///////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////
+    Optional<List<GameUser>> findAllByGameCode(String gameCode);
+    Optional<List<GameUser>> findAllByUserId(Long userId);
+    ///////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////
+    Boolean existsByUserIdAndGameCode(Long userId, String gameCode);
+    Boolean existsByUserId(Long userId);
 
 }
