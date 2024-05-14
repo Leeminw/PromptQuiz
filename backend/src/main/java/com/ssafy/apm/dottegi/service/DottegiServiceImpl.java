@@ -1,15 +1,19 @@
 package com.ssafy.apm.dottegi.service;
 
+import com.ssafy.apm.common.dto.ImageResponseDto;
+import com.ssafy.apm.common.service.ImageService;
+import com.ssafy.apm.common.util.GoogleTranslator;
+import com.ssafy.apm.sdw.dto.SdwRequestDto;
+import com.ssafy.apm.sdw.dto.SdwResponseDto;
+import com.ssafy.apm.sdw.service.SdwService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -17,12 +21,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DottegiServiceImpl implements DottegiService {
 
     private final SimpMessagingTemplate messagingTemplate;
+    private final ImageService imageService;
+    private final SdwService sdwService;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    @Getter
     /* TODO: RDB에 저장해놨다가, 접속하면 Latest Payload를 돌려주는 것으로 대체필요 */
+    @Getter
     private volatile Map<String, Object> latestPayload;
-
+    private final ConcurrentHashMap<String, Integer> messageCountStyle = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Integer> messageCountSubject = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Integer> messageCountObject = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Integer> messageCountVerb = new ConcurrentHashMap<>();
@@ -30,6 +36,12 @@ public class DottegiServiceImpl implements DottegiService {
     private final ConcurrentHashMap<String, Integer> messageCountObjAdjective = new ConcurrentHashMap<>();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    @Override
+    public void processMessageStyle(String message) {
+        messageCountStyle.merge(message, 1, Integer::sum);
+        sendTop10Updates(messageCountStyle, "/dottegi/style");
+    }
+
     @Override
     public void processMessageSubject(String message) {
         messageCountSubject.merge(message, 1, Integer::sum);
@@ -74,8 +86,33 @@ public class DottegiServiceImpl implements DottegiService {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    @Scheduled(fixedRate = 300000)
-    public void sendTopMessageImage() {
+    private long timerStart = System.currentTimeMillis();
+//    private final long timerDuration = 10000;
+    private final long timerDuration = 300000;
+
+    @Scheduled(fixedRate = 1000)
+    public void broadcastRemainingTime() throws IOException {
+        long now = System.currentTimeMillis();
+        long elapsed = now - timerStart;
+        long remainingMillis = timerDuration - elapsed;
+
+        if (remainingMillis <= 0) {
+            sendTopMessageImage();
+            timerStart = now;
+            remainingMillis = timerDuration;
+        }
+
+        long remainingSeconds = remainingMillis / 1000;
+        String remainingTime = String.format("%02d:%02d",
+                remainingSeconds / 60,
+                remainingSeconds % 60);
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("remainingTime", remainingTime);
+        messagingTemplate.convertAndSend("/dottegi", payload);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public void sendTopMessageImage() throws IOException, IOException {
         /* DONE: 각각의 품사의 Top 10 문자열들을 불러온다.
             Top 1 단어들만 뽑아 합쳐 하나의 문자열을 만든다.
             Top 1 부터 10까지 각각의 품사들을 리스트에 담는다.
@@ -89,11 +126,30 @@ public class DottegiServiceImpl implements DottegiService {
         String topObjAdjective = getTopWord(messageCountObjAdjective);
 
         // Combine the top words into a single sentence
-        String combinedSentence = String.format("%s %s %s %s %s.", topSubject, topVerb, topObject, topSubAdjective, topObjAdjective);
+        String combinedSentence = String.format("%s %s이(가) %s %s을(를) %s하(고) 있다.",
+                topSubAdjective, topSubject, topObjAdjective, topObject, topVerb);
+        String prompt = GoogleTranslator.translate("ko", "en", combinedSentence);
 
-        /* TODO: 영문 번역하여 Stable-Diffusion 에 요청하여 Base64 Encoded Image 받아옴
-        *   RDB에 저장 or 파일로 저장하여 불러와서 Base64 인코딩 하여 전송하는 방식 */
-        String base64Image = "data:image/png;base64,{base64Image}";
+        Random random = new Random();
+        String[] styles = {"Anime", "Cartoon", "Realistic"};
+        String style = messageCountStyle.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElseGet(() -> styles[random.nextInt(styles.length)]);
+
+        /* DONE: 영문 번역하여 Stable-Diffusion 에 요청하여 Base64 Encoded Image 받아옴 */
+        SdwRequestDto sdwRequestDto = new SdwRequestDto();
+        switch (style) {
+            case "Anime" -> sdwRequestDto.updateAnimePrompt(prompt);
+            case "Cartoon" -> sdwRequestDto.updateDisneyPrompt(prompt);
+            case "Realistic" -> sdwRequestDto.updateRealisticPrompt(prompt);
+        }
+        SdwResponseDto sdwResponseDto = sdwService.requestStableDiffusion(sdwRequestDto);
+        String base64Image = sdwResponseDto.getImages().get(0);
+
+        /* DONE: RDB에 저장 or 파일로 저장하여 불러와서 Base64 인코딩 하여 전송하는 방식 */
+        ImageResponseDto imageResponseDto = imageService.saveBase64Image(combinedSentence, base64Image);
 
         // Collect top 10 words from each category into lists
         List<Map.Entry<String, Integer>> top10Subjects = getTop10Entries(messageCountSubject);
@@ -103,6 +159,7 @@ public class DottegiServiceImpl implements DottegiService {
         List<Map.Entry<String, Integer>> top10ObjAdjectives = getTop10Entries(messageCountObjAdjective);
 
         // Clear the maps
+        messageCountStyle.clear();
         messageCountSubject.clear();
         messageCountObject.clear();
         messageCountVerb.clear();
@@ -111,7 +168,8 @@ public class DottegiServiceImpl implements DottegiService {
 
         // Send the combined sentence and lists to subscribers
         Map<String, Object> payload = new HashMap<>();
-        payload.put("image", base64Image);
+        payload.put("style", style);
+        payload.put("image", imageResponseDto.getUrl());
         payload.put("sentence", combinedSentence);
         payload.put("topSubjects", top10Subjects);
         payload.put("topObjects", top10Objects);
