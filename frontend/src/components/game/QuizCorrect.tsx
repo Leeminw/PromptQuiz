@@ -7,7 +7,6 @@ const QuizCorrect = ({ nickname }: { nickname: string }) => {
   customSetTimeout(
     () => {
       if (nickname !== null && nickname !== undefined && nickname !== '') {
-        console.log('HI');
         setShow(true);
         setStartShow(true);
         setTimeout(() => {
