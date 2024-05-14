@@ -498,6 +498,9 @@ const GamePage = () => {
               )}
               <div className={`w-full h-full bg-cover bg-center`}>
                 <img src={imageUrl} alt="" />
+                <div className={`w-full h-full bg-blue-200`}>
+                  
+                </div>
               </div>
             </div>
           </div>
@@ -514,7 +517,10 @@ const GamePage = () => {
             )
         )}
         {Array.from({ length: 12 - gameUserList.length }, (_, index) => (
-          <div className="w-full h-full border-custom-mint bg-white/50" key={index}></div>
+          <div
+            className="w-full h-full border-custom-mint bg-gray-200/70 backdrop-blur-sm"
+            key={index}
+          ></div>
         ))}
       </div>
       {/* 광고, 채팅창, 게임 설정 */}

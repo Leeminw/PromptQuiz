@@ -39,7 +39,7 @@ const SelectionGame = ({ choiceList, onButtonClick, choosedButton }: SelectionGa
   };
   if (!choiceList) return <div></div>;
   return (
-    <div className="absolute w-full h-full grid grid-rows-2 grid-cols-2 gap-3 text-sm">
+    <div className="absolute w-full h-full grid grid-rows-2 grid-cols-2 gap-3 text-xs">
       {choiceList.map((item, index) => (
         <button
           className={choosedButton[index] ? choosedButtonClass[index] : buttonClass[index]}
