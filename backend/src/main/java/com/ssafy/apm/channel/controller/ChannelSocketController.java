@@ -1,8 +1,8 @@
 package com.ssafy.apm.channel.controller;
 
-import com.ssafy.apm.channel.dto.response.ChannelChatResponseDto;
 import com.ssafy.apm.chat.service.ChatService;
 import com.ssafy.apm.channel.dto.request.ChannelChatRequestDto;
+import com.ssafy.apm.channel.dto.response.ChannelChatResponseDto;
 
 import lombok.RequiredArgsConstructor;
 

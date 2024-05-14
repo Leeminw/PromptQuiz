@@ -1,6 +1,5 @@
 package com.ssafy.apm.game.controller;
 
-import com.ssafy.apm.game.service.BlankSubjectiveService;
 import com.ssafy.apm.socket.dto.response.*;
 import com.ssafy.apm.chat.service.ChatService;
 import com.ssafy.apm.game.service.GameService;
@@ -10,6 +9,7 @@ import com.ssafy.apm.game.service.GameAnswerService;
 import com.ssafy.apm.socket.dto.request.GameReadyDto;
 import com.ssafy.apm.gameuser.service.GameUserService;
 import com.ssafy.apm.gamequiz.service.GameQuizService;
+import com.ssafy.apm.game.service.BlankSubjectiveService;
 import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.socket.dto.request.GameChatRequestDto;
 import com.ssafy.apm.socket.dto.request.EnterUserMessageDto;
@@ -152,10 +152,8 @@ public class GameSocketController {
     @MessageMapping("/game/chat/send")
     public void sendGameChat(@Payload GameChatRequestDto chatMessage) {
         GameRoomStatus game = gameOngoingMap.get(chatMessage.getGameCode());
-
         if (game != null && chatMessage.getRound().equals(game.round)) {
             GameAnswerCheck check = gameAnswerService.checkAnswer(chatMessage, game.playerSimilarityMap.keySet());
-
             switch (check.getType()) {
                 case MULTIPLECHOICE:
                 case BLANKCHOICE:
@@ -169,12 +167,10 @@ public class GameSocketController {
                     break;
                 case BLANKSUBJECTIVE:
                     game.updateSimilarityRanking(chatMessage.getContent(), check.getSimilarity());
-
                     if (game.similarityGameEnd()) {
                         setEndGame(game, chatMessage.getUserId());
                     } else {
-                        GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(chatMessage.getGameCode());
-                        sendMessage(chatMessage.getUuid(), new GameResponseDto("similarity", new GameBlankResponseDto(game, quiz.getUrl())));
+                        sendMessage(chatMessage.getUuid(), new GameResponseDto("similarity", new GameBlankResponseDto(game, "")));
                     }
                     break;
             }
@@ -303,7 +299,14 @@ public class GameSocketController {
 
     // (게임 종료) 전체 게임 종료 이후 사용자 접수 업데이트
     public void setGameResult(GameRoomStatus game) {
-        gameService.updateUserScore(game.gameCode);
+        try {
+            gameService.updateUserScore(game.gameCode);
+            gameService.resetGame(game.gameCode);
+            gameQuizService.deleteGameQuizzesByGameCode(game.gameCode);
+            gameUserService.resetGameUserScore(game.gameCode);
+        } catch (Exception e) {
+            log.debug(e.getMessage());
+        }
         gameOngoingMap.remove(game.gameCode);
         gameEndMap.remove(game.gameCode);
         gameReadyMap.remove(game.gameCode);
