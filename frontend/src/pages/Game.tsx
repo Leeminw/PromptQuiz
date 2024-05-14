@@ -510,10 +510,9 @@ const GamePage = () => {
               ) : (
                 <div></div>
               )}
+              <QuizCorrect nickname={quizCorrectUser} />
               <div className={`w-full h-full bg-cover bg-center relative`}>
                 <img src={imageUrl} alt="" />
-
-                <QuizCorrect nickname={quizCorrectUser} />
               </div>
             </div>
           </div>
@@ -531,7 +530,7 @@ const GamePage = () => {
         )}
         {Array.from({ length: 12 - gameUserList.length }, (_, index) => (
           <div
-            className="w-full h-full border-custom-mint bg-gray-200/70 backdrop-blur-sm"
+            className="w-full h-full border-custom-mint bg-gray-200/70 backdrop-blur-sm z-0"
             key={index}
           ></div>
         ))}
@@ -567,7 +566,7 @@ const GamePage = () => {
             )}
 
             {isQuiz && (quizType & 2) > 0 ? <div>SequenceGame</div> : <div></div>}
-            {/* <SequenceGame choiceList={multipleChoice} /> */}
+            {/* <SequenceGame /> */}
           </div>
           {/* 채팅 */}
           <div className="w-full">
