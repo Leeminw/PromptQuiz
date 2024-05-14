@@ -143,11 +143,6 @@ interface Similarity{
     rate :number
 }
 
-interface QuizCorrectUser {
-    nickname:string,
-    
-}
-
 interface CorrectUser {
     round: number,
     nickname: string

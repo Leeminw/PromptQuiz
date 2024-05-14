@@ -46,16 +46,16 @@ instance.interceptors.response.use(
             }
             catch (_error) {
                 // 로그아웃 
-                // localStorage.removeItem("accessToken")
+                window.location.href="/"
                 // localStorage.removeItem("refreshToken")
-                // useUserStore.getState().clearUser();
                 return Promise.reject(_error);
             }
         }
+        else if (error.response.status >= 500 && error.response.status < 600){
+            window.location.href="/"
+        }
         else{
-            // localStorage.removeItem("accessToken")
-            // localStorage.removeItem("refreshToken")
-            // useUserStore.getState().clearUser();
+            
             return Promise.reject(error);
 
         }
