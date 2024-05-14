@@ -566,7 +566,7 @@ const GamePage = () => {
             )}
 
             {isQuiz && (quizType & 2) > 0 ? <div>SequenceGame</div> : <div></div>}
-            <SequenceGame />
+            {/* <SequenceGame /> */}
           </div>
           {/* 채팅 */}
           <div className="w-full">
