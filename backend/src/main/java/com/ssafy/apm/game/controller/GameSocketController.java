@@ -1,6 +1,5 @@
 package com.ssafy.apm.game.controller;
 
-import com.ssafy.apm.game.service.BlankSubjectiveService;
 import com.ssafy.apm.socket.dto.response.*;
 import com.ssafy.apm.chat.service.ChatService;
 import com.ssafy.apm.game.service.GameService;
@@ -10,6 +9,7 @@ import com.ssafy.apm.game.service.GameAnswerService;
 import com.ssafy.apm.socket.dto.request.GameReadyDto;
 import com.ssafy.apm.gameuser.service.GameUserService;
 import com.ssafy.apm.gamequiz.service.GameQuizService;
+import com.ssafy.apm.game.service.BlankSubjectiveService;
 import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.socket.dto.request.GameChatRequestDto;
 import com.ssafy.apm.socket.dto.request.EnterUserMessageDto;
@@ -152,10 +152,10 @@ public class GameSocketController {
     @MessageMapping("/game/chat/send")
     public void sendGameChat(@Payload GameChatRequestDto chatMessage) {
         GameRoomStatus game = gameOngoingMap.get(chatMessage.getGameCode());
-
         if (game != null && chatMessage.getRound().equals(game.round)) {
             GameAnswerCheck check = gameAnswerService.checkAnswer(chatMessage, game.playerSimilarityMap.keySet());
-
+            System.out.println(check.getType());
+            System.out.println(check.getSimilarity());
             switch (check.getType()) {
                 case MULTIPLECHOICE:
                 case BLANKCHOICE:
@@ -169,12 +169,12 @@ public class GameSocketController {
                     break;
                 case BLANKSUBJECTIVE:
                     game.updateSimilarityRanking(chatMessage.getContent(), check.getSimilarity());
-
+                    System.out.println(check.getSimilarity());
+                    System.out.println(chatMessage.getContent());
                     if (game.similarityGameEnd()) {
                         setEndGame(game, chatMessage.getUserId());
                     } else {
-                        GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(chatMessage.getGameCode());
-                        sendMessage(chatMessage.getUuid(), new GameResponseDto("similarity", new GameBlankResponseDto(game, quiz.getUrl())));
+                        sendMessage(chatMessage.getUuid(), new GameResponseDto("similarity", new GameBlankResponseDto(game, "")));
                     }
                     break;
             }
