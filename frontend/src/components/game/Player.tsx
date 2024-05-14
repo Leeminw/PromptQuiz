@@ -31,7 +31,7 @@ const GamePlayer = ({ userInfo, gameChat }: GamePlayerProps) => {
     [gameChat?.createdDate]
   );
   return (
-    <div className="border-custom-mint bg-mint backdrop-blur-sm w-full h-full relative flex items-center">
+    <div className="border-custom-mint bg-mint backdrop-blur-sm w-full h-full relative flex items-center z-0">
       <div
         className={`absolute w-full -translate-y-8 opacity-0 ${startChat && (showChat ? 'opacity-100' : 'animate-chatBubble')}`}
       >
