@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # 모델 파일 경로 설정
 MODEL_DIR="models"
 MODEL_FILE="cc.ko.300.bin"
@@ -24,6 +26,10 @@ if [ ! -f $MODEL_PATH ]; then
     echo "압축을 해제 중..."
     gunzip -f $MODEL_GZ_PATH
     echo "압축 해제 완료."
+
+    echo "다운로드한 압축 파일 삭제 중..."
+    rm -f $MODEL_GZ_PATH
+    echo "압축 파일 삭제 완료."
 else
     echo "모델 파일이 이미 존재합니다."
 fi
