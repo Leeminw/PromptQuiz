@@ -1,9 +1,11 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import customSetTimeout from '../../hooks/CustomSetTimeout';
+import customSetTimeout from '../../hooks/customSetTimeout';
 interface GamePlayerProps {
   // idx: number;
   userInfo: GameUser | null;
   gameChat: GameChatRecieve | null;
+  // correctAnswer: boolean | null;
+  // wrongAnswer: boolean | null;
 }
 // { idx }: GamePlayerProps
 // const GamePlayer = forwardRef((props, ref) => {
@@ -29,7 +31,7 @@ const GamePlayer = ({ userInfo, gameChat }: GamePlayerProps) => {
     [gameChat?.createdDate]
   );
   return (
-    <div className="border-custom-green bg-customGreen w-full h-full relative flex items-center">
+    <div className="border-custom-mint bg-mint backdrop-blur-sm w-full h-full relative flex items-center z-0">
       <div
         className={`absolute w-full -translate-y-8 opacity-0 ${startChat && (showChat ? 'opacity-100' : 'animate-chatBubble')}`}
       >

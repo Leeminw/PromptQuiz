@@ -11,7 +11,7 @@ const GameRoomSetting = ({ gamestart }: GameRoomSettingProps) => {
     console.log('게임이 시작됐나요?', gamestart);
   }, []);
   return (
-    <div className="w-full mt-2 h-16 flex flex-col cursor-default relative">
+    <div className="w-full mt-1 h-16 flex flex-col cursor-default relative">
       <dialog id="modalopen" className="modal">
         <div className="modal-box">
           <h3 className="font-bold text-lg">방 만들기</h3>

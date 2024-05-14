@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Client } from '@stomp/stompjs';
+import { last } from 'lodash';
 
 type JsonItem = {
   key: string;
@@ -7,6 +8,7 @@ type JsonItem = {
 };
 
 const WebSocketTest = () => {
+  const wordClass = ['주어', '목적어', '동사', '주형용사', '목형용사'];
   const [top10Messages1, setTop10Messages1] = useState<JsonItem[]>([]);
   const [top10Messages2, setTop10Messages2] = useState<JsonItem[]>([]);
   const [top10Messages3, setTop10Messages3] = useState<JsonItem[]>([]);
@@ -83,6 +85,12 @@ const WebSocketTest = () => {
     client.activate();
   };
 
+  // 한글 문자 받침 여부 확인
+  const checkLastKoreanCharacter = (word: string) => {
+    const lastCh = word.charCodeAt(word.length - 1);
+    const checkLastCh = (lastCh - 0xac00) % 28;
+    return checkLastCh ? true : false;
+  };
   return (
     <div className="flex flex-col items-center w-full">
       <h1 className="text-2xl font-bold my-4">WebSocket STOMP Multi-Channel Chat</h1>

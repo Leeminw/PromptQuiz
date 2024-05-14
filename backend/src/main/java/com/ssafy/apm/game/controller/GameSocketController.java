@@ -1,6 +1,5 @@
 package com.ssafy.apm.game.controller;
 
-import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.socket.dto.response.*;
 import com.ssafy.apm.chat.service.ChatService;
 import com.ssafy.apm.game.service.GameService;
@@ -10,6 +9,8 @@ import com.ssafy.apm.game.service.GameAnswerService;
 import com.ssafy.apm.socket.dto.request.GameReadyDto;
 import com.ssafy.apm.gameuser.service.GameUserService;
 import com.ssafy.apm.gamequiz.service.GameQuizService;
+import com.ssafy.apm.game.service.BlankSubjectiveService;
+import com.ssafy.apm.game.exception.GameNotFoundException;
 import com.ssafy.apm.socket.dto.request.GameChatRequestDto;
 import com.ssafy.apm.socket.dto.request.EnterUserMessageDto;
 import com.ssafy.apm.gamemonitor.service.GameMonitorService;
@@ -17,6 +18,8 @@ import com.ssafy.apm.gameuser.dto.response.GameUserSimpleResponseDto;
 import com.ssafy.apm.gamequiz.dto.response.GameQuizDetailResponseDto;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
@@ -36,11 +39,12 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 public class GameSocketController {
 
     private final ChatService chatService;
-    private final GameAnswerService gameAnswerService;
     private final GameService gameService;
     private final GameQuizService gameQuizService;
     private final GameUserService gameUserService;
+    private final GameAnswerService gameAnswerService;
     private final GameMonitorService gameMonitorService;
+    private final BlankSubjectiveService blankSubjectiveService;
     private final SimpMessagingTemplate template;
 
     private static final int REST_TIME = 3;
@@ -65,25 +69,30 @@ public class GameSocketController {
         List<GameRoomStatus> list = new ArrayList<>(gameOngoingMap.values());
         for (GameRoomStatus game : list) {
             if (!gameOngoingMap.containsKey(game.gameCode) || game.round < 0) continue;
-
-            if (game.time <= 0) {
-                if (game.time == 0) {
-                    try{
-                        sendRoundEndMessage(game);
+            try {
+                if (game.time <= 0) {
+                    if (game.time == 0) {
+                        sendRoundEndMessage(game, -1L);
                         setRoundToEnd(game);
-                    }catch (GameNotFoundException e){
-                        gameOngoingMap.remove(game.gameCode);
-                        sendGameResultMessage(game);
-                        continue;
+                    }
+                    gameEndMap.put(game.gameCode, game);
+                    gameOngoingMap.remove(game.gameCode);
+                    game.time = REST_TIME;
+                } else {
+                    if (game.time == 40 && gameQuizService.getCurrentGameQuizTypeByGameCode(game.gameCode) == BLANKSUBJECTIVE) {
+                        GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(game.gameCode);
+                        quiz = blankSubjectiveService.setInitialSound(quiz);
+                        game.addInitialSound(quiz);
+                        sendMessage(game.gameCode, new GameResponseDto("similarity", new GameBlankResponseDto(game, quiz.getUrl())));
                     }
 
+                    sendTimerMessage(game, "ongoing");
+                    game.time--;
                 }
-                gameEndMap.put(game.gameCode, game);
+
+            } catch (GameNotFoundException e) {
                 gameOngoingMap.remove(game.gameCode);
-                game.time = REST_TIME;
-            } else {
-                sendTimerMessage(game, "ongoing");
-                game.time--;
+                sendGameResultMessage(game);
             }
         }
     }
@@ -143,26 +152,25 @@ public class GameSocketController {
     @MessageMapping("/game/chat/send")
     public void sendGameChat(@Payload GameChatRequestDto chatMessage) {
         GameRoomStatus game = gameOngoingMap.get(chatMessage.getGameCode());
-
         if (game != null && chatMessage.getRound().equals(game.round)) {
             GameAnswerCheck check = gameAnswerService.checkAnswer(chatMessage, game.playerSimilarityMap.keySet());
-
             switch (check.getType()) {
                 case MULTIPLECHOICE:
                 case BLANKCHOICE:
-                    if (check.getResult()) {
-                        setEndGame(game);
-                    } else {
-                        sendMessage(chatMessage.getUuid(), new GameResponseDto("wrongSignal", chatMessage.getUserId()));
+                    if (choiceCheck(chatMessage.getContent())) {
+                        if (check.getResult()) {
+                            setEndGame(game, chatMessage.getUserId());
+                        } else {
+                            sendMessage(chatMessage.getUuid(), new GameResponseDto("wrongSignal", new GameWorndAnswerResponseDto(chatMessage.getUserId(), chatMessage.getContent())));
+                        }
                     }
                     break;
                 case BLANKSUBJECTIVE:
                     game.updateSimilarityRanking(chatMessage.getContent(), check.getSimilarity());
-
                     if (game.similarityGameEnd()) {
-                        setEndGame(game);
+                        setEndGame(game, chatMessage.getUserId());
                     } else {
-                        sendMessage(chatMessage.getUuid(), new GameResponseDto("similarity", new GameBlankResponseDto(game)));
+                        sendMessage(chatMessage.getUuid(), new GameResponseDto("similarity", new GameBlankResponseDto(game, "")));
                     }
                     break;
             }
@@ -172,9 +180,9 @@ public class GameSocketController {
         sendMessage(chat.getUuid(), new GameResponseDto("chat", chat));
     }
 
-    public void setEndGame(GameRoomStatus game) {
+    public void setEndGame(GameRoomStatus game, Long userId) {
         game.time = -game.maxTime;
-        sendRoundEndMessage(game);
+        sendRoundEndMessage(game, userId);
         setRoundToEnd(game);
     }
 
@@ -200,10 +208,10 @@ public class GameSocketController {
                     sendRoundReadyMessage(newGame);
                     gameReadyMap.put(ready.getGameCode(), newGame);
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
 
                 log.debug("Start Error: " + e.getMessage());
-                if(newGame != null){
+                if (newGame != null) {
                     gameReadyMap.remove(newGame.gameCode);
                 }
             }
@@ -214,18 +222,18 @@ public class GameSocketController {
 
     @GetMapping("/api/v1/round/quiz/{gameCode}")
     public ResponseEntity<?> getRoundQuiz(@PathVariable String gameCode) {
-        Integer type = gameQuizService.getCurrentGameQuizTypeByGameCode(gameCode);
+        GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(gameCode);
         ResponseData<Object> responseData = ResponseData.success();
 
-        switch (type) {
+        switch (quiz.getType()) {
             case MULTIPLECHOICE, BLANKCHOICE:
                 List<GameQuizDetailResponseDto> quizList = gameQuizService.findCurrentDetailGameQuizzesByGameCode(gameCode);
-                responseData = ResponseData.success(new RoundQuizResponseDto(type,quizList));
+                responseData = ResponseData.success(new RoundQuizResponseDto(quiz.getType(), quizList));
                 break;
             case BLANKSUBJECTIVE:
                 GameRoomStatus game = gameOngoingMap.get(gameCode);
-                GameBlankResponseDto responseDto = new GameBlankResponseDto(game);
-                responseData = ResponseData.success(new RoundQuizResponseDto(type,responseDto));
+                GameBlankResponseDto responseDto = new GameBlankResponseDto(game, quiz.getUrl());
+                responseData = ResponseData.success(new RoundQuizResponseDto(quiz.getType(), responseDto));
                 break;
         }
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
@@ -250,16 +258,18 @@ public class GameSocketController {
     }
 
     // (라운드 종료) 라운드 종료 메세지 전송
-    public void sendRoundEndMessage(GameRoomStatus game) {
+    public void sendRoundEndMessage(GameRoomStatus game, Long userId) {
         List<GameUserSimpleResponseDto> list = gameUserService.findSimpleGameUsersByGameCode(game.gameCode);
-        GameSystemContentDto responseDto = new GameSystemContentDto(game.round, list);
+        List<GameRoundResultResponseDto> response = GameRoundResultResponseDto.build(list, userId);
+        GameSystemContentDto responseDto = new GameSystemContentDto(game.round, response);
         sendMessage(game.gameCode, new GameResponseDto("game", GameSystemResponseDto.end(responseDto)));
     }
 
     // (게임 종료) 게임 종료 메세지 전송
     public void sendGameResultMessage(GameRoomStatus game) {
         List<GameUserSimpleResponseDto> list = gameUserService.findSimpleGameUsersByGameCode(game.gameCode);
-        GameSystemContentDto responseDto = new GameSystemContentDto(list);
+        List<GameRoundResultResponseDto> response = GameRoundResultResponseDto.build(list, -1L);
+        GameSystemContentDto responseDto = new GameSystemContentDto(response);
         sendMessage(game.gameCode, new GameResponseDto("game", GameSystemResponseDto.result(responseDto)));
     }
 
@@ -279,7 +289,7 @@ public class GameSocketController {
         if (game.round < 0) {
             setGameResult(game);
             sendGameResultMessage(game);
-        }else{
+        } else {
             GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(game.gameCode);
             if (quiz.getType() == BLANKSUBJECTIVE) {
                 game.initSimilarity(quiz);
@@ -289,9 +299,23 @@ public class GameSocketController {
 
     // (게임 종료) 전체 게임 종료 이후 사용자 접수 업데이트
     public void setGameResult(GameRoomStatus game) {
-        gameService.updateUserScore(game.gameCode);
+        try {
+            gameService.updateUserScore(game.gameCode);
+            gameService.resetGame(game.gameCode);
+            gameQuizService.deleteGameQuizzesByGameCode(game.gameCode);
+            gameUserService.resetGameUserScore(game.gameCode);
+        } catch (Exception e) {
+            log.debug(e.getMessage());
+        }
         gameOngoingMap.remove(game.gameCode);
         gameEndMap.remove(game.gameCode);
         gameReadyMap.remove(game.gameCode);
+    }
+
+    public boolean choiceCheck(String data) {
+        String pattern = "[1234]";
+        Pattern regex = Pattern.compile(pattern);
+        Matcher matcher = regex.matcher(data);
+        return matcher.matches();
     }
 }

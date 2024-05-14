@@ -19,6 +19,7 @@ import useUserStore from '../stores/userStore';
 import { IMessage } from '@stomp/stompjs';
 import { UserChannelApi } from '../hooks/axios-user-channel';
 import badwordsFiltering from '../hooks/badwords-filtering';
+import RankingModal from '../components/lobby/RankingModal';
 const Lobby = () => {
   const { channelUuid } = useParams();
   const { user } = useUserStore();
@@ -49,7 +50,7 @@ const Lobby = () => {
     getChannelInfo();
   }, []);
   useEffect(() => {
-    console.log("channelUuid", channelUuid);
+    console.log('channelUuid', channelUuid);
     LobbyApi.enterLobby(channelUuid);
   }, [channelInfo]);
   const handleState = (data1: RoomProps[], data2: CurrentUser[]) => {
@@ -127,6 +128,7 @@ const Lobby = () => {
 
   return (
     <div className="w-[70rem] h-[40rem] min-w-[40rem] min-h-[40rem] flex flex-col px-8 py-6 z-10">
+      <RankingModal />
       <div className="grid grid-cols-8 gap-3 min-h-14 items-center drop-shadow-lg pl-4 backdrop-blur-sm">
         <label className="col-span-2 flex items-center border-custom-mint text-lg font-extrabold h-12 bg-white/90">
           <p className="text-center w-full text-nowrap text-mint">{channelInfo?.name}</p>
@@ -182,7 +184,7 @@ const Lobby = () => {
             <input
               ref={chatInput}
               className="w-full h-10 bg-transparent rounded-full pl-5 pr-20 text-sm border border-gray-300"
-              maxLength={30}
+              maxLength={100}
               placeholder="Enter를 눌러 채팅 입력"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {

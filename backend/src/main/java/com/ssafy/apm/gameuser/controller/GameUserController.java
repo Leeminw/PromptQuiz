@@ -96,37 +96,9 @@ public class GameUserController {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /*  Todo: 방 입장시 GameUserEntity 생성하고, 방 퇴장시 GameUserEntity 삭제하는 로직 필요( 다 Socket Handeler로 처리해야함 )
-     *         레디하거나 팀을 바꾸거나 방장바꾸거나 하는 행동을 할 때 Update 처리가 필요하다
-     * */
-
-    /* REFACTORED: findGameUser() 으로 리팩토링됨 */
-//    //    게임방 안에 있는 유저들 목록 가져옴( UserDB와 GameUserDB에 있는 데이터 불러옴)
-//    @GetMapping("/gameUserList/{gameId}")
-//    public ResponseEntity<ResponseData<?>> getGameUserList(@PathVariable(name = "gameId") Long gameId) {
-//        List<GameUserDetailResponseDto> response = gameUserService.findDetailGameUsersByGameCode(gameId);
-//        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
-//    }
-
-    /* REFACTORED: findGameUser() 으로 리팩토링됨 */
-//    @GetMapping("/{gameUserId}")
-//    public ResponseEntity<ResponseData<?>> getGameUser(@PathVariable(name = "gameUserId") Long gameUserId) {
-//        GameUserSimpleResponseDto response = gameUserService.getGameUser(gameUserId);
-//        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
-//    }
-
-
-    /* FIXME: GameController 로 이동하는 것이 나아보임 */
-//    @PostMapping("/fastEnter")
-//    public ResponseEntity<ResponseData<?>> postFastEnterGame() {
-//        GameUserSimpleResponseDto response = gameUserService.postFastEnterGame();
-//        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(response));
-//    }
-
-
+    @PutMapping("/reset")
+    public ResponseEntity<ResponseData<?>> resetGameUserScore(@RequestParam String gameCode) {
+        List<GameUserSimpleResponseDto> responseDto = gameUserService.resetGameUserScore(gameCode);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
+    }
 }
