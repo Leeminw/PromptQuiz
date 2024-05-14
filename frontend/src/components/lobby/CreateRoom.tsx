@@ -129,14 +129,6 @@ const CreateRoom = ({ channelCode }: Props) => {
       console.error(error);
     }
   };
-  // 버튼 제어
-  const [btnCurrentActivate, setBtnCurrentActivate] = useState<boolean>(false);
-  const activateBtnFunc = async () => {
-    setBtnCurrentActivate(true);
-    await setTimeout(() => {
-      setBtnCurrentActivate(false);
-    }, 800);
-  };
   return (
     // className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 "
     <div className="w-fit h-full text-mint">
