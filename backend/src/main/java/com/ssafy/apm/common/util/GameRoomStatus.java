@@ -39,7 +39,7 @@ public class GameRoomStatus {
         answerWordMap.put("kor_obj_adjective", null);
     }
 
-    public void addInitialSound(GameQuizDetailResponseDto quiz){
+    public void addInitialSound(GameQuizDetailResponseDto quiz) {
         answerWordMap.computeIfAbsent("kor_object", k -> quiz.getKorObject());
         answerWordMap.computeIfAbsent("kor_subject", k -> quiz.getKorSubject());
         answerWordMap.computeIfAbsent("kor_sub_adjective", k -> quiz.getKorSubAdjective());

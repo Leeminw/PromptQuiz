@@ -86,7 +86,7 @@ public class GameSocketController {
                 gameOngoingMap.remove(game.gameCode);
                 game.time = REST_TIME;
             } else {
-                if(game.time == 40 && gameQuizService.getCurrentGameQuizTypeByGameCode(game.gameCode) == BLANKSUBJECTIVE){
+                if (game.time == 40 && gameQuizService.getCurrentGameQuizTypeByGameCode(game.gameCode) == BLANKSUBJECTIVE) {
                     GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(game.gameCode);
                     quiz = blankSubjectiveService.setInitialSound(quiz);
                     game.addInitialSound(quiz);
