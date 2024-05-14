@@ -40,6 +40,7 @@ echo ""
 ## Run Docker Container
 echo ">>> DOCKER CONTAINER $CONTAINER_NAME 실행 시작..."
 docker run -d -p 8080:8080 \
+    -v /home/ubuntu/uploads:/upload \
     --name $CONTAINER_NAME $IMAGE_NAME || {
         echo ">>> DOCKER IMAGE $IMAGE_NAME 실행 실패."
         exit 1
