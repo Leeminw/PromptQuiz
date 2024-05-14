@@ -20,6 +20,7 @@ import InviteUser from '../components/game/InviteUser';
 import SequenceGame from '../components/game/SequenceGame';
 import CustomButton from '../components/ui/CustomButton';
 import SubjectiveGame from '../components/game/SubjectiveGame';
+import QuizCorrect from '../components/game/QuizCorrect';
 
 const GamePage = () => {
   const { roomCode } = useParams();
@@ -47,6 +48,7 @@ const GamePage = () => {
   const [imageUrl, setImageUrl] = useState<string>('');
   const [multipleChoice, setMultipleChoice] = useState<SelectQuiz[] | null>(null);
   const [gameUser, setGameUser] = useState<GameUser | null>(null);
+  const [quizCorrectUser, setQuizCorrectUser] = useState<string>(null);
   const [quizType, setQuizType] = useState<number>(0);
   const [choosedButton, setChoosedButton] = useState<boolean[]>([false, false, false, false]);
   const [answerWord, setAnswerWord] = useState<Word | null>(null);
@@ -456,6 +458,15 @@ const GamePage = () => {
               나가기
             </p>
           </CustomButton>
+          {/* <CustomButton
+            btnCurrentActivate={btnCurrentActivate}
+            onClick={() => {
+              setQuizCorrectUser('정답 테스트' + Math.random());
+              console.log(quizCorrectUser);
+            }}
+          >
+            테스트
+          </CustomButton> */}
         </div>
       </div>
       {/* 중간 : 플레이어, 문제 화면 */}
@@ -499,9 +510,10 @@ const GamePage = () => {
               ) : (
                 <div></div>
               )}
-              <div className={`w-full h-full bg-cover bg-center`}>
+              <div className={`w-full h-full bg-cover bg-center relative`}>
                 <img src={imageUrl} alt="" />
-                <div className={`w-full h-full bg-blue-200`}></div>
+
+                <QuizCorrect nickname={quizCorrectUser} />
               </div>
             </div>
           </div>

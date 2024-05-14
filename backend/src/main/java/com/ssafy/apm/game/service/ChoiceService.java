@@ -88,7 +88,7 @@ public class ChoiceService {
                 .build());
 
         int number = 1;
-        List<Quiz> quizzes = quizRepository.extractRandomQuizzesByStyleAndGroupCode(quiz.getStyle(), quiz.getGroupCode(), 3)
+        List<Quiz> quizzes = quizRepository.extractRandomQuizzesByStyleAndGroupCodeDedupe(quiz.getId(), quiz.getStyle(), quiz.getGroupCode(), 3)
                 .orElseThrow(() -> new QuizNotFoundException("Quiz Not Found with GroupCode: " + quiz.getGroupCode()));
         for (Quiz wrongQuiz : quizzes) {
             if (number == answerNumber) number++;

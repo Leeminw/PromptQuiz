@@ -87,43 +87,51 @@ const Join = ({ movePage }: { movePage: () => void }) => {
 
   return (
     <div
-      className={`modal-box border-2 border-lightmint flex flex-col gap-3 pb-20 bg-white/90 backdrop-blur-lg min-w-96 transition duration-1000 ${moveModal ? 'translate-x-0' : 'translate-x-[-100vw]'}`}
+      className={`w-full rounded-2xl border-2 border-lightmint flex flex-col gap-3 pb-20 bg-white/90 backdrop-blur-lg min-w-96 py-4 px-4 transition duration-1000 ease-in-out ${moveModal ? 'translate-x-0' : 'translate-x-[-100vw]'}`}
     >
-      <h3 className="font-bold text-2xl">회원 가입</h3>
+      <h3 className="font-bold text-2xl text-mint pl-2">회원 가입</h3>
       <hr className="mb-1 border-extralightmint" />
       <div className="flex flex-col gap-3 overflow-x-hidden overflow-y-scroll custom-scroll">
         <div className="flex items-center mt-1 flex-col gap-1">
           <div className="w-full flex items-center px-2">
-            <span className="font-extrabold text-nowrap pr-4 w-24">아이디</span>
+            <span className="font-extrabold text-nowrap pr-4 w-24 text-mint">아이디</span>
             <input
               type="text"
               ref={inputId}
+              maxLength={20}
+              placeholder="최대 20글자 입력..."
               className="input input-bordered input-sm w-full rounded-full border-2 border-lightmint mr-1 pl-4 bg-white/60"
               value={userName}
               onChange={userNameHandler}
             />
           </div>
-          {isExist ? (
-            <p className="text-red-400">중복된 아이디입니다.</p>
-          ) : (
-            <p>사용가능한 아이디입니다.</p>
-          )}
+          <div className={`${inputId.current?.value.length > 0 ? 'opacity-100' : 'opacity-0'}`}>
+            {isExist ? (
+              <p className="text-red-400 text-sm">중복된 아이디입니다.</p>
+            ) : (
+              <p className="text-green-500 text-sm">사용가능한 아이디입니다.</p>
+            )}
+          </div>
+
           <div className="w-full flex items-center px-2">
-            <span className="font-extrabold text-nowrap pr-4 w-24">비밀번호</span>
+            <span className="font-extrabold text-nowrap pr-4 w-24 text-mint">비밀번호</span>
             <input
               type="password"
               className="input input-bordered input-sm w-full rounded-full border-2 border-lightmint mr-1 pl-4 bg-white/70"
               maxLength={20}
+              placeholder="최대 20글자 입력..."
               value={password}
               onChange={passwordHandler}
             />
           </div>
           <div className="w-full flex items-center px-2">
-            <span className="font-extrabold text-nowrap pr-4 w-24">닉네임</span>
+            <span className="font-extrabold text-nowrap pr-4 w-24 text-mint">닉네임</span>
             <input
               type="text"
               className="input input-bordered input-sm w-full rounded-full border-2 border-lightmint mr-1 pl-4 bg-white/60"
               value={nickName}
+              maxLength={15}
+              placeholder="최대 15글자 입력..."
               onChange={nickNameHandler}
             />
           </div>
@@ -157,7 +165,7 @@ const Join = ({ movePage }: { movePage: () => void }) => {
                 setMoveModal(false);
                 setTimeout(() => {
                   movePage();
-                }, 300);
+                }, 500);
               }, 500);
             }}
           >
