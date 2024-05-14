@@ -47,7 +47,7 @@ public class GameSocketController {
     private final BlankSubjectiveService blankSubjectiveService;
     private final SimpMessagingTemplate template;
 
-    private static final int REST_TIME = 3;
+    private static final int REST_TIME = 3, READY_TIME = 2;
     private static final String ENDPOINT = "/ws/sub/game?uuid=";
     private static final int MULTIPLECHOICE = 1, BLANKCHOICE = 2, BLANKSUBJECTIVE = 4;
 
@@ -58,9 +58,9 @@ public class GameSocketController {
     // 현재 게임 진행중인 리스트 (max_time 초 대기)
     private static final HashMap<String, GameRoomStatus> gameOngoingMap = new HashMap<>();
 
-    @Scheduled(fixedRate = 360000)
+    @Scheduled(fixedRate = 36000)
     private void saveCurrentGameList() {
-        gameMonitorService.saveRoomList(gameEndMap, gameReadyMap, gameOngoingMap);
+        gameMonitorService.saveRoomList();
     }
 
     @Scheduled(fixedRate = 1000)
@@ -123,7 +123,7 @@ public class GameSocketController {
             if (!gameEndMap.containsKey(game.gameCode) || game.round < 0) continue;
 
             if (game.time <= 0) {
-                game.time = REST_TIME;
+                game.time = READY_TIME;
                 gameReadyMap.put(game.gameCode, game);
                 gameEndMap.remove(game.gameCode);
 
