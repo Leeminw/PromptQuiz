@@ -96,4 +96,9 @@ public class GameUserController {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
     }
 
+    @PutMapping("/reset")
+    public ResponseEntity<ResponseData<?>> resetGameUserScore(@RequestParam String gameCode) {
+        List<GameUserSimpleResponseDto> responseDto = gameUserService.resetGameUserScore(gameCode);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
+    }
 }

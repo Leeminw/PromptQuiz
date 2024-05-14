@@ -15,8 +15,6 @@ public class GameRoomStatus {
     public HashMap<String, String> answerWordMap;
     public HashMap<String, PriorityQueue<SimilarityResponseDto>> playerSimilarityMap;
 
-    private static final Double similarityRate = 0.9;
-
     public GameRoomStatus(String gameCode, Integer round, Integer maxTime, Integer time) {
         this.gameCode = gameCode;
         this.round = round;
@@ -55,7 +53,7 @@ public class GameRoomStatus {
         for (String i : rateMap.keySet()) {
             SimilarityResponseDto cur = new SimilarityResponseDto(answer, rateMap.get(i));
 
-            if (cur.getRate() >= similarityRate) {
+            if (cur.getRate() >= 100) {
                 addSimilarityAnswerToMap(i, answer);
             } else {
                 PriorityQueue<SimilarityResponseDto> ranking = playerSimilarityMap.get(i);

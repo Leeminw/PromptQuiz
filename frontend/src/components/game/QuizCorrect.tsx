@@ -1,12 +1,22 @@
 import React, { useState } from 'react';
 import customSetTimeout from '../../hooks/customSetTimeout';
-const QuizCorrect = ({ nickname }: { nickname: string }) => {
+interface QuizCorrectProp {
+  correctUser: CorrectUser | null;
+}
+
+const QuizCorrect = ({ correctUser }: QuizCorrectProp) => {
   const [show, setShow] = useState<boolean>(false);
   const [startShow, setStartShow] = useState<boolean>(false);
   const [earthquake, setEarthquake] = useState<boolean>(false);
   customSetTimeout(
     () => {
-      if (nickname !== null && nickname !== undefined && nickname !== '') {
+      if (
+        correctUser?.nickname !== null &&
+        correctUser?.nickname !== undefined &&
+        correctUser?.nickname !== ''
+      ) {
+        console.log('HI');
+
         setShow(true);
         setStartShow(true);
         setTimeout(() => {
@@ -21,7 +31,7 @@ const QuizCorrect = ({ nickname }: { nickname: string }) => {
       setShow(false);
     },
     3000,
-    [nickname]
+    [correctUser]
   );
   return (
     <div
@@ -34,7 +44,7 @@ const QuizCorrect = ({ nickname }: { nickname: string }) => {
       `}
       >
         <p className="font-extrabold text-4xl text-white text-center leading-[3.2rem] text-nowrap">
-          <p className="text-white inline text-nowrap">{nickname}</p>님 정답!
+          <p className="text-white inline text-nowrap">{correctUser?.nickname}</p>님 정답!
         </p>
       </div>
     </div>
