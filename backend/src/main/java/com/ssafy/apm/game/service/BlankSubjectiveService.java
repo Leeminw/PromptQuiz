@@ -3,18 +3,31 @@ package com.ssafy.apm.game.service;
 import com.ssafy.apm.game.domain.Game;
 import com.ssafy.apm.quiz.domain.Quiz;
 import com.ssafy.apm.gamequiz.domain.GameQuiz;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.apm.gameuser.service.GameUserService;
 import com.ssafy.apm.gamequiz.service.GameQuizService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.apm.socket.dto.request.GameChatRequestDto;
 import com.ssafy.apm.gamequiz.dto.response.GameQuizDetailResponseDto;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 
 import java.util.*;
+import java.nio.charset.StandardCharsets;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.client.ResponseHandler;
 import org.springframework.stereotype.Service;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -62,17 +75,15 @@ public class BlankSubjectiveService {
         GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(answer.getGameCode());
         HashMap<String, Double> resultMap = new HashMap<>();
         for (String prompt : checkPrompt) {
-            Double rate = 0.0;
+            double rate = 0.0;
             switch (prompt) {
                 case "kor_subject" -> rate = calculate(quiz.getKorSubject(), answer.getContent());
                 case "kor_sub_adjective" -> rate = calculate(quiz.getKorSubAdjective(), answer.getContent());
                 case "kor_object" -> rate = calculate(quiz.getKorObject(), answer.getContent());
                 case "kor_obj_adjective" -> rate = calculate(quiz.getKorObjAdjective(), answer.getContent());
             }
-            if (rate >= 0.9) {
-                /* todo: 유저 점수 올리기 (맞춤 처리를 어떻게 할 것인가..
-                    transaction처리가 되야 한다. 그럼 DB로 맞춘사람 관리를 해야 되는데..
-                */
+            rate = Math.round(rate * 10000.0) / 100.0;
+            if (rate >= 100.0) {
                 gameUserService.updateGameUserScore(answer.getUserId(), 5);
             }
             resultMap.put(prompt, rate);
@@ -82,7 +93,41 @@ public class BlankSubjectiveService {
     }
 
     public static double calculate(String str1, String str2) {
-        return 0.0;
+        double similarity = 0.0;
+        try {
+            HttpClient httpClient = HttpClients.createDefault();
+            HttpPost postRequest = new HttpPost("http://k10a509.p.ssafy.io:8000/similarity");
+            postRequest.setHeader("Content-Type", "application/json; charset=UTF-8");
+            postRequest.setEntity(buildBody(str1, str2));
+
+            HttpResponse response = httpClient.execute(postRequest);
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == 200) {
+                ResponseHandler<String> handler = new BasicResponseHandler();
+                similarity = parseBody(handler.handleResponse(response));
+            } else {
+                log.debug("response is error : " + response.getStatusLine().getStatusCode());
+            }
+
+        } catch (Exception e) {
+            log.debug(e.getMessage());
+        }
+
+        return similarity;
+    }
+
+    public static StringEntity buildBody(String str1, String str2) {
+        str1 = str1.replace(" ", "");
+        str2 = str2.replace(" ", "");
+
+        String requestBody = String.format("{\"word1\": \"%s\", \"word2\": \"%s\"}", str1, str2);
+        return new StringEntity(requestBody, StandardCharsets.UTF_8);
+    }
+
+    public static double parseBody(String responseBody) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(responseBody);
+        return jsonNode.get("similarity").asDouble();
     }
 
     public GameQuizDetailResponseDto setInitialSound(GameQuizDetailResponseDto quiz) {
