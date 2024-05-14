@@ -56,6 +56,8 @@ const GamePage = () => {
   const [answerWord, setAnswerWord] = useState<Word | null>(null);
   const [playerSimilarity, setPlayerSimilarity] = useState<PlayerSimilarity | null>(null);
   const [roundResult, setRoundResult] = useState<RoundUser[]>([]);
+  const [gameState, setGameState] = useState<number>(0); // 0: 카운트다운, 1: 퀴즈, 2:결과
+  const [countdownSec, setCountdownSec] = useState<number>(0);
   //문제 틀렸을때 틀린거 표기
   const [timeRatio, setTimeRatio] = useState<number>(0);
   const getGameData = async () => {
@@ -104,7 +106,14 @@ const GamePage = () => {
       console.error(error);
     }
   };
-
+  useEffect(() => {
+    if (countdownSec > 0) {
+      const timer = setInterval(() => {
+        setCountdownSec((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [countdownSec]);
   //  문제를 받았는지 ?
   // false, , timer로받았을때>> 현재게임상태 ' '
   useEffect(() => {
@@ -173,12 +182,6 @@ const GamePage = () => {
     }
   };
 
-  useEffect(()=>{
-    if(roundState==='ready') {
-
-    }
-  },[roundState])
-
   useEffect(() => {
     if (isQuiz) {
       getGameDetail(game?.code);
@@ -236,7 +239,7 @@ const GamePage = () => {
       gameController(body);
     }
   };
-  
+
   const gameController = async (recieve: RecieveData) => {
     console.log(recieve);
     if (recieve.tag === 'startGame') {
@@ -289,10 +292,14 @@ const GamePage = () => {
       const data: GameStatus = recieve.data as GameStatus;
       if (data.type === 'ready') {
         setIsQuiz(false);
+        setGameState(0);
+        setCountdownSec(3);
       } else if (data.type === 'start') {
         setIsQuiz(true);
+        setGameState(1);
       } else if (data.type === 'end') {
         setIsQuiz(false);
+        setGameState(2);
 
         const roundInfo = data.content;
         // 라운드 결과
@@ -403,13 +410,13 @@ const GamePage = () => {
   // 게임 시작 이벤트
   const handleGamestart = () => {
     setGamestartui(true);
-    setGamestart(true);
     setTimeout(() => {
       setEarthquake(true);
       setTimeout(() => {
         setEarthquake(false);
         setTimeout(() => {
           setGamestartui(false);
+          setGamestart(true);
           postStart();
           //
         }, 1000);
@@ -545,8 +552,11 @@ const GamePage = () => {
               ) : (
                 <div></div>
               )}
-              {/* <QuizCorrect nickname={quizCorrectUser} /> */}
-              {/* <GameCountdown sec={3}/> */}
+              {gamestart && gameState === 0 && countdownSec > 0 && countdownSec < 4 && (
+                <GameCountdown sec={countdownSec} />
+              )}
+              {gamestart && gameState === 2 && <QuizCorrect correctUser={quizCorrectUser} />}
+
               {/* <GameResult/> */}
               <div
                 className={`w-full h-full bg-center relative bg-cover`}
