@@ -11,6 +11,7 @@ import com.ssafy.apm.game.exception.GameValidationException;
 import com.ssafy.apm.game.repository.GameRepository;
 import com.ssafy.apm.gamequiz.domain.GameQuiz;
 import com.ssafy.apm.gamequiz.repository.GameQuizRepository;
+import com.ssafy.apm.gamequiz.service.GameQuizService;
 import com.ssafy.apm.gameuser.domain.GameUser;
 import com.ssafy.apm.gameuser.dto.response.GameUserSimpleResponseDto;
 import com.ssafy.apm.gameuser.exception.GameUserNotFoundException;
@@ -48,6 +49,7 @@ public class GameServiceImpl implements GameService {
     private final ChoiceService choiceService;
     private final BlankChoiceService blankChoiceService;
     private final BlankSubjectiveService blankSubjectiveService;
+    private final GameQuizService gameQuizService;
 
     @Override
     @Transactional
@@ -205,6 +207,7 @@ public class GameServiceImpl implements GameService {
 
         if (game.getCurPlayers() == 1) {// 방에 방장 혼자였다면
             gameRepository.delete(game);// 방 자체를 지움
+            gameQuizService.deleteGameQuizzesByGameCode(gameCode);// 방에 생성된 퀴즈들 삭제
         } else {
             game.decreaseCurPlayers();// 방 현재 인원 수를 줄임
             gameRepository.save(game);
@@ -234,6 +237,7 @@ public class GameServiceImpl implements GameService {
         String gameUserCode = gameUser.getCode();
 
         if (game.getCurPlayers() == 1) {// 방에 방장 혼자였다면
+            gameQuizService.
             gameRepository.delete(game);// 방 자체를 지움
         } else {
             game.decreaseCurPlayers();// 방 현재 인원 수를 줄임
