@@ -545,7 +545,7 @@ const GamePage = () => {
               ) : (
                 <div></div>
               )}
-              <QuizCorrect nickname={quizCorrectUser} />
+              {/* <QuizCorrect nickname={quizCorrectUser} /> */}
               {/* <GameCountdown sec={3}/> */}
               {/* <GameResult/> */}
               <div
