@@ -249,9 +249,12 @@ const GamePage = () => {
       console.log('timeRatio', Math.round((data.time / game.timeLimit) * 100));
       setRound(data.round);
     } else if (recieve.tag === 'wrongSignal') {
-      const data: bigint = recieve.data as bigint;
-      console.log('wrong Signal', data);
-      if (data === user.userId) {
+      const data: WrongSignal = recieve.data as WrongSignal;
+      if (data.userId === user.userId) {
+        const updatedChoosedButton = [...choosedButton];
+        console.log(choosedButton);
+        updatedChoosedButton[data.answer - 1] = true;
+        setChoosedButton(updatedChoosedButton);
         alert('난 틀렸어..');
       }
     } else if (recieve.tag === 'similarity') {
@@ -352,9 +355,7 @@ const GamePage = () => {
   };
   const postStart = async () => {
     try {
-      console.log('post start', gameUser);
       if (gameUser?.isHost) {
-        console.log('post start', gameUser);
         const response = await GameApi.startGame(game.code);
         setIsStart(true);
       }
@@ -481,14 +482,14 @@ const GamePage = () => {
           </div>
           <div className="border-custom- w-full h-full flex items-center justify-center relative">
             <div className="border-custom- w-full h-full flex items-center justify-center relative">
-              {roundState === 'ongoing' ? (
+              {isQuiz ? (
                 <div className="w-16 h-7 absolute top-2 left-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
                   {round} 라운드
                 </div>
               ) : (
                 <div></div>
               )}
-              {roundState === 'ongoing' ? (
+              {isQuiz ? (
                 <div className="w-fit h-7 px-3 absolute top-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
                   {time}
                 </div>

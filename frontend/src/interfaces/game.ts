@@ -56,9 +56,12 @@ interface GameLeave {
 
 interface RecieveData {
     tag: string,
-    data : GameChatRecieve|GameTimer|GameReady|GameLeave|GameStatus|bigint|SimilarityQuiz
+    data : GameChatRecieve|GameTimer|GameReady|GameLeave|GameStatus|bigint|SimilarityQuiz|WrongSignal
 }
-
+interface WrongSignal { 
+    answer: number,
+    userId: bigint
+}
 interface GameChatRecieve {
     userId: bigint|null,
     nickname: string|null,
