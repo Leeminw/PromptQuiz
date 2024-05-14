@@ -69,31 +69,30 @@ public class GameSocketController {
         List<GameRoomStatus> list = new ArrayList<>(gameOngoingMap.values());
         for (GameRoomStatus game : list) {
             if (!gameOngoingMap.containsKey(game.gameCode) || game.round < 0) continue;
-
-            if (game.time <= 0) {
-                if (game.time == 0) {
-                    try {
+            try {
+                if (game.time <= 0) {
+                    if (game.time == 0) {
                         sendRoundEndMessage(game, -1L);
                         setRoundToEnd(game);
-                    } catch (GameNotFoundException e) {
-                        gameOngoingMap.remove(game.gameCode);
-                        sendGameResultMessage(game);
-                        continue;
+                    }
+                    gameEndMap.put(game.gameCode, game);
+                    gameOngoingMap.remove(game.gameCode);
+                    game.time = REST_TIME;
+                } else {
+                    if (game.time == 40 && gameQuizService.getCurrentGameQuizTypeByGameCode(game.gameCode) == BLANKSUBJECTIVE) {
+                        GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(game.gameCode);
+                        quiz = blankSubjectiveService.setInitialSound(quiz);
+                        game.addInitialSound(quiz);
+                        sendMessage(game.gameCode, new GameResponseDto("similarity", new GameBlankResponseDto(game, quiz.getUrl())));
                     }
 
+                    sendTimerMessage(game, "ongoing");
+                    game.time--;
                 }
-                gameEndMap.put(game.gameCode, game);
+
+            } catch (GameNotFoundException e) {
                 gameOngoingMap.remove(game.gameCode);
-                game.time = REST_TIME;
-            } else {
-                if (game.time == 40 && gameQuizService.getCurrentGameQuizTypeByGameCode(game.gameCode) == BLANKSUBJECTIVE) {
-                    GameQuizDetailResponseDto quiz = gameQuizService.findFirstCurrentDetailGameQuizByGameCode(game.gameCode);
-                    quiz = blankSubjectiveService.setInitialSound(quiz);
-                    game.addInitialSound(quiz);
-                    sendMessage(game.gameCode, new GameResponseDto("similarity", new GameBlankResponseDto(game, quiz.getUrl())));
-                }
-                sendTimerMessage(game, "ongoing");
-                game.time--;
+                sendGameResultMessage(game);
             }
         }
     }
