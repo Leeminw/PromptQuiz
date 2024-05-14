@@ -12,14 +12,12 @@ const Room = ({ roomInfo }: Props) => {
   const [gamePassword, setGamePassword] = useState<string>('');
   const findRoomType = (type: number) => {
     // 객관식, 주관식, 순서
-    switch (roomInfo.mode) {
-      case 0:
-        return '객관식';
-      case 1:
-        return '주관식';
-      case 2:
-        return '순서';
-    }
+    let ret: string = '';
+    if ((type & 1) > 0) ret += '| 객관식 ';
+    if ((type & 2) > 0) ret += '| 순서 ';
+    if ((type & 4) > 0) ret += '| 주관식 ';
+
+    return ret.substring(2);
   };
   const gamePasswordHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setGamePassword(event.target.value);
