@@ -366,28 +366,28 @@ public class GameServiceImpl implements GameService {
 
         if (gameType == 3) {
             for (Quiz quiz : quizList) {
-                int randomMode = random.nextInt(3) + 1;
+                int randomMode = random.nextInt(2) + 1;
                 if (randomMode == 1) response.addAll(choiceService.createGameQuiz(gameEntity, quiz, curRound));
                 if (randomMode == 2) response.addAll(blankChoiceService.createGameQuiz(gameEntity, quiz, curRound));
                 curRound++;
             }
         } else if (gameType == 5) {
             for (Quiz quiz : quizList) {
-                int randomMode = random.nextInt(3) + 1;
+                int randomMode = random.nextInt(2) + 1;
                 if (randomMode == 1) response.addAll(choiceService.createGameQuiz(gameEntity, quiz, curRound));
                 if (randomMode == 2) response.add(blankSubjectiveService.createGameQuiz(gameEntity, quiz, curRound));
                 curRound++;
             }
         } else if (gameType == 6) {
             for (Quiz quiz : quizList) {
-                int randomMode = random.nextInt(3) + 1;
+                int randomMode = random.nextInt(2) + 1;
                 if (randomMode == 1) response.addAll(blankChoiceService.createGameQuiz(gameEntity, quiz, curRound));
                 if (randomMode == 2) response.add(blankSubjectiveService.createGameQuiz(gameEntity, quiz, curRound));
                 curRound++;
             }
         } else if (gameType == 7) {
             for (Quiz quiz : quizList) {
-                int randomMode = random.nextInt(4) + 1;
+                int randomMode = random.nextInt(3) + 1;
                 if (randomMode == 1) response.addAll(choiceService.createGameQuiz(gameEntity, quiz, curRound));
                 if (randomMode == 2) response.addAll(blankChoiceService.createGameQuiz(gameEntity, quiz, curRound));
                 if (randomMode == 3) response.add(blankSubjectiveService.createGameQuiz(gameEntity, quiz, curRound));
@@ -404,9 +404,11 @@ public class GameServiceImpl implements GameService {
         if (gameStyle.equals("random")) {
             quizList = quizRepository.extractRandomQuizzes(gameEntity.getMaxRounds())
                     .orElseThrow(() -> new QuizNotFoundException("No entities exists by random!"));
+            System.out.println("랜덤 퀴즈 답안 생성");
         } else if (gameStyle.equals("anime") || gameStyle.equals("realistic") || gameStyle.equals("cartoon")) {
             quizList = quizRepository.extractRandomQuizzesByStyle(gameStyle, gameEntity.getMaxRounds())
                     .orElseThrow(() -> new QuizNotFoundException("No entities exists by style!"));
+            System.out.println(gameStyle + " 퀴즈 생성");
         } else {
             throw new GameValidationException("Style 값이 잘못됐습니다.");
         }
