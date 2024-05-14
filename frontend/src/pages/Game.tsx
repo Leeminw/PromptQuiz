@@ -63,6 +63,7 @@ const GamePage = () => {
       const responseGame: Game = response.data;
       const userResponse = await GameApi.getUserList(roomCode);
       const gameUserList: GameUser[] = userResponse.data;
+      console.log('onmount', gameUserList);
       setGame(responseGame);
       setGameUserList(gameUserList);
       getChannelInfo(responseGame?.channelCode);
@@ -290,10 +291,23 @@ const GamePage = () => {
         //     gameCode, isCorrect, score, userId
         // }
         const result = roundInfo.roundList;
+        const userResponse = await GameApi.getUserList(roomCode);
+        const updateUserList = userResponse.data;
+        for (const user of result) {
+          if (user.isCorrect) {
+            const correctUser = updateUserList.find(
+              (item: GameUser) => item.userId === user.userId
+            );
+            setQuizCorrectUser({
+              nickname: correctUser.nickName,
+              round: round,
+            });
+          }
+        }
         // todo 중간 결과 페이지 보여줘야됨.
 
         setRoundResult(result);
-        const userResponse = await GameApi.getUserList(roomCode);
+
         setGameUserList(userResponse.data);
         // setGameUserList(updateUserList);
       } else if (data.type === 'result') {
