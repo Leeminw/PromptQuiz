@@ -414,12 +414,6 @@ const CreateRoom = ({ channelCode }: Props) => {
               >
                 생성
               </CustomButton>
-              {/* <button
-                onClick={createRoom}
-                className="bg-mint text-white btn-mint px-6 hover:brightness-110"
-              >
-                생성
-              </button> */}
               <form method="dialog">
                 <button className="bg-[#999999] text-white border-custom-gray px-6 font-bold hover:brightness-110">
                   취소
