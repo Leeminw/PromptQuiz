@@ -17,17 +17,22 @@ const CreateRoom = ({ channelCode }: Props) => {
   const [mode, setMode] = useState(7);
   const [maxPlayers, setMaxPlayers] = useState(12);
   const [maxRounds, setMaxRounds] = useState(50);
-  /**로그인 상태 정보를 가져오기 전에 임시로 userId 값을 부여 */
-  // const [userId, setUserId] = useState(3);
   const { user } = useUserStore();
-  // const [channelId, setChannelId] = useState(1);
   const [status, setStatus] = useState(false);
   const curPlayers = 1;
   const curRound = 0;
-  // const [styleIndex, setStyleIndex] = useState(0); // style 변수가 string일 때 사용한 코드
   const [style, setStyle] = useState(0);
   const [password, setPassword] = useState('');
   const [title, setTitle] = useState<string>('');
+
+  // 버튼 제어
+  const [btnCurrentActivate, setBtnCurrentActivate] = useState<boolean>(false);
+  const activateBtnFunc = async () => {
+    setBtnCurrentActivate(true);
+    await setTimeout(() => {
+      setBtnCurrentActivate(false);
+    }, 800);
+  };
 
   const navigate = useNavigate();
   const privacyHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,20 +124,10 @@ const CreateRoom = ({ channelCode }: Props) => {
 
       console.log(room);
       const { data } = await LobbyApi.createRoom(room);
-      setTimeout(() => {
-        navigate(`/game/${data.code}`);
-      }, 1000);
+      navigate(`/game/${data.code}`);
     } catch (error) {
       console.error(error);
     }
-  };
-  // 버튼 제어
-  const [btnCurrentActivate, setBtnCurrentActivate] = useState<boolean>(false);
-  const activateBtnFunc = async () => {
-    setBtnCurrentActivate(true);
-    await setTimeout(() => {
-      setBtnCurrentActivate(false);
-    }, 800);
   };
   return (
     // className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 "
@@ -419,6 +414,12 @@ const CreateRoom = ({ channelCode }: Props) => {
               >
                 생성
               </CustomButton>
+              {/* <button
+                onClick={createRoom}
+                className="bg-mint text-white btn-mint px-6 hover:brightness-110"
+              >
+                생성
+              </button> */}
               <form method="dialog">
                 <button className="bg-[#999999] text-white border-custom-gray px-6 font-bold hover:brightness-110">
                   취소
