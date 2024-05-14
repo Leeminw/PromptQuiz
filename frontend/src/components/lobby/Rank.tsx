@@ -86,8 +86,8 @@ const Rank = () => {
         <p className="text-nowrap font-extrabold lg:flex max-lg:hidden">랭킹</p>
       </button>
       <dialog id="ranking_modal" className="modal">
-        <div className="modal-box max-w-[60rem] border-2 border-lightmint">
-          <h3 className="font-bold text-2xl">랭킹</h3>
+        <div className="modal-box max-w-[60rem] border-2 border-lightmint overflow-hidden">
+          <h3 className="font-bold text-2xl pt-2">랭킹</h3>
           <hr className="my-4" />
           <div className="flex flex-row items-center h-[30rem] gap-6">
             <RankingList rankingTitle={'통합 랭킹'} users={totalRankingArray} rankingType={1} />
@@ -104,7 +104,7 @@ const Rank = () => {
           {/* // */}
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn btn-sm btn-circle btn-ghost absolute right-4 top-5 text-lg ">
+              <button className="btn btn-sm btn-circle btn-ghost absolute right-4 top-5 text-lg mt-2">
                 ✕
               </button>
             </form>
