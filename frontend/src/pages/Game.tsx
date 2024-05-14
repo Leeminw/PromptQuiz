@@ -53,7 +53,7 @@ const GamePage = () => {
   const [choosedButton, setChoosedButton] = useState<boolean[]>([false, false, false, false]);
   const [answerWord, setAnswerWord] = useState<Word | null>(null);
   const [playerSimilarity, setPlayerSimilarity] = useState<PlayerSimilarity | null>(null);
-
+  const [roundResult, setRoundResult] = useState<RoundUser[]>([]);
   //문제 틀렸을때 틀린거 표기
   const [timeRatio, setTimeRatio] = useState<number>(0);
   const getGameData = async () => {
@@ -266,8 +266,15 @@ const GamePage = () => {
     } else if (recieve.tag === 'similarity') {
       console.log('유사도 갱신', recieve.data);
       const data: SimilarityQuiz = recieve.data as SimilarityQuiz;
+      const sortedSimilarity: PlayerSimilarity = {};
       setAnswerWord(data.answerWord);
-      setPlayerSimilarity(data.playerSimilarity);
+      for (const key in data.playerSimilarity) {
+        const sorted = data.playerSimilarity[String(key)].sort(
+          (a: Similarity, b: Similarity) => b.rate - a.rate
+        );
+        sortedSimilarity[key] = sorted;
+      }
+      setPlayerSimilarity(sortedSimilarity);
     } else if (recieve.tag === 'game') {
       const data: GameStatus = recieve.data as GameStatus;
       if (data.type === 'ready') {
@@ -282,8 +289,10 @@ const GamePage = () => {
         // {
         //     gameCode, isCorrect, score, userId
         // }
-        const roundResult = roundInfo.roundList;
+        const result = roundInfo.roundList;
+        // todo 중간 결과 페이지 보여줘야됨.
 
+        setRoundResult(result);
         const userResponse = await GameApi.getUserList(roomCode);
         setGameUserList(userResponse.data);
         // setGameUserList(updateUserList);
