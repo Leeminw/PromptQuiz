@@ -301,8 +301,9 @@ public class GameSocketController {
     public void setGameResult(GameRoomStatus game) {
         try {
             gameService.updateUserScore(game.gameCode);
+            gameService.resetGame(game.gameCode);
             gameQuizService.deleteGameQuizzesByGameCode(game.gameCode);
-            //gameUserService.resetGameUserScore(game.gameCode);
+            gameUserService.resetGameUserScore(game.gameCode);
         } catch (Exception e) {
             log.debug(e.getMessage());
         }
