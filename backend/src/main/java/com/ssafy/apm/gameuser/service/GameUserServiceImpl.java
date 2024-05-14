@@ -152,9 +152,8 @@ public class GameUserServiceImpl implements GameUserService {
     public List<GameUserSimpleResponseDto> resetGameUserScore(String gameCode) {
         List<GameUser> gameUserList = gameUserRepository.findAllByGameCode(gameCode).orElseThrow(
                 () -> new GameUserNotFoundException("Entities Not Found with GameCode: " + gameCode));
-        for (GameUser gameUser : gameUserList) {
-            gameUser.updateScore(0);
-        }
+        for (GameUser gameUser : gameUserList) gameUser.updateScore(0);
+        gameUserRepository.saveAll(gameUserList);
 
         return gameUserList.stream()
                 .map(GameUserSimpleResponseDto::new)
