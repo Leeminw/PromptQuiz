@@ -140,12 +140,14 @@ const GamePage = () => {
         // console.log(data);
         // 이미지 세팅
         data.forEach((element) => {
+          console.log(element);
           if (element.isAnswer) {
             setImageUrl(element.url);
           }
         });
-        // 보기 구성
-        setMultipleChoice(data);
+        // 보기 구성\
+        const sortedData = data.sort((a: SelectQuiz, b: SelectQuiz) => a.number - b.number);
+        setMultipleChoice(sortedData);
         // choosed button 초기화
         setChoosedButton([false, false, false, false]);
       } else if (quiz.quizType == 2) {
@@ -469,7 +471,7 @@ const GamePage = () => {
         {/* 문제 화면, 타이머 */}
         <div className="w-full grow flex flex-col row-span-6 col-span-3 px-4">
           <div className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint border relative overflow-hidden flex">
-            {roundState === 'ongoing' ? (
+            {isQuiz ? (
               <div
                 className="w-full h-full rounded-full bg-mint absolute"
                 style={progressStyle}
@@ -498,9 +500,7 @@ const GamePage = () => {
               )}
               <div className={`w-full h-full bg-cover bg-center`}>
                 <img src={imageUrl} alt="" />
-                <div className={`w-full h-full bg-blue-200`}>
-                  
-                </div>
+                <div className={`w-full h-full bg-blue-200`}></div>
               </div>
             </div>
           </div>
