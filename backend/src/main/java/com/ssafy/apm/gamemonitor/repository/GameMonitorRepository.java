@@ -21,7 +21,7 @@ public class GameMonitorRepository {
 
     @Value("${spring.influx.org}")
     private String org;
-    @Value("${spring.influx.bucket}")
+    @Value("game_monitor")
     private String bucket;
 
     public void saves(List<GameMonitor> gameMonitorList) {
