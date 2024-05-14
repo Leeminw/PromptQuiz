@@ -42,7 +42,7 @@ public class BlankChoiceService {
                     .isAnswer(true)
                     .build();
             response.add(entity);
-            List<Quiz> randomQuizList = quizRepository.extractRandomQuizzesByStyle(quiz.getStyle(), 3) // 같은 스타일의 quiz 찾아
+            List<Quiz> randomQuizList = quizRepository.extractRandomQuizzesByStyleDedupe(quiz.getId(), quiz.getStyle(), 3) // 같은 스타일의 quiz 찾아
                     .orElseThrow(() -> new QuizNotFoundException("No entities exists by style!"));
 
             for (Quiz wrong : randomQuizList) {
@@ -72,7 +72,7 @@ public class BlankChoiceService {
                 .build();
         response.add(entity);
 
-        List<Quiz> randomQuizList = quizRepository.extractRandomQuizzesByStyle(quiz.getStyle(), 3) // 같은 스타일의 quiz 찾아
+        List<Quiz> randomQuizList = quizRepository.extractRandomQuizzesByStyleDedupe(quiz.getId(), quiz.getStyle(), 3) // 같은 스타일의 quiz 찾아
                 .orElseThrow(() -> new QuizNotFoundException("No entities exists by style!"));
 
         for (Quiz wrong : randomQuizList) {
