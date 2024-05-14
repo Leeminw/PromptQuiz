@@ -7,9 +7,6 @@ interface SelectionGameProps {
 }
 
 const SelectionGame = ({ choiceList, onButtonClick, choosedButton }: SelectionGameProps) => {
-  useEffect(() => {
-    console.log('child', choosedButton);
-  }, []);
   const buttonClass = [
     'w-full h-full bg-[#e37070] border-custom-red flex items-center justify-center cursor-pointer hover:brightness-125 hover:scale-105 transition',
     'w-full h-full bg-customYellow border-custom-yellow flex items-center justify-center cursor-pointer hover:brightness-125 hover:scale-105 transition',
@@ -38,8 +35,6 @@ const SelectionGame = ({ choiceList, onButtonClick, choosedButton }: SelectionGa
   ];
 
   const sendAnswer = (answer: number) => {
-    if (choosedButton[answer - 1]) return;
-    // console.log('send answer ', answer);
     onButtonClick(answer);
   };
   if (!choiceList) return <div></div>;
@@ -50,8 +45,6 @@ const SelectionGame = ({ choiceList, onButtonClick, choosedButton }: SelectionGa
           className={choosedButton[index] ? choosedButtonClass[index] : buttonClass[index]}
           onClick={() => sendAnswer(index + 1)}
           key={index}
-          disabled={choosedButton[index]}
-          style={{ pointerEvents: choosedButton[index] ? 'none' : 'auto' }}
         >
           <div
             className={choosedButton[index] ? choosedInnerDivClass[index] : innerDivClass[index]}
