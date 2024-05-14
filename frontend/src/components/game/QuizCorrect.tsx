@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import customSetTimeout from '../../hooks/customSetTimeout';
-interface QuizCorrectProp {
-  correctUser: CorrectUser | null;
-}
 
-const QuizCorrect = ({ correctUser }: QuizCorrectProp) => {
+const QuizCorrect = ({ correctUser }: { correctUser: CorrectUser }) => {
   const [show, setShow] = useState<boolean>(false);
   const [startShow, setStartShow] = useState<boolean>(false);
   const [earthquake, setEarthquake] = useState<boolean>(false);
@@ -30,15 +27,15 @@ const QuizCorrect = ({ correctUser }: QuizCorrectProp) => {
     () => {
       setShow(false);
     },
-    3000,
+    2000,
     [correctUser]
   );
   return (
     <div
-      className={`absolute w-full h-full flex justify-center items-center z-50 px-10 select-none ${earthquake ? 'animate-earthquake' : ''}`}
+      className={`absolute w-full h-full flex justify-center items-center z-50 px-12 select-none ${earthquake ? 'animate-earthquake' : ''}`}
     >
       <div
-        className={`w-fit h-fit bg-lightmint backdrop-blur-sm px-8 py-6 rounded-full border-gray-300 border 
+        className={`w-fit h-fit bg-lightmint backdrop-blur-sm px-12 py-6 rounded-full border-gray-300 border 
       ease-in duration-500 transition
       ${startShow ? (show ? 'translate-y-0' : 'translate-y-[-100vh]') : 'translate-y-[-100vh]'}
       `}

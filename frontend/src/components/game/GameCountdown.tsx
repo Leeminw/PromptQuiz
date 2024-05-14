@@ -10,13 +10,13 @@ const GameCountdown = ({ sec }: { sec: number }) => {
     if (val > 0) {
       const timer = setInterval(() => {
         setVal((prev) => prev - 1);
-      }, 10);
+      }, 8);
       return () => clearInterval(timer);
     }
   }, [val]);
 
   useEffect(() => {
-    setVal(100);
+    setVal(103);
   }, [sec]);
   const progreesProperties: CustomCSSProperties = {
     '--value': val,
