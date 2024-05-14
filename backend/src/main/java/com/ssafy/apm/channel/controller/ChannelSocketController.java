@@ -34,5 +34,10 @@ public class ChannelSocketController {
         template.convertAndSend("/ws/sub/channel?uuid=" + chat.getUuid(), chat);
     }
 
+    @MessageMapping("/channel/leave")
+    public void sendChannelLeaveMessage(@Payload ChannelChatRequestDto chatMessage) {
+        ChannelChatResponseDto chat = chatService.insertChannelChat(chatMessage);
+        template.convertAndSend("/ws/sub/channel?uuid=" + chat.getUuid(), chat);
+    }
 
 }
