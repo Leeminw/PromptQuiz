@@ -237,8 +237,8 @@ public class GameServiceImpl implements GameService {
         String gameUserCode = gameUser.getCode();
 
         if (game.getCurPlayers() == 1) {// 방에 방장 혼자였다면
-            gameQuizService.
             gameRepository.delete(game);// 방 자체를 지움
+            gameQuizService.deleteGameQuizzesByGameCode(gameCode);// 방에 생성된 퀴즈들 삭제
         } else {
             game.decreaseCurPlayers();// 방 현재 인원 수를 줄임
             gameRepository.save(game);
