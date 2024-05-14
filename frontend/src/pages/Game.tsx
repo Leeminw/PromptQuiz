@@ -21,6 +21,8 @@ import SequenceGame from '../components/game/SequenceGame';
 import CustomButton from '../components/ui/CustomButton';
 import SubjectiveGame from '../components/game/SubjectiveGame';
 import QuizCorrect from '../components/game/QuizCorrect';
+import GameResult from '../components/game/GameResult';
+import GameCountdown from '../components/game/GameCountdown';
 
 const GamePage = () => {
   const { roomCode } = useParams();
@@ -48,12 +50,12 @@ const GamePage = () => {
   const [imageUrl, setImageUrl] = useState<string>('');
   const [multipleChoice, setMultipleChoice] = useState<SelectQuiz[] | null>(null);
   const [gameUser, setGameUser] = useState<GameUser | null>(null);
-  const [quizCorrectUser, setQuizCorrectUser] = useState<string>(null);
+  const [quizCorrectUser, setQuizCorrectUser] = useState<CorrectUser | null>(null);
   const [quizType, setQuizType] = useState<number>(0);
   const [choosedButton, setChoosedButton] = useState<boolean[]>([false, false, false, false]);
   const [answerWord, setAnswerWord] = useState<Word | null>(null);
   const [playerSimilarity, setPlayerSimilarity] = useState<PlayerSimilarity | null>(null);
-
+  const [roundResult, setRoundResult] = useState<RoundUser[]>([]);
   //문제 틀렸을때 틀린거 표기
   const [timeRatio, setTimeRatio] = useState<number>(0);
   const getGameData = async () => {
@@ -63,6 +65,7 @@ const GamePage = () => {
       const responseGame: Game = response.data;
       const userResponse = await GameApi.getUserList(roomCode);
       const gameUserList: GameUser[] = userResponse.data;
+      console.log('onmount', gameUserList);
       setGame(responseGame);
       setGameUserList(gameUserList);
       getChannelInfo(responseGame?.channelCode);
@@ -170,6 +173,12 @@ const GamePage = () => {
     }
   };
 
+  useEffect(()=>{
+    if(roundState==='ready') {
+
+    }
+  },[roundState])
+
   useEffect(() => {
     if (isQuiz) {
       getGameDetail(game?.code);
@@ -227,6 +236,7 @@ const GamePage = () => {
       gameController(body);
     }
   };
+  
   const gameController = async (recieve: RecieveData) => {
     console.log(recieve);
     if (recieve.tag === 'startGame') {
@@ -266,8 +276,15 @@ const GamePage = () => {
     } else if (recieve.tag === 'similarity') {
       console.log('유사도 갱신', recieve.data);
       const data: SimilarityQuiz = recieve.data as SimilarityQuiz;
+      const sortedSimilarity: PlayerSimilarity = {};
       setAnswerWord(data.answerWord);
-      setPlayerSimilarity(data.playerSimilarity);
+      for (const key in data.playerSimilarity) {
+        const sorted = data.playerSimilarity[String(key)].sort(
+          (a: Similarity, b: Similarity) => b.rate - a.rate
+        );
+        sortedSimilarity[key] = sorted;
+      }
+      setPlayerSimilarity(sortedSimilarity);
     } else if (recieve.tag === 'game') {
       const data: GameStatus = recieve.data as GameStatus;
       if (data.type === 'ready') {
@@ -282,9 +299,24 @@ const GamePage = () => {
         // {
         //     gameCode, isCorrect, score, userId
         // }
-        const roundResult = roundInfo.roundList;
-
+        const result = roundInfo.roundList;
         const userResponse = await GameApi.getUserList(roomCode);
+        const updateUserList = userResponse.data;
+        for (const user of result) {
+          if (user.isCorrect) {
+            const correctUser = updateUserList.find(
+              (item: GameUser) => item.userId === user.userId
+            );
+            setQuizCorrectUser({
+              nickname: correctUser.nickName,
+              round: round,
+            });
+          }
+        }
+        // todo 중간 결과 페이지 보여줘야됨.
+
+        setRoundResult(result);
+
         setGameUserList(userResponse.data);
         // setGameUserList(updateUserList);
       } else if (data.type === 'result') {
@@ -461,7 +493,10 @@ const GamePage = () => {
           {/* <CustomButton
             btnCurrentActivate={btnCurrentActivate}
             onClick={() => {
-              setQuizCorrectUser('정답 테스트' + Math.random());
+              setQuizCorrectUser({
+                nickname: 'sameName',
+                round: Math.random(),
+              });
               console.log(quizCorrectUser);
             }}
           >
@@ -510,10 +545,13 @@ const GamePage = () => {
               ) : (
                 <div></div>
               )}
-              <QuizCorrect nickname={quizCorrectUser} />
-              <div className={`w-full h-full bg-cover bg-center relative`}>
-                <img src={imageUrl} alt="" />
-              </div>
+              {/* <QuizCorrect nickname={quizCorrectUser} /> */}
+              {/* <GameCountdown sec={3}/> */}
+              {/* <GameResult/> */}
+              <div
+                className={`w-full h-full bg-center relative bg-cover`}
+                style={{ backgroundImage: `url(${imageUrl})` }}
+              ></div>
             </div>
           </div>
         </div>
