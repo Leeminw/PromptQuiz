@@ -97,7 +97,11 @@ $ npm run dev
 
 
 # 🖤API 명세서
+#### [Postman](https://documenter.getpostman.com/view/34459551/2sA3JQ3z94)
+![image.png](./image.png)
 
+# :yellow_heart: 소켓 연결 Dto
+![dsf.png](./dsf.png)
 
 # :green_heart: 프로젝트 구조
 
