@@ -68,3 +68,7 @@ body::-webkit-scrollbar {
   background-color: transparent;
   border-radius: 999px;
 }
+
+.text-stroke {
+  -webkit-text-stroke: 1px #359DB0;
+}
