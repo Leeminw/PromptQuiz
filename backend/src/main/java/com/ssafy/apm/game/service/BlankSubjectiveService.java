@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.*;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.entity.StringEntity;
@@ -92,6 +93,15 @@ public class BlankSubjectiveService {
         return resultMap;
     }
 
+    public static double levenshteinDistanceCalculate(String str1, String str2) {
+        str1 = str1.replace(" ", "");
+        str2 = str2.replace(" ", "");
+        LevenshteinDistance ld = new LevenshteinDistance();
+        int maxLen = Math.max(str1.length(), str2.length());
+        double temp = ld.apply(str1, str2);
+        return (maxLen - temp) / maxLen;
+    }
+
     public static double calculate(String str1, String str2) {
         double similarity = 0.0;
         try {
@@ -105,6 +115,8 @@ public class BlankSubjectiveService {
             if (statusCode == 200) {
                 ResponseHandler<String> handler = new BasicResponseHandler();
                 similarity = parseBody(handler.handleResponse(response));
+            } else if (statusCode == 404) {
+                similarity = levenshteinDistanceCalculate(str1, str2);
             } else {
                 log.debug("response is error : " + response.getStatusLine().getStatusCode());
             }

@@ -154,8 +154,6 @@ public class GameSocketController {
         GameRoomStatus game = gameOngoingMap.get(chatMessage.getGameCode());
         if (game != null && chatMessage.getRound().equals(game.round)) {
             GameAnswerCheck check = gameAnswerService.checkAnswer(chatMessage, game.playerSimilarityMap.keySet());
-            System.out.println(check.getType());
-            System.out.println(check.getSimilarity());
             switch (check.getType()) {
                 case MULTIPLECHOICE:
                 case BLANKCHOICE:
@@ -169,8 +167,6 @@ public class GameSocketController {
                     break;
                 case BLANKSUBJECTIVE:
                     game.updateSimilarityRanking(chatMessage.getContent(), check.getSimilarity());
-                    System.out.println(check.getSimilarity());
-                    System.out.println(chatMessage.getContent());
                     if (game.similarityGameEnd()) {
                         setEndGame(game, chatMessage.getUserId());
                     } else {
@@ -306,8 +302,8 @@ public class GameSocketController {
         try {
             gameService.updateUserScore(game.gameCode);
             gameQuizService.deleteGameQuizzesByGameCode(game.gameCode);
-            gameUserService.resetGameUserScore(game.gameCode);
-        }catch (Exception e){
+            //gameUserService.resetGameUserScore(game.gameCode);
+        } catch (Exception e) {
             log.debug(e.getMessage());
         }
         gameOngoingMap.remove(game.gameCode);
