@@ -131,6 +131,8 @@ const GamePage = () => {
   }, [game]);
   const getGameDetail = async (gameCode: string) => {
     try {
+      const userResponse = await GameApi.getUserList(roomCode);
+      setGameUserList(userResponse.data);
       const response = await GameApi.getRoundGame(gameCode);
       const quiz: ReiceveQuiz = response.data;
       setQuizType(quiz.quizType);
@@ -272,18 +274,17 @@ const GamePage = () => {
         setIsQuiz(true);
       } else if (data.type === 'end') {
         setIsQuiz(false);
+
         const roundInfo = data.content;
+        // 라운드 결과
+        // {
+        //     gameCode, isCorrect, score, userId
+        // }
         const roundResult = roundInfo.roundList;
-        const updateUserList = [...gameUserList];
-        for (const user of updateUserList) {
-          for (const result of roundResult) {
-            if (user.userId === result.userId) {
-              user.score = result.score;
-              break; // 같은 userId를 찾았으므로 반복문 종료
-            }
-          }
-        }
-        setGameUserList(updateUserList);
+
+        const userResponse = await GameApi.getUserList(roomCode);
+        setGameUserList(userResponse.data);
+        // setGameUserList(updateUserList);
       } else if (data.type === 'result') {
         setRoundState('result');
         const roundInfo = data.content;
@@ -357,9 +358,9 @@ const GamePage = () => {
   };
   const postStart = async () => {
     try {
+      setIsStart(true);
       if (gameUser?.isHost) {
         const response = await GameApi.startGame(game.code);
-        setIsStart(true);
       }
     } catch (error) {
       console.error(error);
