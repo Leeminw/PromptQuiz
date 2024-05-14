@@ -4,12 +4,14 @@ set -e
 
 # 모델 파일 경로 설정
 MODEL_DIR="models"
-MODEL_FILE="cc.ko.300.bin"
+MODEL_FILE="cc.ko.300.vec"
+#MODEL_FILE="cc.ko.300.bin"
 MODEL_PATH="${MODEL_DIR}/${MODEL_FILE}"
 
 MODEL_GZ="${MODEL_FILE}.gz"
 MODEL_GZ_PATH="${MODEL_DIR}/${MODEL_GZ}"
-MODEL_URL="https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.ko.300.bin.gz"
+MODEL_URL="https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.ko.300.vec.gz"
+#MODEL_URL="https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.ko.300.bin.gz"
 
 # models 디렉토리 생성 (없을 경우)
 sudo mkdir -p $MODEL_DIR
