@@ -18,7 +18,7 @@ COPY download-model.sh .
 RUN chmod +x download-model.sh && ./download-model.sh
 
 # 다운로드된 파일 확인 (디버깅 용도)
-RUN ls -l models && ls -l models/cc.ko.300.bin
+RUN ls -l models && ls -l models/cc.ko.300.vec
 
 # 나머지 애플리케이션 파일 복사
 COPY . /app
