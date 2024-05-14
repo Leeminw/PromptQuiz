@@ -26,15 +26,15 @@ const QuizCorrect = ({ nickname }: { nickname: string }) => {
   );
   return (
     <div
-      className={`absolute w-full h-full flex justify-center items-center px-10 z-20 ${earthquake ? 'animate-earthquake' : ''}`}
+      className={`absolute w-full h-full flex justify-center items-center z-50 px-10 select-none ${earthquake ? 'animate-earthquake' : ''}`}
     >
       <div
-        className={`w-fit h-fit bg-lightmint backdrop-blur-sm px-14 py-8 rounded-full border-gray-300 border 
+        className={`w-fit h-fit bg-lightmint backdrop-blur-sm px-8 py-6 rounded-full border-gray-300 border 
       ease-in duration-500 transition
       ${startShow ? (show ? 'translate-y-0' : 'translate-y-[-100vh]') : 'translate-y-[-100vh]'}
       `}
       >
-        <p className="font-extrabold text-5xl text-white text-center leading-[3.2rem] text-nowrap">
+        <p className="font-extrabold text-4xl text-white text-center leading-[3.2rem] text-nowrap">
           <p className="text-white inline text-nowrap">{nickname}</p>님 정답!
         </p>
       </div>

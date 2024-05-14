@@ -88,6 +88,7 @@ const CreateRoom = ({ channelCode }: Props) => {
       alert('모드를 선택해주세요');
       return;
     }
+
     // console.log('방 생성 정보 받음');
     // // console.log('사용자id:' + user.userId);
     // // console.log('채널id:' + channelCode);
@@ -127,6 +128,14 @@ const CreateRoom = ({ channelCode }: Props) => {
     } catch (error) {
       console.error(error);
     }
+  };
+  // 버튼 제어
+  const [btnCurrentActivate, setBtnCurrentActivate] = useState<boolean>(false);
+  const activateBtnFunc = async () => {
+    setBtnCurrentActivate(true);
+    await setTimeout(() => {
+      setBtnCurrentActivate(false);
+    }, 800);
   };
   return (
     // className="w-1/3 h-[100px] bg-white-300 gap-1 border-2 "
@@ -413,12 +422,6 @@ const CreateRoom = ({ channelCode }: Props) => {
               >
                 생성
               </CustomButton>
-              {/* <button
-                onClick={createRoom}
-                className="bg-mint text-white btn-mint px-6 hover:brightness-110"
-              >
-                생성
-              </button> */}
               <form method="dialog">
                 <button className="bg-[#999999] text-white border-custom-gray px-6 font-bold hover:brightness-110">
                   취소
