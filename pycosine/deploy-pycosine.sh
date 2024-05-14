@@ -39,7 +39,7 @@ echo ""
 
 ## Run Docker Container
 echo ">>> DOCKER CONTAINER $CONTAINER_NAME 실행 시작..."
-sudo docker run -d -p 8080:8080 \
+sudo docker run -d -p 8000:8000 \
     --name $CONTAINER_NAME $IMAGE_NAME || {
         echo ">>> DOCKER IMAGE $IMAGE_NAME 실행 실패."
         exit 1
