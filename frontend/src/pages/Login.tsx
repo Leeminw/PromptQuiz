@@ -54,7 +54,7 @@ const LoginPage = ({ movePage }: { movePage: () => void }) => {
 
         setUser(userData);
         setTimeout(() => {
-          movePage();
+          navigate('/channel');
         }, 1000);
       } catch (error) {
         // 로그인 오류
