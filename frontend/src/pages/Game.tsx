@@ -48,7 +48,7 @@ const GamePage = () => {
   const [imageUrl, setImageUrl] = useState<string>('');
   const [multipleChoice, setMultipleChoice] = useState<SelectQuiz[] | null>(null);
   const [gameUser, setGameUser] = useState<GameUser | null>(null);
-  const [quizCorrectUser, setQuizCorrectUser] = useState<string>(null);
+  const [quizCorrectUser, setQuizCorrectUser] = useState<CorrectUser | null>(null);
   const [quizType, setQuizType] = useState<number>(0);
   const [choosedButton, setChoosedButton] = useState<boolean[]>([false, false, false, false]);
   const [answerWord, setAnswerWord] = useState<Word | null>(null);
@@ -470,7 +470,10 @@ const GamePage = () => {
           {/* <CustomButton
             btnCurrentActivate={btnCurrentActivate}
             onClick={() => {
-              setQuizCorrectUser('정답 테스트' + Math.random());
+              setQuizCorrectUser({
+                nickname: 'sameName',
+                round: Math.random(),
+              });
               console.log(quizCorrectUser);
             }}
           >
@@ -519,7 +522,7 @@ const GamePage = () => {
               ) : (
                 <div></div>
               )}
-              <QuizCorrect nickname={quizCorrectUser} />
+              <QuizCorrect correctUser={quizCorrectUser} />
               <div className={`w-full h-full bg-cover bg-center relative`}>
                 <img src={imageUrl} alt="" />
               </div>
