@@ -22,6 +22,7 @@ import CustomButton from '../components/ui/CustomButton';
 import SubjectiveGame from '../components/game/SubjectiveGame';
 import QuizCorrect from '../components/game/QuizCorrect';
 import GameResult from '../components/game/GameResult';
+import GameCountdown from '../components/game/GameCountdown';
 
 const GamePage = () => {
   const { roomCode } = useParams();
@@ -172,6 +173,12 @@ const GamePage = () => {
     }
   };
 
+  useEffect(()=>{
+    if(roundState==='ready') {
+
+    }
+  },[roundState])
+
   useEffect(() => {
     if (isQuiz) {
       getGameDetail(game?.code);
@@ -229,6 +236,7 @@ const GamePage = () => {
       gameController(body);
     }
   };
+  
   const gameController = async (recieve: RecieveData) => {
     console.log(recieve);
     if (recieve.tag === 'startGame') {
@@ -537,11 +545,9 @@ const GamePage = () => {
               ) : (
                 <div></div>
               )}
-              <QuizCorrect correctUser={quizCorrectUser} />
-              <div className={`w-full h-full bg-cover bg-center relative`}>
-                <img src={imageUrl} alt="" />
-              </div>
-              <GameResult />
+              <QuizCorrect nickname={quizCorrectUser} />
+              {/* <GameCountdown sec={3}/> */}
+              {/* <GameResult/> */}
               <div
                 className={`w-full h-full bg-center relative bg-cover`}
                 style={{ backgroundImage: `url(${imageUrl})` }}

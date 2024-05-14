@@ -108,6 +108,10 @@ module.exports = {
             display: 'hidden',
           },
         },
+        countdown: {
+          from: { transform: 'scale(2)' },
+          to: { transform: 'scale(1)' },
+        },
       },
       animation: {
         logo: 'logo 2s ease-in-out',
@@ -117,6 +121,7 @@ module.exports = {
         clickwhitebtn: 'clickwhitebtn 0.1s linear infinite',
         earthquake: 'earthquake 0.1s linear infinite',
         chatBubble: 'chatBubble 1s ease-out',
+        countdown: 'countdown 0.5s',
       },
     },
   },

@@ -28,7 +28,7 @@ const GameResult = () => {
               1
             </div>
           </div>
-          <div className="text-white font-extrabold px-1 line-clamp-1 bg-mint border-custom-mint text-sm flex">
+          <div className="text-white font-extrabold px-1 line-clamp-1 bg-mint border-custom-mint text-sm flex mb-2">
             <p className='w-fyll break-words line-clamp-1'>임시닉네임ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ</p>
             <p className='pl-1 text-nowrap'>1557점</p>
           </div>
@@ -50,8 +50,8 @@ const GameResult = () => {
       </div>
       <div className="w-full min-h-40 flex-grow grid grid-rows-3 grid-cols-3 gap-3 pt-2">
         {Array.from({ length: 9 }, (_, index) => (
-          <div className="w-full h-full pl-1 bg-mint backd border-custom-mint flex items-center relative">
-            <div className="w-6 h-6 flex items-center justify-center pr-2 text-white font-extrabold text-nowrap">
+          <div className="w-full h-full pl-1 bg-mint backd border-custom-mint flex items-center relative overflow-hidden">
+            <div className="min-w-6 h-6 flex items-center justify-center pr-2 text-white font-extrabold text-nowrap">
               {index + 4}
             </div>
             <div className="rounded-full bg-[url(https://contents-cdn.viewus.co.kr/image/2023/08/CP-2023-0056/image-7adf97c8-ef11-4def-81e8-fe2913667983.jpeg)] bg-cover w-8 h-8 aspect-square"></div>
