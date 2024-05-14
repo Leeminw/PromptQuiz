@@ -70,6 +70,12 @@ public class GameController {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("방 설정 수정 완료", response));
     }
 
+    @PutMapping("/reset")
+    public ResponseEntity<ResponseData<?>> resetGame(@RequestParam String gameCode) {
+        GameResponseDto response = gameService.resetGame(gameCode);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success("게임 종료시 방 데이터 초기화", response));
+    }
+
     @DeleteMapping("/{gameCode}")
     public ResponseEntity<ResponseData<?>> deleteGame(@PathVariable(name = "gameCode") String gameCode) {
         GameResponseDto response = gameService.deleteGame(gameCode);

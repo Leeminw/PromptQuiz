@@ -164,6 +164,20 @@ public class GameServiceImpl implements GameService {
         gameRepository.save(gameEntity);
         return new GameResponseDto(gameEntity);
     }
+
+    @Override
+    @Transactional
+    public GameResponseDto resetGame(String gameCode) {
+        Game game = gameRepository.findByCode(gameCode)
+                .orElseThrow(() -> new GameNotFoundException(gameCode));
+
+        game.initCurRounds();
+        game.updateIsStarted(false);
+
+        gameRepository.save(game);
+        return new GameResponseDto(game);
+    }
+
     @Override
     @Transactional
     public GameResponseDto deleteGame(String code) {
