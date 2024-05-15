@@ -8,5 +8,5 @@ public interface DottegiService {
     void processMessageVerb(String message);
     void processMessageSubAdjective(String message);
     void processMessageObjAdjective(String message);
-
+    void sendLastUpdatedPayload(String sessionId);
 }
