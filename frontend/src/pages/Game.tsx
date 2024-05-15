@@ -58,6 +58,7 @@ const GamePage = () => {
   const [roundResult, setRoundResult] = useState<RoundUser[]>([]);
   const [gameState, setGameState] = useState<number>(0); // 0: 카운트다운, 1: 퀴즈, 2:결과
   const [countdownSec, setCountdownSec] = useState<number>(0);
+  const [chatCooldown, setChatCooldown] = useState<boolean>(false);
   //문제 틀렸을때 틀린거 표기
   const [timeRatio, setTimeRatio] = useState<number>(0);
   const getGameData = async () => {
@@ -358,6 +359,12 @@ const GamePage = () => {
       content: chatfilter,
     };
     publish(destination, gameChat);
+    if (gamestart) {
+      setChatCooldown(true);
+      setTimeout(() => {
+        setChatCooldown(false);
+      }, 1000);
+    }
     chatInput.current.value = '';
   };
   const publishAnswer = (answer: number) => {
@@ -646,7 +653,7 @@ const GamePage = () => {
                 placeholder={`${chatOpen ? 'Esc를 눌러 채팅창 닫기' : 'Enter를 눌러 채팅 입력'}`}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                    if (chatInput.current.value !== '') {
+                    if (chatInput.current.value !== '' && !chatCooldown) {
                       publishChat();
                     }
                   } else if (e.key === 'Escape') chatFocusOut();
@@ -654,10 +661,12 @@ const GamePage = () => {
                 onClick={chatFocus}
               ></input>
               <div
-                className="w-16 bg-mint cursor-pointer absolute h-full right-0 rounded-r-full flex justify-center items-center hover:brightness-125 transition"
+                className={`w-16 cursor-pointer absolute h-full right-0 rounded-r-full flex justify-center items-center hover:brightness-125 transition
+                ${chatCooldown ? 'bg-gray-400' : 'bg-mint'}
+                `}
                 ref={chatBtn}
                 onClick={() => {
-                  if (chatInput.current.value !== '') {
+                  if (chatInput.current.value !== '' && !chatCooldown) {
                     publishChat();
                     if (!chatOpen) chatFocus();
                   }
