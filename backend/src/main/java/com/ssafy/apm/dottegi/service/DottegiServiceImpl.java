@@ -96,8 +96,8 @@ public class DottegiServiceImpl implements DottegiService {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private long timerStart = System.currentTimeMillis();
-    private final long timerDuration = 30000;
-//    private final long timerDuration = 300000;
+//    private final long timerDuration = 30000;
+    private final long timerDuration = 300000;
 
     @Scheduled(fixedRate = 1000)
     public void broadcastRemainingTime() throws IOException {
@@ -187,12 +187,12 @@ public class DottegiServiceImpl implements DottegiService {
             case "Cartoon" -> sdwRequestDto.updateDisneyPrompt(prompt);
             case "Realistic" -> sdwRequestDto.updateRealisticPrompt(prompt);
         }
-        //SdwResponseDto sdwResponseDto = sdwService.requestStableDiffusion(sdwRequestDto);
-        //String base64Image = sdwResponseDto.getImages().get(0);
+        SdwResponseDto sdwResponseDto = sdwService.requestStableDiffusion(sdwRequestDto);
+        String base64Image = sdwResponseDto.getImages().get(0);
 
         /* DONE: RDB에 저장 or 파일로 저장하여 불러와서 Base64 인코딩 하여 전송하는 방식 */
-        //ImageResponseDto imageResponseDto = imageService.saveBase64Image(combinedSentence, base64Image);
-        ImageResponseDto imageResponseDto = imageService.findImageByUuid("2c2e4dce-34c1-4f27-838a-6e1bc1bc00e9");
+        ImageResponseDto imageResponseDto = imageService.saveBase64Image(combinedSentence, base64Image);
+//        ImageResponseDto imageResponseDto = imageService.findImageByUuid("2c2e4dce-34c1-4f27-838a-6e1bc1bc00e9");
 
         // Collect top 10 words from each category into lists
         List<Map.Entry<String, Integer>> top10Subjects = getTop10Entries(messageCountSubject);
