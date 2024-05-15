@@ -1,7 +1,7 @@
 interface Game {
     channelCode: string,
     type: number,
-    style: number,
+    style: string,
     code: string,
     title: string,
     password: string|null,
