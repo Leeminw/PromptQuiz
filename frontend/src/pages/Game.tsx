@@ -543,8 +543,11 @@ const GamePage = () => {
               ></div>
             )}
           </div>
-          <div className="border-custom- w-full h-full flex items-center justify-center relative">
-            <div className="border-custom- w-full h-full flex items-center justify-center relative">
+          <div
+            className="w-full h-full flex items-center justify-center relative bg-center bg-cover"
+            style={{ backgroundImage: `url(${imageUrl})` }}
+          >
+            <div className="w-full h-full flex items-center justify-center relative">
               {isQuiz ? (
                 <div className="w-16 h-7 absolute top-2 left-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
                   {round} 라운드
@@ -565,10 +568,6 @@ const GamePage = () => {
               {gamestart && gameState === 2 && <QuizCorrect correctUser={quizCorrectUser} />}
 
               {/* <GameResult/> */}
-              <div
-                className={`w-full h-full bg-center relative bg-cover`}
-                style={{ backgroundImage: `url(${imageUrl})` }}
-              ></div>
             </div>
           </div>
         </div>
@@ -641,7 +640,7 @@ const GamePage = () => {
                     ))}
                   </div>
                 </div>
-                <div className="absolute w-full h-full border-custom-white opacity-90 bg-white z-0"></div>
+                <div className="absolute w-full h-full border-custom-white opacity-90 bg-white -z-10"></div>
               </div>
             </div>
 
@@ -680,7 +679,9 @@ const GamePage = () => {
         {/* 게임 설정 */}
         <div className="w-1/3 flex flex-col cursor-default select-none">
           {/* 방 설정 */}
-          <GameRoomSetting gamestart={isStart} />
+          <div className="w-full h-16">
+            {game !== null && <GameRoomSetting gamestart={isStart} gamesetting={game} />}
+          </div>
 
           {/* 팀 선택, 게임 시작 버튼 */}
           <div className="w-full h-6 my-3 flex">
