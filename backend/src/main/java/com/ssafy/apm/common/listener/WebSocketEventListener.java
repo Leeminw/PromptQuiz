@@ -3,6 +3,7 @@ package com.ssafy.apm.common.listener;
 import com.ssafy.apm.common.service.SocketService;
 import com.ssafy.apm.common.util.SocketEventUrlParser;
 
+import com.ssafy.apm.dottegi.service.DottegiService;
 import lombok.RequiredArgsConstructor;
 
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ import java.util.Objects;
 public class WebSocketEventListener {
 
     private final SocketService socketService;
+    private final DottegiService dottegiService;
     private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
 
     @EventListener
@@ -44,6 +46,13 @@ public class WebSocketEventListener {
 
         } else {
             logger.info("destination format does not match.");
+        }
+
+        /* TODO: Dottegi 새로고침 시 유저별 세션 관리 필요 */
+        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        String destination = headerAccessor.getDestination();
+        if ("/ws/sub/dottegi".equals(destination)) {
+            dottegiService.sendLastUpdatedPayload(sessionId);
         }
     }
 
