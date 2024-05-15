@@ -25,4 +25,7 @@ public interface ImageService {
     ByteArrayResource downloadImage(String uuid) throws IOException;
     InputStreamResource getImageSource(String uuid) throws IOException;
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ImageResponseDto saveBase64Image(String filename, String base64Image) throws IOException;
+
 }

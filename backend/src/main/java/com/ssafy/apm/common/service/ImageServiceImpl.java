@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -122,5 +123,24 @@ public class ImageServiceImpl implements ImageService {
         Path filepath = Paths.get(image.getFilepath(), image.getUuid() + ".png");
         return new InputStreamResource(Files.newInputStream(filepath));
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public ImageResponseDto saveBase64Image(String filename, String base64Image) throws IOException {
+        byte[] decodedImage = Base64.getDecoder().decode(base64Image);
+        String uuid = UUID.randomUUID().toString();
+        Path filepath = Paths.get(imagePath, uuid + ".png");
+        Files.write(filepath, decodedImage);
+
+        ImageRequestDto requestDto = ImageRequestDto.builder()
+                .url("https://k10a509.p.ssafy.io/api/v1/images/" + uuid + ".png")
+                .uuid(uuid)
+                .filepath(imagePath)
+                .filesize((long) decodedImage.length)
+                .filename(filename + ".png")
+                .contentType(Files.probeContentType(filepath))
+                .build();
+        return new ImageResponseDto(imageRepository.save(requestDto.toEntity()));
+    }
+
 
 }
