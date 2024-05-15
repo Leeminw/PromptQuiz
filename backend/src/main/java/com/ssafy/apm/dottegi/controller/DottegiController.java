@@ -15,47 +15,47 @@ public class DottegiController {
     private final DottegiService dottegiService;
 
     @MessageMapping("/dottegi/style")
-    @SendTo("/dottegi/style")
+    @SendTo("/ws/sub/dottegi/style")
     public void handleMessage4Style(String message) {
         dottegiService.processMessageStyle(message);
     }
 
     /* TODO: DTO 클래스로 return */
-    /** FullPath: /chat/dottegi/subject */
+    /** FullPath: /ws/pub/dottegi/subject */
     @MessageMapping("/dottegi/subject")
-    @SendTo("/dottegi/subject")
+    @SendTo("/ws/sub/dottegi/subject")
     public String handleMessage4Subject(String message) {
         dottegiService.processMessageSubject(message);
         return message;
     }
 
-    /** FullPath: /chat/dottegi/object */
+    /** FullPath: /ws/pub/dottegi/object */
     @MessageMapping("/dottegi/object")
-    @SendTo("/dottegi/object")
+    @SendTo("/ws/sub/dottegi/object")
     public String handleMessage4Object(String message) {
         dottegiService.processMessageObject(message);
         return message;
     }
 
-    /** FullPath: /chat/dottegi/verb */
+    /** FullPath: /ws/pub/dottegi/verb */
     @MessageMapping("/dottegi/verb")
-    @SendTo("/dottegi/verb")
+    @SendTo("/ws/sub/dottegi/verb")
     public String handleMessage4Verb(String message) {
         dottegiService.processMessageVerb(message);
         return message;
     }
 
-    /** FullPath: /chat/dottegi/sub-adjective */
+    /** FullPath: /ws/pub/dottegi/sub-adjective */
     @MessageMapping("/dottegi/sub-adjective")
-    @SendTo("/dottegi/sub-adjective")
+    @SendTo("/ws/sub/dottegi/sub-adjective")
     public String handleMessage4SubAdjective(String message) {
         dottegiService.processMessageSubAdjective(message);
         return message;
     }
 
-    /** FullPath: /chat/dottegi/obj-adjective */
+    /** FullPath: /ws/pub/dottegi/obj-adjective */
     @MessageMapping("/dottegi/obj-adjective")
-    @SendTo("/dottegi/obj-adjective")
+    @SendTo("/ws/sub/dottegi/obj-adjective")
     public String handleMessage4ObjAdjective(String message) {
         dottegiService.processMessageObjAdjective(message);
         return message;
