@@ -48,6 +48,7 @@ public class WebSocketEventListener {
             logger.info("destination format does not match.");
         }
 
+        /* TODO: Dottegi 새로고침 시 유저별 세션 관리 필요 */
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         String destination = headerAccessor.getDestination();
         if ("/ws/sub/dottegi".equals(destination)) {
