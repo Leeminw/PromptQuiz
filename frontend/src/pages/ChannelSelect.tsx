@@ -7,13 +7,14 @@ import CustomButton from '../components/ui/CustomButton';
 
 const ChannelSelectPage = () => {
   const [channelArray, setChannelList] = useState<Channel[]>([]);
-  const [activateBtn, setActivateBtn] = useState<ActivateButton>({});
+  const [moveBox, setMoveBox] = useState<boolean>(false);
   const navigate = useNavigate();
   useEffect(() => {
     // 채널리스트 가져오기
     const response = ChannelApi.getChannelList()
       .then((response) => {
         setChannelList(response.data);
+        setMoveBox(true);
       })
       .catch((error) => {
         console.log(error);
@@ -31,11 +32,15 @@ const ChannelSelectPage = () => {
 
   return (
     <div className="w-[55rem] min-w-[45rem]">
-      <div className="w-full flex justify-center items-center bg-white/90 backdrop-blur-sm h-14 rounded-xl">
+      <div
+        className={`w-full flex justify-center items-center bg-white/90 backdrop-blur-sm h-14 rounded-xl transition duration-1000 ${moveBox ? 'translate-x-0' : '-translate-x-[100vw]'}`}
+      >
         <p className="text-mint font-extrabold text-lg">채널목록</p>
       </div>
 
-      <div className="grid grid-cols-3 grid-rows-3 gap-x-3 gap-y-3 py-4 rounded-xl mt-2 mb-4">
+      <div
+        className={`grid grid-cols-3 grid-rows-3 gap-x-3 gap-y-3 py-4 rounded-xl mt-2 mb-4 transition duration-1000 ${moveBox ? 'translate-x-0' : 'translate-x-[100vw]'}`}
+      >
         {channelArray.map((item, idx) => (
           <ChannelBox
             key={idx}
@@ -47,17 +52,25 @@ const ChannelSelectPage = () => {
             btnActivate={btnCurrentActivate}
             onClick={() => {
               activateBtnFunc();
+              setTimeout(() => {
+                setMoveBox(false);
+              }, 600);
             }}
           />
         ))}
       </div>
-      <div className="flex justify-end">
+      <div
+        className={`flex justify-end transition duration-1000 ${moveBox ? 'translate-x-0' : 'translate-x-[100vw]'}`}
+      >
         <CustomButton
           className="btn-red text-white text-sm w-28 min-w-[3rem] flex gap-1 items-center px-2 overflow-hidden max-xl:justify-center"
           onClick={() => {
             activateBtnFunc();
             setTimeout(() => {
-              navigate('/');
+              setMoveBox(false);
+              setTimeout(() => {
+                navigate('/');
+              }, 500);
             }, 500);
           }}
           btnCurrentActivate={btnCurrentActivate}
