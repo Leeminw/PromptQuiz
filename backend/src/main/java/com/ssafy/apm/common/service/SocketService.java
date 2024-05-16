@@ -1,6 +1,10 @@
 package com.ssafy.apm.common.service;
 
+import com.ssafy.apm.common.dto.SessionResponseDto;
+
 public interface SocketService {
+
+    SessionResponseDto getSession(String sessionId);
 
     void addSession(String sessionId);
 
