@@ -97,7 +97,7 @@ public class ImageServiceImpl implements ImageService {
         Files.write(filepath, file.getBytes());
 
         ImageRequestDto requestDto = ImageRequestDto.builder()
-                .url("https://k10a509.p.ssafy.io/api/v1/images/" + uuid + ".png")
+                .url("https://k10a509.p.ssafy.io/api/v1/images/" + uuid)
                 .uuid(uuid)
                 .filepath(imagePath)
                 .filesize(file.getSize())
@@ -132,7 +132,7 @@ public class ImageServiceImpl implements ImageService {
         Files.write(filepath, decodedImage);
 
         ImageRequestDto requestDto = ImageRequestDto.builder()
-                .url("https://k10a509.p.ssafy.io/api/v1/images/" + uuid + ".png")
+                .url("https://k10a509.p.ssafy.io/api/v1/images/" + uuid)
                 .uuid(uuid)
                 .filepath(imagePath)
                 .filesize((long) decodedImage.length)

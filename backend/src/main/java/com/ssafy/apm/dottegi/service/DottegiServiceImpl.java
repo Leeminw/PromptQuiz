@@ -164,7 +164,7 @@ public class DottegiServiceImpl implements DottegiService {
             log.info("[No Data Exists] Send Basic Payload.");
             ImageResponseDto imageResponseDto = imageService.findImageByUuid("2c2e4dce-34c1-4f27-838a-6e1bc1bc00e9");
             lastUpdatedPayload = DottegiResponseDto.builder()
-                    .lastUpdatedUrl(imageResponseDto.getUrl().replace(".png", ""))
+                    .lastUpdatedUrl(imageResponseDto.getUrl())
                     .lastUpdatedStyles(List.of(Map.of("Anime", 1)))
                     .lastUpdatedSubjects(List.of(Map.of("바람", 1)))
                     .lastUpdatedObjects(List.of(Map.of("벚꽃잎", 1)))
@@ -204,7 +204,7 @@ public class DottegiServiceImpl implements DottegiService {
 
         // Send the combined sentence and lists to subscribers
         DottegiResponseDto payload = DottegiResponseDto.builder()
-                .lastUpdatedUrl(imageResponseDto.getUrl().replace(".png", ""))
+                .lastUpdatedUrl(imageResponseDto.getUrl())
                 .lastUpdatedStyles(getTop10ListMap(countMessageStyles))
                 .lastUpdatedSubjects(getTop10ListMap(countMessageSubjects))
                 .lastUpdatedObjects(getTop10ListMap(countMessageObjects))
