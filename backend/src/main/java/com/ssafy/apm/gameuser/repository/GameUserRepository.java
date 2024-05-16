@@ -25,4 +25,5 @@ public interface GameUserRepository extends JpaRepository<GameUser, String> {
     Boolean existsByUserIdAndGameCode(Long userId, String gameCode);
     Boolean existsByUserId(Long userId);
 
+    Integer countByGameCode(String gameCode);
 }
