@@ -9,7 +9,7 @@ const Rank = () => {
         onClick={() => (document.getElementById('ranking_modal') as HTMLDialogElement).showModal()}
       >
         <BsFillTrophyFill className="min-w-4 min-h-4 " />
-        <p className="text-nowrap font-extrabold lg:flex max-lg:hidden">랭킹</p>
+        <p className="text-nowrap font-extrabold md:flex max-md:hidden select-none">랭킹</p>
       </button>
     </div>
   );

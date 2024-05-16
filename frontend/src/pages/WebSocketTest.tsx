@@ -182,6 +182,13 @@ const WebSocketTest = () => {
     return checkLastCh ? true : false;
   };
 
+  // 순위에 따라 다른 스타일을 입힘
+  const getStyleByRank = (rank: number): string => {
+    if (rank === 0) return 'mb-2 h-12 bg-yellow-200 border-custom-yellow';
+    if (rank === 1) return 'mb-2 h-12 bg-gray-200 border-custom-gray';
+    if (rank === 2) return 'mb-2 h-12 bg-yellow-500 border-custom-yellow';
+    return 'mb-2 h-12 bg-white border-custom-mint';
+  };
   return (
     <div className="flex flex-col items-center w-full">
       <h1 className="text-2xl font-bold my-4">WebSocket STOMP Multi-Channel Chat</h1>
@@ -398,7 +405,17 @@ const WebSocketTest = () => {
                   ];
                   setters[index](e.target.value);
                 }}
-                placeholder={`Type your message in chat ${index + 1}...`}
+                // 엔터를 눌러도 단어 입력
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    sendMessage(
+                      input,
+                      `/ws/pub/dottegi/${['subject', 'object', 'verb', 'sub-adjective', 'obj-adjective'][index]}`
+                    );
+                  }
+                }}
+                // placeholder={`Type your message in chat ${index + 1}...`}
+                placeholder={`${wordClass[index]}를 입력해주세요`}
                 className="p-2 border border-gray-300 rounded mb-2"
               />
               <button
@@ -408,9 +425,11 @@ const WebSocketTest = () => {
                     `/ws/pub/dottegi/${['sub-adjective', 'subject', 'obj-adjective', 'object', 'verb'][index]}`
                   )
                 }
-                className="bg-green-500 text-white p-2 rounded hover:bg-blue-700 transition duration-200"
+                // className="w-fit h-full btn-mint-border-white hover:brightness-110 flex justify-center items-center gap-2 px-4"
+
+                className="btn-mint-border-white bg-green-500 text-white p-2 rounded hover:brightness-110 transition duration-200"
               >
-                Send Message
+                입력
               </button>
             </div>
           )

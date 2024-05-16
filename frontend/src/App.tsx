@@ -27,12 +27,11 @@ const App = () => {
       className="w-[100vw] h-[100vh] flex justify-center items-center 
     bg-[url(/public/ui/bg.jpg)] bg-no-repeat bg-cover bg-center overflow-hidden relative"
     >
-      <div className="absolute w-full h-full"></div>
 
       <SettingModal />
       <HelpModal />
       <div className="absolute top-6 right-6 flex gap-3">
-        <CustomButton
+        {/* <CustomButton
           btnCurrentActivate={btnCurrentActivate}
           className="btn-mint flex gap-1 items-center h-8 px-2 cursor-pointer"
           onClick={() => {
@@ -67,7 +66,7 @@ const App = () => {
           >
             도움말
           </p>
-        </CustomButton>
+        </CustomButton> */}
       </div>
       <Outlet />
     </div>
