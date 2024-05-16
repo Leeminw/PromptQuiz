@@ -24,12 +24,12 @@ public class Channel {
         return curPlayers < maxPlayers;
     }
 
-    public void decreaseCurPlayers() {
-        this.curPlayers = Math.max(0, this.curPlayers-1);
+    public void decreaseCurPlayers(Integer count) {
+        this.curPlayers = count;
     }
 
-    public void increaseCurPlayers() {
-        this.curPlayers++;
+    public void increaseCurPlayers(Integer count) {
+        this.curPlayers = count;
     }
 
 
