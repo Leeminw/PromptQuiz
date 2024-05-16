@@ -84,9 +84,6 @@ const GamePage = () => {
       console.error(error);
       // navigate(-1);
     }
-    return () => {
-      disconnectWebSocket();
-    };
     // setMaxRound(responseGame.maxRounds);
     // enterGame();
   };
