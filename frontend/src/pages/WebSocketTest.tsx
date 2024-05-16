@@ -41,6 +41,13 @@ const WebSocketTest = () => {
   const [curUpdatedSubAdjectives, setCurUpdatedSubAdjectives] = useState<Object[]>([]);
   const [curUpdatedObjAdjectives, setCurUpdatedObjAdjectives] = useState<Object[]>([]);
 
+  const curUpdatedList = [
+    curUpdatedSubjects,
+    curUpdatedObjects,
+    curUpdatedVerbs,
+    curUpdatedSubAdjectives,
+    curUpdatedObjAdjectives,
+  ];
   useEffect(() => {
     axios
       .get('http://localhost:8080/api/v1/dottegi')
@@ -390,6 +397,16 @@ const WebSocketTest = () => {
         {[inputSubject, inputObject, inputVerb, inputSubAdjective, inputObjAdjective].map(
           (input, index) => (
             <div key={index} className="flex flex-col w-1/6">
+              <div className="flex justify-center w-full text-xl bg-mint text-white font-bold">
+                {wordClass[index]}
+              </div>
+              <div className="h-1/4 flex flex-col overflow-y-scroll custom-scroll border-custom-mint bg-white mb-4">
+                {curUpdatedList[index].map((item, index) => (
+                  <div key={index} className="mb-2">
+                    {Object.keys(item)[0]} : {Object.values(item)[0]} 개
+                  </div>
+                ))}
+              </div>
               {/* <div className="overflow-setChatLogSubjects h-48 mb-2 p-2 border border-gray-200"> */}
               <div className="w-full p-2 h-48 mb-3 overflow-y-scroll custom-scroll border-custom-mint bg-white">
                 {[
@@ -430,7 +447,6 @@ const WebSocketTest = () => {
                 placeholder={`${wordClass[index]}를 입력해주세요`}
                 className="p-2 border border-gray-300 rounded mb-2"
               />
-
               <button
                 onClick={() =>
                   sendMessage(
