@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { AiOutlineRight } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
-import { UserChannelApi } from '../../hooks/axios-user-channel';
-import { error } from 'console';
-import CustomButton from '../ui/CustomButton';
 
 interface Props {
   id: string;
@@ -24,19 +21,21 @@ const ChannelBox = ({ id, code, name, curPlayers, maxPlayers, btnActivate, onCli
       onClick();
       setActivateBtn(true);
       setTimeout(() => {
-        navigate(`/lobby/${code}`, { state: { channelCode: id } });
         setActivateBtn(false);
+        setTimeout(() => {
+          navigate(`/lobby/${code}`, { state: { channelCode: id } });
+        }, 1000);
       }, 500);
     }
   };
   return (
     <button
-      className={`${activateBtn ? 'animate-clickbtn scale-105' : ''} hover:brightness-110 hover:scale-105 transition`}
+      className={`${activateBtn ? 'animate-clickbtn scale-105 bg-mint/90 text-white' : ''} rounded-lg hover:brightness-110 bg-white/90 hover:bg-mint/90 text-mint hover:text-white hover:scale-105 transition`}
       onClick={handleClick}
     >
-      <div className="bg-white/90 px-2.5 py-2 rounded-lg w-full">
+      <div className="px-2.5 py-2 w-full">
         <div className="flex items-center">
-          <div className="w-full text-mint font-bold flex justify-start pl-1">{id}채널</div>
+          <div className="w-full font-bold flex justify-start pl-1">{id}채널</div>
           <AiOutlineRight />
         </div>
         <div className="flex items-center gap-2 text-xs pt-1">
