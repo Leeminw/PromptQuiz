@@ -283,33 +283,40 @@ const WebSocketTest = () => {
         </h1>
       </div>
       <h1 className="text-xl font-bold my-4">
-        {curUpdatedStyles.map((item, index) => {
-          if (Object.keys(item)[0] === 'Anime') {
-            return (
-              <div key={index} className="mb-2">
-                애니 스타일: {Object.values(item)[0]}개
-              </div>
-            );
-          } else if (Object.keys(item)[0] === 'Cartoon') {
-            return (
-              <div key={index} className="mb-2">
-                디즈니 스타일: {Object.values(item)[0]}개
-              </div>
-            );
-          } else if (Object.keys(item)[0] === 'Realistic') {
-            return (
-              <div key={index} className="mb-2">
-                실사 스타일: {Object.values(item)[0]}개
-              </div>
-            );
-          }
-        })}
+        <div className="w-full h-full bg-mint border-custom-mint">
+          <div className="w-full h-8 bg-mint text-white font-bold text-lg flex items-center mb-3">
+            그림체 순위
+          </div>
+          <div className="w-full  flex flex-col gap-3 border-custom-white bg-white py-1 pr-2 pl-1">
+            {curUpdatedStyles.map((item, index) => {
+              if (Object.keys(item)[0] === 'Anime') {
+                return (
+                  <div key={index} className={getStyleByRank(index)}>
+                    애니 스타일: {Object.values(item)[0]}개
+                  </div>
+                );
+              } else if (Object.keys(item)[0] === 'Cartoon') {
+                return (
+                  <div key={index} className={getStyleByRank(index)}>
+                    디즈니 스타일: {Object.values(item)[0]}개
+                  </div>
+                );
+              } else if (Object.keys(item)[0] === 'Realistic') {
+                return (
+                  <div key={index} className={getStyleByRank(index)}>
+                    실사 스타일: {Object.values(item)[0]}개
+                  </div>
+                );
+              }
+            })}
+          </div>
+        </div>
       </h1>
       <div className="flex justify-around w-full">
         <div className="flex flex-col mb-2">
           <button
             onClick={() => sendMessage('Anime', '/ws/pub/dottegi/style')}
-            className="bg-red-500 text-white p-2 rounded hover:bg-blue-700 transition duration-200"
+            className="btn-mint-border-white w-[5rem] bg-green-500 text-white p-2 rounded hover:brightness-110 transition duration-200"
           >
             애니
           </button>
@@ -317,7 +324,7 @@ const WebSocketTest = () => {
         <div className="flex flex-col">
           <button
             onClick={() => sendMessage('Cartoon', '/ws/pub/dottegi/style')}
-            className="bg-red-500 text-white p-2 rounded hover:bg-blue-700 transition duration-200"
+            className="btn-mint-border-white w-[5rem]  bg-green-500 text-white p-2 rounded hover:brightness-110 transition duration-200"
           >
             카툰
           </button>
@@ -325,7 +332,7 @@ const WebSocketTest = () => {
         <div className="flex flex-col">
           <button
             onClick={() => sendMessage('Realistic', '/ws/pub/dottegi/style')}
-            className="bg-red-500 text-white p-2 rounded hover:bg-blue-700 transition duration-200"
+            className="btn-mint-border-white w-[5rem]  bg-green-500 text-white p-2 rounded hover:brightness-110 transition duration-200"
           >
             실사
           </button>
