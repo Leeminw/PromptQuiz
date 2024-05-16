@@ -225,7 +225,7 @@ public class GameServiceImpl implements GameService {
                     }
                 }
             }
-            gameUserRepository.delete(gameUser);
+            gameUserRepository.deleteAllByUserId(gameUser.getUserId());
             game.decreaseCurPlayers(gameUserRepository.countByGameCode(gameCode));// 방 현재 인원 수를 줄임
             gameRepository.save(game);
         }
