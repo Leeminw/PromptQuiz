@@ -188,8 +188,8 @@ const Lobby = () => {
       </div>
       <div className="w-full grid grid-cols-8 gap-3 pl-4">
         {/* 광고 */}
-        <div className="w-full h-full bg-blue-200 flex items-center justify-center col-span-2">
-          광고
+        <div className="w-full h-full flex items-center justify-center col-span-2">
+
         </div>
         <div className="w-full h-full col-span-6 backdrop-blur-sm">
           {/* 로비 채팅창 */}

@@ -7,12 +7,6 @@ interface GamePlayerProps {
   // correctAnswer: boolean | null;
   // wrongAnswer: boolean | null;
 }
-// { idx }: GamePlayerProps
-// const GamePlayer = forwardRef((props, ref) => {
-//   const chatBubbleBox = useRef(null);
-//   const chatBubbleFunction = () => {
-//     console.log('HI');
-//   };
 
 const GamePlayer = ({ userInfo, gameChat }: GamePlayerProps) => {
   const [showChat, setShowChat] = useState<boolean>(false);
@@ -48,7 +42,9 @@ const GamePlayer = ({ userInfo, gameChat }: GamePlayerProps) => {
       </div>
       <div className="pl-1 w-full flex items-center">
         <div className="flex justify-center relative rounded-full bg-[url(https://contents-cdn.viewus.co.kr/image/2023/08/CP-2023-0056/image-7adf97c8-ef11-4def-81e8-fe2913667983.jpeg)] bg-cover w-8 h-8 aspect-square -z-10">
-          <div className="absolute bg-[url(/public/ui/host.png)] bg-cover w-6 h-6 -translate-y-4 -z-20"></div>
+          {userInfo.isHost && (
+            <div className="absolute bg-[url(/public/ui/host.png)] bg-cover w-6 h-6 -translate-y-4 -z-20"></div>
+          )}
         </div>
         <p className="pl-2 w-full text-xs font-bold text-white line-clamp-2 text-ellipsis">
           {userInfo.nickName}

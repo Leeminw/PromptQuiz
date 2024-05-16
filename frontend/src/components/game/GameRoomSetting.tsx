@@ -27,12 +27,12 @@ const GameRoomSetting = ({ gamestart, gamesetting }: GameRoomSettingProps) => {
       </dialog>
       <div className="w-full h-6 border-custom-mint bg-mint pl-2 pr-1 text-white font-bold text-sm flex items-center z-10">
         <p className="w-full">방 설정</p>
-        <IoSettings
+        {/* <IoSettings
           className={`w-5 h-5 transition ${!gamestart && 'hover:scale-125 cursor-pointer'}`}
           onClick={() => {
             if (!gamestart) (document.getElementById('modalopen') as HTMLDialogElement).showModal();
           }}
-        />
+        /> */}
       </div>
       <div
         className={`absolute w-full grid grid-cols-3 grid-rows-3 bg-white h-24 border-custom-white translate-y-14 transition text-xs origin-top z-10 ${unfold ? '' : 'scale-y-0'}`}

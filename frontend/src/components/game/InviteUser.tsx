@@ -49,15 +49,16 @@ const InviteUser = () => {
   return (
     <dialog id="invite_modal" className="modal">
       <div className="modal-box border-2 border-lightmint flex flex-col gap-3 pb-14 bg-white/90 backdrop-blur-lg min-w-96">
-        <h3 className="font-bold text-2xl">초대코드 발송하기</h3>
+        <h3 className="font-bold text-2xl">초대하기</h3>
         <hr className="mb-1 border-extralightmint" />
         <div className="flex flex-col gap-3 overflow-x-hidden overflow-y-scroll custom-scroll">
-          <button
+          {/* <button
             className="bg-black text-white border-custom-gray px-6 font-bold hover:brightness-110"
             onClick={sendKakaoInvite}
           >
             초대 코드 공유하기
-          </button>
+          </button> */}
+          <p>추후 추가될 예정입니다.</p>
           <div className="absolute bottom-6 right-6 flex gap-4 w-full justify-end">
             <form method="dialog">
               <button className="bg-[#999999] text-white border-custom-gray px-6 font-bold hover:brightness-110">
