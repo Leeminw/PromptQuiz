@@ -9,7 +9,9 @@ public interface UserChannelService {
     List<UserDetailResponseDto> getUserChannelList(Long channelId);
 
     UserChannelGetResponseDto enterUserChannel(Long channelId);
+
     UserChannelGetResponseDto enterUserChannelByCode(String code);
+
     Long deleteExitUserChannel();
 
     Long deleteExitUserChannelByUserIdAndCode(Long userId, String code);

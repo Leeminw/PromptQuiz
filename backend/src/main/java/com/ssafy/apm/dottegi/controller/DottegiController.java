@@ -1,9 +1,14 @@
 package com.ssafy.apm.dottegi.controller;
 
+import com.ssafy.apm.common.domain.ResponseData;
+import com.ssafy.apm.dottegi.dto.DottegiResponseDto;
 import com.ssafy.apm.dottegi.service.DottegiService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
@@ -13,6 +18,12 @@ import java.util.Map;
 public class DottegiController {
 
     private final DottegiService dottegiService;
+
+    @GetMapping("/api/v1/dottegi")
+    public ResponseEntity<ResponseData<?>> findCurrentStatus() {
+        DottegiResponseDto responseDto = dottegiService.findLastUpdatedPayload();
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseData.success(responseDto));
+    }
 
     @MessageMapping("/dottegi/style")
     @SendTo("/ws/sub/dottegi/style")

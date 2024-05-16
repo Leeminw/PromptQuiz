@@ -1,50 +1,67 @@
 import React, { useState, useEffect } from 'react';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
+import axios from 'axios';
 import { last } from 'lodash';
-
-type JsonItem = {
-  key: string;
-  value: number;
-};
 
 const WebSocketTest = () => {
   const wordClass = ['주어', '목적어', '동사', '주형용사', '목형용사'];
 
-  // 통계 변수
-  const [top3MessagesStyle, setTop3MessagesStyle] = useState<JsonItem[]>([]);
-  const [top10Messages1, setTop10Messages1] = useState<JsonItem[]>([]);
-  const [top10Messages2, setTop10Messages2] = useState<JsonItem[]>([]);
-  const [top10Messages3, setTop10Messages3] = useState<JsonItem[]>([]);
-  const [top10Messages4, setTop10Messages4] = useState<JsonItem[]>([]);
-  const [top10Messages5, setTop10Messages5] = useState<JsonItem[]>([]);
+  // 채팅 내역
+  const [chatLogVerbs, setChatLogVerbs] = useState<string[]>([]);
+  const [chatLogObjects, setChatLogObjects] = useState<string[]>([]);
+  const [chatLogSubjects, setChatLogSubjects] = useState<string[]>([]);
+  const [chatLogSubAdjectives, setChatLogSubAdjectives] = useState<string[]>([]);
+  const [chatLogObjAdjectives, setChatLogObjAdjectives] = useState<string[]>([]);
+
+  // 채팅입력창
+  const [inputVerb, setInputVerb] = useState('');
+  const [inputObject, setInputObject] = useState('');
+  const [inputSubject, setInputSubject] = useState('');
+  const [inputSubAdjective, setInputSubAdjective] = useState('');
+  const [inputObjAdjective, setInputObjAdjective] = useState('');
 
   // 결과 변수
   const [remainTime, setRemainTime] = useState<string>('');
-  const [resultStyle, setResultStyle] = useState<string>('');
-  const [resultImage, setResultImage] = useState<string>('');
-  const [resultSentence, setResultSentence] = useState<string>('');
-  const [resultTop10Subjects, setResultTop10Subjects] = useState<JsonItem[]>([]);
-  const [resultTop10Objects, setResultTop10Objects] = useState<JsonItem[]>([]);
-  const [resultTop10Verbs, setResultTop10Verbs] = useState<JsonItem[]>([]);
-  const [resultTop10SubAdjectives, setResultTop10SubAdjectives] = useState<JsonItem[]>([]);
-  const [resultTop10ObjAdjectives, setResultTop10ObjAdjectives] = useState<JsonItem[]>([]);
+  const [lastUpdatedUrl, setLastUpdatedUrl] = useState<string>('');
 
-  // 채팅 내역
-  const [messages1, setMessages1] = useState<string[]>([]);
-  const [messages2, setMessages2] = useState<string[]>([]);
-  const [messages3, setMessages3] = useState<string[]>([]);
-  const [messages4, setMessages4] = useState<string[]>([]);
-  const [messages5, setMessages5] = useState<string[]>([]);
+  // 이전 결과 통계
+  const [lastUpdatedStyles, setLastUpdatedStyles] = useState<Object[]>([]);
+  const [lastUpdatedSubjects, setLastUpdatedSubjects] = useState<Object[]>([]);
+  const [lastUpdatedObjects, setLastUpdatedObjects] = useState<Object[]>([]);
+  const [lastUpdatedVerbs, setLastUpdatedVerbs] = useState<Object[]>([]);
+  const [lastUpdatedSubAdjectives, setLastUpdatedSubAdjectives] = useState<Object[]>([]);
+  const [lastUpdatedObjAdjectives, setLastUpdatedObjAdjectives] = useState<Object[]>([]);
 
-  // 채팅입력창
-  const [inputMessage1, setInputMessage1] = useState('');
-  const [inputMessage2, setInputMessage2] = useState('');
-  const [inputMessage3, setInputMessage3] = useState('');
-  const [inputMessage4, setInputMessage4] = useState('');
-  const [inputMessage5, setInputMessage5] = useState('');
+  // 현재 결과 통계
+  const [curUpdatedStyles, setCurUpdatedStyles] = useState<Object[]>([]);
+  const [curUpdatedSubjects, setCurUpdatedSubjects] = useState<Object[]>([]);
+  const [curUpdatedObjects, setCurUpdatedObjects] = useState<Object[]>([]);
+  const [curUpdatedVerbs, setCurUpdatedVerbs] = useState<Object[]>([]);
+  const [curUpdatedSubAdjectives, setCurUpdatedSubAdjectives] = useState<Object[]>([]);
+  const [curUpdatedObjAdjectives, setCurUpdatedObjAdjectives] = useState<Object[]>([]);
 
   useEffect(() => {
+    axios
+      .get('http://localhost:8080/api/v1/dottegi')
+      .then((response) => {
+        setLastUpdatedUrl(response.data.data.lastUpdatedUrl);
+        setLastUpdatedStyles(response.data.data.lastUpdatedStyles);
+        setLastUpdatedSubjects(response.data.data.lastUpdatedSubjects);
+        setLastUpdatedObjects(response.data.data.lastUpdatedObjects);
+        setLastUpdatedVerbs(response.data.data.lastUpdatedVerbs);
+        setLastUpdatedSubAdjectives(response.data.data.lastUpdatedSubAdjectives);
+        setLastUpdatedObjAdjectives(response.data.data.lastUpdatedObjAdjectives);
+
+        setCurUpdatedStyles(response.data.data.curUpdatedStyles);
+        setCurUpdatedSubjects(response.data.data.curUpdatedSubjects);
+        setCurUpdatedObjects(response.data.data.curUpdatedObjects);
+        setCurUpdatedVerbs(response.data.data.curUpdatedVerbs);
+        setCurUpdatedSubAdjectives(response.data.data.curUpdatedSubAdjectives);
+        setCurUpdatedObjAdjectives(response.data.data.curUpdatedObjAdjectives);
+      })
+      .catch();
+
     const socket = new SockJS('http://localhost:8080/ws/socket/connect');
     const client = new Client({
       // brokerURL: 'ws://localhost:8080/ws/socket/connect',
@@ -53,70 +70,73 @@ const WebSocketTest = () => {
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
       onConnect: () => {
-        // Define topics for subscription
-        const topics = [
-          {
-            topic: '/ws/sub/dottegi/subject',
-            setter: setMessages1,
-            top10Setter: setTop10Messages1,
-          },
-          { topic: '/ws/sub/dottegi/object', setter: setMessages2, top10Setter: setTop10Messages2 },
-          { topic: '/ws/sub/dottegi/verb', setter: setMessages3, top10Setter: setTop10Messages3 },
-          {
-            topic: '/ws/sub/dottegi/sub-adjective',
-            setter: setMessages4,
-            top10Setter: setTop10Messages4,
-          },
-          {
-            topic: '/ws/sub/dottegi/obj-adjective',
-            setter: setMessages5,
-            top10Setter: setTop10Messages5,
-          },
-        ];
-
         // Subscribe for reamining time
         client.subscribe('/ws/sub/dottegi', (message) => {
           const jsonObject = JSON.parse(message.body);
           setRemainTime(jsonObject.remainingTime);
           if (Object.keys(jsonObject).length > 1) {
-            console.log(jsonObject);
-            setResultStyle(jsonObject.style);
-            setResultImage(jsonObject.image);
-            setResultSentence(jsonObject.sentence);
-            setResultTop10Subjects(jsonObject.topSubjects);
-            setResultTop10Objects(jsonObject.topObjects);
-            setResultTop10Verbs(jsonObject.topVerbs);
-            setResultTop10SubAdjectives(jsonObject.topSubAdjectives);
-            setResultTop10ObjAdjectives(jsonObject.topObjAdjectives);
+            setLastUpdatedUrl(jsonObject.lastUpdatedUrl);
+            setLastUpdatedStyles(jsonObject.lastUpdatedStyles);
+            setLastUpdatedSubjects(jsonObject.lastUpdatedSubjects);
+            setLastUpdatedObjects(jsonObject.lastUpdatedObjects);
+            setLastUpdatedVerbs(jsonObject.lastUpdatedVerbs);
+            setLastUpdatedSubAdjectives(jsonObject.lastUpdatedSubAdjectives);
+            setLastUpdatedObjAdjectives(jsonObject.lastUpdatedObjAdjectives);
 
-            // 투표현황 초기화
-            setTop3MessagesStyle([]);
-            setTop10Messages1([]);
-            setTop10Messages2([]);
-            setTop10Messages3([]);
-            setTop10Messages4([]);
-            setTop10Messages5([]);
+            setCurUpdatedStyles(jsonObject.curUpdatedStyles);
+            setCurUpdatedSubjects(jsonObject.curUpdatedSubjects);
+            setCurUpdatedObjects(jsonObject.curUpdatedObjects);
+            setCurUpdatedVerbs(jsonObject.curUpdatedVerbs);
+            setCurUpdatedSubAdjectives(jsonObject.curUpdatedSubAdjectives);
+            setCurUpdatedObjAdjectives(jsonObject.curUpdatedObjAdjectives);
           }
         });
 
         client.subscribe('/ws/sub/dottegi/style', (message) => {
           const jsonData = JSON.parse(message.body);
-          setTop3MessagesStyle(jsonData);
+          setCurUpdatedStyles(jsonData);
         });
+
+        // Define topics for subscription
+        const topics = [
+          {
+            topic: '/ws/sub/dottegi/subject',
+            setter: setChatLogSubjects,
+            top10Setter: setCurUpdatedSubjects,
+          },
+          {
+            topic: '/ws/sub/dottegi/object',
+            setter: setChatLogObjects,
+            top10Setter: setCurUpdatedObjects,
+          },
+          {
+            topic: '/ws/sub/dottegi/verb',
+            setter: setChatLogVerbs,
+            top10Setter: setCurUpdatedVerbs,
+          },
+          {
+            topic: '/ws/sub/dottegi/sub-adjective',
+            setter: setChatLogSubAdjectives,
+            top10Setter: setCurUpdatedSubAdjectives,
+          },
+          {
+            topic: '/ws/sub/dottegi/obj-adjective',
+            setter: setChatLogObjAdjectives,
+            top10Setter: setCurUpdatedObjAdjectives,
+          },
+        ];
 
         // Subscribe to each topic
         topics.forEach(({ topic, setter, top10Setter }) => {
           client.subscribe(topic, (message) => {
             try {
               const jsonData = JSON.parse(message.body);
-              console.log(jsonData);
               if (Array.isArray(jsonData)) {
-                const top10JsonData: JsonItem[] = jsonData;
-                top10Setter(top10JsonData);
+                top10Setter(jsonData);
               } else {
                 setter((prevMessages) => [...prevMessages, message.body]);
               }
-            } catch {
+            } catch (error) {
               setter((prevMessages) => [...prevMessages, message.body]);
             }
           });
@@ -161,106 +181,130 @@ const WebSocketTest = () => {
     const checkLastCh = (lastCh - 0xac00) % 28;
     return checkLastCh ? true : false;
   };
+
+  // 순위에 따라 다른 스타일을 입힘
+  const getStyleByRank = (rank: number): string => {
+    if (rank === 0) return 'mb-2 h-12 bg-yellow-200 border-custom-yellow';
+    if (rank === 1) return 'mb-2 h-12 bg-gray-200 border-custom-gray';
+    if (rank === 2) return 'mb-2 h-12 bg-yellow-500 border-custom-yellow';
+    return 'mb-2 h-12 bg-white border-custom-mint';
+  };
   return (
     <div className="flex flex-col items-center w-full">
       <h1 className="text-2xl font-bold my-4">WebSocket STOMP Multi-Channel Chat</h1>
       <h1 className="text-8xl font-bold my-4">{remainTime}</h1>
       <h1 className="text-4xl font-bold my-4">결과화면</h1>
-      <h1 className="text-xl font-bold my-4">{resultStyle}</h1>
-      <h1 className="text-2xl font-bold my-4">{resultSentence}</h1>
+      <h1 className="text-xl font-bold my-4">
+        {lastUpdatedStyles.map((item, index) => {
+          if (Object.keys(item)[0] === 'Anime') {
+            return (
+              <div key={index} className="mb-2">
+                애니 스타일: {Object.values(item)[0]}개
+              </div>
+            );
+          } else if (Object.keys(item)[0] === 'Cartoon') {
+            return (
+              <div key={index} className="mb-2">
+                디즈니 스타일: {Object.values(item)[0]}개
+              </div>
+            );
+          } else if (Object.keys(item)[0] === 'Realistic') {
+            return (
+              <div key={index} className="mb-2">
+                실사 스타일: {Object.values(item)[0]}개
+              </div>
+            );
+          }
+        })}
+      </h1>
+      <h1 className="text-2xl font-bold my-4">
+        {lastUpdatedSubAdjectives.length > 0 && Object.keys(lastUpdatedSubAdjectives[0])[0]}&nbsp;
+        {lastUpdatedSubjects.length > 0 && Object.keys(lastUpdatedSubjects[0])[0]}이(가)&nbsp;
+        {lastUpdatedObjAdjectives.length > 0 && Object.keys(lastUpdatedObjAdjectives[0])[0]}&nbsp;
+        {lastUpdatedObjects.length > 0 && Object.keys(lastUpdatedObjects[0])[0]}을(를)&nbsp;
+        {lastUpdatedVerbs.length > 0 && Object.keys(lastUpdatedVerbs[0])[0]}하(고) 있다.
+      </h1>
+
       <div className="flex justify-around w-full">
         <div className="flex flex-col">
           <div className="flex justify-center w-full text-xl">주형용사</div>
-          {resultTop10SubAdjectives.map((subAdjective, index) => (
+          {lastUpdatedSubAdjectives.map((item, index) => (
             <div key={index} className="mb-2">
-              {Object.keys(subAdjective)[0]} : {Object.values(subAdjective)[0]} 개
+              {Object.keys(item)[0]} : {Object.values(item)[0]} 개
             </div>
           ))}
         </div>
         <div className="flex flex-col">
           <div className="flex justify-center w-full text-xl">주어</div>
-          {resultTop10Subjects.map((subject, index) => (
+          {lastUpdatedSubjects.map((item, index) => (
             <div key={index} className="mb-2">
-              {Object.keys(subject)[0]} : {Object.values(subject)[0]} 개
+              {Object.keys(item)[0]} : {Object.values(item)[0]} 개
             </div>
           ))}
         </div>
         <div className="flex flex-col">
           <div className="flex justify-center w-full text-xl">목형용사</div>
-          {resultTop10ObjAdjectives.map((objAdjective, index) => (
+          {lastUpdatedObjAdjectives.map((item, index) => (
             <div key={index} className="mb-2">
-              {Object.keys(objAdjective)[0]} : {Object.values(objAdjective)[0]} 개
+              {Object.keys(item)[0]} : {Object.values(item)[0]} 개
             </div>
           ))}
         </div>
         <div className="flex flex-col">
           <div className="flex justify-center w-full text-xl">목적어</div>
-          {resultTop10Objects.map((object, index) => (
+          {lastUpdatedObjects.map((item, index) => (
             <div key={index} className="mb-2">
-              {Object.keys(object)[0]} : {Object.values(object)[0]} 개
+              {Object.keys(item)[0]} : {Object.values(item)[0]} 개
             </div>
           ))}
         </div>
         <div className="flex flex-col">
           <div className="flex justify-center w-full text-xl">동사</div>
-          {resultTop10Verbs.map((verb, index) => (
+          {lastUpdatedVerbs.map((item, index) => (
             <div key={index} className="mb-2">
-              {Object.keys(verb)[0]} : {Object.values(verb)[0]} 개
+              {Object.keys(item)[0]} : {Object.values(item)[0]} 개
             </div>
           ))}
         </div>
       </div>
-      <img src={resultImage} />
+      <img src={lastUpdatedUrl} />
       <hr />
 
       <h1 className="text-4xl font-bold my-4">현재까지 결과</h1>
       <hr />
 
       <div>
-        {top10Messages1.length > 0 && (
-          <div>
-            {top10Messages4.length > 0 && Object.keys(top10Messages4[0])[0]}&nbsp;
-            {top10Messages1.length > 0 && Object.keys(top10Messages1[0])[0]}이(가)&nbsp;
-            {top10Messages5.length > 0 && Object.keys(top10Messages5[0])[0]}&nbsp;
-            {top10Messages2.length > 0 && Object.keys(top10Messages2[0])[0]}을(를)&nbsp;
-            {top10Messages3.length > 0 && Object.keys(top10Messages3[0])[0]}
-          </div>
-        )}
+        <h1 className="text-2xl font-bold my-4">
+          {curUpdatedSubAdjectives.length > 0 && Object.keys(curUpdatedSubAdjectives[0])[0]}&nbsp;
+          {curUpdatedSubjects.length > 0 && Object.keys(curUpdatedSubjects[0])[0]}이(가)&nbsp;
+          {curUpdatedObjAdjectives.length > 0 && Object.keys(curUpdatedObjAdjectives[0])[0]}&nbsp;
+          {curUpdatedObjects.length > 0 && Object.keys(curUpdatedObjects[0])[0]}을(를)&nbsp;
+          {curUpdatedVerbs.length > 0 && Object.keys(curUpdatedVerbs[0])[0]}하(고) 있다.
+        </h1>
       </div>
-      <div className="flex justify-around w-full">
-        <div className="flex flex-col justify-end">
-          {top3MessagesStyle.map((item, index) => {
-            const key = Object.keys(item)[0];
-            const value = Object.values(item)[0];
-
-            if (key === 'Anime') {
-              return (
-                <div key={index} className="mb-2">
-                  <div className="anime-style">
-                    <strong>애니 스타일:</strong> {value}
-                  </div>
-                </div>
-              );
-            } else if (key === 'Cartoon') {
-              return (
-                <div key={index} className="mb-2">
-                  <div className="cartoon-style">
-                    <strong>디즈니 스타일:</strong> {value}
-                  </div>
-                </div>
-              );
-            } else if (key === 'Realistic') {
-              return (
-                <div key={index} className="mb-2">
-                  <div className="realistic-style">
-                    <strong>실사 스타일:</strong> {value}
-                  </div>
-                </div>
-              );
-            }
-          })}
-        </div>
-      </div>
+      <h1 className="text-xl font-bold my-4">
+        {curUpdatedStyles.map((item, index) => {
+          if (Object.keys(item)[0] === 'Anime') {
+            return (
+              <div key={index} className="mb-2">
+                애니 스타일: {Object.values(item)[0]}개
+              </div>
+            );
+          } else if (Object.keys(item)[0] === 'Cartoon') {
+            return (
+              <div key={index} className="mb-2">
+                디즈니 스타일: {Object.values(item)[0]}개
+              </div>
+            );
+          } else if (Object.keys(item)[0] === 'Realistic') {
+            return (
+              <div key={index} className="mb-2">
+                실사 스타일: {Object.values(item)[0]}개
+              </div>
+            );
+          }
+        })}
+      </h1>
       <div className="flex justify-around w-full">
         <div className="flex flex-col mb-2">
           <button
@@ -291,85 +335,101 @@ const WebSocketTest = () => {
       <div className="flex justify-around w-full">
         <div className="flex flex-col">
           <div className="flex justify-center w-full text-xl">주형용사</div>
-          {top10Messages1.map((subAdjective, index) => (
+          {curUpdatedSubAdjectives.map((item, index) => (
             <div key={index} className="mb-2">
-              {Object.keys(subAdjective)[0]} : {Object.values(subAdjective)[0]} 개
+              {Object.keys(item)[0]} : {Object.values(item)[0]} 개
             </div>
           ))}
         </div>
         <div className="flex flex-col">
           <div className="flex justify-center w-full text-xl">주어</div>
-          {top10Messages2.map((subject, index) => (
+          {curUpdatedSubjects.map((item, index) => (
             <div key={index} className="mb-2">
-              {Object.keys(subject)[0]} : {Object.values(subject)[0]} 개
+              {Object.keys(item)[0]} : {Object.values(item)[0]} 개
             </div>
           ))}
         </div>
         <div className="flex flex-col">
           <div className="flex justify-center w-full text-xl">목형용사</div>
-          {top10Messages3.map((objAdjective, index) => (
+          {curUpdatedObjAdjectives.map((item, index) => (
             <div key={index} className="mb-2">
-              {Object.keys(objAdjective)[0]} : {Object.values(objAdjective)[0]} 개
+              {Object.keys(item)[0]} : {Object.values(item)[0]} 개
             </div>
           ))}
         </div>
         <div className="flex flex-col">
           <div className="flex justify-center w-full text-xl">목적어</div>
-          {top10Messages4.map((object, index) => (
+          {curUpdatedObjects.map((item, index) => (
             <div key={index} className="mb-2">
-              {Object.keys(object)[0]} : {Object.values(object)[0]} 개
+              {Object.keys(item)[0]} : {Object.values(item)[0]} 개
             </div>
           ))}
         </div>
         <div className="flex flex-col">
           <div className="flex justify-center w-full text-xl">동사</div>
-          {top10Messages5.map((verb, index) => (
+          {curUpdatedVerbs.map((item, index) => (
             <div key={index} className="mb-2">
-              {Object.keys(verb)[0]} : {Object.values(verb)[0]} 개
+              {Object.keys(item)[0]} : {Object.values(item)[0]} 개
             </div>
           ))}
         </div>
       </div>
 
       <div className="flex justify-around w-full px-4">
-        {[inputMessage4, inputMessage1, inputMessage5, inputMessage2, inputMessage3].map(
+        {[inputSubAdjective, inputSubject, inputObjAdjective, inputObject, inputVerb].map(
           (input, index) => (
             <div key={index} className="flex flex-col w-1/6">
-              <div className="overflow-auto h-48 mb-2 p-2 border border-gray-200">
-                {[messages1, messages2, messages3, messages4, messages5][index].map(
-                  (msg, msgIndex) => (
-                    <div key={msgIndex} className="text-sm">
-                      {msg}
-                    </div>
-                  )
-                )}
+              <div className="overflow-setChatLogSubjects h-48 mb-2 p-2 border border-gray-200">
+                {[
+                  chatLogSubAdjectives,
+                  chatLogSubjects,
+                  chatLogObjAdjectives,
+                  chatLogObjects,
+                  chatLogVerbs,
+                ][index].map((msg, index2) => (
+                  <div key={index2} className="text-sm">
+                    {msg}
+                  </div>
+                ))}
               </div>
               <input
                 type="text"
                 value={input}
                 onChange={(e) => {
                   const setters = [
-                    setInputMessage4,
-                    setInputMessage1,
-                    setInputMessage5,
-                    setInputMessage2,
-                    setInputMessage3,
+                    setInputSubAdjective,
+                    setInputSubject,
+                    setInputObjAdjective,
+                    setInputObject,
+                    setInputVerb,
                   ];
                   setters[index](e.target.value);
                 }}
-                placeholder={`Type your message in chat ${index + 1}...`}
+                // 엔터를 눌러도 단어 입력
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    sendMessage(
+                      input,
+                      `/ws/pub/dottegi/${['subject', 'object', 'verb', 'sub-adjective', 'obj-adjective'][index]}`
+                    );
+                  }
+                }}
+                // placeholder={`Type your message in chat ${index + 1}...`}
+                placeholder={`${wordClass[index]}를 입력해주세요`}
                 className="p-2 border border-gray-300 rounded mb-2"
               />
               <button
                 onClick={() =>
                   sendMessage(
                     input,
-                    `/ws/pub/dottegi/${['subject', 'object', 'verb', 'sub-adjective', 'obj-adjective'][index]}`
+                    `/ws/pub/dottegi/${['sub-adjective', 'subject', 'obj-adjective', 'object', 'verb'][index]}`
                   )
                 }
-                className="bg-green-500 text-white p-2 rounded hover:bg-blue-700 transition duration-200"
+                // className="w-fit h-full btn-mint-border-white hover:brightness-110 flex justify-center items-center gap-2 px-4"
+
+                className="btn-mint-border-white bg-green-500 text-white p-2 rounded hover:brightness-110 transition duration-200"
               >
-                Send Message
+                입력
               </button>
             </div>
           )

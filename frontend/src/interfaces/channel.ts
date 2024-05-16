@@ -6,6 +6,7 @@ interface Channel {
     maxPlayers: number
 }
 interface ChannelChat {
+    userId:bigint,
     nickname: string,
     uuid: string,
     content: string,

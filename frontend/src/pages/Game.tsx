@@ -43,7 +43,7 @@ const GamePage = () => {
   const [chatOpen, setChatOpen] = useState(false);
   const [gameUserList, setGameUserList] = useState<GameUser[]>([]);
   const [roundState, setRoundState] = useState<string>('wait');
-  const [result, setResult] = useState<RoundUser[]>([]);
+  const [result, setResult] = useState<GameUser[]>([]);
   const [isQuiz, setIsQuiz] = useState<boolean>(false);
   const [messageMap, setMessageMap] = useState<Map<bigint, GameChatRecieve>>(new Map());
   const [channelInfo, setChannelInfo] = useState<Channel | null>();
@@ -84,9 +84,6 @@ const GamePage = () => {
       console.error(error);
       // navigate(-1);
     }
-    return () => {
-      disconnectWebSocket();
-    };
     // setMaxRound(responseGame.maxRounds);
     // enterGame();
   };
@@ -306,10 +303,10 @@ const GamePage = () => {
         // {
         //     gameCode, isCorrect, score, userId
         // }
-        const result = roundInfo.roundList;
+        const middleResult = roundInfo.roundList;
         const userResponse = await GameApi.getUserList(roomCode);
         const updateUserList = userResponse.data;
-        for (const user of result) {
+        for (const user of middleResult) {
           if (user.isCorrect) {
             const correctUser = updateUserList.find(
               (item: GameUser) => item.userId === user.userId
@@ -322,15 +319,14 @@ const GamePage = () => {
         }
         // todo 중간 결과 페이지 보여줘야됨.
 
-        setRoundResult(result);
+        setRoundResult(middleResult);
 
         setGameUserList(userResponse.data);
         // setGameUserList(updateUserList);
       } else if (data.type === 'result') {
         setRoundState('result');
-        const roundInfo = data.content;
-        const roundResult = roundInfo.roundList;
-        setResult(roundResult);
+        const userResponse = await GameApi.getUserList(roomCode);
+        setResult(userResponse.data);
         setIsStart(false);
       }
     }
@@ -406,6 +402,7 @@ const GamePage = () => {
   const postStart = async () => {
     try {
       setIsStart(true);
+
       if (gameUser?.isHost) {
         const response = await GameApi.startGame(game.code);
       }
@@ -415,6 +412,7 @@ const GamePage = () => {
   };
   // 게임 시작 이벤트
   const handleGamestart = () => {
+    setResult([]);
     setGamestartui(true);
     setTimeout(() => {
       setEarthquake(true);
@@ -547,26 +545,22 @@ const GamePage = () => {
             style={{ backgroundImage: `url(${imageUrl})` }}
           >
             <div className="w-full h-full flex items-center justify-center relative">
-              {isQuiz ? (
+              {isQuiz && (
                 <div className="w-16 h-7 absolute top-2 left-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
                   {round} 라운드
                 </div>
-              ) : (
-                <div></div>
               )}
-              {isQuiz ? (
+              {isQuiz && (
                 <div className="w-fit h-7 px-3 absolute top-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
                   {time}
                 </div>
-              ) : (
-                <div></div>
               )}
               {gamestart && gameState === 0 && countdownSec > 0 && countdownSec < 4 && (
                 <GameCountdown sec={countdownSec} />
               )}
               {gamestart && gameState === 2 && <QuizCorrect correctUser={quizCorrectUser} />}
 
-              {/* <GameResult/> */}
+              {result.length !== 0 && <GameResult result={result} />}
             </div>
           </div>
         </div>
@@ -591,12 +585,7 @@ const GamePage = () => {
       {/* 광고, 채팅창, 게임 설정 */}
       <div className="w-full h-[10.5rem] flex gap-4">
         {/* 광고 */}
-        <div className="w-1/3 flex justify-center items-center">
-          광고
-          {result.map((item, index) => (
-            <div key={index}>{JSON.stringify(item)}</div>
-          ))}
-        </div>
+        <div className="w-1/3 flex justify-center items-center">광고</div>
         {/* 채팅창, 객관식 선택, 순서 배치 등 */}
         <div className="w-full flex grow flex-col items-center justify-end px-4 mt-1">
           <div className="w-full h-36 mb-2 relative">

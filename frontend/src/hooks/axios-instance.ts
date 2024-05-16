@@ -31,7 +31,7 @@ instance.interceptors.response.use(
     async error => { 
         const originalRequest = error.config;
         // console.log("send refresh")
-        if(error.response.status === 401){
+        if(error.response?.status === 401){
             try {
                 const refreshToken = localStorage.getItem("refreshToken");
                 const response = await apiClient.get("/user", {
@@ -51,7 +51,7 @@ instance.interceptors.response.use(
                 return Promise.reject(_error);
             }
         }
-        else if (error.response.status >= 500 && error.response.status < 600){
+        else if (error.response?.status >= 500 && error.response?.status < 600){
             window.location.href="/"
         }
         else{
