@@ -41,6 +41,13 @@ const WebSocketTest = () => {
   const [curUpdatedSubAdjectives, setCurUpdatedSubAdjectives] = useState<Object[]>([]);
   const [curUpdatedObjAdjectives, setCurUpdatedObjAdjectives] = useState<Object[]>([]);
 
+  const curUpdatedList = [
+    curUpdatedSubjects,
+    curUpdatedObjects,
+    curUpdatedVerbs,
+    curUpdatedSubAdjectives,
+    curUpdatedObjAdjectives,
+  ];
   useEffect(() => {
     axios
       .get('http://localhost:8080/api/v1/dottegi')
@@ -225,52 +232,55 @@ const WebSocketTest = () => {
         {lastUpdatedVerbs.length > 0 && Object.keys(lastUpdatedVerbs[0])[0]}하(고) 있다.
       </h1>
 
-      <div className="flex justify-around w-full">
-        <div className="flex flex-col">
-          <div className="flex justify-center w-full text-xl">주형용사</div>
+      <div className="flex justify-around w-full mb-10">
+        <div className="flex flex-col bg-mint border-custom-mint">
+          <div className="flex justify-center w-full text-xl text-white font-bold">주형용사</div>
           {lastUpdatedSubAdjectives.map((item, index) => (
-            <div key={index} className="mb-2">
+            <div key={index} className="mb-2 text-white font-bold">
               {Object.keys(item)[0]} : {Object.values(item)[0]} 개
             </div>
           ))}
         </div>
-        <div className="flex flex-col">
-          <div className="flex justify-center w-full text-xl">주어</div>
+        <div className="flex flex-col bg-mint border-custom-mint">
+          <div className="flex justify-center w-full text-xl text-white font-bold">주어</div>
           {lastUpdatedSubjects.map((item, index) => (
-            <div key={index} className="mb-2">
+            <div key={index} className="mb-2 text-white font-bold">
               {Object.keys(item)[0]} : {Object.values(item)[0]} 개
             </div>
           ))}
         </div>
-        <div className="flex flex-col">
-          <div className="flex justify-center w-full text-xl">목형용사</div>
+        <div className="flex flex-col bg-mint border-custom-mint">
+          <div className="flex justify-center w-full text-xl text-white font-bold">목형용사</div>
           {lastUpdatedObjAdjectives.map((item, index) => (
-            <div key={index} className="mb-2">
+            <div key={index} className="mb-2 text-white font-bold">
               {Object.keys(item)[0]} : {Object.values(item)[0]} 개
             </div>
           ))}
         </div>
-        <div className="flex flex-col">
-          <div className="flex justify-center w-full text-xl">목적어</div>
+
+        <div className="flex flex-col bg-mint border-custom-mint">
+          <div className="flex justify-center w-full text-xl text-white font-bold">목적어</div>
           {lastUpdatedObjects.map((item, index) => (
-            <div key={index} className="mb-2">
+            <div key={index} className="mb-2 text-white font-bold">
               {Object.keys(item)[0]} : {Object.values(item)[0]} 개
             </div>
           ))}
         </div>
-        <div className="flex flex-col">
-          <div className="flex justify-center w-full text-xl">동사</div>
+        <div className="flex flex-col bg-mint border-custom-mint">
+          <div className="flex justify-center w-full text-xl text-white font-bold">동사</div>
           {lastUpdatedVerbs.map((item, index) => (
-            <div key={index} className="mb-2">
+            <div key={index} className="mb-2 text-white font-bold">
               {Object.keys(item)[0]} : {Object.values(item)[0]} 개
             </div>
           ))}
         </div>
       </div>
-      <img src={lastUpdatedUrl} />
+      <div className="w-1/2 flex flex-col gap-3 custom-scroll py-1 pr-2 pl-1 border-custom-mint">
+        <img src={lastUpdatedUrl} />
+      </div>
       <hr />
 
-      <h1 className="text-4xl font-bold my-4">현재까지 결과</h1>
+      <h1 className="text-4xl font-bold my-4">현재까지 생성된 프롬프트 결과</h1>
       <hr />
 
       <div>
@@ -283,33 +293,40 @@ const WebSocketTest = () => {
         </h1>
       </div>
       <h1 className="text-xl font-bold my-4">
-        {curUpdatedStyles.map((item, index) => {
-          if (Object.keys(item)[0] === 'Anime') {
-            return (
-              <div key={index} className="mb-2">
-                애니 스타일: {Object.values(item)[0]}개
-              </div>
-            );
-          } else if (Object.keys(item)[0] === 'Cartoon') {
-            return (
-              <div key={index} className="mb-2">
-                디즈니 스타일: {Object.values(item)[0]}개
-              </div>
-            );
-          } else if (Object.keys(item)[0] === 'Realistic') {
-            return (
-              <div key={index} className="mb-2">
-                실사 스타일: {Object.values(item)[0]}개
-              </div>
-            );
-          }
-        })}
+        <div className="w-full h-full bg-mint border-custom-mint">
+          <div className="w-full h-8 bg-mint text-white font-bold text-lg flex items-center mb-3">
+            그림체 순위
+          </div>
+          <div className="w-full  flex flex-col gap-3 border-custom-white bg-white py-1 pr-2 pl-1">
+            {curUpdatedStyles.map((item, index) => {
+              if (Object.keys(item)[0] === 'Anime') {
+                return (
+                  <div key={index} className={getStyleByRank(index)}>
+                    애니 스타일: {Object.values(item)[0]}개
+                  </div>
+                );
+              } else if (Object.keys(item)[0] === 'Cartoon') {
+                return (
+                  <div key={index} className={getStyleByRank(index)}>
+                    디즈니 스타일: {Object.values(item)[0]}개
+                  </div>
+                );
+              } else if (Object.keys(item)[0] === 'Realistic') {
+                return (
+                  <div key={index} className={getStyleByRank(index)}>
+                    실사 스타일: {Object.values(item)[0]}개
+                  </div>
+                );
+              }
+            })}
+          </div>
+        </div>
       </h1>
       <div className="flex justify-around w-full">
         <div className="flex flex-col mb-2">
           <button
             onClick={() => sendMessage('Anime', '/ws/pub/dottegi/style')}
-            className="bg-red-500 text-white p-2 rounded hover:bg-blue-700 transition duration-200"
+            className="btn-mint-border-white w-[5rem] bg-green-500 text-white p-2 rounded hover:brightness-110 transition duration-200"
           >
             애니
           </button>
@@ -317,7 +334,7 @@ const WebSocketTest = () => {
         <div className="flex flex-col">
           <button
             onClick={() => sendMessage('Cartoon', '/ws/pub/dottegi/style')}
-            className="bg-red-500 text-white p-2 rounded hover:bg-blue-700 transition duration-200"
+            className="btn-mint-border-white w-[5rem]  bg-green-500 text-white p-2 rounded hover:brightness-110 transition duration-200"
           >
             카툰
           </button>
@@ -325,14 +342,14 @@ const WebSocketTest = () => {
         <div className="flex flex-col">
           <button
             onClick={() => sendMessage('Realistic', '/ws/pub/dottegi/style')}
-            className="bg-red-500 text-white p-2 rounded hover:bg-blue-700 transition duration-200"
+            className="btn-mint-border-white w-[5rem]  bg-green-500 text-white p-2 rounded hover:brightness-110 transition duration-200"
           >
             실사
           </button>
         </div>
       </div>
 
-      <div className="flex justify-around w-full">
+      {/* <div className="flex justify-around w-full">
         <div className="flex flex-col">
           <div className="flex justify-center w-full text-xl">주형용사</div>
           {curUpdatedSubAdjectives.map((item, index) => (
@@ -373,19 +390,31 @@ const WebSocketTest = () => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
 
       <div className="flex justify-around w-full px-4">
-        {[inputSubAdjective, inputSubject, inputObjAdjective, inputObject, inputVerb].map(
+        {/* {[inputSubAdjective, inputSubject, inputObjAdjective, inputObject, inputVerb].map( */}
+        {[inputSubject, inputObject, inputVerb, inputSubAdjective, inputObjAdjective].map(
           (input, index) => (
             <div key={index} className="flex flex-col w-1/6">
-              <div className="overflow-setChatLogSubjects h-48 mb-2 p-2 border border-gray-200">
+              <div className="flex justify-center w-full text-xl bg-mint text-white font-bold">
+                {wordClass[index]}
+              </div>
+              <div className="h-1/4 flex flex-col overflow-y-scroll custom-scroll border-custom-mint bg-white mb-4">
+                {curUpdatedList[index].map((item, index) => (
+                  <div key={index} className="mb-2">
+                    {Object.keys(item)[0]} : {Object.values(item)[0]} 개
+                  </div>
+                ))}
+              </div>
+              {/* <div className="overflow-setChatLogSubjects h-48 mb-2 p-2 border border-gray-200"> */}
+              <div className="w-full p-2 h-48 mb-3 overflow-y-scroll custom-scroll border-custom-mint bg-white">
                 {[
-                  chatLogSubAdjectives,
                   chatLogSubjects,
-                  chatLogObjAdjectives,
                   chatLogObjects,
                   chatLogVerbs,
+                  chatLogSubAdjectives,
+                  chatLogObjAdjectives,
                 ][index].map((msg, index2) => (
                   <div key={index2} className="text-sm">
                     {msg}
@@ -397,11 +426,11 @@ const WebSocketTest = () => {
                 value={input}
                 onChange={(e) => {
                   const setters = [
-                    setInputSubAdjective,
                     setInputSubject,
-                    setInputObjAdjective,
                     setInputObject,
                     setInputVerb,
+                    setInputSubAdjective,
+                    setInputObjAdjective,
                   ];
                   setters[index](e.target.value);
                 }}
@@ -422,7 +451,8 @@ const WebSocketTest = () => {
                 onClick={() =>
                   sendMessage(
                     input,
-                    `/ws/pub/dottegi/${['sub-adjective', 'subject', 'obj-adjective', 'object', 'verb'][index]}`
+                    // `/ws/pub/dottegi/${['sub-adjective', 'subject', 'obj-adjective', 'object', 'verb'][index]}`
+                    `/ws/pub/dottegi/${['subject', 'object', 'verb', 'sub-adjective', 'obj-adjective'][index]}`
                   )
                 }
                 // className="w-fit h-full btn-mint-border-white hover:brightness-110 flex justify-center items-center gap-2 px-4"
