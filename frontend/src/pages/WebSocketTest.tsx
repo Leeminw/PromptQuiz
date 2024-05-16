@@ -386,32 +386,34 @@ const WebSocketTest = () => {
       </div> */}
 
       <div className="flex justify-around w-full px-4">
-        {[inputSubAdjective, inputSubject, inputObjAdjective, inputObject, inputVerb].map(
+        {/* {[inputSubAdjective, inputSubject, inputObjAdjective, inputObject, inputVerb].map( */}
+        {[inputSubject, inputObject, inputVerb, inputSubAdjective, inputObjAdjective].map(
           (input, index) => (
             <div key={index} className="flex flex-col w-1/6">
               <div className="overflow-setChatLogSubjects h-48 mb-2 p-2 border border-gray-200">
                 {[
-                  chatLogSubAdjectives,
                   chatLogSubjects,
-                  chatLogObjAdjectives,
                   chatLogObjects,
                   chatLogVerbs,
+                  chatLogSubAdjectives,
+                  chatLogObjAdjectives,
                 ][index].map((msg, index2) => (
                   <div key={index2} className="text-sm">
                     {msg}
                   </div>
                 ))}
               </div>
+              {/* 주어 목적어 동사 주형용사 목형용사*/}
               <input
                 type="text"
                 value={input}
                 onChange={(e) => {
                   const setters = [
-                    setInputSubAdjective,
                     setInputSubject,
-                    setInputObjAdjective,
                     setInputObject,
                     setInputVerb,
+                    setInputSubAdjective,
+                    setInputObjAdjective,
                   ];
                   setters[index](e.target.value);
                 }}
@@ -420,8 +422,7 @@ const WebSocketTest = () => {
                   if (e.key === 'Enter') {
                     sendMessage(
                       input,
-                      // `/ws/pub/dottegi/${['subject', 'object', 'verb', 'sub-adjective', 'obj-adjective'][index]}`
-                      `/ws/pub/dottegi/${['sub-adjective', 'subject', 'obj-adjective', 'object', 'verb'][index]}`
+                      `/ws/pub/dottegi/${['subject', 'object', 'verb', 'sub-adjective', 'obj-adjective'][index]}`
                     );
                   }
                 }}
@@ -433,7 +434,8 @@ const WebSocketTest = () => {
                 onClick={() =>
                   sendMessage(
                     input,
-                    `/ws/pub/dottegi/${['sub-adjective', 'subject', 'obj-adjective', 'object', 'verb'][index]}`
+                    // `/ws/pub/dottegi/${['sub-adjective', 'subject', 'obj-adjective', 'object', 'verb'][index]}`
+                    `/ws/pub/dottegi/${['subject', 'object', 'verb', 'sub-adjective', 'obj-adjective'][index]}`
                   )
                 }
                 // className="w-fit h-full btn-mint-border-white hover:brightness-110 flex justify-center items-center gap-2 px-4"
