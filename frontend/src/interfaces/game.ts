@@ -1,6 +1,6 @@
 interface Game {
     channelCode: string,
-    type: number,
+    mode: number,
     style: string,
     code: string,
     title: string,

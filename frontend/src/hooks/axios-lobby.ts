@@ -30,7 +30,6 @@ const LobbyApi = {
   createRoom: async (room: CreateRoom) => {
     try {
       const response = await instance.post(`/game`, room);
-      alert('게임방이 정상적으로 생성되었습니다.');
       return response.data;
     } catch (error) {
       console.error(error);
