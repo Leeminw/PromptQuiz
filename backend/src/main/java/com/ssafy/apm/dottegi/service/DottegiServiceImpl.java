@@ -3,8 +3,8 @@ package com.ssafy.apm.dottegi.service;
 import com.ssafy.apm.common.dto.ImageResponseDto;
 import com.ssafy.apm.common.service.ImageService;
 import com.ssafy.apm.common.util.GoogleTranslator;
-import com.ssafy.apm.sdw.dto.SdwRequestDto;
-import com.ssafy.apm.sdw.dto.SdwResponseDto;
+import com.ssafy.apm.sdw.dto.SdwCustomRequestDto;
+import com.ssafy.apm.sdw.dto.SdwCustomResponseDto;
 import com.ssafy.apm.sdw.service.SdwService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -181,14 +181,14 @@ public class DottegiServiceImpl implements DottegiService {
         String prompt = GoogleTranslator.translate("ko", "en", combinedSentence);
 
         /* DONE: 영문 번역하여 Stable-Diffusion 에 요청하여 Base64 Encoded Image 받아옴 */
-        SdwRequestDto sdwRequestDto = new SdwRequestDto();
+        SdwCustomRequestDto sdwCustomRequestDto = new SdwCustomRequestDto();
         switch (topStyle) {
-            case "Anime" -> sdwRequestDto.updateAnimePrompt(prompt);
-            case "Cartoon" -> sdwRequestDto.updateDisneyPrompt(prompt);
-            case "Realistic" -> sdwRequestDto.updateRealisticPrompt(prompt);
+            case "Anime" -> sdwCustomRequestDto.updateAnimePrompt(prompt);
+            case "Cartoon" -> sdwCustomRequestDto.updateDisneyPrompt(prompt);
+            case "Realistic" -> sdwCustomRequestDto.updateRealisticPrompt(prompt);
         }
-        SdwResponseDto sdwResponseDto = sdwService.requestStableDiffusion(sdwRequestDto);
-        String base64Image = sdwResponseDto.getImages().get(0);
+        SdwCustomResponseDto sdwCustomResponseDto = sdwService.requestCustomStableDiffusion(sdwCustomRequestDto);
+        String base64Image = sdwCustomResponseDto.getImages().get(0);
 
         /* DONE: RDB에 저장 or 파일로 저장하여 불러와서 Base64 인코딩 하여 전송하는 방식 */
         ImageResponseDto imageResponseDto = imageService.saveBase64Image(combinedSentence, base64Image);
