@@ -37,13 +37,19 @@ const Lobby = () => {
 
   useEffect(() => {
     // 채널 구독하기
-    connectWebSocket(`/ws/sub/channel?uuid=${channelUuid}`, recieveChat, enterGame, user.userId);
+    connectWebSocket(
+      `/ws/sub/channel?uuid=${channelUuid}`,
+      recieveChat,
+      publishEnterLobby,
+      user.userId
+    );
     document.addEventListener('click', handleOutsideClick);
     document.addEventListener('keydown', handleChatKey);
     return () => {
+      disconnectWebSocket();
       document.removeEventListener('click', handleOutsideClick);
     };
-  }, []);
+  }, [channelInfo]);
 
   useEffect(() => {
     // 입장처리?
@@ -53,6 +59,7 @@ const Lobby = () => {
     console.log('channelUuid', channelUuid);
     LobbyApi.enterLobby(channelUuid);
   }, [channelInfo]);
+
   const handleState = (data1: RoomProps[], data2: CurrentUser[]) => {
     setRoomList(data1);
     setCurrentUserList(data2);
@@ -88,18 +95,46 @@ const Lobby = () => {
     }
   };
 
-  const recieveChat = (message: IMessage) => {
+  const recieveChat = async (message: IMessage) => {
     if (message.body) {
+      // console.log(message.body);
+      if (message.body === 'enter' || message.body === 'leave') {
+        const response = await UserChannelApi.channelUserList(channelInfo.id);
+        setCurrentUserList(response.data);
+        return;
+      }
       const body: RecieveChannelChat = JSON.parse(message.body);
+
       setChat((prev) => [...prev, body]);
     }
   };
-  const enterGame = () => {};
+  const publishEnterLobby = () => {
+    const destination = '/ws/pub/channel/enter';
+    const channelChat: ChannelChat = {
+      userId: user.userId,
+      nickname: user.nickName,
+      uuid: channelUuid,
+      content: 'entered',
+    };
+    publish(destination, channelChat);
+  };
+  const publishLeaveLobby = () => {
+    const destination = '/ws/pub/channel/leave';
+    const channelChat: ChannelChat = {
+      userId: user.userId,
+      nickname: user.nickName,
+      uuid: channelUuid,
+      content: 'leave',
+    };
+    publish(destination, channelChat);
+  };
+
   const publishChat = () => {
     let chatFilter = badwordsFiltering(chatInput.current?.value);
     console.log(chatFilter);
     const destination = '/ws/pub/channel/chat/send';
     const channelChat: ChannelChat = {
+      userId: user.userId,
       nickname: user.nickName,
       uuid: channelUuid,
       content: chatFilter,
