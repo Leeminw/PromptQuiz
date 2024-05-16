@@ -390,7 +390,8 @@ const WebSocketTest = () => {
         {[inputSubject, inputObject, inputVerb, inputSubAdjective, inputObjAdjective].map(
           (input, index) => (
             <div key={index} className="flex flex-col w-1/6">
-              <div className="overflow-setChatLogSubjects h-48 mb-2 p-2 border border-gray-200">
+              {/* <div className="overflow-setChatLogSubjects h-48 mb-2 p-2 border border-gray-200"> */}
+              <div className="w-full p-2 h-48 mb-3 overflow-y-scroll custom-scroll border-custom-mint bg-white">
                 {[
                   chatLogSubjects,
                   chatLogObjects,
@@ -403,7 +404,6 @@ const WebSocketTest = () => {
                   </div>
                 ))}
               </div>
-              {/* 주어 목적어 동사 주형용사 목형용사*/}
               <input
                 type="text"
                 value={input}
@@ -430,6 +430,7 @@ const WebSocketTest = () => {
                 placeholder={`${wordClass[index]}를 입력해주세요`}
                 className="p-2 border border-gray-300 rounded mb-2"
               />
+
               <button
                 onClick={() =>
                   sendMessage(
