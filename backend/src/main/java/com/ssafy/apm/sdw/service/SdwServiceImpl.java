@@ -1,9 +1,9 @@
 package com.ssafy.apm.sdw.service;
 
-import com.ssafy.apm.dottegi.dto.DottegiRequestDto;
-import com.ssafy.apm.dottegi.dto.DottegiResponseDto;
-import com.ssafy.apm.sdw.dto.SdwRequestDto;
-import com.ssafy.apm.sdw.dto.SdwResponseDto;
+import com.ssafy.apm.sdw.dto.SdwSimpleRequestDto;
+import com.ssafy.apm.sdw.dto.SdwSimpleResponseDto;
+import com.ssafy.apm.sdw.dto.SdwCustomRequestDto;
+import com.ssafy.apm.sdw.dto.SdwCustomResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
@@ -29,18 +29,18 @@ public class SdwServiceImpl implements SdwService {
     private String gpuServerIP;
 
     @Override
-    public SdwResponseDto requestStableDiffusion(SdwRequestDto requestDto) {
+    public SdwCustomResponseDto requestCustomStableDiffusion(SdwCustomRequestDto requestDto) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-//        String url = "http://127.0.0.1:7860/sdapi/v1/txt2img";
+        // String url = "http://127.0.0.1:7860/sdapi/v1/txt2img";
         String url = String.format("http://%s/sdapi/v1/txt2img", gpuServerIP);
 
-        HttpEntity<SdwRequestDto> request = new HttpEntity<>(requestDto, httpHeaders);
+        HttpEntity<SdwCustomRequestDto> request = new HttpEntity<>(requestDto, httpHeaders);
         try {
             log.info("[Request Stable Diffusion Create Images] {}", requestDto.toString());
-            ResponseEntity<SdwResponseDto> response = restTemplate.postForEntity(url, request, SdwResponseDto.class);
+            ResponseEntity<SdwCustomResponseDto> response = restTemplate.postForEntity(url, request, SdwCustomResponseDto.class);
             return Optional.ofNullable(response.getBody())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No response body"));
         } catch (HttpClientErrorException | HttpServerErrorException e) {
@@ -53,19 +53,19 @@ public class SdwServiceImpl implements SdwService {
     }
 
     @Override
-    public DottegiResponseDto createDottegiTxt2Img(DottegiRequestDto requestDto) {
-        SdwRequestDto sdwRequestDto = new SdwRequestDto();
+    public SdwSimpleResponseDto requestSimpleStableDiffusion(SdwSimpleRequestDto requestDto) {
+        SdwCustomRequestDto sdwCustomRequestDto = new SdwCustomRequestDto();
         switch (requestDto.getStyle()) {
-            case "Anime" -> sdwRequestDto.updateAnimePrompt(requestDto.getPrompt());
-            case "Disney" -> sdwRequestDto.updateDisneyPrompt(requestDto.getPrompt());
-            case "Realistic" -> sdwRequestDto.updateRealisticPrompt(requestDto.getPrompt());
+            case "Anime" -> sdwCustomRequestDto.updateAnimePrompt(requestDto.getPrompt());
+            case "Disney" -> sdwCustomRequestDto.updateDisneyPrompt(requestDto.getPrompt());
+            case "Realistic" -> sdwCustomRequestDto.updateRealisticPrompt(requestDto.getPrompt());
         }
-        SdwResponseDto sdwResponseDto = requestStableDiffusion(sdwRequestDto);
+        SdwCustomResponseDto sdwCustomResponseDto = requestCustomStableDiffusion(sdwCustomRequestDto);
 
-        List<String> encodedImages = new ArrayList<>(sdwResponseDto.getImages());
+        List<String> encodedImages = new ArrayList<>(sdwCustomResponseDto.getImages());
         List<byte[]> decodedImages = decodeImages(encodedImages);
         List<Resource> convertedImages = convertImages(decodedImages);
-        DottegiResponseDto responseDto = DottegiResponseDto.builder()
+        SdwSimpleResponseDto responseDto = SdwSimpleResponseDto.builder()
                 .style(requestDto.getStyle())
                 .prompt(requestDto.getPrompt())
                 .resources(convertedImages)
