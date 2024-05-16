@@ -1,18 +1,20 @@
 package com.ssafy.apm.userchannel.service;
 
-import com.ssafy.apm.channel.domain.Channel;
-import com.ssafy.apm.channel.exception.ChannelNotFoundException;
-import com.ssafy.apm.channel.repository.ChannelRepository;
 import com.ssafy.apm.user.domain.User;
-import com.ssafy.apm.user.dto.UserDetailResponseDto;
-import com.ssafy.apm.user.repository.UserRepository;
+import com.ssafy.apm.channel.domain.Channel;
 import com.ssafy.apm.user.service.UserService;
 import com.ssafy.apm.userchannel.domain.UserChannel;
-import com.ssafy.apm.userchannel.dto.response.UserChannelGetResponseDto;
-import com.ssafy.apm.userchannel.exception.UserChannelFullException;
-import com.ssafy.apm.userchannel.exception.UserChannelNotFoundException;
+import com.ssafy.apm.user.dto.UserDetailResponseDto;
+import com.ssafy.apm.user.repository.UserRepository;
+import com.ssafy.apm.channel.repository.ChannelRepository;
+import com.ssafy.apm.channel.exception.ChannelNotFoundException;
 import com.ssafy.apm.userchannel.repository.UserChannelRepository;
+import com.ssafy.apm.userchannel.exception.UserChannelFullException;
+import com.ssafy.apm.userchannel.dto.response.UserChannelGetResponseDto;
+import com.ssafy.apm.userchannel.exception.UserChannelNotFoundException;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +43,7 @@ public class UserChannelServiceImpl implements UserChannelService {
                 .map(UserDetailResponseDto::new)
                 .toList();
     }
+
     @Override
     @Transactional
     public UserChannelGetResponseDto enterUserChannel(Long channelId) {
@@ -48,7 +51,7 @@ public class UserChannelServiceImpl implements UserChannelService {
         Channel channel = channelRepository.findById(channelId)
                 .orElseThrow(() -> new ChannelNotFoundException(channelId));
 
-        if(channel.getCurPlayers() >= channel.getMaxPlayers()) throw new UserChannelFullException();
+        if (channel.getCurPlayers() >= channel.getMaxPlayers()) throw new UserChannelFullException();
 
         deleteAllDummyUserChannel(user);
 
@@ -56,13 +59,14 @@ public class UserChannelServiceImpl implements UserChannelService {
                 .userId(user.getId())
                 .channelId(channelId)
                 .build();
-        channel.increaseCurPlayers(channel.getCurPlayers()+1);
+        channel.increaseCurPlayers(channel.getCurPlayers() + 1);
 
         channelRepository.save(channel);
         entity = userChannelRepository.save(entity);
 
         return new UserChannelGetResponseDto(entity);
     }
+
     @Override
     @Transactional
     public UserChannelGetResponseDto enterUserChannelByCode(String code) {
@@ -70,7 +74,7 @@ public class UserChannelServiceImpl implements UserChannelService {
         Channel channel = channelRepository.findByCode(code)
                 .orElseThrow(() -> new ChannelNotFoundException("No entity exist by code!"));
 
-        if(channel.getCurPlayers() >= channel.getMaxPlayers()) throw new UserChannelFullException();
+        if (channel.getCurPlayers() >= channel.getMaxPlayers()) throw new UserChannelFullException();
         deleteAllDummyUserChannel(user);
 
         UserChannel entity = UserChannel.builder()
@@ -84,6 +88,7 @@ public class UserChannelServiceImpl implements UserChannelService {
 
         return new UserChannelGetResponseDto(entity);
     }
+
     @Override
     @Transactional
     public Long deleteExitUserChannel() {
@@ -99,6 +104,7 @@ public class UserChannelServiceImpl implements UserChannelService {
         channelRepository.save(channel);
         return response;
     }
+
     @Override
     @Transactional
     public Long deleteExitUserChannelByUserIdAndCode(Long userId, String code) {
@@ -115,15 +121,16 @@ public class UserChannelServiceImpl implements UserChannelService {
 
         return response;
     }
+
     private void deleteAllDummyUserChannel(User user) {
-        if(userChannelRepository.existsByUserId(user.getId())){ // 이미 어디 채널에 들어가 있는 유저면
+        if (userChannelRepository.existsByUserId(user.getId())) { // 이미 어디 채널에 들어가 있는 유저면
             List<UserChannel> dummyUserChannelList = userChannelRepository.findAllByUserId(user.getId())
                     .orElseThrow(() -> new UserChannelNotFoundException("No entities exists by userId!"));
             List<Channel> dummyChannelList = new ArrayList<>();
-            for(UserChannel userChannel: dummyUserChannelList) {
+            for (UserChannel userChannel : dummyUserChannelList) {
                 Channel temp = channelRepository.findById(userChannel.getChannelId()) // 그 놈들이 들어있는 채널 찾아서
                         .orElseThrow(() -> new ChannelNotFoundException(userChannel.getChannelId()));
-                temp.decreaseCurPlayers(temp.getCurPlayers()-1); // 그 놈이 들어있는 채널의 curPlayers를 줄여준 후
+                temp.decreaseCurPlayers(temp.getCurPlayers() - 1); // 그 놈이 들어있는 채널의 curPlayers를 줄여준 후
                 dummyChannelList.add(temp);
             }
             channelRepository.saveAll(dummyChannelList); // 채널 curPlayers 변경 사항들 저장
