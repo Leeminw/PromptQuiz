@@ -147,3 +147,8 @@ interface CorrectUser {
     round: number,
     nickname: string
 }
+
+interface GameState {
+    current:number,
+    now : number
+}

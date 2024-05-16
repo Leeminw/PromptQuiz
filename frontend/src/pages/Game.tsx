@@ -56,7 +56,7 @@ const GamePage = () => {
   const [answerWord, setAnswerWord] = useState<Word | null>(null);
   const [playerSimilarity, setPlayerSimilarity] = useState<PlayerSimilarity | null>(null);
   const [roundResult, setRoundResult] = useState<RoundUser[]>([]);
-  const [gameState, setGameState] = useState<number>(0); // 0: 카운트다운, 1: 퀴즈, 2:결과
+  const [gameState, setGameState] = useState<GameState>({ current: -1, now: -1 }); // 0: 카운트다운, 1: 퀴즈, 2:결과
   const [countdownSec, setCountdownSec] = useState<number>(0);
   const [chatCooldown, setChatCooldown] = useState<boolean>(false);
   //문제 틀렸을때 틀린거 표기
@@ -141,6 +141,13 @@ const GamePage = () => {
       disconnectWebSocket();
     };
   }, [game]);
+
+  useEffect(() => {
+    if (gameState.now === 0 && gameState.current === 2) {
+      console.log(gameState.now, gameState.current);
+      setCountdownSec(3);
+    }
+  }, [gameState]);
   const getGameDetail = async (gameCode: string) => {
     try {
       const userResponse = await GameApi.getUserList(roomCode);
@@ -289,20 +296,27 @@ const GamePage = () => {
       const data: GameStatus = recieve.data as GameStatus;
       if (data.type === 'ready') {
         setIsQuiz(false);
-        setGameState(0);
-        setCountdownSec(3);
+        setGameState((prevState) => ({
+          ...prevState,
+          current: prevState.now,
+          now: 0,
+        }));
       } else if (data.type === 'start') {
         setIsQuiz(true);
-        setGameState(1);
+        setGameState((prevState) => ({
+          ...prevState,
+          current: prevState.now,
+          now: 1,
+        }));
       } else if (data.type === 'end') {
         setIsQuiz(false);
-        setGameState(2);
+        setGameState((prevState) => ({
+          ...prevState,
+          current: prevState.now,
+          now: 2,
+        }));
 
         const roundInfo = data.content;
-        // 라운드 결과
-        // {
-        //     gameCode, isCorrect, score, userId
-        // }
         const middleResult = roundInfo.roundList;
         const userResponse = await GameApi.getUserList(roomCode);
         const updateUserList = userResponse.data;
@@ -324,9 +338,15 @@ const GamePage = () => {
         setGameUserList(userResponse.data);
         // setGameUserList(updateUserList);
       } else if (data.type === 'result') {
+        setGameState((prevState) => ({
+          ...prevState,
+          current: prevState.now,
+          now: 3,
+        }));
         setRoundState('result');
         const userResponse = await GameApi.getUserList(roomCode);
         setResult(userResponse.data);
+        setGameUserList(userResponse.data);
         setIsStart(false);
       }
     }
@@ -555,10 +575,10 @@ const GamePage = () => {
                   {time}
                 </div>
               )}
-              {gamestart && gameState === 0 && countdownSec > 0 && countdownSec < 4 && (
+              {gamestart && gameState.now === 0 && countdownSec > 0 && countdownSec < 4 && (
                 <GameCountdown sec={countdownSec} />
               )}
-              {gamestart && gameState === 2 && <QuizCorrect correctUser={quizCorrectUser} />}
+              {gamestart && gameState.now === 2 && <QuizCorrect correctUser={quizCorrectUser} />}
 
               {result.length !== 0 && <GameResult result={result} />}
             </div>
