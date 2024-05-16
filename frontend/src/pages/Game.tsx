@@ -58,6 +58,7 @@ const GamePage = () => {
   const [roundResult, setRoundResult] = useState<RoundUser[]>([]);
   const [gameState, setGameState] = useState<number>(0); // 0: 카운트다운, 1: 퀴즈, 2:결과
   const [countdownSec, setCountdownSec] = useState<number>(0);
+  const [chatCooldown, setChatCooldown] = useState<boolean>(false);
   //문제 틀렸을때 틀린거 표기
   const [timeRatio, setTimeRatio] = useState<number>(0);
   const getGameData = async () => {
@@ -355,6 +356,12 @@ const GamePage = () => {
       content: chatfilter,
     };
     publish(destination, gameChat);
+    if (gamestart) {
+      setChatCooldown(true);
+      setTimeout(() => {
+        setChatCooldown(false);
+      }, 1000);
+    }
     chatInput.current.value = '';
   };
   const publishAnswer = (answer: number) => {
@@ -533,8 +540,11 @@ const GamePage = () => {
               ></div>
             )}
           </div>
-          <div className="border-custom- w-full h-full flex items-center justify-center relative">
-            <div className="border-custom- w-full h-full flex items-center justify-center relative">
+          <div
+            className="w-full h-full flex items-center justify-center relative bg-center bg-cover"
+            style={{ backgroundImage: `url(${imageUrl})` }}
+          >
+            <div className="w-full h-full flex items-center justify-center relative">
               {isQuiz ? (
                 <div className="w-16 h-7 absolute top-2 left-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
                   {round} 라운드
@@ -555,10 +565,6 @@ const GamePage = () => {
               {gamestart && gameState === 2 && <QuizCorrect correctUser={quizCorrectUser} />}
 
               {/* <GameResult/> */}
-              <div
-                className={`w-full h-full bg-center relative bg-cover`}
-                style={{ backgroundImage: `url(${imageUrl})` }}
-              ></div>
             </div>
           </div>
         </div>
@@ -631,7 +637,7 @@ const GamePage = () => {
                     ))}
                   </div>
                 </div>
-                <div className="absolute w-full h-full border-custom-white opacity-90 bg-white z-0"></div>
+                <div className="absolute w-full h-full border-custom-white opacity-90 bg-white -z-10"></div>
               </div>
             </div>
 
@@ -643,7 +649,7 @@ const GamePage = () => {
                 placeholder={`${chatOpen ? 'Esc를 눌러 채팅창 닫기' : 'Enter를 눌러 채팅 입력'}`}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                    if (chatInput.current.value !== '') {
+                    if (chatInput.current.value !== '' && !chatCooldown) {
                       publishChat();
                     }
                   } else if (e.key === 'Escape') chatFocusOut();
@@ -651,10 +657,12 @@ const GamePage = () => {
                 onClick={chatFocus}
               ></input>
               <div
-                className="w-16 bg-mint cursor-pointer absolute h-full right-0 rounded-r-full flex justify-center items-center hover:brightness-125 transition"
+                className={`w-16 cursor-pointer absolute h-full right-0 rounded-r-full flex justify-center items-center hover:brightness-125 transition
+                ${chatCooldown ? 'bg-gray-400' : 'bg-mint'}
+                `}
                 ref={chatBtn}
                 onClick={() => {
-                  if (chatInput.current.value !== '') {
+                  if (chatInput.current.value !== '' && !chatCooldown) {
                     publishChat();
                     if (!chatOpen) chatFocus();
                   }
@@ -668,7 +676,9 @@ const GamePage = () => {
         {/* 게임 설정 */}
         <div className="w-1/3 flex flex-col cursor-default select-none">
           {/* 방 설정 */}
-          <GameRoomSetting gamestart={isStart} />
+          <div className="w-full h-16">
+            {game !== null && <GameRoomSetting gamestart={isStart} gamesetting={game} />}
+          </div>
 
           {/* 팀 선택, 게임 시작 버튼 */}
           <div className="w-full h-6 my-3 flex">

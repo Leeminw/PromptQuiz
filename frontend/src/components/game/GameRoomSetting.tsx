@@ -3,15 +3,17 @@ import { IoSettings } from 'react-icons/io5';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 interface GameRoomSettingProps {
   gamestart: boolean;
+  gamesetting: Game | null;
 }
 
-const GameRoomSetting = ({ gamestart }: GameRoomSettingProps) => {
+const GameRoomSetting = ({ gamestart, gamesetting }: GameRoomSettingProps) => {
   const [unfold, setUnfold] = useState<boolean>(false);
   useEffect(() => {
+    console.log('게임세팅 확인', gamesetting);
     console.log('게임이 시작됐나요?', gamestart);
   }, []);
   return (
-    <div className="w-full mt-1 h-16 flex flex-col cursor-default relative">
+    <div className="w-full mt-1 h-full flex flex-col cursor-default relative">
       <dialog id="modalopen" className="modal">
         <div className="modal-box">
           <h3 className="font-bold text-lg">방 만들기</h3>
@@ -36,13 +38,10 @@ const GameRoomSetting = ({ gamestart }: GameRoomSettingProps) => {
         className={`absolute w-full grid grid-cols-3 grid-rows-3 bg-white h-24 border-custom-white translate-y-14 transition text-xs origin-top z-10 ${unfold ? '' : 'scale-y-0'}`}
       >
         <div className="flex justify-center items-center text-gray-300 font-extrabold text-nowrap border-r border-gray-200">
-          실사체
+          {gamesetting.style === 'realistic' ? <p>실사체</p> : <p></p>}
         </div>
-        <div className="flex justify-center items-center text-gray-300 font-extrabold text-nowrap border-r border-gray-200">
-          
-        </div>
+        <div className="flex justify-center items-center text-gray-300 font-extrabold text-nowrap border-r border-gray-200"></div>
         <div className="flex justify-center items-center text-gray-300 font-extrabold text-nowrap">
-          객관식
         </div>
       </div>
       <div
@@ -55,7 +54,7 @@ const GameRoomSetting = ({ gamestart }: GameRoomSettingProps) => {
         }}
       >
         <div className="col-span-3 flex justify-center items-center text-mint font-extrabold text-nowrap border-r border-gray-200">
-          개인전
+          {gamesetting.isTeam?"팀전":"개인전"}
         </div>
         <div className="col-span-3 flex justify-center items-center text-mint font-extrabold text-nowrap">
           객관식

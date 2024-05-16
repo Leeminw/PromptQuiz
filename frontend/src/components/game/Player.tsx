@@ -33,7 +33,7 @@ const GamePlayer = ({ userInfo, gameChat }: GamePlayerProps) => {
   return (
     <div className="border-custom-mint bg-mint backdrop-blur-sm w-full h-full relative flex items-center z-0">
       <div
-        className={`absolute w-full -translate-y-8 opacity-0 ${startChat && (showChat ? 'opacity-100' : 'animate-chatBubble')}`}
+        className={`absolute w-full -translate-y-8 opacity-0 z-10 ${startChat && (showChat ? 'opacity-100' : 'animate-chatBubble')}`}
       >
         <div
           className={`min-w-12 min-h-6 w-fit h-fit bg-white border border-gray-200 rounded-lg text-sm px-3 pt-1 line-clamp-2 leading-4 text-black
@@ -47,7 +47,9 @@ const GamePlayer = ({ userInfo, gameChat }: GamePlayerProps) => {
         </svg>
       </div>
       <div className="pl-1 w-full flex items-center">
-        <div className="rounded-full bg-[url(https://contents-cdn.viewus.co.kr/image/2023/08/CP-2023-0056/image-7adf97c8-ef11-4def-81e8-fe2913667983.jpeg)] bg-cover w-8 h-8 aspect-square"></div>
+        <div className="flex justify-center relative rounded-full bg-[url(https://contents-cdn.viewus.co.kr/image/2023/08/CP-2023-0056/image-7adf97c8-ef11-4def-81e8-fe2913667983.jpeg)] bg-cover w-8 h-8 aspect-square -z-10">
+          <div className="absolute bg-[url(/public/ui/host.png)] bg-cover w-6 h-6 -translate-y-4 -z-20"></div>
+        </div>
         <p className="pl-2 w-full text-xs font-bold text-white line-clamp-2 text-ellipsis">
           {userInfo.nickName}
         </p>

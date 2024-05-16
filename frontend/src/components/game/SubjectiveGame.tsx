@@ -29,9 +29,9 @@ const SubjectiveGame = ({ answerWord, playerSimilarity }: SubjectiveGameProps) =
   if (!answerWord || !playerSimilarity) return <div>대기화면</div>;
   // if (!choiceList) return <div>no game</div>;
   return (
-    <div className="w-full h-full align">
-      <div className="w-full bg-white border-custom-green">
-        <div className="w-full h-full align">
+    <div className="w-full h-full relative">
+      <div className="w-full bg-white border-custom-green absolute -translate-y-16">
+        <div className="w-full h-full">
           {sentenceOrder.map((field: string, index) => (
             <span key={index}>
               {answerWord[field] === null ? '[???]' : answerWord[field]} {conjunction[index]}{' '}
@@ -52,7 +52,7 @@ const SubjectiveGame = ({ answerWord, playerSimilarity }: SubjectiveGameProps) =
                 <div className={idx == 0 ? firstFontClass : elseFontClass} key={idx}>
                   <p className="font-bold inline">{similarity.value}</p>
                   <p className={idx == 0 ? firstRateFontClass : elseRateFontClass}>
-                    [{similarity.rate}]
+                    [{similarity.rate}%]
                   </p>
                 </div>
               ))}
