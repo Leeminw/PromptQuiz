@@ -14,12 +14,13 @@ interface Props {
 const ChannelBox = ({ id, code, name, curPlayers, maxPlayers, btnActivate, onClick }: Props) => {
   const percentage = Math.floor((curPlayers / maxPlayers) * 100);
   const navigate = useNavigate();
-
   const [activateBtn, setActivateBtn] = useState<boolean>(false);
+  const [channelSelected, setChannelSelected] = useState<boolean>(false);
   const handleClick = () => {
     if (!btnActivate) {
       onClick();
       setActivateBtn(true);
+      setChannelSelected(true);
       setTimeout(() => {
         setActivateBtn(false);
         setTimeout(() => {
@@ -30,7 +31,7 @@ const ChannelBox = ({ id, code, name, curPlayers, maxPlayers, btnActivate, onCli
   };
   return (
     <button
-      className={`${activateBtn ? 'animate-clickbtn scale-105 bg-mint/90 text-white' : ''} rounded-lg hover:brightness-110 bg-white/90 hover:bg-mint/90 text-mint hover:text-white hover:scale-105 transition`}
+      className={`${activateBtn ? 'animate-clickbtn scale-105 bg-mint/90 text-white' : ''} ${channelSelected ? 'bg-mint/90 text-white' : 'bg-white/90 text-mint'} rounded-lg hover:brightness-110 hover:bg-mint/90  hover:text-white hover:scale-105 transition`}
       onClick={handleClick}
     >
       <div className="px-2.5 py-2 w-full">
