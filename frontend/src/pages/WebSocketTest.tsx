@@ -225,52 +225,54 @@ const WebSocketTest = () => {
         {lastUpdatedVerbs.length > 0 && Object.keys(lastUpdatedVerbs[0])[0]}하(고) 있다.
       </h1>
 
-      <div className="flex justify-around w-full">
-        <div className="flex flex-col">
-          <div className="flex justify-center w-full text-xl">주형용사</div>
+      <div className="flex justify-around w-full mb-10">
+        <div className="flex flex-col bg-mint border-custom-mint">
+          <div className="flex justify-center w-full text-xl text-white font-bold">주형용사</div>
           {lastUpdatedSubAdjectives.map((item, index) => (
-            <div key={index} className="mb-2">
+            <div key={index} className="mb-2 text-white font-bold">
               {Object.keys(item)[0]} : {Object.values(item)[0]} 개
             </div>
           ))}
         </div>
-        <div className="flex flex-col">
-          <div className="flex justify-center w-full text-xl">주어</div>
+        <div className="flex flex-col bg-mint border-custom-mint">
+          <div className="flex justify-center w-full text-xl text-white font-bold">주어</div>
           {lastUpdatedSubjects.map((item, index) => (
-            <div key={index} className="mb-2">
+            <div key={index} className="mb-2 text-white font-bold">
               {Object.keys(item)[0]} : {Object.values(item)[0]} 개
             </div>
           ))}
         </div>
-        <div className="flex flex-col">
-          <div className="flex justify-center w-full text-xl">목형용사</div>
+        <div className="flex flex-col bg-mint border-custom-mint">
+          <div className="flex justify-center w-full text-xl text-white font-bold">목형용사</div>
           {lastUpdatedObjAdjectives.map((item, index) => (
-            <div key={index} className="mb-2">
+            <div key={index} className="mb-2 text-white font-bold">
               {Object.keys(item)[0]} : {Object.values(item)[0]} 개
             </div>
           ))}
         </div>
-        <div className="flex flex-col">
-          <div className="flex justify-center w-full text-xl">목적어</div>
+        <div className="flex flex-col bg-mint border-custom-mint">
+          <div className="flex justify-center w-full text-xl text-white font-bold">목적어</div>
           {lastUpdatedObjects.map((item, index) => (
-            <div key={index} className="mb-2">
+            <div key={index} className="mb-2 text-white font-bold">
               {Object.keys(item)[0]} : {Object.values(item)[0]} 개
             </div>
           ))}
         </div>
-        <div className="flex flex-col">
-          <div className="flex justify-center w-full text-xl">동사</div>
+        <div className="flex flex-col bg-mint border-custom-mint">
+          <div className="flex justify-center w-full text-xl text-white font-bold">동사</div>
           {lastUpdatedVerbs.map((item, index) => (
-            <div key={index} className="mb-2">
+            <div key={index} className="mb-2 text-white font-bold">
               {Object.keys(item)[0]} : {Object.values(item)[0]} 개
             </div>
           ))}
         </div>
       </div>
-      <img src={lastUpdatedUrl} />
+      <div className="w-1/2 flex flex-col gap-3 custom-scroll py-1 pr-2 pl-1 border-custom-mint">
+        <img src={lastUpdatedUrl} />
+      </div>
       <hr />
 
-      <h1 className="text-4xl font-bold my-4">현재까지 결과</h1>
+      <h1 className="text-4xl font-bold my-4">현재까지 생성된 프롬프트 결과</h1>
       <hr />
 
       <div>
