@@ -1,7 +1,8 @@
 package com.ssafy.apm.common.service;
 
-import com.ssafy.apm.game.service.GameService;
 import com.ssafy.apm.common.domain.Session;
+import com.ssafy.apm.game.service.GameService;
+import com.ssafy.apm.common.dto.SessionResponseDto;
 import com.ssafy.apm.common.repository.SocketRepository;
 import com.ssafy.apm.userchannel.service.UserChannelService;
 
@@ -21,6 +22,14 @@ public class SocketServiceImpl implements SocketService {
     private final GameService gameService;
     private final SocketRepository socketRepository;
     private final UserChannelService userChannelService;
+
+    @Override
+    public SessionResponseDto getSession(String sessionId) {
+        Session session = socketRepository.findBySessionId(sessionId).orElseThrow(
+                () -> new RuntimeException("Session not found " + sessionId));
+
+        return new SessionResponseDto(session);
+    }
 
     @Override
     @Transactional
