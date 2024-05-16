@@ -37,7 +37,6 @@ const GamePage = () => {
   const [game, setGame] = useState<Game | null>(null);
   const [chat, setChat] = useState<GameChatRecieve[]>([]);
   const [time, setTime] = useState<number>(0);
-  const [maxRound, setMaxRound] = useState<number>(0);
   const [round, setRound] = useState<number>(0);
   const { connectWebSocket, disconnectWebSocket, publish } = useWebSocketStore();
   const [chatOpen, setChatOpen] = useState(false);
@@ -348,6 +347,7 @@ const GamePage = () => {
         setResult(userResponse.data);
         setGameUserList(userResponse.data);
         setIsStart(false);
+        setGamestart(false);
       }
     }
   };
