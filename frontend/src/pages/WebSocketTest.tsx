@@ -250,6 +250,7 @@ const WebSocketTest = () => {
             </div>
           ))}
         </div>
+
         <div className="flex flex-col bg-mint border-custom-mint">
           <div className="flex justify-center w-full text-xl text-white font-bold">목적어</div>
           {lastUpdatedObjects.map((item, index) => (
@@ -341,7 +342,7 @@ const WebSocketTest = () => {
         </div>
       </div>
 
-      <div className="flex justify-around w-full">
+      {/* <div className="flex justify-around w-full">
         <div className="flex flex-col">
           <div className="flex justify-center w-full text-xl">주형용사</div>
           {curUpdatedSubAdjectives.map((item, index) => (
@@ -382,7 +383,7 @@ const WebSocketTest = () => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
 
       <div className="flex justify-around w-full px-4">
         {[inputSubAdjective, inputSubject, inputObjAdjective, inputObject, inputVerb].map(
@@ -419,7 +420,8 @@ const WebSocketTest = () => {
                   if (e.key === 'Enter') {
                     sendMessage(
                       input,
-                      `/ws/pub/dottegi/${['subject', 'object', 'verb', 'sub-adjective', 'obj-adjective'][index]}`
+                      // `/ws/pub/dottegi/${['subject', 'object', 'verb', 'sub-adjective', 'obj-adjective'][index]}`
+                      `/ws/pub/dottegi/${['sub-adjective', 'subject', 'obj-adjective', 'object', 'verb'][index]}`
                     );
                   }
                 }}
