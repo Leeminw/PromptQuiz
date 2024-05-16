@@ -37,6 +37,11 @@ public class GameUser {
         return this;
     }
 
+    public GameUser initScore(Integer score) {
+        this.score = score;
+        return this;
+    }
+
     //    정답, 오답시 스코어 더해주는 API
     public GameUser updateScore(Integer score) {
         this.score += score;
