@@ -9,7 +9,7 @@ type JsonItem = {
 };
 
 const WebSocketTest = () => {
-  const wordClass = ['주어', '목적어', '동사', '주형용사', '목형용사'];
+  const wordClass = ['주형용사', '주어', '목형용사', '목적어', '동사'];
 
   // 통계 변수
   const [top3MessagesStyle, setTop3MessagesStyle] = useState<JsonItem[]>([]);
@@ -166,6 +166,9 @@ const WebSocketTest = () => {
       <h1 className="text-2xl font-bold my-4">WebSocket STOMP Multi-Channel Chat</h1>
       <h1 className="text-8xl font-bold my-4">{remainTime}</h1>
       <h1 className="text-4xl font-bold my-4">결과화면</h1>
+      <div className="w-1/2 flex flex-col gap-3 custom-scroll py-1 pr-2 pl-1 border-custom-mint">
+        <img src="https://source.unsplash.com/random" alt="" className="w-full h-1/2" />
+      </div>
       <h1 className="text-xl font-bold my-4">{resultStyle}</h1>
       <h1 className="text-2xl font-bold my-4">{resultSentence}</h1>
       <div className="flex justify-around w-full">
@@ -357,7 +360,17 @@ const WebSocketTest = () => {
                   ];
                   setters[index](e.target.value);
                 }}
-                placeholder={`Type your message in chat ${index + 1}...`}
+                // 엔터를 눌러도 단어 입력
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    sendMessage(
+                      input,
+                      `/ws/pub/dottegi/${['subject', 'object', 'verb', 'sub-adjective', 'obj-adjective'][index]}`
+                    );
+                  }
+                }}
+                // placeholder={`Type your message in chat ${index + 1}...`}
+                placeholder={`${wordClass[index]}를 입력해주세요`}
                 className="p-2 border border-gray-300 rounded mb-2"
               />
               <button
