@@ -79,13 +79,13 @@ public class Game {
         return this;
     }
 
-    public Game increaseCurPlayers() {
-        this.curPlayers++;
+    public Game increaseCurPlayers(Integer count) {
+        this.curPlayers = count;
         return this;
     }
 
-    public Game decreaseCurPlayers() {
-        this.curPlayers = Math.max(0,this.curPlayers-1);
+    public Game decreaseCurPlayers(Integer count) {
+        this.curPlayers = count;
         return this;
     }
 
