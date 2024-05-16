@@ -11,7 +11,7 @@ import java.util.Map;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SdwRequestDto {
+public class SdwCustomRequestDto {
     @Builder.Default
     private String prompt = "(HDR, UHD, 64K), (masterpiece, best quality, high quality), anime style, " +
             "(hyper detailed, ultra detailed, highly detailed), " +
@@ -78,7 +78,7 @@ public class SdwRequestDto {
     @Builder.Default
     private String hr_upscaler = "4x-UltraSharp";
 
-    public SdwRequestDto updateAnimePrompt(String prompt) {
+    public SdwCustomRequestDto updateAnimePrompt(String prompt) {
         this.prompt = "(HDR, UHD, 64K), (masterpiece, best quality, high quality), " +
                 "(anime style), (hyper detailed, ultra detailed, highly detailed), " +
                 "(" + prompt + ":1.6), (" + prompt + ":1.6), " +
@@ -124,7 +124,7 @@ public class SdwRequestDto {
         return this;
     }
 
-    public SdwRequestDto updateDisneyPrompt(String prompt) {
+    public SdwCustomRequestDto updateDisneyPrompt(String prompt) {
         this.prompt = "(HDR, UHD, 64K), (masterpiece, best quality, high quality), " +
                 "(hyper detailed, ultra detailed, highly detailed), " +
                 "(" + prompt + ":1.1), (" + prompt + ":1.1), " +
@@ -169,7 +169,7 @@ public class SdwRequestDto {
         return this;
     }
 
-    public SdwRequestDto updateRealisticPrompt(String prompt) {
+    public SdwCustomRequestDto updateRealisticPrompt(String prompt) {
         this.prompt = "(HDR, UHD, 64K), (masterpiece, best quality, high quality), " +
                 "(hyper realism, realistic), (hyper detailed, ultra detailed, highly detailed), " +
                 "(" + prompt + ":1.4), (" + prompt + ":1.4), " +

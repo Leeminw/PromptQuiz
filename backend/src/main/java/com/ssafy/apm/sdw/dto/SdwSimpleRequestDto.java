@@ -1,4 +1,4 @@
-package com.ssafy.apm.dottegi.dto;
+package com.ssafy.apm.sdw.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DottegiRequestDto {
+public class SdwSimpleRequestDto {
     private String style;
     private String prompt;
 }
