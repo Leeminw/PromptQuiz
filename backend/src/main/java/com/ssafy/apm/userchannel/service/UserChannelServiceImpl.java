@@ -56,7 +56,7 @@ public class UserChannelServiceImpl implements UserChannelService {
                 .userId(user.getId())
                 .channelId(channelId)
                 .build();
-        channel.increaseCurPlayers();
+        channel.increaseCurPlayers(channel.getCurPlayers()+1);
 
         channelRepository.save(channel);
         entity = userChannelRepository.save(entity);
@@ -77,10 +77,10 @@ public class UserChannelServiceImpl implements UserChannelService {
                 .userId(user.getId())
                 .channelId(channel.getId())
                 .build();
-        channel.increaseCurPlayers();
-
-        channelRepository.save(channel);
         entity = userChannelRepository.save(entity);
+
+        channel.increaseCurPlayers(userChannelRepository.countByChannelId(channel.getId()));
+        channelRepository.save(channel);
 
         return new UserChannelGetResponseDto(entity);
     }
@@ -94,11 +94,9 @@ public class UserChannelServiceImpl implements UserChannelService {
 
         Channel channel = channelRepository.findById(entity.getChannelId())
                 .orElseThrow(() -> new ChannelNotFoundException(entity.getChannelId()));
-        channel.decreaseCurPlayers();
-
-        channelRepository.save(channel);
         userChannelRepository.delete(entity);
-
+        channel.decreaseCurPlayers(userChannelRepository.countByChannelId(channel.getId()));
+        channelRepository.save(channel);
         return response;
     }
     @Override
@@ -106,14 +104,14 @@ public class UserChannelServiceImpl implements UserChannelService {
     public Long deleteExitUserChannelByUserIdAndCode(Long userId, String code) {
         Channel channel = channelRepository.findByCode(code)
                 .orElseThrow(() -> new ChannelNotFoundException("No entity exist by code!"));
-        channel.decreaseCurPlayers();
 
         UserChannel entity = userChannelRepository.findByUserIdAndChannelId(userId, channel.getId())
                 .orElseThrow(() -> new UserChannelNotFoundException("No entity exist by userId, channelId!"));
         Long response = entity.getId();
 
-        channelRepository.save(channel);
         userChannelRepository.delete(entity);
+        channel.decreaseCurPlayers(userChannelRepository.countByChannelId(channel.getId()));
+        channelRepository.save(channel);
 
         return response;
     }
@@ -125,7 +123,7 @@ public class UserChannelServiceImpl implements UserChannelService {
             for(UserChannel userChannel: dummyUserChannelList) {
                 Channel temp = channelRepository.findById(userChannel.getChannelId()) // 그 놈들이 들어있는 채널 찾아서
                         .orElseThrow(() -> new ChannelNotFoundException(userChannel.getChannelId()));
-                temp.decreaseCurPlayers(); // 그 놈이 들어있는 채널의 curPlayers를 줄여준 후
+                temp.decreaseCurPlayers(temp.getCurPlayers()-1); // 그 놈이 들어있는 채널의 curPlayers를 줄여준 후
                 dummyChannelList.add(temp);
             }
             channelRepository.saveAll(dummyChannelList); // 채널 curPlayers 변경 사항들 저장
