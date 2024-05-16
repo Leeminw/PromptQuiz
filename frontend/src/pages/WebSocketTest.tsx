@@ -243,7 +243,9 @@ const WebSocketTest = () => {
         )}
       </div>
       <div className="flex justify-around w-full">
-        <div className="flex flex-col justify-end border-custom-mint">
+        <div
+          className={top3MessagesStyle.length > 0 && 'flex flex-col justify-end border-custom-mint'}
+        >
           {top3MessagesStyle.map((item, index) => {
             const key = Object.keys(item)[0];
             const value = Object.values(item)[0];
@@ -401,7 +403,7 @@ const WebSocketTest = () => {
 
                 className="btn-mint-border-white bg-green-500 text-white p-2 rounded hover:brightness-110 transition duration-200"
               >
-                Send Message
+                입력
               </button>
             </div>
           )
