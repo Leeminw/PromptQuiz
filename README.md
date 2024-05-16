@@ -33,8 +33,7 @@
 # :runner: 개발 인원
 | **서다찬 (팀장)** | **김영욱** | **조시훈** | **서해광** | **유지웅** | **이민우** |
 | :------: |  :------: |  :------: |  :------: |  :------: |  :------: |
-| <img src="https://avatars.githubusercontent.com/u/111109411?v=4" height=150 width=150> <br/> **백엔드** |<img src=""> <br/> **백엔드** | <img src=""> <br/> **백엔드 & 인프라** |<img src=""> <br/>  **백엔드** | <img src=""> <br/> **프론트엔드** | <img src=""> <br/> **프론트엔드 & 백엔드** | 
-
+| <img src="./서다찬.jpeg" height=150 width=150> <br/> **백엔드** |<img src="./김영욱.jpg" height=150 width=150 /> <br/> **백엔드** | <img src="./조시훈.png" height=150 width=150> <br/> **백엔드 & 인프라** |<img src="./서해광.jpg" height=150 width=150> <br/>  **프론트엔드** | <img src="./유지웅.jpg" height=150 width=150> <br/> **프론트엔드** | <img src="./이민우.jpg" height=150 width=150> <br/> **프론트엔드 & 백엔드** | 
 
 
 # :yellow_heart: 개발 환경
