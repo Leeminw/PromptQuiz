@@ -3,6 +3,7 @@ import { AiOutlineRight } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import { UserChannelApi } from '../../hooks/axios-user-channel';
 import { error } from 'console';
+import CustomButton from '../ui/CustomButton';
 
 interface Props {
   id: string;
@@ -10,60 +11,42 @@ interface Props {
   name: string;
   curPlayers: number;
   maxPlayers: number;
+  btnActivate: boolean;
+  onClick: () => void;
 }
-const ChannelBox = ({ id, code, name, curPlayers, maxPlayers }: Props) => {
+const ChannelBox = ({ id, code, name, curPlayers, maxPlayers, btnActivate, onClick }: Props) => {
   const percentage = Math.floor((curPlayers / maxPlayers) * 100);
   const navigate = useNavigate();
 
-  const enterLobby = () => {
-    alert(`code는${code}`);
-    
-    setTimeout(() => {
-      // navigate(`/lobby/${code}`);
-      navigate(`/lobby/${code}`, { state: { channelCode: id } });
-    }, 1000);
+  const [activateBtn, setActivateBtn] = useState<boolean>(false);
+  const handleClick = () => {
+    if (!btnActivate) {
+      onClick();
+      setActivateBtn(true);
+      setTimeout(() => {
+        navigate(`/lobby/${code}`, { state: { channelCode: id } });
+        setActivateBtn(false);
+      }, 500);
+    }
   };
   return (
-    <div
-      className="channelBox"
-      style={{
-        border: '2px solid #359DB0',
-        borderRadius: '15px',
-        height: '50px',
-        width: '300px',
-        color: '#359DB0',
-        lineHeight: '25px',
-        fontSize: '10px', // 10px로
-        margin: '2px',
-      }}
+    <button
+      className={`${activateBtn ? 'animate-clickbtn scale-105' : ''} hover:brightness-110 hover:scale-105 transition`}
+      onClick={handleClick}
     >
-      <div
-        className="ex"
-        style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}
-      >
-        <div>{id}채널</div>
-        {/* <div>
-        </div> */}
-        <button onClick={enterLobby}>
-          <AiOutlineRight style={{ fontSize: '15px', marginTop: '5px' }} />
-        </button>
+      <div className="bg-white/90 px-2.5 py-2 rounded-lg w-full">
+        <div className="flex items-center">
+          <div className="w-full text-mint font-bold flex justify-start pl-1">{id}채널</div>
+          <AiOutlineRight />
+        </div>
+        <div className="flex items-center gap-2 text-xs pt-1">
+          <progress className="progress w-full " value={percentage} max="100"></progress>
+          <div className="text-nowrap">
+            {curPlayers} / {maxPlayers}
+          </div>
+        </div>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-        <span
-          className="w-full bg-gray-200 rounded-full h-2.5 mb-4 dark:bg-gray-700"
-          style={{ width: '75%', border: '0.3px solid #359DB0' }}
-        >
-          <div
-            // className="bg-green-600 h-2.5 rounded-full dark:bg-blue-500"
-            className="h-2.5 rounded-full"
-            style={{ width: `${(curPlayers / maxPlayers) * 100}%`, backgroundColor: '#359DB0' }}
-          ></div>
-        </span>
-        <span>
-          {curPlayers} / {maxPlayers}
-        </span>
-      </div>
-    </div>
+    </button>
   );
 };
 export default ChannelBox;

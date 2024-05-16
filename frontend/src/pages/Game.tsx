@@ -275,7 +275,6 @@ const GamePage = () => {
         console.log(choosedButton);
         updatedChoosedButton[data.answer - 1] = true;
         setChoosedButton(updatedChoosedButton);
-        alert('난 틀렸어..');
       }
     } else if (recieve.tag === 'similarity') {
       console.log('유사도 갱신', recieve.data);
@@ -592,7 +591,7 @@ const GamePage = () => {
       {/* 광고, 채팅창, 게임 설정 */}
       <div className="w-full h-[10.5rem] flex gap-4">
         {/* 광고 */}
-        <div className="w-1/3 bg-red-200 flex justify-center items-center">
+        <div className="w-1/3 flex justify-center items-center">
           광고
           {result.map((item, index) => (
             <div key={index}>{JSON.stringify(item)}</div>
@@ -684,7 +683,7 @@ const GamePage = () => {
           </div>
 
           {/* 팀 선택, 게임 시작 버튼 */}
-          <div className="w-full h-6 my-3 flex">
+          {/* <div className="w-full h-6 my-3 flex">
             {isStart ? (
               <div className="w-full h-full flex gap-3">
                 <div className="w-1/3 h-full flex items-center justify-center text-white text-sm font-bold transition text-nowrap border-custom-gray bg-[#999999] cursor-default">
@@ -731,7 +730,7 @@ const GamePage = () => {
                 </CustomButton>
               </div>
             )}
-          </div>
+          </div> */}
           {isStart ? (
             <div className="w-full h-10 font-extrabold mt-2 flex items-center justify-center transition mb-1 border-custom-gray bg-[#999999] cursor-default text-white">
               게임시작

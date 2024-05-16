@@ -14,9 +14,9 @@ const CreateRoom = ({ channelCode }: Props) => {
   const mappingStyle: string[] = ['realistic', 'cartoon', 'anime', 'random'];
   const [privacyStatus, setPrivacyStatus] = useState(0);
   const [isTeam, setIsTeam] = useState(false);
-  const [mode, setMode] = useState(7);
+  const [mode, setMode] = useState(5);
   const [maxPlayers, setMaxPlayers] = useState(12);
-  const [maxRounds, setMaxRounds] = useState(50);
+  const [maxRounds, setMaxRounds] = useState(25);
   const { user } = useUserStore();
   const [status, setStatus] = useState(false);
   const curPlayers = 1;
@@ -137,7 +137,7 @@ const CreateRoom = ({ channelCode }: Props) => {
         onClick={() => (document.getElementById('my_modal_1') as HTMLDialogElement).showModal()}
       >
         <MdAddHome className="min-w-5 min-h-5" />
-        <p className="text-nowrap lg:flex max-lg:hidden select-none">방 만들기</p>
+        <p className="text-nowrap md:flex max-md:hidden select-none">방 만들기</p>
       </button>
       <dialog id="my_modal_1" className="modal">
         <div className="modal-box border-2 border-lightmint flex flex-col gap-3 pb-14 bg-white/90 backdrop-blur-lg min-w-96">
@@ -226,6 +226,7 @@ const CreateRoom = ({ channelCode }: Props) => {
                     id="team"
                     onChange={isTeamHandler}
                     checked={isTeam}
+                    disabled
                     className="radio radio-sm border-lightmint bg-white checked:bg-mint"
                   />
                   <label
@@ -277,9 +278,9 @@ const CreateRoom = ({ channelCode }: Props) => {
                     type="checkbox"
                     value={2}
                     id="sequence"
-                    defaultChecked
-                    onChange={typeHandler}
-                    checked={(mode & 2) > 0}
+                    disabled
+                    // onChange={typeHandler}
+                    // checked={(mode & 2) > 0}
                     className="checkbox checkbox-sm border-lightmint bg-white checked:bg-mint [--chkbg:theme(colors.mint)] [--chkfg:white]"
                   />
                   <label
@@ -387,18 +388,18 @@ const CreateRoom = ({ channelCode }: Props) => {
             <div className="w-full">
               <input
                 type="range"
-                min={10}
-                max="50"
+                min={5}
+                max="25"
                 className="range range-xs [--range-shdw:#359DB0]"
-                step="10"
+                step="5"
                 onChange={maxRoundHandler}
               />
               <div className="w-full flex justify-between text-xs">
+                <span>5</span>
                 <span>10</span>
+                <span>15</span>
                 <span>20</span>
-                <span>30</span>
-                <span>40</span>
-                <span>50</span>
+                <span>25</span>
               </div>
             </div>
             <div className="absolute bottom-6 right-6 flex gap-4 w-full justify-end">
