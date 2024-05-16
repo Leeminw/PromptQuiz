@@ -17,10 +17,8 @@ import com.ssafy.apm.gameuser.dto.response.GameUserSimpleResponseDto;
 import com.ssafy.apm.gameuser.exception.GameUserNotFoundException;
 import com.ssafy.apm.gameuser.repository.GameUserRepository;
 import com.ssafy.apm.quiz.domain.Quiz;
-import com.ssafy.apm.quiz.dto.request.QuizRequestDto;
 import com.ssafy.apm.quiz.dto.response.QuizResponseDto;
 import com.ssafy.apm.quiz.exception.QuizNotFoundException;
-import com.ssafy.apm.quiz.exception.QuizValidationException;
 import com.ssafy.apm.quiz.repository.QuizRepository;
 import com.ssafy.apm.user.domain.User;
 import com.ssafy.apm.user.dto.UserScoreUpdateRequestDto;
@@ -66,6 +64,7 @@ public class GameServiceImpl implements GameService {
         gameUserRepository.save(gameUser);
         return new GameResponseDto(game);
     }
+
     @Override
     @Transactional
     public GameUserSimpleResponseDto enterGame(String gameCode) {
@@ -91,13 +90,13 @@ public class GameServiceImpl implements GameService {
                 .score(0)
                 .team("NOTHING")
                 .build();
-        game.increaseCurPlayers();
-
-        gameRepository.save(game);
         entity = gameUserRepository.save(entity);
+        game.increaseCurPlayers(gameUserRepository.countByGameCode(gameCode));
+        gameRepository.save(game);
 
         return new GameUserSimpleResponseDto(entity);
     }
+
     @Override
     public List<GameResponseDto> findGamesByChannelCode(String channelCode) {
         List<Game> entityList = gameRepository.findAllByChannelCode(channelCode)
@@ -105,6 +104,7 @@ public class GameServiceImpl implements GameService {
 
         return entityList.stream().map(GameResponseDto::new).toList();
     }
+
     @Override
     public GameResponseDto findGameByGameCode(String gameCode) {
         Game gameEntity = gameRepository.findByCode(gameCode)
@@ -124,6 +124,7 @@ public class GameServiceImpl implements GameService {
         gameRepository.save(gameEntity);
         return new GameResponseDto(gameEntity);
     }
+
     /* FIXME: GameService 로 이동하는 것이 나아보임 */
     @Override
     @Transactional
@@ -156,6 +157,7 @@ public class GameServiceImpl implements GameService {
         }
         userRepository.saveAll(scoredUsers);
     }
+
     @Override
     @Transactional
     public GameResponseDto updateGameIsStarted(String gameCode, Boolean isStarted) {
@@ -192,6 +194,7 @@ public class GameServiceImpl implements GameService {
         gameRepository.delete(game);
         return new GameResponseDto(game);
     }
+
     // 게임 나갈때
     @Override
     @Transactional
@@ -207,10 +210,10 @@ public class GameServiceImpl implements GameService {
 
         if (game.getCurPlayers() == 1) {// 방에 방장 혼자였다면
             gameRepository.delete(game);// 방 자체를 지움
+            gameUserRepository.delete(gameUser);
+
             gameQuizService.deleteGameQuizzesByGameCode(gameCode);// 방에 생성된 퀴즈들 삭제
         } else {
-            game.decreaseCurPlayers();// 방 현재 인원 수를 줄임
-            gameRepository.save(game);
             if (gameUser.getIsHost()) {// 나가는 유저가 방장이라면
                 List<GameUser> userList = gameUserRepository.findAllByGameCode(game.getCode())
                         .orElseThrow(() -> new GameUserNotFoundException("No entities exists by gameId"));// 방 안에 있는 유저 목록 가져와서
@@ -222,11 +225,15 @@ public class GameServiceImpl implements GameService {
                     }
                 }
             }
+            gameUserRepository.delete(gameUser);
+            game.decreaseCurPlayers(gameUserRepository.countByGameCode(gameCode));// 방 현재 인원 수를 줄임
+            gameRepository.save(game);
         }
-        gameUserRepository.delete(gameUser);
+
 
         return gameUserCode;
     }
+
     @Override
     @Transactional
     public String exitGameByUserId(Long userId, String gameCode) {
@@ -238,10 +245,9 @@ public class GameServiceImpl implements GameService {
 
         if (game.getCurPlayers() == 1) {// 방에 방장 혼자였다면
             gameRepository.delete(game);// 방 자체를 지움
+            gameUserRepository.delete(gameUser);
             gameQuizService.deleteGameQuizzesByGameCode(gameCode);// 방에 생성된 퀴즈들 삭제
         } else {
-            game.decreaseCurPlayers();// 방 현재 인원 수를 줄임
-            gameRepository.save(game);
             if (gameUser.getIsHost()) {// 나가는 유저가 방장이라면
                 List<GameUser> userList = gameUserRepository.findAllByGameCode(gameCode)
                         .orElseThrow(() -> new GameUserNotFoundException("No entities exists by gameCode!"));// 방 안에 있는 유저 목록 가져와서
@@ -253,10 +259,13 @@ public class GameServiceImpl implements GameService {
                     }
                 }
             }
+            gameUserRepository.delete(gameUser);
+            game.decreaseCurPlayers(gameUserRepository.countByGameCode(gameCode));// 방 현재 인원 수를 줄임
+            gameRepository.save(game);
         }
-        gameUserRepository.delete(gameUser);
         return gameUserCode;
     }
+
     @Override
     @Transactional
     public Boolean createGameQuiz(String gameCode) {
@@ -270,20 +279,21 @@ public class GameServiceImpl implements GameService {
         startTime = System.currentTimeMillis();
         List<Quiz> quizList = createQuizListByStyle(game.getStyle(), game);
         endTime = System.currentTimeMillis();
-        System.out.println("[Test] 처음 퀴즈 10개 생성 시간 : "+ (endTime-startTime));
+        System.out.println("[Test] 처음 퀴즈 10개 생성 시간 : " + (endTime - startTime));
 //        각 quiz마다 4가지 문제가 있어야함
 
         startTime = System.currentTimeMillis();
         List<GameQuiz> gameQuizList = createGameQuizListByMode(game, game.getMode(), quizList);
         endTime = System.currentTimeMillis();
-        System.out.println("[Test]10개에 대한 보기 생성 시간 : "+ (endTime-startTime));
+        System.out.println("[Test]10개에 대한 보기 생성 시간 : " + (endTime - startTime));
 
         startTime = System.currentTimeMillis();
         gameQuizRepository.saveAll(gameQuizList);
         endTime = System.currentTimeMillis();
-        System.out.println("[Test] 전체 저장 시간 : "+ (endTime-startTime));
+        System.out.println("[Test] 전체 저장 시간 : " + (endTime - startTime));
         return true;
     }
+
     @Override
     @Transactional
     public List<QuizResponseDto> createAnswerGameQuizCanShow(String gameCode) {
@@ -305,9 +315,10 @@ public class GameServiceImpl implements GameService {
                     .orElseThrow(() -> new QuizNotFoundException(gameQuiz.getQuizId()));
             multipleChoiceList.add(temp);
         }
-        
+
         return multipleChoiceList.stream().map(QuizResponseDto::new).toList();
     }
+
     @Override
     public Integer getMaxTimeByGameCode(String gameCode) {
         Game game = gameRepository.findByCode(gameCode)
@@ -320,21 +331,22 @@ public class GameServiceImpl implements GameService {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private void deleteAllDummyGameUser(User user) {
-        if(gameUserRepository.existsByUserId(user.getId())) {
+        if (gameUserRepository.existsByUserId(user.getId())) {
             List<GameUser> dummyGameUserList = gameUserRepository.findAllByUserId(user.getId())
                     .orElseThrow(() -> new GameUserNotFoundException("No entities exists by userId : " + user.getId()));
             List<Game> gameRoomListWithDummy = new ArrayList<>();
 
-            for(GameUser gameUser: dummyGameUserList) {
+            for (GameUser gameUser : dummyGameUserList) {
                 Game temp = gameRepository.findByCode(gameUser.getGameCode())
                         .orElseThrow(() -> new GameNotFoundException("No entity exist by code : " + gameUser.getGameCode()));
-                temp.decreaseCurPlayers();
+                temp.decreaseCurPlayers(temp.getCurPlayers() - 1);
                 gameRoomListWithDummy.add(temp);
             }
             gameRepository.saveAll(gameRoomListWithDummy);
             gameUserRepository.deleteAll(dummyGameUserList);
         }
     }
+
     public Integer updateGameRoundCnt(String gameCode, Boolean flag) {
         Game game = gameRepository.findById(gameCode)
                 .orElseThrow(() -> new GameNotFoundException(gameCode));
@@ -352,6 +364,7 @@ public class GameServiceImpl implements GameService {
         gameRepository.save(game);
         return game.getCurRounds();
     }
+
     private List<GameQuiz> createGameQuizListByMode(Game gameEntity, Integer gameType, List<Quiz> quizList) {
         List<GameQuiz> mainGameQuizList = new ArrayList<>();
         switch (gameType) {
