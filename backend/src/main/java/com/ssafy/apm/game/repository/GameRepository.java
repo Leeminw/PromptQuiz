@@ -29,4 +29,7 @@ public interface GameRepository extends CrudRepository<Game, String> {
     Optional<List<Game>> findAllByCurPlayers(Integer curPlayers);
     Optional<List<Game>> findAllByMaxPlayers(Integer maxPlayers);
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Boolean existsByCode(String code);
+
 }
