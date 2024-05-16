@@ -166,7 +166,7 @@ const GamePage = () => {
             setImageUrl(element.url);
           }
         });
-        // 보기 구성\
+        // 보기 구성
         const sortedData = data.sort((a: SelectQuiz, b: SelectQuiz) => a.number - b.number);
         setMultipleChoice(sortedData);
         // choosed button 초기화
@@ -597,7 +597,7 @@ const GamePage = () => {
         )}
         {Array.from({ length: 12 - gameUserList.length }, (_, index) => (
           <div
-            className="w-full h-full border-custom-mint bg-gray-200/70 backdrop-blur-sm z-0"
+            className={`w-full h-full border-custom-mint backdrop-blur-sm z-0 ${index + 1 >= game?.maxPlayers ? 'bg-mint' : 'bg-gray-200/70'}`}
             key={index}
           ></div>
         ))}
@@ -605,7 +605,7 @@ const GamePage = () => {
       {/* 광고, 채팅창, 게임 설정 */}
       <div className="w-full h-[10.5rem] flex gap-4">
         {/* 광고 */}
-        <div className="w-1/3 flex justify-center items-center">광고</div>
+        <div className="w-1/3 flex justify-center items-center opacity-0">광고</div>
         {/* 채팅창, 객관식 선택, 순서 배치 등 */}
         <div className="w-full flex grow flex-col items-center justify-end px-4 mt-1">
           <div className="w-full h-36 mb-2 relative">
@@ -690,7 +690,7 @@ const GamePage = () => {
           <div className="w-full h-16">
             {game !== null && <GameRoomSetting gamestart={isStart} gamesetting={game} />}
           </div>
-
+          <div className="w-full h-full"></div>
           {/* 팀 선택, 게임 시작 버튼 */}
           {/* <div className="w-full h-6 my-3 flex">
             {isStart ? (
