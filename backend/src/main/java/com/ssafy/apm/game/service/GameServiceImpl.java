@@ -337,10 +337,12 @@ public class GameServiceImpl implements GameService {
             List<Game> gameRoomListWithDummy = new ArrayList<>();
 
             for (GameUser gameUser : dummyGameUserList) {
-                Game temp = gameRepository.findByCode(gameUser.getGameCode())
-                        .orElseThrow(() -> new GameNotFoundException("No entity exist by code : " + gameUser.getGameCode()));
-                temp.decreaseCurPlayers(temp.getCurPlayers() - 1);
-                gameRoomListWithDummy.add(temp);
+                if(gameRepository.existsByCode(gameUser.getGameCode())){
+                    Game temp = gameRepository.findByCode(gameUser.getGameCode())
+                            .orElseThrow(() -> new GameNotFoundException("No entity exist by code : " + gameUser.getGameCode()));
+                    temp.decreaseCurPlayers(temp.getCurPlayers() - 1);
+                    gameRoomListWithDummy.add(temp);
+                }
             }
             gameRepository.saveAll(gameRoomListWithDummy);
             gameUserRepository.deleteAll(dummyGameUserList);
