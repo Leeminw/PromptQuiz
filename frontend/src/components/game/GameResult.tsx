@@ -15,8 +15,7 @@ const GameResult = ({ result }: GameResultProps) => {
           result.length > 1 ? (
             <div className="w-full h-full flex items-center flex-col justify-end">
               <div
-                className="rounded-full bg-[url(/public/profile.jpg)]
-          bg-cover w-20 h-20 aspect-square mb-2 relative flex justify-center"
+                className="rounded-full bg-cover w-20 h-20 aspect-square mb-2 relative flex justify-center" style={{ backgroundImage: `url(${result[1].picture})` }}
               >
                 <div className="w-7 h-7 bg-gray-400 absolute flex justify-center items-center font-extrabold text-white rounded-full text-nowrap -top-5 border-2 border-white">
                   2
@@ -37,8 +36,7 @@ const GameResult = ({ result }: GameResultProps) => {
           result.length > 0 && (
             <div className="w-full h-full flex items-center flex-col justify-end">
               <div
-                className="rounded-full bg-[url(/public/profile.jpg)]
-          bg-cover w-24 h-24 aspect-square mb-2 relative flex justify-center"
+                className="rounded-full bg-cover w-24 h-24 aspect-square mb-2 relative flex justify-center" style={{ backgroundImage: `url(${result[0].picture})` }}
               >
                 <div className="w-9 h-9 bg-yellow-500 absolute flex justify-center items-center font-extrabold text-white rounded-full text-nowrap -top-5 border-2 border-white">
                   1
@@ -56,8 +54,7 @@ const GameResult = ({ result }: GameResultProps) => {
           result.length > 2 ? (
             <div className="w-full h-full flex items-center flex-col justify-end">
               <div
-                className="rounded-full bg-[url(/public/profile.jpg)]
-            bg-cover w-20 h-20 aspect-square mb-2 relative flex justify-center"
+                className="rounded-full bg-cover w-20 h-20 aspect-square mb-2 relative flex justify-center" style={{ backgroundImage: `url(${result[2].picture})` }}
               >
                 <div className="w-7 h-7 bg-yellow-600 absolute flex justify-center items-center font-extrabold text-white rounded-full text-nowrap -top-5 border-2 border-white">
                   3
@@ -87,7 +84,7 @@ const GameResult = ({ result }: GameResultProps) => {
                     <div className="min-w-6 h-6 flex items-center justify-center pr-2 text-white font-extrabold text-nowrap">
                       {index + 1}
                     </div>
-                    <div className="rounded-full bg-[url(/public/profile.jpg)] bg-cover w-8 h-8 aspect-square"></div>
+                    <div className="rounded-ful bg-cover w-8 h-8 aspect-square" style={{ backgroundImage: `url(${gameUser.picture})` }}></div>
                     <p className="pl-2 w-full text-xs font-bold text-white line-clamp-2">
                       {gameUser.nickName}
                     </p>

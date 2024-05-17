@@ -28,9 +28,9 @@ const RankingBox = ({ rank, rankingType, userInfo }: Props) => {
     ${rank > 3 && 'h-12 bg-white border-custom-mint'}
     `}
     >
-      {/* <div>URL로 프로필 사진을 가져올부분</div> */}
-      <div className="pl-0.5 pr-2.5 font-extrabold">{rank}</div>
-      <div className="rounded-full bg-[url(/public/profile.jpg)] bg-cover w-8 h-8 aspect-square"></div>
+    <div className="pl-0.5 pr-2.5 font-extrabold">{rank}</div>
+    {/* <div>URL로 프로필 사진을 가져올부분</div> */}
+<div className="rounded-full bg-cover w-8 h-8 aspect-square" style = {{ backgroundImage: `url(${userInfo.picture})` }} ></div>
       <div className="w-full flex flex-col items-start pl-2">
         <p
           className={`w-full font-bold text-black cursor-default text-ellipsis ${userInfo.nickName.length > 8 ? 'text-xs line-clamp-2' : 'text-sm line-clamp-1'}`}

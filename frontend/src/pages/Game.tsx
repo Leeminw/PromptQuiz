@@ -142,7 +142,7 @@ const GamePage = () => {
   }, [game]);
 
   useEffect(() => {
-    if (gameState.now === 0 && gameState.current === 2) {
+    if (gameState.now === 0) {
       console.log(gameState.now, gameState.current);
       setCountdownSec(3);
     }
@@ -424,7 +424,9 @@ const GamePage = () => {
       setIsStart(true);
 
       if (gameUser?.isHost) {
-        const response = await GameApi.startGame(game.code);
+
+          GameApi.startGame(game.code);
+       
       }
     } catch (error) {
       console.error(error);
@@ -441,7 +443,8 @@ const GamePage = () => {
         setTimeout(() => {
           setGamestartui(false);
           setGamestart(true);
-          postStart();
+          
+            postStart();
           //
         }, 1000);
       }, 600);
