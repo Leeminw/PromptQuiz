@@ -183,6 +183,8 @@ public class DottegiServiceImpl implements DottegiService {
             return;
         }
 
+        messagingTemplate.convertAndSend("/ws/sub/dottegi", Map.of("remainingTime", "이미지 생성중"));
+
         // Combine the top words into a single sentence
         log.info("[Income Data Exists] Update Payload and Send.");
         String combinedSentence = String.format("%s %s이(가) %s %s을(를) %s하(고) 있다.",
