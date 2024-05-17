@@ -50,7 +50,7 @@ const WebSocketTest = () => {
   ];
   useEffect(() => {
     axios
-      .get('http://localhost:8080/api/v1/dottegi')
+      .get(`${process.env.REACT_APP_SERVER}/dottegi`)
       .then((response) => {
         setLastUpdatedUrl(response.data.data.lastUpdatedUrl);
         setLastUpdatedStyles(response.data.data.lastUpdatedStyles);
@@ -69,7 +69,7 @@ const WebSocketTest = () => {
       })
       .catch();
 
-    const socket = new SockJS('http://localhost:8080/ws/socket/connect');
+    const socket = new SockJS(`${process.env.REACT_APP_SOCKET}`);
     const client = new Client({
       // brokerURL: 'ws://localhost:8080/ws/socket/connect',
       webSocketFactory: () => socket,
@@ -164,7 +164,7 @@ const WebSocketTest = () => {
   }, []);
 
   const sendMessage = (input: string, destination: string) => {
-    const socket = new SockJS('http://localhost:8080/ws/socket/connect');
+    const socket = new SockJS(`${process.env.REACT_APP_SOCKET}`);
     const client = new Client({
       // brokerURL: 'ws://localhost:8080/ws/socket/connect',
       webSocketFactory: () => socket,
