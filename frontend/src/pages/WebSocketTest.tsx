@@ -50,7 +50,7 @@ const WebSocketTest = () => {
   ];
   useEffect(() => {
     axios
-      .get('https://k10a509.p.ssafy.io/api/v1/dottegi')
+      .get(`${process.env.REACT_APP_SERVER}/dottegi`)
       .then((response) => {
         setLastUpdatedUrl(response.data.data.lastUpdatedUrl);
         setLastUpdatedStyles(response.data.data.lastUpdatedStyles);
