@@ -249,6 +249,8 @@ const GamePage = () => {
     console.log(recieve);
     if (recieve.tag === 'startGame') {
       console.log('game start!! ', recieve);
+      const userResponse = await GameApi.getUserList(roomCode);
+      setGameUserList(userResponse.data);
       handleGamestart();
     } else if (recieve.tag === 'chat') {
       const data: GameChatRecieve = recieve.data as GameChatRecieve;
@@ -345,8 +347,10 @@ const GamePage = () => {
         }));
         setRoundState('result');
         const userResponse = await GameApi.getUserList(roomCode);
-        setResult(userResponse.data);
+        const sorted: GameUser[] = [... userResponse.data]
+        sorted.sort((o1:GameUser,o2:GameUser) => o2.score - o1.score)
         setGameUserList(userResponse.data);
+        setResult(sorted);
         setIsStart(false);
       }
     }
@@ -401,6 +405,8 @@ const GamePage = () => {
       return;
     }
     // 모두 레디가 되있는지?
+    await GameApi.resetGame(game.code);
+
     const destination = '/ws/pub/api/v1/game/start';
     const data = {
       gameCode: game.code,
@@ -424,9 +430,8 @@ const GamePage = () => {
       setIsStart(true);
 
       if (gameUser?.isHost) {
-
-          GameApi.startGame(game.code);
-       
+        GameApi.startGame(game.code);
+        
       }
     } catch (error) {
       console.error(error);
@@ -443,8 +448,7 @@ const GamePage = () => {
         setTimeout(() => {
           setGamestartui(false);
           setGamestart(true);
-          
-            postStart();
+          postStart();
           //
         }, 1000);
       }, 600);
