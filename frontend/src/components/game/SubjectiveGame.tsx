@@ -30,27 +30,28 @@ const SubjectiveGame = ({ answerWord, playerSimilarity }: SubjectiveGameProps) =
   // if (!choiceList) return <div>no game</div>;
   return (
     <div className="w-full h-full relative">
-      <div className="w-full bg-white border-custom-green absolute -translate-y-16">
+      <div className="w-full bg-white border-custom-mint absolute text-black -translate-y-16 px-2">
         <div className="w-full h-full">
+          <p className='inline pr-2 font-extrabold'>Q.</p>
           {sentenceOrder.map((field: string, index) => (
             <span key={index}>
-              {answerWord[field] === null ? '[???]' : answerWord[field]} {conjunction[index]}{' '}
+              {answerWord[field] === null ? <div className='inline border-2 border-mint rounded-lg px-5 mr-0.5 bg-gray-200'></div> : answerWord[field]} {conjunction[index]}{' '}
             </span>
           ))}
         </div>
       </div>
       <div className="w-full h-full flex relative">
-        <div className="absolute w-full h-full flex gap-4 opacity-80 -z-10">
+        <div className="absolute w-full h-full flex gap-4 opacity-100 -z-10">
           {similarityOrder.map((field: string, index) => (
             <div
-              className="bg-white border-custom-red text-black w-1/3 h-full flex flex-col items-center justify-center"
+              className="bg-white border-custom-mint text-black w-1/3 h-full flex flex-col items-center justify-center relative"
               key={index}
             >
-              <div>{translationMap[field]}</div>
+              <div className='w-fit h-6 px-3 absolute bg-mint border-custom-mint text-white -top-4 flex items-center justify-center font-extrabold'>{translationMap[field]}</div>
               {// 오답인경우
               playerSimilarity[field]?.map((similarity: Similarity, idx) => (
-                <div className={idx == 0 ? firstFontClass : elseFontClass} key={idx}>
-                  <p className="font-bold inline">{similarity.value}</p>
+                <div className={`${idx == 0 ? firstFontClass : elseFontClass} flex items-center`} key={idx}>
+                  <p className="w-full font-bold line-clamp-1 break-words text-ellipsis text-sm">{similarity.value}</p>
                   <p className={idx == 0 ? firstRateFontClass : elseRateFontClass}>
                     [{similarity.rate}%]
                   </p>
