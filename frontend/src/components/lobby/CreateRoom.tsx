@@ -11,12 +11,13 @@ interface Props {
 }
 
 const CreateRoom = ({ channelCode }: Props) => {
-  const mappingStyle: string[] = ['realistic', 'cartoon', 'anime', 'random'];
+  const mappingStyle: string[] = ['realistic', 'anime', 'cartoon', 'random'];
   const [privacyStatus, setPrivacyStatus] = useState(0);
   const [isTeam, setIsTeam] = useState(false);
   const [mode, setMode] = useState(5);
   const [maxPlayers, setMaxPlayers] = useState(12);
-  const [maxRounds, setMaxRounds] = useState(25);
+  const [maxRounds, setMaxRounds] = useState(10);
+  const [maxTimeLimit, setMaxTimeLimit] = useState(30);
   const { user } = useUserStore();
   const [status, setStatus] = useState(false);
   const curPlayers = 1;
@@ -57,6 +58,10 @@ const CreateRoom = ({ channelCode }: Props) => {
     setMaxRounds(Number(event.target.value));
     console.log(maxRounds);
   };
+  const maxTimeLimitHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMaxTimeLimit(Number(event.target.value));
+    console.log(maxTimeLimit);
+  };
   const styleHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStyle(Number(event.target.value));
     console.log('style', event.target.value);
@@ -71,7 +76,6 @@ const CreateRoom = ({ channelCode }: Props) => {
     console.log(password);
   };
   const createRoom = async () => {
-    const styleArr = ['realistic', 'anime', 'cartoon', 'random'];
     const stateNum = status ? 1 : 0;
     // const style = styleArr[styleIndex]; // 다시 string에서 number로 변경
     // const style = 2; // 임시값
@@ -81,7 +85,7 @@ const CreateRoom = ({ channelCode }: Props) => {
       return;
     }
     if (privacyStatus === 1 && password.trim().length === 0) {
-      alert('비공개 방의 비밀번호를 입력해주세요');
+      alert('비밀번호를 입력해주세요');
       return;
     }
     if (mode === 0) {
@@ -118,7 +122,7 @@ const CreateRoom = ({ channelCode }: Props) => {
         mode,
         password,
         style: mappingStyle[style],
-        timeLimit: 60,
+        timeLimit: maxTimeLimit,
         title,
       };
 
@@ -140,10 +144,10 @@ const CreateRoom = ({ channelCode }: Props) => {
         <p className="text-nowrap md:flex max-md:hidden select-none">방 만들기</p>
       </button>
       <dialog id="my_modal_1" className="modal">
-        <div className="modal-box border-2 border-lightmint flex flex-col gap-3 pb-14 bg-white/90 backdrop-blur-lg min-w-96">
+        <div className="modal-box border-2 border-lightmint flex flex-col gap-2 pb-12 bg-white/90 backdrop-blur-lg min-w-96">
           <h3 className="font-bold text-2xl">방 만들기</h3>
           <hr className="mb-1 border-extralightmint" />
-          <div className="flex flex-col gap-3 overflow-x-hidden overflow-y-scroll custom-scroll">
+          <div className="flex flex-col gap-2 overflow-x-hidden overflow-y-scroll custom-scroll">
             <div className="flex items-center gap-3 mt-1">
               <span className="font-extrabold text-nowrap pr-6">방 이름</span>
               <input
@@ -201,7 +205,7 @@ const CreateRoom = ({ channelCode }: Props) => {
               />
             </div>
             <span className="font-extrabold text-nowrap">게임 종류</span>
-            <div className="flex gap-3 flex-col">
+            <div className="flex gap-2 flex-col">
               <div className="flex gap-3">
                 <div className="flex pr-2 items-center">
                   <input
@@ -384,7 +388,7 @@ const CreateRoom = ({ channelCode }: Props) => {
                 <span>12</span>
               </div>
             </div>
-            <span className="font-extrabold text-nowrap mt-2">라운드 수</span>
+            <span className="font-extrabold text-nowrap mt-1">라운드 수</span>
             <div className="w-full">
               <input
                 type="range"
@@ -392,6 +396,7 @@ const CreateRoom = ({ channelCode }: Props) => {
                 max="25"
                 className="range range-xs [--range-shdw:#359DB0]"
                 step="5"
+                value={maxRounds}
                 onChange={maxRoundHandler}
               />
               <div className="w-full flex justify-between text-xs">
@@ -400,6 +405,26 @@ const CreateRoom = ({ channelCode }: Props) => {
                 <span>15</span>
                 <span>20</span>
                 <span>25</span>
+              </div>
+            </div>
+            <span className="font-extrabold text-nowrap mt-1">시간 제한</span>
+            <div className="w-full">
+              <input
+                type="range"
+                min={10}
+                max="60"
+                className="range range-xs [--range-shdw:#359DB0]"
+                step="10"
+                value={maxTimeLimit}
+                onChange={maxTimeLimitHandler}
+              />
+              <div className="w-full flex justify-between text-xs">
+                <span>10</span>
+                <span>20</span>
+                <span>30</span>
+                <span>40</span>
+                <span>50</span>
+                <span>60</span>
               </div>
             </div>
             <div className="absolute bottom-6 right-6 flex gap-4 w-full justify-end">

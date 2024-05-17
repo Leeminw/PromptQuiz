@@ -1,6 +1,6 @@
 interface Game {
     channelCode: string,
-    type: number,
+    mode: number,
     style: string,
     code: string,
     title: string,
@@ -146,4 +146,9 @@ interface Similarity{
 interface CorrectUser {
     round: number,
     nickname: string
+}
+
+interface GameState {
+    current:number,
+    now : number
 }

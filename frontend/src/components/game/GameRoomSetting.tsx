@@ -10,6 +10,7 @@ const GameRoomSetting = ({ gamestart, gamesetting }: GameRoomSettingProps) => {
   const [unfold, setUnfold] = useState<boolean>(false);
   useEffect(() => {
     console.log('게임세팅 확인', gamesetting);
+    console.log('모드 확인', gamesetting.mode);
     console.log('게임이 시작됐나요?', gamestart);
   }, []);
   return (
@@ -35,15 +36,35 @@ const GameRoomSetting = ({ gamestart, gamesetting }: GameRoomSettingProps) => {
         /> */}
       </div>
       <div
-        className={`absolute w-full grid grid-cols-3 grid-rows-3 bg-white h-24 border-custom-white translate-y-14 transition text-xs origin-top z-10 ${unfold ? '' : 'scale-y-0'}`}
+        className={`absolute w-full grid grid-cols-3 grid-rows-3 bg-white h-20 border-custom-white translate-y-14 transition text-xs origin-top z-10 ${unfold ? '' : 'scale-y-0'}`}
       >
-        <div className="flex justify-center items-center text-gray-300 font-extrabold text-nowrap border-r border-gray-200">
-          {gamesetting.style === 'realistic' ? <p>실사체</p> : <p></p>}
+        <div
+          className={`flex justify-center items-center font-extrabold text-nowrap ${gamesetting.mode & (1 << 0) ? 'text-mint' : 'text-gray-300'}`}
+        >
+          객관식
         </div>
-        <div className="flex justify-center items-center text-gray-300 font-extrabold text-nowrap border-r border-gray-200"></div>
-        <div className="flex justify-center items-center text-gray-300 font-extrabold text-nowrap">
+        <div
+          className={`flex justify-center items-center font-extrabold text-nowrap ${gamesetting.mode & (1 << 2) ? 'text-mint' : 'text-gray-300'}`}
+        >
+          주관식
+        </div>
+        <div
+          className={`flex justify-center items-center font-extrabold text-nowrap ${gamesetting.mode & (1 << 1) ? 'text-mint' : 'text-gray-300'}`}
+        >
+          순서배치
+        </div>
+        <div
+          className={`w-full col-span-3 flex justify-center items-center font-extrabold text-nowrap text-mint translate-y-0.5`}
+        >
+          {gamesetting.maxRounds} 라운드
+        </div>
+        <div
+          className={`w-full col-span-3 flex justify-center items-center font-extrabold text-nowrap text-mint translate-y-1`}
+        >
+          {gamesetting.timeLimit}초
         </div>
       </div>
+
       <div
         className="w-full h-8 border-custom-white bg-white grid grid-cols-7 text-xs pt-0.5 cursor-pointer"
         onMouseOver={() => {
@@ -54,10 +75,18 @@ const GameRoomSetting = ({ gamestart, gamesetting }: GameRoomSettingProps) => {
         }}
       >
         <div className="col-span-3 flex justify-center items-center text-mint font-extrabold text-nowrap border-r border-gray-200">
-          {gamesetting.isTeam?"팀전":"개인전"}
+          {gamesetting.isTeam ? '팀전' : '개인전'}
         </div>
         <div className="col-span-3 flex justify-center items-center text-mint font-extrabold text-nowrap">
-          객관식
+          {gamesetting.style === 'realistic' ? (
+            <p>실사체</p>
+          ) : gamesetting.style === 'anime' ? (
+            <p>만화체</p>
+          ) : gamesetting.style === 'cartoon' ? (
+            <p>디즈니체</p>
+          ) : (
+            <p>랜덤</p>
+          )}
         </div>
         <div className="h-full flex items-center justify-end text-2xl text-gray-500">
           <MdKeyboardArrowDown />
