@@ -9,7 +9,7 @@ const CurrentUser = ({ user }: UserProps) => {
   return (
     <div className="w-full h-12 flex relative items-center pl-1 border-custom-mint bg-white/60 overflow-y-visible py-4">
       {/* <div>URL로 프로필 사진을 가져올부분</div> */}
-      <div className="rounded-full bg-[url(/public/profile.jpg)] bg-cover w-8 h-8 aspect-square"></div>
+      <div className="rounded-full bg-cover w-8 h-8 aspect-square" style={{ backgroundImage: `url(${user.picture})` }}></div>
       <div className="flex flex-col items-start pl-2">
         <p
           className={`w-full font-bold text-black text-ellipsis ${user.nickName.length > 8 ? 'text-xs line-clamp-2' : 'text-sm line-clamp-1'}`}
