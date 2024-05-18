@@ -22,7 +22,7 @@ const CreateRoom = ({ channelCode }: Props) => {
   const [status, setStatus] = useState(false);
   const curPlayers = 1;
   const curRound = 0;
-  const [style, setStyle] = useState(0);
+  const [style, setStyle] = useState(3);
   const [password, setPassword] = useState('');
   const [title, setTitle] = useState<string>('');
 
