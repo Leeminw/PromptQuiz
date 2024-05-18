@@ -197,7 +197,7 @@ const Dottegi = () => {
     return 'mb-2 h-12 bg-white border-custom-mint';
   };
   return ( 
-    <div className="flex flex-col items-center w-[80%] h-2/3 custom-scroll overflow-y-scroll bg-white opacity-50">
+    <div className="flex flex-col items-center w-[100%] h-[100%] custom-scroll overflow-y-scroll bg-white opacity-80">
       <h1 className="text-2xl font-bold my-4">사용자 입력단어기반 이미지 생성 시장통 서비스</h1>
       <h1 className="text-8xl font-bold my-4">{remainTime}</h1>
       <h1 className="text-4xl font-bold my-4">생성된 이미지 결과화면</h1>
@@ -409,12 +409,14 @@ const Dottegi = () => {
               </div>
               {/* <div className="overflow-setChatLogSubjects h-48 mb-2 p-2 border border-gray-200"> */}
               <div className="w-full p-2 h-48 mb-3 overflow-y-scroll custom-scroll border-custom-mint bg-white">
+              {/* 주형 - 주어 - 목형 - 목적 - 동사 */}
+              {/* 이 부분도 품사 순서 맞게 수정 */}
                 {[
+                  chatLogSubAdjectives,
                   chatLogSubjects,
+                  chatLogObjAdjectives,
                   chatLogObjects,
                   chatLogVerbs,
-                  chatLogSubAdjectives,
-                  chatLogObjAdjectives,
                 ][index].map((msg, index2) => (
                   <div key={index2} className="text-sm">
                     {msg}
@@ -425,12 +427,13 @@ const Dottegi = () => {
                 type="text"
                 value={input}
                 onChange={(e) => {
+                  // 순서에 맞게 fix
                   const setters = [
+                    setInputSubAdjective,
                     setInputSubject,
+                    setInputObjAdjective,
                     setInputObject,
                     setInputVerb,
-                    setInputSubAdjective,
-                    setInputObjAdjective,
                   ];
                   setters[index](e.target.value);
                 }}
