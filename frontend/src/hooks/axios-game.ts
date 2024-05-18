@@ -46,6 +46,16 @@ const GameApi = {
     catch (error) {
       return Promise.reject(error);
     }
+  },
+  resetGame: async (gameCode: string) => {
+    try {
+      const response = await instance.put(`game-user/reset?gameCode=${gameCode}`)
+      return response.data;
+
+    }
+    catch (error) {
+      return Promise.reject(error)
+    }
   }
 };
 
