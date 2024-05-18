@@ -441,9 +441,13 @@ const GamePage = () => {
   const postStart = async () => {
     try {
       setIsStart(true);
+      const {data : gameUserList} = await GameApi.getUserList(roomCode);
+      const foundUser: GameUser = gameUserList.find((gUser:GameUser) => {
+        return gUser.userId == user.userId;
+      });
 
-      if (gameUser?.isHost) {
-        GameApi.startGame(game.code);
+      if (foundUser.isHost) {
+        await GameApi.startGame(game.code);
       }
     } catch (error) {
       console.error(error);
