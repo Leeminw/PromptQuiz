@@ -78,7 +78,6 @@ const GamePage = () => {
       setGameUser(foundUser);
 
       console.log('foundUser', foundUser);
-
     } catch (error) {
       console.error(error);
       // navigate(-1);
@@ -171,7 +170,6 @@ const GamePage = () => {
         // choosed button 초기화
         setChoosedButton([false, false, false, false]);
         setQuizCorrectUser(null);
-
       } else if (quiz.quizType == 2) {
         // 순서 맞추기
       } else if (quiz.quizType == 4) {
@@ -265,14 +263,14 @@ const GamePage = () => {
     } else if (recieve.tag === 'enter') {
       const userResponse = await GameApi.getUserList(roomCode);
       setGameUserList(userResponse.data);
-      const foundUser: GameUser = userResponse.data.find((gUser:GameUser) => {
+      const foundUser: GameUser = userResponse.data.find((gUser: GameUser) => {
         return gUser.userId == user.userId;
       });
       setGameUser(foundUser);
     } else if (recieve.tag === 'leave') {
       const userResponse = await GameApi.getUserList(roomCode);
       setGameUserList(userResponse.data);
-      const foundUser: GameUser = userResponse.data.find((gUser:GameUser) => {
+      const foundUser: GameUser = userResponse.data.find((gUser: GameUser) => {
         return gUser.userId == user.userId;
       });
       setGameUser(foundUser);
@@ -332,7 +330,7 @@ const GamePage = () => {
         const middleResult = roundInfo.roundList;
         const userResponse = await GameApi.getUserList(roomCode);
         const updateUserList = userResponse.data;
-        console.log(middleResult)
+        console.log(middleResult);
         for (const user of middleResult) {
           if (user.isCorrect) {
             console.log(user);
@@ -359,8 +357,8 @@ const GamePage = () => {
         }));
         setRoundState('result');
         const userResponse = await GameApi.getUserList(roomCode);
-        const sorted: GameUser[] = [... userResponse.data]
-        sorted.sort((o1:GameUser,o2:GameUser) => o2.score - o1.score)
+        const sorted: GameUser[] = [...userResponse.data];
+        sorted.sort((o1: GameUser, o2: GameUser) => o2.score - o1.score);
         setGameUserList(userResponse.data);
         setResult(sorted);
         setIsStart(false);
@@ -441,8 +439,8 @@ const GamePage = () => {
   const postStart = async () => {
     try {
       setIsStart(true);
-      const {data : gameUserList} = await GameApi.getUserList(roomCode);
-      const foundUser: GameUser = gameUserList.find((gUser:GameUser) => {
+      const { data: gameUserList } = await GameApi.getUserList(roomCode);
+      const foundUser: GameUser = gameUserList.find((gUser: GameUser) => {
         return gUser.userId == user.userId;
       });
 
@@ -571,7 +569,7 @@ const GamePage = () => {
         </div>
         {/* 문제 화면, 타이머 */}
         <div className="w-full grow flex flex-col row-span-6 col-span-3 px-4">
-          <div className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint border relative overflow-hidden flex">
+          <div className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint border relative overflow-hidden flex -translate-y-1">
             {isQuiz ? (
               <div className="w-full h-full relative flex items-center justify-center">
                 <div
@@ -587,7 +585,7 @@ const GamePage = () => {
           </div>
           <div
             className="w-full h-full flex items-center justify-center relative bg-center bg-cover"
-            style={{ backgroundImage: `url(${imageUrl})` }}
+            style={{ backgroundImage: `url(${gamestart?imageUrl:""})` }}
           >
             <div className="w-full h-full flex items-center justify-center relative">
               {isQuiz && (
@@ -607,6 +605,7 @@ const GamePage = () => {
 
               {result.length !== 0 && <GameResult result={result} />}
             </div>
+            <div className="w-full h-full bg-white border-custom-mint opacity-70 backdrop-blur-sm absolute -z-20"></div>
           </div>
         </div>
         {/* 나머지 플레이어 */}
