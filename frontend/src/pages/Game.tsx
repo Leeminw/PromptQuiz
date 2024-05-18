@@ -76,10 +76,10 @@ const GamePage = () => {
       const foundUser: GameUser = gameUserList.find((gUser) => {
         return gUser.userId == user.userId;
       });
+      setGameUser(foundUser);
 
       console.log('foundUser', foundUser);
 
-      setGameUser(foundUser);
     } catch (error) {
       console.error(error);
       // navigate(-1);
@@ -171,6 +171,8 @@ const GamePage = () => {
         setMultipleChoice(sortedData);
         // choosed button 초기화
         setChoosedButton([false, false, false, false]);
+        setQuizCorrectUser(null);
+
       } else if (quiz.quizType == 2) {
         // 순서 맞추기
       } else if (quiz.quizType == 4) {
@@ -181,6 +183,7 @@ const GamePage = () => {
         setImageUrl(data.url);
         setAnswerWord(data.answerWord);
         setPlayerSimilarity(data.playerSimilarity);
+        setQuizCorrectUser(null);
       }
     } catch (error) {
       console.error(error);
@@ -264,9 +267,17 @@ const GamePage = () => {
     } else if (recieve.tag === 'enter') {
       const userResponse = await GameApi.getUserList(roomCode);
       setGameUserList(userResponse.data);
+      const foundUser: GameUser = userResponse.data.find((gUser:GameUser) => {
+        return gUser.userId == user.userId;
+      });
+      setGameUser(foundUser);
     } else if (recieve.tag === 'leave') {
       const userResponse = await GameApi.getUserList(roomCode);
       setGameUserList(userResponse.data);
+      const foundUser: GameUser = userResponse.data.find((gUser:GameUser) => {
+        return gUser.userId == user.userId;
+      });
+      setGameUser(foundUser);
     } else if (recieve.tag === 'timer') {
       const data: GameTimer = recieve.data as GameTimer;
       setRoundState(data.state);
@@ -322,8 +333,10 @@ const GamePage = () => {
         const middleResult = roundInfo.roundList;
         const userResponse = await GameApi.getUserList(roomCode);
         const updateUserList = userResponse.data;
+        console.log(middleResult)
         for (const user of middleResult) {
           if (user.isCorrect) {
+            console.log(user);
             const correctUser = updateUserList.find(
               (item: GameUser) => item.userId === user.userId
             );

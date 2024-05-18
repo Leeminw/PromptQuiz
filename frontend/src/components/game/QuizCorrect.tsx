@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import customSetTimeout from '../../hooks/customSetTimeout';
 
-const QuizCorrect = ({ correctUser }: { correctUser: CorrectUser }) => {
+const QuizCorrect = ({ correctUser }: { correctUser: CorrectUser|null }) => {
+  if(!correctUser) return 
+  
   const [show, setShow] = useState<boolean>(false);
   const [startShow, setStartShow] = useState<boolean>(false);
   const [earthquake, setEarthquake] = useState<boolean>(false);
