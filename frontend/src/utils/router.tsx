@@ -5,6 +5,7 @@ import MainPage from '../pages/Main';
 import GamePage from '../pages/Game';
 import TestPage from '../pages/Test';
 import Lobby from '../pages/Lobby';
+import Dottegi from '../pages/Dottegi';
 
 const RouterInfo = [
   {
@@ -31,6 +32,11 @@ const RouterInfo = [
         path: '/lobby/:channelUuid',
         element: <Lobby />,
         label: 'lobby',
+      },
+      { // 시장통 라우팅 설정
+        path: '/dottegi',
+        element: <Dottegi />,
+        label: 'dottegi',
       },
     ],
   },
