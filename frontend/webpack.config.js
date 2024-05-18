@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const Dotenv = require('dotenv-webpack')
 
 module.exports = {
-  name: 'AI-Prompt-Matcher',
+  name: 'Prompt Quiz',
   entry: './src/index.tsx',
   module: {
     rules: [
