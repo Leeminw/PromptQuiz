@@ -5,7 +5,7 @@ import axios from 'axios';
 import { last } from 'lodash';
 
 const WebSocketTest = () => {
-  const wordClass = ['주어', '목적어', '동사', '주형용사', '목형용사'];
+  const wordClass = ['주형용사', '주어', '목형용사', '목적어', '동사'];
 
   // 채팅 내역
   const [chatLogVerbs, setChatLogVerbs] = useState<string[]>([]);
@@ -42,11 +42,11 @@ const WebSocketTest = () => {
   const [curUpdatedObjAdjectives, setCurUpdatedObjAdjectives] = useState<Object[]>([]);
 
   const curUpdatedList = [
+    curUpdatedSubAdjectives,
     curUpdatedSubjects,
+    curUpdatedObjAdjectives,
     curUpdatedObjects,
     curUpdatedVerbs,
-    curUpdatedSubAdjectives,
-    curUpdatedObjAdjectives,
   ];
   useEffect(() => {
     axios
@@ -393,8 +393,8 @@ const WebSocketTest = () => {
       </div> */}
 
       <div className="flex justify-around w-full px-4">
-        {/* {[inputSubAdjective, inputSubject, inputObjAdjective, inputObject, inputVerb].map( */}
-        {[inputSubject, inputObject, inputVerb, inputSubAdjective, inputObjAdjective].map(
+        {[inputSubAdjective, inputSubject, inputObjAdjective, inputObject, inputVerb].map(
+        // {[inputSubject, inputObject, inputVerb, inputSubAdjective, inputObjAdjective].map(
           (input, index) => (
             <div key={index} className="flex flex-col w-1/6">
               <div className="flex justify-center w-full text-xl bg-mint text-white font-bold">
@@ -439,7 +439,8 @@ const WebSocketTest = () => {
                   if (e.key === 'Enter') {
                     sendMessage(
                       input,
-                      `/ws/pub/dottegi/${['subject', 'object', 'verb', 'sub-adjective', 'obj-adjective'][index]}`
+                      `/ws/pub/dottegi/${['sub-adjective', 'subject', 'obj-adjective', 'object', 'verb'][index]}`
+                      // `/ws/pub/dottegi/${['subject', 'object', 'verb', 'sub-adjective', 'obj-adjective'][index]}`
                     );
                   }
                 }}
@@ -451,8 +452,8 @@ const WebSocketTest = () => {
                 onClick={() =>
                   sendMessage(
                     input,
-                    // `/ws/pub/dottegi/${['sub-adjective', 'subject', 'obj-adjective', 'object', 'verb'][index]}`
-                    `/ws/pub/dottegi/${['subject', 'object', 'verb', 'sub-adjective', 'obj-adjective'][index]}`
+                    `/ws/pub/dottegi/${['sub-adjective', 'subject', 'obj-adjective', 'object', 'verb'][index]}`
+                    // `/ws/pub/dottegi/${['subject', 'object', 'verb', 'sub-adjective', 'obj-adjective'][index]}`
                   )
                 }
                 // className="w-fit h-full btn-mint-border-white hover:brightness-110 flex justify-center items-center gap-2 px-4"

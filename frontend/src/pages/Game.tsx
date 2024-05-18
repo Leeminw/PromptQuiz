@@ -75,10 +75,10 @@ const GamePage = () => {
       const foundUser: GameUser = gameUserList.find((gUser) => {
         return gUser.userId == user.userId;
       });
+      setGameUser(foundUser);
 
       console.log('foundUser', foundUser);
 
-      setGameUser(foundUser);
     } catch (error) {
       console.error(error);
       // navigate(-1);
@@ -170,6 +170,8 @@ const GamePage = () => {
         setMultipleChoice(sortedData);
         // choosed button 초기화
         setChoosedButton([false, false, false, false]);
+        setQuizCorrectUser(null);
+
       } else if (quiz.quizType == 2) {
         // 순서 맞추기
       } else if (quiz.quizType == 4) {
@@ -180,6 +182,7 @@ const GamePage = () => {
         setImageUrl(data.url);
         setAnswerWord(data.answerWord);
         setPlayerSimilarity(data.playerSimilarity);
+        setQuizCorrectUser(null);
       }
     } catch (error) {
       console.error(error);
@@ -247,6 +250,8 @@ const GamePage = () => {
     console.log(recieve);
     if (recieve.tag === 'startGame') {
       console.log('game start!! ', recieve);
+      const userResponse = await GameApi.getUserList(roomCode);
+      setGameUserList(userResponse.data);
       handleGamestart();
     } else if (recieve.tag === 'chat') {
       const data: GameChatRecieve = recieve.data as GameChatRecieve;
@@ -260,9 +265,17 @@ const GamePage = () => {
     } else if (recieve.tag === 'enter') {
       const userResponse = await GameApi.getUserList(roomCode);
       setGameUserList(userResponse.data);
+      const foundUser: GameUser = userResponse.data.find((gUser:GameUser) => {
+        return gUser.userId == user.userId;
+      });
+      setGameUser(foundUser);
     } else if (recieve.tag === 'leave') {
       const userResponse = await GameApi.getUserList(roomCode);
       setGameUserList(userResponse.data);
+      const foundUser: GameUser = userResponse.data.find((gUser:GameUser) => {
+        return gUser.userId == user.userId;
+      });
+      setGameUser(foundUser);
     } else if (recieve.tag === 'timer') {
       const data: GameTimer = recieve.data as GameTimer;
       setRoundState(data.state);
@@ -319,8 +332,10 @@ const GamePage = () => {
         const middleResult = roundInfo.roundList;
         const userResponse = await GameApi.getUserList(roomCode);
         const updateUserList = userResponse.data;
+        console.log(middleResult)
         for (const user of middleResult) {
           if (user.isCorrect) {
+            console.log(user);
             const correctUser = updateUserList.find(
               (item: GameUser) => item.userId === user.userId
             );
@@ -344,8 +359,10 @@ const GamePage = () => {
         }));
         setRoundState('result');
         const userResponse = await GameApi.getUserList(roomCode);
-        setResult(userResponse.data);
+        const sorted: GameUser[] = [... userResponse.data]
+        sorted.sort((o1:GameUser,o2:GameUser) => o2.score - o1.score)
         setGameUserList(userResponse.data);
+        setResult(sorted);
         setIsStart(false);
         setGamestart(false);
       }
@@ -401,6 +418,8 @@ const GamePage = () => {
       return;
     }
     // 모두 레디가 되있는지?
+    await GameApi.resetGame(game.code);
+
     const destination = '/ws/pub/api/v1/game/start';
     const data = {
       gameCode: game.code,
@@ -441,7 +460,6 @@ const GamePage = () => {
         setTimeout(() => {
           setGamestartui(false);
           setGamestart(true);
-
           postStart();
           //
         }, 1000);
