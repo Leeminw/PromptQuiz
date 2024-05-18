@@ -182,12 +182,19 @@ public class DottegiServiceImpl implements DottegiService {
             messagingTemplate.convertAndSend("/ws/sub/dottegi", lastUpdatedPayload);
             return;
         }
+        for (int i = 0; i <= 50; i++)
+            messagingTemplate.convertAndSend("/ws/sub/dottegi",
+                    Map.of("remainingTime", "이미지 생성중... " + i + "%"));
+
 
         // Combine the top words into a single sentence
         log.info("[Income Data Exists] Update Payload and Send.");
         String combinedSentence = String.format("%s %s이(가) %s %s을(를) %s하(고) 있다.",
                 curTopSubAdjective, curTopSubject, curTopObjAdjective, curTopObject, curTopVerb);
         String prompt = GoogleTranslator.translate("ko", "en", combinedSentence);
+        for (int i = 51; i <= 65; i++)
+            messagingTemplate.convertAndSend("/ws/sub/dottegi",
+                    Map.of("remainingTime", "이미지 생성중... " + i + "%"));
 
         /* DONE: 영문 번역하여 Stable-Diffusion 에 요청하여 Base64 Encoded Image 받아옴 */
         SdwCustomRequestDto sdwCustomRequestDto = new SdwCustomRequestDto();
@@ -198,6 +205,9 @@ public class DottegiServiceImpl implements DottegiService {
         }
         SdwCustomResponseDto sdwCustomResponseDto = sdwService.requestCustomStableDiffusion(sdwCustomRequestDto);
         String base64Image = sdwCustomResponseDto.getImages().get(0);
+        for (int i = 66; i <= 99; i++)
+            messagingTemplate.convertAndSend("/ws/sub/dottegi",
+                    Map.of("remainingTime", "이미지 생성중... " + i + "%"));
 
         /* DONE: RDB에 저장 or 파일로 저장하여 불러와서 Base64 인코딩 하여 전송하는 방식 */
         ImageResponseDto imageResponseDto = imageService.saveBase64Image(combinedSentence, base64Image);
@@ -205,13 +215,20 @@ public class DottegiServiceImpl implements DottegiService {
         // Send the combined sentence and lists to subscribers
         DottegiResponseDto payload = DottegiResponseDto.builder()
                 .lastUpdatedUrl(imageResponseDto.getUrl())
-                .lastUpdatedStyles(getTop10ListMap(countMessageStyles))
-                .lastUpdatedSubjects(getTop10ListMap(countMessageSubjects))
-                .lastUpdatedObjects(getTop10ListMap(countMessageObjects))
                 .lastUpdatedVerbs(getTop10ListMap(countMessageVerbs))
+                .lastUpdatedStyles(getTop10ListMap(countMessageStyles))
+                .lastUpdatedObjects(getTop10ListMap(countMessageObjects))
+                .lastUpdatedSubjects(getTop10ListMap(countMessageSubjects))
                 .lastUpdatedSubAdjectives(getTop10ListMap(countMessageSubAdjectives))
                 .lastUpdatedObjAdjectives(getTop10ListMap(countMessageObjAdjectives))
+                .curUpdatedObjAdjectives(List.of(Map.of()))
+                .curUpdatedSubAdjectives(List.of(Map.of()))
+                .curUpdatedSubjects(List.of(Map.of()))
+                .curUpdatedObjects(List.of(Map.of()))
+                .curUpdatedStyles(List.of(Map.of()))
+                .curUpdatedVerbs(List.of(Map.of()))
                 .build();
+        messagingTemplate.convertAndSend("/ws/sub/dottegi", Map.of("remainingTime", "이미지 생성중... 100%"));
 
         clearAllCountMessages();
         lastUpdatedPayload = payload;

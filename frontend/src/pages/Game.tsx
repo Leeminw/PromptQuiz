@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { IoSettings } from 'react-icons/io5';
 import { IoLogOut } from 'react-icons/io5';
-import { FaUserPlus } from 'react-icons/fa';
+import { FaLock, FaUserPlus } from 'react-icons/fa';
 import { IoSend } from 'react-icons/io5';
 import GamePlayer from '../components/game/Player';
 import SelectionGame from '../components/game/SelectionGame';
@@ -37,7 +37,6 @@ const GamePage = () => {
   const [game, setGame] = useState<Game | null>(null);
   const [chat, setChat] = useState<GameChatRecieve[]>([]);
   const [time, setTime] = useState<number>(0);
-  const [maxRound, setMaxRound] = useState<number>(0);
   const [round, setRound] = useState<number>(0);
   const { connectWebSocket, disconnectWebSocket, publish } = useWebSocketStore();
   const [chatOpen, setChatOpen] = useState(false);
@@ -196,11 +195,10 @@ const GamePage = () => {
 
       console.log('isQuiz updated:', isQuiz);
     } else {
-      // 퀴즈 내리기
-      setImageUrl('');
       setMultipleChoice(null);
       setAnswerWord(null);
       setPlayerSimilarity(null);
+      // 퀴즈 내리기
     }
   }, [isQuiz]);
 
@@ -309,6 +307,7 @@ const GamePage = () => {
       const data: GameStatus = recieve.data as GameStatus;
       if (data.type === 'ready') {
         setIsQuiz(false);
+        setImageUrl('');
         setGameState((prevState) => ({
           ...prevState,
           current: prevState.now,
@@ -365,6 +364,7 @@ const GamePage = () => {
         setGameUserList(userResponse.data);
         setResult(sorted);
         setIsStart(false);
+        setGamestart(false);
       }
     }
   };
@@ -441,17 +441,13 @@ const GamePage = () => {
   const postStart = async () => {
     try {
       setIsStart(true);
-      console.log("1")
       const {data : gameUserList} = await GameApi.getUserList(roomCode);
       const foundUser: GameUser = gameUserList.find((gUser:GameUser) => {
         return gUser.userId == user.userId;
       });
 
       if (foundUser.isHost) {
-        console.log("2")
         await GameApi.startGame(game.code);
-        console.log("3")
-        
       }
     } catch (error) {
       console.error(error);
@@ -482,7 +478,7 @@ const GamePage = () => {
 
   // 비율 표시
   const progressStyle = {
-    transform: `translateX(-${timeRatio}%)`,
+    transform: `translateX(${-100 + timeRatio}%)`,
     transition: 'transform 1s ease-in-out', // transition 효과 추가
   };
   return (
@@ -577,10 +573,12 @@ const GamePage = () => {
         <div className="w-full grow flex flex-col row-span-6 col-span-3 px-4">
           <div className="h-4 rounded-full w-full bg-white mb-1 border-extralightmint border relative overflow-hidden flex">
             {isQuiz ? (
-              <div
-                className="w-full h-full rounded-full bg-mint absolute"
-                style={progressStyle}
-              ></div>
+              <div className="w-full h-full relative flex items-center justify-center">
+                <div
+                  className="w-full h-full rounded-full bg-mint absolute"
+                  style={progressStyle}
+                ></div>
+              </div>
             ) : (
               <div
                 className={`w-full h-full rounded-full translate-x-[0%] transition-transform duration-1000 bg-mint absolute`}
@@ -593,12 +591,12 @@ const GamePage = () => {
           >
             <div className="w-full h-full flex items-center justify-center relative">
               {isQuiz && (
-                <div className="w-16 h-7 absolute top-2 left-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
+                <div className="w-16 h-7 absolute top-2 left-2 bg-mint/90 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
                   {round} 라운드
                 </div>
               )}
               {isQuiz && (
-                <div className="w-fit h-7 px-3 absolute top-2 bg-yellow-500/80 text-white rounded-full flex items-center justify-center font-extrabold text-xs border border-gray-300">
+                <div className="w-8 h-8 p-2 absolute top-1 bg-mint text-white flex items-center justify-center font-extrabold text-sm rounded-full border-white border">
                   {time}
                 </div>
               )}
@@ -624,9 +622,11 @@ const GamePage = () => {
         )}
         {Array.from({ length: 12 - gameUserList.length }, (_, index) => (
           <div
-            className={`w-full h-full border-custom-mint backdrop-blur-sm z-0 ${index + 1 >= game?.maxPlayers ? 'bg-mint' : 'bg-gray-200/70'}`}
+            className={`w-full h-full border-custom-mint backdrop-blur-sm z-0 flex items-center justify-center ${index + 1 >= game?.maxPlayers ? 'bg-mint' : 'bg-gray-200/70'}`}
             key={index}
-          ></div>
+          >
+            {index + 1 >= game?.maxPlayers && <FaLock className="text-white" />}
+          </div>
         ))}
       </div>
       {/* 광고, 채팅창, 게임 설정 */}
@@ -682,7 +682,7 @@ const GamePage = () => {
             <div className="w-full h-10 bg-white/80 rounded-full flex relative">
               <input
                 ref={chatInput}
-                className="w-full h-10 bg-transparent rounded-full pl-5 pr-20 text-sm placeholder-gray-400"
+                className={`w-full h-10 bg-transparent rounded-full pl-5 pr-20 text-sm ${chatCooldown ? 'bg-gray-600 text-white placeholder:text-white' : 'text-black placeholder-gray-400'}`}
                 maxLength={30}
                 placeholder={`${chatOpen ? 'Esc를 눌러 채팅창 닫기' : 'Enter를 눌러 채팅 입력'}`}
                 onKeyDown={(e) => {

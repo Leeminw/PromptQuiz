@@ -4,7 +4,7 @@ import { Client } from '@stomp/stompjs';
 import axios from 'axios';
 import { last } from 'lodash';
 
-const WebSocketTest = () => {
+const Dottegi = () => {
   const wordClass = ['주형용사', '주어', '목형용사', '목적어', '동사'];
 
   // 채팅 내역
@@ -196,11 +196,11 @@ const WebSocketTest = () => {
     if (rank === 2) return 'mb-2 h-12 bg-yellow-500 border-custom-yellow';
     return 'mb-2 h-12 bg-white border-custom-mint';
   };
-  return (
-    <div className="flex flex-col items-center w-full">
-      <h1 className="text-2xl font-bold my-4">WebSocket STOMP Multi-Channel Chat</h1>
+  return ( 
+    <div className="flex flex-col items-center w-[80%] h-2/3 custom-scroll overflow-y-scroll bg-white opacity-50">
+      <h1 className="text-2xl font-bold my-4">사용자 입력단어기반 이미지 생성 시장통 서비스</h1>
       <h1 className="text-8xl font-bold my-4">{remainTime}</h1>
-      <h1 className="text-4xl font-bold my-4">결과화면</h1>
+      <h1 className="text-4xl font-bold my-4">생성된 이미지 결과화면</h1>
       <h1 className="text-xl font-bold my-4">
         {lastUpdatedStyles.map((item, index) => {
           if (Object.keys(item)[0] === 'Anime') {
@@ -470,4 +470,4 @@ const WebSocketTest = () => {
   );
 };
 
-export default WebSocketTest;
+export default Dottegi;
