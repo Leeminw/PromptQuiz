@@ -149,15 +149,7 @@ public class DottegiServiceImpl implements DottegiService {
             Top 1 부터 10까지 각각의 품사들을 리스트에 담는다.
             Map을 초기화하고, /dottegi를 구독중인 유저들에게 합쳐진 하나의 문장과 리스트를 전송한다. */
 
-        // Extract the top word from each category
-        String curTopStyle = getTopWord(countMessageStyles);
-        String curTopSubject = getTopWord(countMessageSubjects);
-        String curTopObject = getTopWord(countMessageObjects);
-        String curTopVerb = getTopWord(countMessageVerbs);
-        String curTopSubAdjective = getTopWord(countMessageSubAdjectives);
-        String curTopObjAdjective = getTopWord(countMessageObjAdjectives);
-
-        /* TODO: 예외 상황에 대한 처리 필요
+        /* DONE: 예외 상황에 대한 처리 필요
             1. 최초 실행시 lastUpdatedPayload 가 Null 인 경우 기본 이미지 사용
             2. 기존값이 존재할 때, 새로운 값이 없다면 기존값 사용  */
         if (lastUpdatedPayload == null) {
@@ -175,6 +167,7 @@ public class DottegiServiceImpl implements DottegiService {
             return;
         }
 
+        // 이전 값이 존재하며, 아무것도 바뀌지 않은 경우
         if (countMessageStyles.isEmpty() && countMessageVerbs.isEmpty() &&
                 countMessageSubjects.isEmpty() && countMessageObjects.isEmpty() &&
                 countMessageSubAdjectives.isEmpty() && countMessageObjAdjectives.isEmpty()) {
@@ -182,10 +175,36 @@ public class DottegiServiceImpl implements DottegiService {
             messagingTemplate.convertAndSend("/ws/sub/dottegi", lastUpdatedPayload);
             return;
         }
+
+        // 이전 값이 존재하며, 스타일만 바뀐 경우
+        if (!countMessageStyles.isEmpty() && countMessageVerbs.isEmpty() &&
+                countMessageSubjects.isEmpty() && countMessageObjects.isEmpty() &&
+                countMessageSubAdjectives.isEmpty() && countMessageObjAdjectives.isEmpty()) {
+            log.info("[Data Income] Only Style Changed. Send Last Updated Payload.");
+            for (Map<String, Integer> map : lastUpdatedPayload.getLastUpdatedSubAdjectives()) countMessageSubAdjectives.putAll(map);
+            for (Map<String, Integer> map : lastUpdatedPayload.getLastUpdatedObjAdjectives()) countMessageObjAdjectives.putAll(map);
+            for (Map<String, Integer> map : lastUpdatedPayload.getLastUpdatedSubjects()) countMessageSubjects.putAll(map);
+            for (Map<String, Integer> map : lastUpdatedPayload.getLastUpdatedObjects()) countMessageObjects.putAll(map);
+            for (Map<String, Integer> map : lastUpdatedPayload.getLastUpdatedVerbs()) countMessageVerbs.putAll(map);
+        }
+        // 이전 값이 존재하며, 스타일 이외의 값들이 바뀐 경우
+        else if (countMessageStyles.isEmpty() && !countMessageVerbs.isEmpty() &&
+                !countMessageSubjects.isEmpty() && !countMessageObjects.isEmpty() &&
+                !countMessageSubAdjectives.isEmpty() && !countMessageObjAdjectives.isEmpty()) {
+            log.info("[Data Income] Only Style Not Changed. Send Last Updated Payload.");
+            for (Map<String, Integer> map : lastUpdatedPayload.getLastUpdatedStyles()) countMessageStyles.putAll(map);
+        }
         for (int i = 0; i <= 50; i++)
             messagingTemplate.convertAndSend("/ws/sub/dottegi",
                     Map.of("remainingTime", "이미지 생성중... " + i + "%"));
 
+        // Extract the top word from each category
+        String curTopStyle = getTopWord(countMessageStyles);
+        String curTopSubject = getTopWord(countMessageSubjects);
+        String curTopObject = getTopWord(countMessageObjects);
+        String curTopVerb = getTopWord(countMessageVerbs);
+        String curTopSubAdjective = getTopWord(countMessageSubAdjectives);
+        String curTopObjAdjective = getTopWord(countMessageObjAdjectives);
 
         // Combine the top words into a single sentence
         log.info("[Income Data Exists] Update Payload and Send.");
@@ -244,4 +263,10 @@ public class DottegiServiceImpl implements DottegiService {
         countMessageObjAdjectives.clear();
     }
 
+    private ConcurrentHashMap<String, Integer> convertListMapToConcurrentMashMap(List<Map<String, Integer>> listMap) {
+        for (Map<String, Integer> map : listMap) {
+            ConcurrentHashMap<String, Integer> concurrentMap = new ConcurrentHashMap<>(map);
+            listOfConcurrentMaps.add(concurrentMap);
+        }
+    }
 }
