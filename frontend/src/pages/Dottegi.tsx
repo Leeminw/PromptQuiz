@@ -196,7 +196,7 @@ const Dottegi = () => {
     if (rank === 2) return 'mb-2 h-12 bg-yellow-500 border-custom-yellow';
     return 'mb-2 h-12 bg-white border-custom-mint';
   };
-  return ( 
+  return (
     <div className="flex flex-col items-center w-[100%] h-[100%] custom-scroll overflow-y-scroll bg-white opacity-80">
       <h1 className="text-2xl font-bold my-4">사용자 입력단어기반 이미지 생성 시장통 서비스</h1>
       <h1 className="text-8xl font-bold my-4">{remainTime}</h1>
@@ -327,6 +327,7 @@ const Dottegi = () => {
           <button
             onClick={() => sendMessage('Anime', '/ws/pub/dottegi/style')}
             className="btn-mint-border-white w-[5rem] bg-green-500 text-white p-2 rounded hover:brightness-110 transition duration-200"
+            disabled={remainTime.includes('생성중')}
           >
             애니
           </button>
@@ -335,6 +336,7 @@ const Dottegi = () => {
           <button
             onClick={() => sendMessage('Cartoon', '/ws/pub/dottegi/style')}
             className="btn-mint-border-white w-[5rem]  bg-green-500 text-white p-2 rounded hover:brightness-110 transition duration-200"
+            disabled={remainTime.includes('생성중')}
           >
             카툰
           </button>
@@ -343,6 +345,7 @@ const Dottegi = () => {
           <button
             onClick={() => sendMessage('Realistic', '/ws/pub/dottegi/style')}
             className="btn-mint-border-white w-[5rem]  bg-green-500 text-white p-2 rounded hover:brightness-110 transition duration-200"
+            disabled={remainTime.includes('생성중')}
           >
             실사
           </button>
@@ -394,7 +397,7 @@ const Dottegi = () => {
 
       <div className="flex justify-around w-full px-4">
         {[inputSubAdjective, inputSubject, inputObjAdjective, inputObject, inputVerb].map(
-        // {[inputSubject, inputObject, inputVerb, inputSubAdjective, inputObjAdjective].map(
+          // {[inputSubject, inputObject, inputVerb, inputSubAdjective, inputObjAdjective].map(
           (input, index) => (
             <div key={index} className="flex flex-col w-1/6">
               <div className="flex justify-center w-full text-xl bg-mint text-white font-bold">
@@ -409,8 +412,8 @@ const Dottegi = () => {
               </div>
               {/* <div className="overflow-setChatLogSubjects h-48 mb-2 p-2 border border-gray-200"> */}
               <div className="w-full p-2 h-48 mb-3 overflow-y-scroll custom-scroll border-custom-mint bg-white">
-              {/* 주형 - 주어 - 목형 - 목적 - 동사 */}
-              {/* 이 부분도 품사 순서 맞게 수정 */}
+                {/* 주형 - 주어 - 목형 - 목적 - 동사 */}
+                {/* 이 부분도 품사 순서 맞게 수정 */}
                 {[
                   chatLogSubAdjectives,
                   chatLogSubjects,
@@ -450,6 +453,7 @@ const Dottegi = () => {
                 // placeholder={`Type your message in chat ${index + 1}...`}
                 placeholder={`${wordClass[index]}를 입력해주세요`}
                 className="p-2 border border-gray-300 rounded mb-2"
+                disabled={remainTime.includes('생성중')}
               />
               <button
                 onClick={() =>
@@ -462,6 +466,7 @@ const Dottegi = () => {
                 // className="w-fit h-full btn-mint-border-white hover:brightness-110 flex justify-center items-center gap-2 px-4"
 
                 className="btn-mint-border-white bg-green-500 text-white p-2 rounded hover:brightness-110 transition duration-200"
+                disabled={remainTime.includes('생성중')}
               >
                 입력
               </button>
