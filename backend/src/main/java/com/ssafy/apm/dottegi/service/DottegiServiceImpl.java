@@ -117,7 +117,7 @@ public class DottegiServiceImpl implements DottegiService {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private long timerStart = System.currentTimeMillis();
-    private final long timerDuration = 30000;
+    private final long timerDuration = 180000;
 //    private final long timerDuration = 300000;
 
     @Scheduled(fixedRate = 1000)
@@ -263,10 +263,4 @@ public class DottegiServiceImpl implements DottegiService {
         countMessageObjAdjectives.clear();
     }
 
-    private ConcurrentHashMap<String, Integer> convertListMapToConcurrentMashMap(List<Map<String, Integer>> listMap) {
-        for (Map<String, Integer> map : listMap) {
-            ConcurrentHashMap<String, Integer> concurrentMap = new ConcurrentHashMap<>(map);
-            listOfConcurrentMaps.add(concurrentMap);
-        }
-    }
 }
