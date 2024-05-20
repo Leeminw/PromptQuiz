@@ -15,6 +15,25 @@
     <title>AI Prompt Quiz</title>
   </head>
   <body>
+    <audio id="bgm" autoplay loop>
+      <source src="bgm/bgm.mp3" type="audio/mp3" />
+    </audio>
     <div id="root"></div>
   </body>
+  <script>
+    function playAudio() {
+      var audio = document.getElementById('bgm');
+      audio.volume = 0.2; // 볼륨을 50%로 설정
+      audio
+        .play()
+        .then(() => {
+          console.log('Music is playing');
+        })
+        .catch((error) => {
+          console.log('Failed to play music: ', error);
+        });
+    }
+
+    document.addEventListener('click', playAudio, { once: true });
+  </script>
 </html>
