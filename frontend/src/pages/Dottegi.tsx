@@ -327,7 +327,7 @@ const Dottegi = () => {
           <button
             onClick={() => sendMessage('Anime', '/ws/pub/dottegi/style')}
             className="btn-mint-border-white w-[5rem] bg-green-500 text-white p-2 rounded hover:brightness-110 transition duration-200"
-            disabled={remainTime === null ? false : remainTime.includes('생성중')}
+            disabled={remainTime ? remainTime.includes('생성중') : false}
           >
             애니
           </button>
@@ -336,7 +336,7 @@ const Dottegi = () => {
           <button
             onClick={() => sendMessage('Cartoon', '/ws/pub/dottegi/style')}
             className="btn-mint-border-white w-[5rem]  bg-green-500 text-white p-2 rounded hover:brightness-110 transition duration-200"
-            disabled={remainTime === null ? false : remainTime.includes('생성중')}
+            disabled={remainTime ? remainTime.includes('생성중') : false}
           >
             카툰
           </button>
@@ -345,7 +345,7 @@ const Dottegi = () => {
           <button
             onClick={() => sendMessage('Realistic', '/ws/pub/dottegi/style')}
             className="btn-mint-border-white w-[5rem]  bg-green-500 text-white p-2 rounded hover:brightness-110 transition duration-200"
-            disabled={remainTime === null ? false : remainTime.includes('생성중')}
+            disabled={remainTime ? remainTime.includes('생성중') : false}
           >
             실사
           </button>
@@ -453,7 +453,7 @@ const Dottegi = () => {
                 // placeholder={`Type your message in chat ${index + 1}...`}
                 placeholder={`${wordClass[index]}를 입력해주세요`}
                 className="p-2 border border-gray-300 rounded mb-2"
-                disabled={remainTime === null ? false : remainTime.includes('생성중')}
+                disabled={remainTime ? remainTime.includes('생성중') : false}
               />
               <button
                 onClick={() =>
@@ -466,7 +466,7 @@ const Dottegi = () => {
                 // className="w-fit h-full btn-mint-border-white hover:brightness-110 flex justify-center items-center gap-2 px-4"
 
                 className="btn-mint-border-white bg-green-500 text-white p-2 rounded hover:brightness-110 transition duration-200"
-                disabled={remainTime === null ? false : remainTime.includes('생성중')}
+                disabled={remainTime ? remainTime.includes('생성중') : false}
               >
                 입력
               </button>
