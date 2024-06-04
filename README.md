@@ -107,26 +107,25 @@ $ npm run build
 
 # :yellow_heart: 기능별 소개
 ### 로그인
-![로그인](/uploads/a60c05945134ba0e0204f898fcf827e3/로그인.gif)
+![로그인](https://github.com/Leeminw/PromptQuiz/assets/92208022/152d44eb-d07e-4162-b54e-f7c1c9a71387)
 
 ### 채팅
-![채팅](/uploads/6a38772e807cc3fe5de124a581195328/채팅.gif)
+![채팅](https://github.com/Leeminw/PromptQuiz/assets/92208022/5a6635e0-0ab4-4dc9-9d5e-89a8a6e09a4b)
 
 ### 게임방 생성
-![게임방생성](/uploads/b62b26f00503ca103766e4cdb78a3fb4/게임방생성.gif)
+![게임방생성](https://github.com/Leeminw/PromptQuiz/assets/92208022/c50aab14-c00e-49ae-80fa-1a4d85394a4b)
 
 ### 객관식
-![객관식](/uploads/e1c503f11b74796058e56a60eda9197a/객관식.gif)
-
+![객관식](https://github.com/Leeminw/PromptQuiz/assets/92208022/3db2e57c-fedc-4da1-85ae-05d6727e0be9)
 
 ### 시작
-![시작](/uploads/c5c2a66b8325f1cfa382fe5c4cfb3f41/시작.gif)
+![시작](https://github.com/Leeminw/PromptQuiz/assets/92208022/3a50cf54-7cca-4ce4-a165-b3537b7ad7b7)
 
 ### 주관식
-![주관식](/uploads/49a527c2c590c28d78b9b546a9fe2e6a/주관식.gif)
+![주관식](https://github.com/Leeminw/PromptQuiz/assets/92208022/23188fe5-da3e-4cea-9f78-6f6dc0677142)
 
 ### 라운드 준비 타이머
-![타이머](/uploads/502df64c550bdb6cc0ba9f77c845022f/타이머.gif)
+![타이머](https://github.com/Leeminw/PromptQuiz/assets/92208022/f1c21b56-e60f-4fc3-ae3d-0b005927a9b1)
 
 
 # 💙 버그 리포트
